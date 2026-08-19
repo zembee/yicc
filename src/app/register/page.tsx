@@ -143,8 +143,8 @@ export default function RegisterPage() {
       }
 
       setTimeout(() => {
-        router.push('/academy');
-      }, 1500);
+        router.replace('/academy');
+      }, 1200);
     } catch (err: any) {
       console.error('Registration failed:', err);
       setErrorMsg(err.message || 'เกิดข้อผิดพลาดในการลงทะเบียน กรุณาลองใหม่อีกครั้ง');

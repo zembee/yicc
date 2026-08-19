@@ -47,7 +47,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [error, setError] = useState<string | null>(null);
   const [isMockMode, setIsMockMode] = useState<boolean>(true);
 
-  const syncSupabaseProfile = useCallback(async (lineUser: { userId: string; displayName: string; pictureUrl?: string }) => {
+  const syncSupabaseProfile = useCallback(async (lineUser: { userId: string; displayName: string; pictureUrl?: string }, shouldRedirect = false) => {
     try {
       const { data, error: fetchErr } = await supabase
         .from('profiles')
@@ -56,7 +56,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .maybeSingle();
 
       if (!data) {
-        // First time user: not yet registered
+        // User not found in DB -> not registered
         setIsRegistered(false);
         setProfile({
           id: '',
@@ -70,30 +70,21 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
           attendance_rate: 100,
         });
 
-        if (pathname !== '/register') {
-          router.push('/register');
+        if (shouldRedirect && typeof window !== 'undefined' && window.location.pathname !== '/register') {
+          router.replace('/register');
         }
       } else {
-        // User exists
-        if (data.display_name !== lineUser.displayName || (lineUser.pictureUrl && data.picture_url !== lineUser.pictureUrl)) {
-          await supabase
-            .from('profiles')
-            .update({ display_name: lineUser.displayName, picture_url: lineUser.pictureUrl })
-            .eq('id', data.id);
-        }
-
+        // User exists in DB
         const attendance = Array.isArray(data.profile_attendance_stats) 
           ? data.profile_attendance_stats[0]?.attendance_percentage ?? 100
           : 100;
 
-        // If user has not filled company_name or phone_number, consider them uncompleted
-        const registered = Boolean(data.company_name && data.phone_number);
-        setIsRegistered(registered);
-
+        const hasCompletedInfo = Boolean(data.company_name && data.phone_number);
+        setIsRegistered(hasCompletedInfo);
         setProfile({ ...data, attendance_rate: attendance });
 
-        if (!registered && pathname !== '/register') {
-          router.push('/register');
+        if (shouldRedirect && !hasCompletedInfo && typeof window !== 'undefined' && window.location.pathname !== '/register') {
+          router.replace('/register');
         }
       }
     } catch (err: any) {
@@ -106,7 +97,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
         picture_url: lineUser.pictureUrl || mockCurrentUser.picture_url,
       });
     }
-  }, [pathname, router]);
+  }, [router]);
 
   const initLiff = useCallback(async () => {
     const liffId = process.env.NEXT_PUBLIC_LIFF_ID;
@@ -144,7 +135,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
         pictureUrl: lProfile.pictureUrl,
       });
 
-      await syncSupabaseProfile(lProfile);
+      await syncSupabaseProfile(lProfile, true);
     } catch (err: any) {
       console.warn('LIFF init warning (Running in Local Demo Mode):', err);
       setIsMockMode(true);
@@ -165,7 +156,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const refetchProfile = async () => {
     if (lineProfile && !isMockMode) {
-      await syncSupabaseProfile(lineProfile);
+      await syncSupabaseProfile(lineProfile, false);
     }
   };
 
