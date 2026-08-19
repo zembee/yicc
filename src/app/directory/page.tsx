@@ -17,15 +17,15 @@ import {
 } from 'lucide-react';
 
 const INDUSTRY_CATEGORIES = [
-  { id: 'ALL', nameTh: 'ทั้งหมด', nameEn: 'All Industries', img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&auto=format&fit=crop&q=80' },
-  { id: 'Technology', nameTh: 'เทคโนโลยี', nameEn: 'Technology', img: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&auto=format&fit=crop&q=80' },
-  { id: 'Service', nameTh: 'บริการ', nameEn: 'Service', img: 'https://images.unsplash.com/photo-1556742049-0a67e55722c3?w=400&auto=format&fit=crop&q=80' },
-  { id: 'Consumer Products', nameTh: 'สินค้าอุปโภคบริโภค', nameEn: 'Consumer Products', img: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&auto=format&fit=crop&q=80' },
-  { id: 'Industrial Goods', nameTh: 'สินค้าอุตสาหกรรม', nameEn: 'Industrial Goods', img: 'https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?w=400&auto=format&fit=crop&q=80' },
-  { id: 'Agriculture', nameTh: 'การเกษตร / อาหาร', nameEn: 'Agriculture / Food', img: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400&auto=format&fit=crop&q=80' },
-  { id: 'Real Estate', nameTh: 'การก่อสร้าง', nameEn: 'Real Estate / Construction', img: 'https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?w=400&auto=format&fit=crop&q=80' },
-  { id: 'Resources', nameTh: 'ทรัพยากร', nameEn: 'Resources', img: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=400&auto=format&fit=crop&q=80' },
-  { id: 'Finance', nameTh: 'ธุรกิจการเงิน / ลงทุน', nameEn: 'Financials / Investment', img: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&auto=format&fit=crop&q=80' },
+  { id: 'ALL', nameTh: 'ทั้งหมด', nameEn: 'All Industries', img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=500&auto=format&fit=crop&q=80' },
+  { id: 'Technology', nameTh: 'เทคโนโลยี', nameEn: 'Technology', img: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=500&auto=format&fit=crop&q=80' },
+  { id: 'Service', nameTh: 'บริการ', nameEn: 'Service', img: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=500&auto=format&fit=crop&q=80' },
+  { id: 'Consumer Products', nameTh: 'สินค้าอุปโภคบริโภค', nameEn: 'Consumer Products', img: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&auto=format&fit=crop&q=80' },
+  { id: 'Industrial Goods', nameTh: 'สินค้าอุตสาหกรรม', nameEn: 'Industrial Goods', img: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=500&auto=format&fit=crop&q=80' },
+  { id: 'Agriculture', nameTh: 'การเกษตร / อาหาร', nameEn: 'Agriculture / Food', img: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=500&auto=format&fit=crop&q=80' },
+  { id: 'Real Estate', nameTh: 'การก่อสร้าง', nameEn: 'Real Estate / Construction', img: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=500&auto=format&fit=crop&q=80' },
+  { id: 'Resources', nameTh: 'ทรัพยากร', nameEn: 'Resources', img: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=500&auto=format&fit=crop&q=80' },
+  { id: 'Finance', nameTh: 'ธุรกิจการเงิน / ลงทุน', nameEn: 'Financials / Investment', img: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=500&auto=format&fit=crop&q=80' },
 ];
 
 export default function DirectoryPage() {
@@ -82,7 +82,7 @@ export default function DirectoryPage() {
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(isSelected ? 'ALL' : cat.id)}
-                className={`relative h-20 rounded-xl overflow-hidden text-left p-2.5 flex flex-col justify-end transition-all border ${
+                className={`relative h-20 rounded-xl overflow-hidden text-left p-2.5 flex flex-col justify-end transition-all border bg-[#181B34] ${
                   isSelected
                     ? 'border-[#FB7170] ring-2 ring-[#FB7170] scale-[1.02]'
                     : 'border-slate-200 hover:border-slate-400'
@@ -92,6 +92,10 @@ export default function DirectoryPage() {
                   src={cat.img}
                   alt={cat.nameTh}
                   className="absolute inset-0 w-full h-full object-cover"
+                  onError={(e) => {
+                    // Fallback to high reliability backup image if blocked
+                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=500&auto=format&fit=crop&q=80';
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/60 to-black/30" />
                 <div className="relative z-10">
