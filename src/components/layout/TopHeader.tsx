@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useLiffAuth } from '@/contexts/LiffContext';
+import Image from 'next/image';
 import { Coins, Award, Shield } from 'lucide-react';
 import Link from 'next/link';
 
@@ -9,23 +10,21 @@ export const TopHeader: React.FC = () => {
   const { profile, isMockMode } = useLiffAuth();
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-[#EEEEEE] px-4 py-2.5 shadow-[0_2px_12px_rgba(33,37,66,0.03)]">
+    <header className="sticky top-0 z-40 bg-[#212542] backdrop-blur-xl border-b border-[#EEEEEE] px-4 py-2.5 shadow-[0_2px_12px_rgba(33,37,66,0.03)]">
       <div className="max-w-md mx-auto flex items-center justify-between gap-3">
         {/* Brand & Cohort Badge */}
         <Link href="/academy" className="flex items-center gap-2.5 shrink-0">
-          <div className="w-8 h-8 rounded-xl bg-[#212542] flex items-center justify-center text-white font-black text-[11px] tracking-tight shadow-md shadow-[#212542]/20 shrink-0">
-            YFTI
-          </div>
+          <Image src="/YFTI-11-Logo.jpg" alt="YFTI Connect" width={32} height={32} className="rounded-md" />
           <div className="flex flex-col">
-            <span className="font-black text-sm tracking-tight text-[#212542] leading-tight whitespace-nowrap">
+            <span className="font-black text-sm tracking-tight text-[var(--e-global-color-primary)] leading-tight whitespace-nowrap">
               YFTI CONNECT
             </span>
             <div className="flex items-center gap-1.5 leading-none mt-0.5">
-              <span className="text-[10px] text-[#6B7280] font-medium whitespace-nowrap">
+              <span className="text-[10px] text-[var(--e-global-color-secondary)] font-medium whitespace-nowrap">
                 Cohort 1
               </span>
               {isMockMode && (
-                <span className="text-[8px] bg-[#FFD7D7] text-[#FB7170] font-bold px-1 py-0.2 rounded font-mono">
+                <span className="text-[8px] bg-[var(--e-global-color-daf0130)] text-[var(--e-global-color-secondary)] font-bold px-1 py-0.2 rounded font-mono">
                   DEMO
                 </span>
               )}
