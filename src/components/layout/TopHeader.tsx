@@ -4,13 +4,14 @@ import React from 'react';
 import { useLiffAuth } from '@/contexts/LiffContext';
 import Image from 'next/image';
 import { Coins, Award, Shield } from 'lucide-react';
+import { useState } from 'react';
 import Link from 'next/link';
 
 export const TopHeader: React.FC = () => {
   const { profile, isMockMode } = useLiffAuth();
 
   return (
-    <header className="sticky top-0 z-40 bg-[#212542] backdrop-blur-xl border-b border-[#EEEEEE] px-4 py-2.5 shadow-[0_2px_12px_rgba(33,37,66,0.03)]">
+    <header className="sticky top-0 z-40 bg-[var(--e-global-color-3108c96)]/95 backdrop-blur-xl border-b border-[var(--e-global-color-cf63a04)] px-4 py-2.5 shadow-[0_2px_12px_rgba(33,37,66,0.03)]">
       <div className="max-w-md mx-auto flex items-center justify-between gap-3">
         {/* Brand & Cohort Badge */}
         <Link href="/academy" className="flex items-center gap-2.5 shrink-0">
