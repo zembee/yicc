@@ -43,6 +43,7 @@ export interface EventItem {
   is_mandatory: boolean;
   status: EventStatus;
   isCheckedIn?: boolean;
+  isRegisteredForEvent?: boolean;
 }
 
 export interface Mission {

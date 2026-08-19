@@ -51,9 +51,13 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const { data, error: fetchErr } = await supabase
         .from('profiles')
-        .select('*, house:houses(*), profile_attendance_stats(attendance_percentage)')
+        .select('*, house:houses(*)')
         .eq('line_user_id', lineUser.userId)
         .maybeSingle();
+
+      if (fetchErr) {
+        console.error('Error fetching profile from Supabase:', fetchErr);
+      }
 
       if (!data) {
         // User not found in DB -> not registered
@@ -75,13 +79,9 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       } else {
         // User exists in DB
-        const attendance = Array.isArray(data.profile_attendance_stats) 
-          ? data.profile_attendance_stats[0]?.attendance_percentage ?? 100
-          : 100;
-
         const hasCompletedInfo = Boolean(data.company_name && data.phone_number);
         setIsRegistered(hasCompletedInfo);
-        setProfile({ ...data, attendance_rate: attendance });
+        setProfile({ ...data, attendance_rate: data.attendance_rate ?? 100 });
 
         if (shouldRedirect && !hasCompletedInfo && typeof window !== 'undefined' && window.location.pathname !== '/register') {
           router.replace('/register');
