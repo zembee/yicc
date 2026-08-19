@@ -20,16 +20,8 @@ export async function createRichMenu(): Promise<string> {
     chatBarText: 'เมนู',
     areas: [
       {
-        bounds: { x: 0, y: 0, width: 300, height: 300 },
-        action: { type: 'uri', uri: 'https://yicc.vercel.app' }
-      },
-      {
-        bounds: { x: 1100, y: 700, width: 300, height: 300 },
-        action: { type: 'message', text: 'เช็คคะแนน' }
-      },
-      {
-        bounds: { x: 2200, y: 1300, width: 300, height: 300 },
-        action: { type: 'uri', uri: 'https://yicc.vercel.app/profile' }
+        bounds: { x: 0, y: 0, width: 2500, height: 1686 },
+        action: { type: 'uri', uri: 'https://liff.line.me/2011170570-qSzFUdyR' }
       }
     ]
   };
@@ -51,14 +43,28 @@ export async function createRichMenu(): Promise<string> {
   return data.richMenuId;
 }
 
-/** Upload PNG image for the Rich Menu (must be 2500×1686) */
+/** Upload image for the Rich Menu (must be <= 1MB, 2500×1686) */
 export async function uploadRichMenuImage(richMenuId: string): Promise<void> {
-  const imagePath = path.resolve(process.cwd(), 'public', 'richmenu.png');
-  const buffer = readFileSync(imagePath);
-  const res = await fetch(`${API_BASE}/richmenu/${richMenuId}/content`, {
+  const fs = await import('fs');
+  const possiblePaths = [
+    { file: path.resolve(process.cwd(), 'public', 'richmenu.jpg'), type: 'image/jpeg' },
+    { file: path.resolve(process.cwd(), 'public', 'richmenu.png'), type: 'image/png' }
+  ];
+
+  let selected = possiblePaths.find(p => fs.existsSync(p.file));
+  if (!selected) {
+    throw new Error('❌ RichMenu image not found in public/ (richmenu.jpg or richmenu.png)');
+  }
+
+  const buffer = readFileSync(selected.file);
+  console.log(`Uploading ${selected.file} (${(buffer.length / 1024).toFixed(1)} KB, ${selected.type})...`);
+
+  // Use data endpoint for image upload as required by LINE
+  const dataBase = API_BASE.replace('api.line.me', 'api-data.line.me');
+  const res = await fetch(`${dataBase}/richmenu/${richMenuId}/content`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'image/png',
+      'Content-Type': selected.type,
       Authorization: `Bearer ${ACCESS_TOKEN}`
     },
     body: buffer
