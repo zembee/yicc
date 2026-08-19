@@ -5,8 +5,8 @@ import { TopHeader } from '@/components/layout/TopHeader';
 import { BottomNavigation } from '@/components/layout/BottomNavigation';
 
 export const metadata: Metadata = {
-  title: 'YFTI Connect | Executive Cohort Hub',
-  description: 'Mobile-first Community & Networking Web App for Executive Cohorts',
+  title: 'Young FTI ELITE 11 | Member Connect Hub',
+  description: 'หลักสูตรนักอุตสาหกรรมรุ่นใหม่ Young FTI ELITE 11 - Executive Cohort Portal',
 };
 
 export const viewport: Viewport = {
@@ -23,11 +23,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="th">
-      <body className="bg-[#F8F9FC] text-[#292929] min-h-screen flex flex-col antialiased selection:bg-[#FB7170] selection:text-white">
+      <body className="bg-[#EAEFF8] text-[#1F2937] min-h-screen flex flex-col antialiased selection:bg-[#FB7170] selection:text-white">
         <LiffProvider>
-          <div className="w-full max-w-md mx-auto min-h-screen flex flex-col relative bg-[#F8F9FC] shadow-2xl border-x border-[#EEEEEE]">
+          <div className="w-full max-w-md mx-auto min-h-screen flex flex-col relative bg-[#F6F7FB] shadow-xl border-x border-slate-200">
             <TopHeader />
-            <main className="flex-1 pb-24 px-4 pt-3 overflow-y-auto">
+            <main className="flex-1 pb-20 px-3.5 pt-3 overflow-y-auto">
               {children}
             </main>
             <BottomNavigation />
@@ -37,3 +37,4 @@ export default function RootLayout({
     </html>
   );
 }
+

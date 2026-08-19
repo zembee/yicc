@@ -19,16 +19,16 @@ export default function EventsPage() {
       {/* Header Info */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-base font-extrabold text-[#212542]">Cohort Events & Schedule</h2>
-          <p className="text-xs text-[#6B7280]">ตารางเรียนและกิจกรรมสัมมนาเครือข่ายผู้นำ</p>
+          <h1 className="text-base font-extrabold text-[#181B34]">กิจกรรมโครงการ</h1>
+          <p className="text-xs text-slate-500">ตารางเรียนและกิจกรรมสัมมนาเครือข่าย Young FTI ELITE</p>
         </div>
-        <div className="w-9 h-9 rounded-2xl bg-[#DBDFFF] flex items-center justify-center text-[#212542]">
-          <Calendar className="w-4 h-4" />
+        <div className="w-8 h-8 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-[#181B34]">
+          <Calendar className="w-4 h-4 text-[#FB7170]" />
         </div>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto py-1 no-scrollbar">
+      <div className="flex items-center gap-1.5 overflow-x-auto py-1 no-scrollbar">
         {[
           { key: 'ALL', label: 'ทั้งหมด' },
           { key: 'MANDATORY', label: 'วิชาบังคับ (80%)' },
@@ -37,10 +37,10 @@ export default function EventsPage() {
           <button
             key={tab.key}
             onClick={() => setFilter(tab.key as any)}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition ${
               filter === tab.key
-                ? 'bg-[#212542] text-white shadow-md shadow-[#212542]/20'
-                : 'bg-white text-[#6B7280] border border-[#EEEEEE] hover:text-[#212542]'
+                ? 'bg-[#181B34] text-white shadow-sm'
+                : 'bg-white text-slate-600 border border-slate-200 hover:text-[#181B34]'
             }`}
           >
             {tab.label}
@@ -49,7 +49,7 @@ export default function EventsPage() {
       </div>
 
       {/* Events List */}
-      <div className="space-y-4 pt-1">
+      <div className="space-y-3.5 pt-1">
         {filteredEvents.map((ev) => (
           <EventCardWithQrModal key={ev.id} event={ev} />
         ))}
@@ -57,3 +57,4 @@ export default function EventsPage() {
     </div>
   );
 }
+

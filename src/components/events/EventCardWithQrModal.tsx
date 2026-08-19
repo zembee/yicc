@@ -14,8 +14,6 @@ import {
   RefreshCw,
   X,
   UserCheck,
-  Lock,
-  Sparkles,
   Loader2
 } from 'lucide-react';
 import { format, formatISO } from 'date-fns';
@@ -67,13 +65,13 @@ export const EventCardWithQrModal: React.FC<Props> = ({ event }) => {
           localStorage.setItem(`event_reg_${event.id}`, 'true');
         }
       } catch (err) {
-        // Table might not exist yet, fallback to local storage
+        // Fallback to local storage
       }
     }
     checkEventRegistration();
   }, [profile?.id, event.id]);
 
-  // 1. Google Calendar URL
+  // Google Calendar URL
   const googleCalendarUrl = useMemo(() => {
     try {
       const startIso = formatISO(new Date(event.start_time)).replace(/-|:|\.\d+/g, '');
@@ -91,7 +89,7 @@ export const EventCardWithQrModal: React.FC<Props> = ({ event }) => {
     }
   }, [event]);
 
-  // 2. Rolling Time-based Token
+  // Rolling Time-based Token
   useEffect(() => {
     if (!isOpen) return;
 
@@ -126,7 +124,6 @@ export const EventCardWithQrModal: React.FC<Props> = ({ event }) => {
     setIsRegistering(true);
     try {
       if (profile?.id) {
-        // Try recording into Supabase
         await supabase
           .from('event_registrations')
           .insert({
@@ -142,188 +139,206 @@ export const EventCardWithQrModal: React.FC<Props> = ({ event }) => {
       }
 
       setShowRegSuccessToast(true);
-      setTimeout(() => setShowRegSuccessToast(false), 4000);
+      setTimeout(() => setShowRegSuccessToast(false), 3500);
     } catch (err) {
-      console.warn('Registration fallback to local state:', err);
       setIsRegistered(true);
       if (typeof window !== 'undefined') {
         localStorage.setItem(`event_reg_${event.id}`, 'true');
       }
       setShowRegSuccessToast(true);
-      setTimeout(() => setShowRegSuccessToast(false), 4000);
+      setTimeout(() => setShowRegSuccessToast(false), 3500);
     } finally {
       setIsRegistering(false);
     }
   };
 
+  // Event Cover Photos (Matching executive class aesthetic from image.png)
+  const eventCover = event.id === 'e1'
+    ? 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&auto=format&fit=crop&q=80'
+    : event.id === 'e2'
+    ? 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop&q=80'
+    : 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=800&auto=format&fit=crop&q=80';
+
   return (
-    <div className="bg-white border border-[#EEEEEE] rounded-3xl p-5 shadow-[0_4px_20px_rgba(33,37,66,0.04)] text-[#292929] mb-4 transition-all hover:shadow-[0_8px_25px_rgba(33,37,66,0.07)] relative overflow-hidden">
-      {/* Registration Success Toast */}
+    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:border-slate-300 transition-all">
+      {/* Toast */}
       {showRegSuccessToast && (
-        <div className="mb-3 p-3 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs text-emerald-800 font-bold animate-in fade-in slide-in-from-top-2">
-          <Sparkles className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span>ลงทะเบียนเข้าร่วมกิจกรรมเรียบร้อยแล้ว! สามารถเปิด QR เช็คชื่อได้เมื่อถึงเวลา</span>
+        <div className="m-3 p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2 text-xs text-emerald-800 font-bold">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+          <span>ลงทะเบียนสำเร็จ! สามารถเปิด QR เช็คชื่อได้เมื่อถึงเวลางาน</span>
         </div>
       )}
 
-      {/* Top Meta */}
-      <div className="flex items-center justify-between gap-2 mb-3">
-        <div className="flex items-center gap-2">
-          {event.is_mandatory && (
-            <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-[#FFD7D7] text-[#FB7170] border border-[#FB7170]/30">
-              วิชาบังคับ
+      {/* Event Photo Banner with Status Chip */}
+      <div className="relative h-36 w-full overflow-hidden bg-slate-900">
+        <img
+          src={eventCover}
+          alt={event.title}
+          className="w-full h-full object-cover opacity-90 hover:scale-105 transition-transform duration-500"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/20" />
+
+        {/* Top Badges */}
+        <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between">
+          {event.is_mandatory ? (
+            <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-[#FB7170] text-white shadow-sm">
+              วิชาบังคับ (80%)
+            </span>
+          ) : (
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#181B34]/80 backdrop-blur-sm text-white">
+              กิจกรรมทั่วไป
             </span>
           )}
-          <span className="text-xs text-[#6B7280] font-medium flex items-center gap-1">
-            <Calendar className="w-3.5 h-3.5 text-[#212542]" />
-            {format(new Date(event.start_time), 'EEE d MMM yyyy', { locale: th })}
-          </span>
+
+          {event.isCheckedIn ? (
+            <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500 text-white shadow-sm">
+              <CheckCircle2 className="w-3 h-3" /> เช็คชื่อแล้ว
+            </span>
+          ) : isRegistered ? (
+            <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded bg-[#3B82F6] text-white shadow-sm">
+              <UserCheck className="w-3 h-3" /> ลงทะเบียนแล้ว
+            </span>
+          ) : null}
         </div>
 
-        {event.isCheckedIn ? (
-          <span className="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">
-            <CheckCircle2 className="w-3.5 h-3.5" /> เช็คชื่อแล้ว
+        {/* Bottom Reward Badges on Image */}
+        <div className="absolute bottom-2.5 right-2.5 flex items-center gap-1.5">
+          <span className="text-[10px] font-bold text-white bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded flex items-center gap-1">
+            <Coins className="w-3 h-3 text-[#FB7170]" /> +{event.reward_points}
           </span>
-        ) : isRegistered ? (
-          <span className="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#EFF6FF] text-[#3B82F6] border border-[#BFDBFE]">
-            <UserCheck className="w-3.5 h-3.5" /> ลงทะเบียนแล้ว
+          <span className="text-[10px] font-bold text-white bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded font-mono">
+            +{event.reward_xp} XP
           </span>
-        ) : (
-          <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
-            <Clock className="w-3.5 h-3.5 text-slate-400" /> รอลงทะเบียน
-          </span>
-        )}
+        </div>
       </div>
 
-      {/* Event Details */}
-      <h3 className="text-base font-extrabold text-[#212542] mb-1.5 leading-snug">{event.title}</h3>
-      <p className="text-xs text-[#6B7280] line-clamp-2 mb-4 leading-relaxed">{event.description}</p>
+      {/* Event Content Block */}
+      <div className="p-4">
+        {/* Coral Date Tag (Directly echoing image.png style: '24 พ.ค. 2025') */}
+        <div className="text-xs font-bold text-[#FB7170] mb-1">
+          {format(new Date(event.start_time), 'd MMM yyyy', { locale: th })}
+        </div>
 
-      {/* Rewards & Location */}
-      <div className="grid grid-cols-2 gap-2 mb-4 bg-[#F8F9FC] p-3 rounded-2xl border border-[#EEEEEE]">
+        {/* Title */}
+        <h3 className="text-sm font-bold text-[#181B34] mb-1.5 leading-snug">
+          {event.title}
+        </h3>
+
+        {/* Description */}
+        <p className="text-xs text-slate-600 line-clamp-2 mb-3 leading-relaxed">
+          {event.description}
+        </p>
+
+        {/* Venue info */}
+        <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-3.5 bg-slate-50 p-2 rounded-lg border border-slate-100">
+          <MapPin className="w-3.5 h-3.5 text-[#FB7170] shrink-0" />
+          <span className="truncate">{event.location_name}</span>
+        </div>
+
+        {/* Action Buttons */}
         <div className="flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-[#FB7170] shrink-0" />
-          <div className="truncate text-xs">
-            <p className="text-[#9CA3AF] text-[10px] font-medium">สถานที่</p>
-            <p className="text-[#212542] font-semibold truncate">{event.location_name}</p>
-          </div>
+          <a
+            href={googleCalendarUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 inline-flex items-center justify-center gap-1 py-2 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition"
+          >
+            <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
+            ลงปฏิทิน
+          </a>
+
+          {/* Not Registered */}
+          {!event.isCheckedIn && !isRegistered && (
+            <button
+              onClick={handleRegisterEvent}
+              disabled={isRegistering}
+              className="flex-1 inline-flex items-center justify-center gap-1 py-2 px-2 rounded-xl bg-[#181B34] hover:bg-[#25294e] text-xs font-bold text-white transition disabled:opacity-60"
+            >
+              {isRegistering ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <span>กำลังลงทะเบียน...</span>
+                </>
+              ) : (
+                <>
+                  <UserCheck className="w-3.5 h-3.5 text-[#FB7170]" />
+                  <span>ลงทะเบียน</span>
+                </>
+              )}
+            </button>
+          )}
+
+          {/* Registered -> Show QR */}
+          {!event.isCheckedIn && isRegistered && (
+            <button
+              onClick={() => {
+                setTimestampToken(Date.now());
+                setCountdown(30);
+                setIsOpen(true);
+              }}
+              className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl bg-[#181B34] hover:bg-[#25294e] text-xs font-bold text-white transition"
+            >
+              <QrCode className="w-3.5 h-3.5 text-[#FB7170]" />
+              <span>เปิด QR เช็คชื่อ</span>
+            </button>
+          )}
+
+          {/* Completed */}
+          {event.isCheckedIn && (
+            <div className="flex-1 inline-flex items-center justify-center gap-1 py-2 px-2 rounded-xl bg-emerald-50 text-xs font-bold text-emerald-700 border border-emerald-200">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              เช็คชื่อแล้ว
+            </div>
+          )}
         </div>
-
-        <div className="flex items-center gap-2 justify-end">
-          <div className="flex items-center gap-1 text-xs font-extrabold text-[#FB7170] bg-[#FFD7D7]/50 px-2 py-1 rounded-xl border border-[#FFD7D7]">
-            <Coins className="w-3.5 h-3.5" /> +{event.reward_points}
-          </div>
-          <div className="flex items-center gap-1 text-xs font-extrabold text-[#212542] bg-[#DBDFFF] px-2 py-1 rounded-xl border border-[#c2c9ff]">
-            <Award className="w-3.5 h-3.5 text-[#5867E8]" /> +{event.reward_xp} XP
-          </div>
-        </div>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="flex items-center gap-2">
-        <a
-          href={googleCalendarUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-1 inline-flex items-center justify-center gap-1.5 py-3 px-2 rounded-2xl bg-[#F8F9FC] hover:bg-[#EEEEEE] active:scale-[0.98] text-xs font-bold text-[#212542] border border-[#EEEEEE] transition"
-        >
-          <ExternalLink className="w-3.5 h-3.5 text-[#5867E8]" />
-          ลงปฏิทิน Google
-        </a>
-
-        {/* Step 1: Not registered yet -> Show Register button */}
-        {!event.isCheckedIn && !isRegistered && (
-          <button
-            onClick={handleRegisterEvent}
-            disabled={isRegistering}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 py-3 px-2 rounded-2xl bg-[#5867E8] hover:bg-[#4754d6] active:scale-[0.98] text-xs font-bold text-white shadow-md shadow-[#5867E8]/25 transition"
-          >
-            {isRegistering ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>กำลังลงทะเบียน...</span>
-              </>
-            ) : (
-              <>
-                <UserCheck className="w-4 h-4 text-white" />
-                <span>ลงทะเบียนเข้าร่วม</span>
-              </>
-            )}
-          </button>
-        )}
-
-        {/* Step 2: Registered -> Show Check-in QR button */}
-        {!event.isCheckedIn && isRegistered && (
-          <button
-            onClick={() => {
-              setTimestampToken(Date.now());
-              setCountdown(30);
-              setIsOpen(true);
-            }}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 py-3 px-2 rounded-2xl bg-[#212542] hover:bg-[#2d335a] active:scale-[0.98] text-xs font-bold text-white shadow-md shadow-[#212542]/20 transition animate-in fade-in"
-          >
-            <QrCode className="w-4 h-4 text-[#DBDFFF]" />
-            <span>เปิด QR เช็คชื่อ</span>
-          </button>
-        )}
-
-        {/* Step 3: Already Checked in */}
-        {event.isCheckedIn && (
-          <button
-            disabled
-            className="flex-1 inline-flex items-center justify-center gap-1.5 py-3 px-2 rounded-2xl bg-[#F4F5FA] text-xs font-semibold text-[#9CA3AF] cursor-not-allowed border border-[#EEEEEE]"
-          >
-            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-            เช็คชื่อเรียบร้อย
-          </button>
-        )}
       </div>
 
       {/* Modal QR Code */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#212542]/60 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="bg-white border border-[#EEEEEE] w-full max-w-sm rounded-3xl p-6 relative shadow-2xl flex flex-col items-center text-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white border border-slate-200 w-full max-w-sm rounded-2xl p-5 relative shadow-xl flex flex-col items-center text-center">
             <button
               onClick={() => setIsOpen(false)}
-              className="absolute top-4 right-4 p-2 rounded-full text-[#6B7280] hover:text-[#212542] bg-[#F8F9FC] hover:bg-[#EEEEEE]"
+              className="absolute top-3.5 right-3.5 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 bg-slate-100"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
 
-            <div className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full mb-2">
+            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md mb-2 border border-emerald-200">
               <UserCheck className="w-3.5 h-3.5" />
-              <span>RSVP Confirmed & Verified</span>
+              <span>RSVP Confirmed</span>
             </div>
 
-            <h4 className="text-base font-extrabold text-[#212542] mb-1">{event.title}</h4>
-            <p className="text-xs text-[#6B7280] mb-5">ยื่น QR Code นี้ให้ Staff สแกนหน้างาน</p>
+            <h4 className="text-sm font-bold text-[#181B34] mb-1">{event.title}</h4>
+            <p className="text-xs text-slate-500 mb-4">แสดง QR Code นี้ให้ Staff สแกนหน้างาน</p>
 
             {/* QR Card */}
-            <div className="p-4 bg-white rounded-2xl shadow-[0_4px_20px_rgba(33,37,66,0.08)] border border-[#EEEEEE] mb-4">
+            <div className="p-3.5 bg-white rounded-xl shadow-sm border border-slate-200 mb-3.5">
               <QRCodeSVG
                 value={qrPayload}
-                size={200}
+                size={190}
                 level="H"
-                fgColor="#212542"
+                fgColor="#181B34"
                 includeMargin={false}
               />
             </div>
 
-            {/* Live refresh timer */}
-            <div className="w-full flex items-center justify-between text-xs px-3.5 py-2.5 rounded-xl bg-[#F8F9FC] border border-[#DBDFFF] text-[#212542] mb-3">
-              <span className="flex items-center gap-1.5 text-[#6B7280] font-medium">
-                <RefreshCw className="w-3.5 h-3.5 text-[#5867E8] animate-spin" />
+            {/* Live refresh countdown */}
+            <div className="w-full flex items-center justify-between text-xs px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-700 mb-2">
+              <span className="flex items-center gap-1.5 text-slate-500">
+                <RefreshCw className="w-3.5 h-3.5 text-[#181B34] animate-spin" />
                 รีเฟรชรหัสความปลอดภัยใน
               </span>
-              <span className="font-mono font-extrabold text-[#FB7170]">{countdown}s</span>
+              <span className="font-mono font-bold text-[#FB7170]">{countdown}s</span>
             </div>
 
-            <div className="text-[11px] text-[#9CA3AF] leading-relaxed">
-              * รหัส QR จะเปลี่ยนอัตโนมัติทุก 30 วินาที เพื่อป้องกันการส่งต่อภาพ
-            </div>
+            <p className="text-[10px] text-slate-400">
+              * รหัส QR จะเปลี่ยนอัตโนมัติทุก 30 วินาที เพื่อความปลอดภัย
+            </p>
           </div>
         </div>
       )}
     </div>
   );
 };
+

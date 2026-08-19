@@ -6,7 +6,6 @@ import { mockHouses, mockMissions } from '@/lib/mockData';
 import { Mission } from '@/types';
 import { 
   Trophy, 
-  Flame, 
   Lock, 
   Sparkles, 
   UploadCloud, 
@@ -15,7 +14,9 @@ import {
   Coins, 
   Award,
   X,
-  FileText
+  FileText,
+  ChevronRight,
+  ShieldCheck
 } from 'lucide-react';
 
 export default function AcademyPage() {
@@ -29,8 +30,8 @@ export default function AcademyPage() {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
-        <div className="w-8 h-8 border-2 border-[#212542] border-t-transparent rounded-full animate-spin" />
-        <p className="text-xs text-[#6B7280]">กำลังเชื่อมต่อข้อมูล Cohort...</p>
+        <div className="w-8 h-8 border-2 border-[#181B34] border-t-transparent rounded-full animate-spin" />
+        <p className="text-xs text-slate-500 font-medium">กำลังโหลดข้อมูลหลักสูตร...</p>
       </div>
     );
   }
@@ -53,107 +54,111 @@ export default function AcademyPage() {
       setActiveMissionToUpload(null);
       setNote('');
       setUploadedImagePreview(null);
-    }, 800);
+    }, 700);
   };
 
   return (
-    <div className="space-y-5 pb-6">
-      {/* 1. Attendance Tracker Card (Navy Hero Card) */}
-      <section className="bg-[#212542] text-white p-5 rounded-3xl shadow-[0_10px_25px_rgba(33,37,66,0.15)] relative overflow-hidden">
-        {/* Accent Soft Glow */}
-        <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#FB7170] rounded-full blur-3xl opacity-20 pointer-events-none" />
-
-        <div className="flex justify-between items-start mb-3 relative z-10">
+    <div className="space-y-4 pb-6">
+      {/* 1. Official Executive Headline & Attendance Banner */}
+      <section className="bg-[#181B34] text-white p-5 rounded-2xl shadow-sm border border-[#2A2E54] relative overflow-hidden">
+        <div className="flex justify-between items-start mb-3">
           <div>
-            <span className="text-[10px] uppercase font-bold tracking-widest text-[#212542] bg-[#DBDFFF] px-2.5 py-0.5 rounded-full">
-              Attendance Tracker
-            </span>
-            <h2 className="text-base font-extrabold text-white mt-2">อัตราการเข้าเรียนสะสม</h2>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 text-[#DBDFFF] text-[10px] font-bold tracking-wide uppercase mb-1.5 border border-white/10">
+              <ShieldCheck className="w-3 h-3 text-[#FB7170]" />
+              Executive Cohort 1
+            </div>
+            <h1 className="text-lg font-black text-white leading-tight">Young FTI ELITE 11</h1>
+            <p className="text-xs text-[#FB7170] font-semibold mt-0.5">หลักสูตรนักอุตสาหกรรมรุ่นใหม่</p>
           </div>
-          <div className="text-right">
-            <span className={`text-2xl font-black ${attendance >= 80 ? 'text-[#DBDFFF]' : 'text-[#FFD7D7]'}`}>
+          <div className="text-right shrink-0">
+            <span className={`text-2xl font-black ${attendance >= 80 ? 'text-[#DBDFFF]' : 'text-[#FB7170]'}`}>
               {attendance}%
             </span>
-            <p className="text-[10px] text-[#DBDFFF]/80">เกณฑ์ขั้นต่ำ 80%</p>
+            <p className="text-[10px] text-slate-300 font-medium">เกณฑ์ขั้นต่ำ 80%</p>
           </div>
         </div>
 
-        {/* Progress Bar */}
-        <div className="w-full bg-white/15 rounded-full h-3 p-0.5 mb-3 border border-white/20 relative z-10">
+        {/* Clean Solid Progress Bar */}
+        <div className="w-full bg-white/15 rounded-full h-2.5 p-0.5 mb-2.5">
           <div
             className={`h-full rounded-full transition-all duration-700 ${
               attendance >= 80 
-                ? 'bg-gradient-to-r from-[#DBDFFF] to-[#FB7170] shadow-md' 
-                : 'bg-[#FB7170]'
+                ? 'bg-[#FB7170]' 
+                : 'bg-amber-400'
             }`}
             style={{ width: `${Math.min(100, attendance)}%` }}
           />
         </div>
 
-        <p className="text-[11px] text-white/85 flex items-center gap-1.5 relative z-10">
-          <Flame className="w-3.5 h-3.5 text-[#FB7170] shrink-0" />
-          {attendance >= 80
-            ? 'ยอดเยี่ยม! คุณผ่านเกณฑ์รับวุฒิบัตรและสิทธิ์เข้าถึงเนื้อหาพิเศษ'
-            : 'คำเตือน: เวลาเรียนต่ำกว่า 80% เมนู Masterclass จะถูกล็อกชั่วคราว'}
-        </p>
+        <div className="flex items-center justify-between text-[11px] text-slate-300">
+          <span>อัตราการเข้าเรียนสะสม</span>
+          <span className="text-white font-medium">
+            {attendance >= 80 ? '✓ ผ่านเกณฑ์รับวุฒิบัตร' : '⚠️ ต่ำกว่าเกณฑ์ที่กำหนด'}
+          </span>
+        </div>
       </section>
 
-      {/* 2. Locked / Unlocked Masterclass Resource */}
-      <section className="relative rounded-3xl overflow-hidden border border-[#EEEEEE] bg-white p-5 shadow-[0_4px_20px_rgba(33,37,66,0.04)]">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-2xl bg-[#DBDFFF] flex items-center justify-center text-[#212542]">
-              <Sparkles className="w-4 h-4" />
+      {/* 2. Executive Masterclass Resource Section */}
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm relative overflow-hidden">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-xl bg-[#F6F7FB] border border-slate-200 flex items-center justify-center text-[#181B34]">
+              <Sparkles className="w-4 h-4 text-[#FB7170]" />
             </div>
             <div>
-              <h3 className="text-sm font-extrabold text-[#212542]">Executive Masterclass Vault</h3>
-              <p className="text-[10px] text-[#6B7280]">สไลด์สรุป คลังความรู้ และ VDO ย้อนหลัง</p>
+              <h2 className="text-sm font-bold text-[#181B34]">Executive Masterclass Vault</h2>
+              <p className="text-[11px] text-slate-500">เอกสารการบรรยาย สไลด์สรุป และบันทึกย้อนหลัง</p>
             </div>
           </div>
           {!isLocked && (
-            <span className="text-xs text-emerald-600 font-bold flex items-center gap-1 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+            <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
               ปลดล็อกแล้ว
             </span>
           )}
         </div>
 
-        <div className="mt-3 space-y-2">
-          <div className="flex items-center justify-between p-3 rounded-2xl bg-[#F8F9FC] border border-[#EEEEEE] text-xs">
-            <div className="flex items-center gap-2.5">
-              <FileText className="w-4 h-4 text-[#5867E8]" />
-              <span className="text-[#212542] font-semibold">AI Strategy Framework 2026.pdf</span>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between p-3 rounded-xl bg-[#F8F9FA] border border-slate-200 text-xs hover:border-slate-300 transition cursor-pointer">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-7 h-7 rounded-lg bg-rose-50 border border-rose-100 flex items-center justify-center shrink-0">
+                <FileText className="w-4 h-4 text-[#FB7170]" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[#181B34] font-semibold truncate">AI Strategy & Industrial Transformation 2026.pdf</p>
+                <p className="text-[10px] text-slate-400">บรรยายโดย ดร.สุทธิเกียรติ • 24.8 MB</p>
+              </div>
             </div>
-            <span className="text-[10px] text-[#9CA3AF] font-medium">24 MB</span>
+            <ChevronRight className="w-4 h-4 text-slate-400 shrink-0 ml-2" />
           </div>
         </div>
 
         {/* Lock Overlay */}
         {isLocked && (
-          <div className="absolute inset-0 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center p-5 text-center z-10">
-            <div className="w-11 h-11 rounded-2xl bg-[#FFD7D7] border border-[#FB7170]/30 flex items-center justify-center text-[#FB7170] mb-2">
+          <div className="absolute inset-0 bg-white/95 backdrop-blur-[2px] flex flex-col items-center justify-center p-5 text-center z-10">
+            <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-[#FB7170] mb-2">
               <Lock className="w-5 h-5" />
             </div>
-            <h4 className="text-sm font-extrabold text-[#212542]">เนื้อหาถูกล็อก (Locked)</h4>
-            <p className="text-xs text-[#6B7280] mt-1 max-w-xs leading-relaxed">
-              สงวนสิทธิ์เฉพาะผู้มีอัตราการเข้าเรียน 80% ขึ้นไปเท่านั้น (ปัจจุบันคุณอยู่ที่ {attendance}%)
+            <h3 className="text-xs font-bold text-[#181B34]">เนื้อหาถูกจำกัดสิทธิ์ (Locked)</h3>
+            <p className="text-[11px] text-slate-500 mt-1 max-w-xs leading-relaxed">
+              สงวนสิทธิ์เฉพาะผู้มีอัตราการเข้าเรียน 80% ขึ้นไปเท่านั้น (ปัจจุบันอยู่ที่ {attendance}%)
             </p>
           </div>
         )}
       </section>
 
-      {/* 3. House/Team Leaderboard */}
-      <section className="bg-white border border-[#EEEEEE] p-5 rounded-3xl shadow-[0_4px_20px_rgba(33,37,66,0.04)]">
-        <div className="flex items-center justify-between mb-4">
+      {/* 3. House Score Leaderboard */}
+      <section className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
+        <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
           <div className="flex items-center gap-2">
             <Trophy className="w-4 h-4 text-[#FB7170]" />
-            <h3 className="text-sm font-extrabold text-[#212542]">House Score Leaderboard</h3>
+            <h2 className="text-sm font-bold text-[#181B34]">House Score Leaderboard</h2>
           </div>
-          <span className="text-[10px] text-[#6B7280] font-medium bg-[#F8F9FC] px-2 py-0.5 rounded-md border border-[#EEEEEE]">
+          <span className="text-[10px] text-slate-500 font-semibold bg-slate-100 px-2 py-0.5 rounded">
             สัปดาห์ที่ 4
           </span>
         </div>
 
-        <div className="space-y-2.5">
+        <div className="space-y-2">
           {mockHouses
             .sort((a, b) => b.total_points - a.total_points)
             .map((house, idx) => {
@@ -161,36 +166,36 @@ export default function AcademyPage() {
               return (
                 <div
                   key={house.id}
-                  className={`flex items-center justify-between p-3.5 rounded-2xl border transition ${
+                  className={`flex items-center justify-between p-3 rounded-xl border transition-all ${
                     isUserHouse
-                      ? 'bg-[#F4F6FF] border-[#DBDFFF] shadow-sm'
-                      : 'bg-[#F8F9FC] border-[#EEEEEE]'
+                      ? 'bg-[#F4F6FF] border-[#DBDFFF] ring-1 ring-[#DBDFFF]'
+                      : 'bg-white border-slate-200 hover:bg-slate-50/50'
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <span className={`w-5 text-center font-black text-xs ${
-                      idx === 0 ? 'text-[#FB7170] font-bold' : idx === 1 ? 'text-[#212542]' : 'text-[#9CA3AF]'
+                      idx === 0 ? 'text-[#FB7170]' : idx === 1 ? 'text-[#181B34]' : 'text-slate-400'
                     }`}>
                       #{idx + 1}
                     </span>
-                    <div
-                      className="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm"
+                    <span
+                      className="w-3 h-3 rounded-full shrink-0"
                       style={{ backgroundColor: house.color_hex }}
                     />
                     <div>
-                      <h4 className="text-xs font-bold text-[#212542] flex items-center gap-1.5">
+                      <h3 className="text-xs font-bold text-[#181B34] flex items-center gap-1.5">
                         {house.name}
                         {isUserHouse && (
-                          <span className="text-[9px] bg-[#DBDFFF] text-[#212542] px-1.5 py-0.2 rounded font-bold">
+                          <span className="text-[9px] bg-[#181B34] text-white px-1.5 py-0.2 rounded font-bold">
                             บ้านของคุณ
                           </span>
                         )}
-                      </h4>
+                      </h3>
                     </div>
                   </div>
 
-                  <span className="text-xs font-mono font-extrabold text-[#212542]">
-                    {house.total_points} pts
+                  <span className="text-xs font-mono font-bold text-[#181B34]">
+                    {house.total_points.toLocaleString()} pts
                   </span>
                 </div>
               );
@@ -198,15 +203,15 @@ export default function AcademyPage() {
         </div>
       </section>
 
-      {/* 4. Gamified Missions List */}
-      <section className="bg-white border border-[#EEEEEE] p-5 rounded-3xl shadow-[0_4px_20px_rgba(33,37,66,0.04)]">
-        <div className="flex items-center justify-between mb-4">
+      {/* 4. Gamified Cohort Missions */}
+      <section className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
+        <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
           <div className="flex items-center gap-2">
-            <Award className="w-4 h-4 text-[#5867E8]" />
-            <h3 className="text-sm font-extrabold text-[#212542]">Gamified Cohort Missions</h3>
+            <Award className="w-4 h-4 text-[#FB7170]" />
+            <h2 className="text-sm font-bold text-[#181B34]">ภารกิจสะสมแต้ม Cohort</h2>
           </div>
-          <span className="text-[10px] text-[#212542] bg-[#DBDFFF] font-bold px-2 py-0.5 rounded-full">
-            ภารกิจสะสมแต้ม
+          <span className="text-[10px] text-slate-500 font-medium">
+            แลกของรางวัล & สิทธิ์พิเศษ
           </span>
         </div>
 
@@ -215,41 +220,41 @@ export default function AcademyPage() {
             return (
               <div
                 key={mission.id}
-                className="bg-[#F8F9FC] border border-[#EEEEEE] rounded-2xl p-4 flex flex-col gap-3 hover:border-[#DBDFFF] transition"
+                className="bg-[#F8F9FA] border border-slate-200 rounded-xl p-3.5 flex flex-col gap-2.5 hover:border-slate-300 transition"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <h4 className="text-xs font-extrabold text-[#212542]">{mission.title}</h4>
-                    <p className="text-[11px] text-[#6B7280] mt-1 leading-relaxed">
+                    <h3 className="text-xs font-bold text-[#181B34]">{mission.title}</h3>
+                    <p className="text-[11px] text-slate-600 mt-0.5 leading-relaxed">
                       {mission.description}
                     </p>
                   </div>
                   <div className="flex flex-col items-end shrink-0 gap-1">
-                    <span className="text-[11px] font-extrabold text-[#FB7170] flex items-center gap-1 bg-[#FFD7D7] px-2 py-0.5 rounded-lg border border-[#FB7170]/30">
-                      <Coins className="w-3 h-3" /> +{mission.reward_points}
+                    <span className="text-[11px] font-bold text-[#FB7170] flex items-center gap-1 bg-[#FFD7D7]/60 px-2 py-0.5 rounded-md border border-[#FFD7D7]">
+                      <Coins className="w-3 h-3 text-[#FB7170]" /> +{mission.reward_points}
                     </span>
-                    <span className="text-[10px] font-bold text-[#5867E8] bg-[#DBDFFF] px-1.5 py-0.2 rounded">
+                    <span className="text-[9px] font-bold text-[#181B34] bg-slate-200/80 px-1.5 py-0.2 rounded font-mono">
                       +{mission.reward_xp} XP
                     </span>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-[#EEEEEE]">
+                <div className="flex items-center justify-between pt-2 border-t border-slate-200/70">
                   {mission.status === 'APPROVED' ? (
-                    <span className="text-[11px] text-emerald-600 font-bold flex items-center gap-1">
+                    <span className="text-[11px] text-emerald-700 font-bold flex items-center gap-1">
                       <CheckCircle2 className="w-3.5 h-3.5" /> อนุมัติแต้มแล้ว
                     </span>
                   ) : mission.status === 'PENDING' ? (
-                    <span className="text-[11px] text-[#FB7170] font-bold flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5" /> รอแอดมินตรวจสอบรูป
+                    <span className="text-[11px] text-amber-700 font-bold flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5" /> รอเจ้าหน้าที่ตรวจสอบ
                     </span>
                   ) : (
                     <button
                       onClick={() => setActiveMissionToUpload(mission)}
-                      className="inline-flex items-center gap-1.5 py-2 px-3 rounded-xl bg-[#212542] hover:bg-[#2d335a] text-white font-bold text-xs shadow-md shadow-[#212542]/20 transition active:scale-95 ml-auto"
+                      className="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-lg bg-[#181B34] hover:bg-[#25294e] text-white font-bold text-xs transition active:scale-95 ml-auto"
                     >
                       <UploadCloud className="w-3.5 h-3.5 text-[#DBDFFF]" />
-                      ส่งหลักฐานภาพถ่าย
+                      ส่งภาพหลักฐาน
                     </button>
                   )}
                 </div>
@@ -261,44 +266,44 @@ export default function AcademyPage() {
 
       {/* Photo Upload Modal */}
       {activeMissionToUpload && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#212542]/60 backdrop-blur-md">
-          <div className="bg-white border border-[#EEEEEE] w-full max-w-sm rounded-3xl p-5 relative shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <div className="bg-white border border-slate-200 w-full max-w-sm rounded-2xl p-5 relative shadow-xl">
             <button
               onClick={() => setActiveMissionToUpload(null)}
-              className="absolute top-4 right-4 p-2 rounded-full text-[#6B7280] hover:text-[#212542] bg-[#F8F9FC]"
+              className="absolute top-3.5 right-3.5 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 bg-slate-100"
             >
               <X className="w-4 h-4" />
             </button>
 
-            <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#212542] bg-[#DBDFFF] px-2.5 py-0.5 rounded-full mb-2 inline-block">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#181B34] bg-slate-100 px-2 py-0.5 rounded mb-2 inline-block">
               Mission Submission
             </span>
-            <h4 className="text-sm font-extrabold text-[#212542] mb-1">{activeMissionToUpload.title}</h4>
-            <p className="text-xs text-[#6B7280] mb-4">{activeMissionToUpload.description}</p>
+            <h3 className="text-sm font-bold text-[#181B34] mb-1">{activeMissionToUpload.title}</h3>
+            <p className="text-xs text-slate-500 mb-4">{activeMissionToUpload.description}</p>
 
-            <form onSubmit={handleUploadSubmit} className="space-y-4">
+            <form onSubmit={handleUploadSubmit} className="space-y-3.5">
               {/* Photo Input Picker */}
-              <div className="border-2 border-dashed border-[#CBD5E1] hover:border-[#212542] rounded-2xl p-4 text-center cursor-pointer bg-[#F8F9FC] transition">
+              <div className="border border-dashed border-slate-300 hover:border-[#181B34] rounded-xl p-4 text-center cursor-pointer bg-[#F8F9FA] transition">
                 {uploadedImagePreview ? (
                   <div className="relative">
                     <img
                       src={uploadedImagePreview}
                       alt="Preview"
-                      className="w-full h-36 object-cover rounded-xl"
+                      className="w-full h-36 object-cover rounded-lg"
                     />
                     <button
                       type="button"
                       onClick={() => setUploadedImagePreview(null)}
-                      className="absolute top-2 right-2 p-1 bg-black/70 rounded-full text-white"
+                      className="absolute top-2 right-2 p-1 bg-slate-900/80 rounded-full text-white"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 ) : (
-                  <label className="flex flex-col items-center justify-center gap-2 cursor-pointer py-2">
-                    <UploadCloud className="w-7 h-7 text-[#212542]" />
-                    <span className="text-xs text-[#212542] font-bold">แตะเพื่อเลือกภาพจากกล้อง / Gallery</span>
-                    <span className="text-[10px] text-[#9CA3AF]">รองรับไฟล์ JPG, PNG</span>
+                  <label className="flex flex-col items-center justify-center gap-1.5 cursor-pointer py-2">
+                    <UploadCloud className="w-6 h-6 text-[#181B34]" />
+                    <span className="text-xs text-[#181B34] font-bold">แตะเพื่อเลือกภาพหลักฐาน</span>
+                    <span className="text-[10px] text-slate-400">รองรับไฟล์ JPG, PNG</span>
                     <input
                       type="file"
                       accept="image/*"
@@ -316,23 +321,32 @@ export default function AcademyPage() {
 
               {/* Note */}
               <div>
-                <label className="block text-xs font-bold text-[#212542] mb-1">บันทึกข้อความหรือแท็กเพื่อน (ถ้ามี)</label>
+                <label className="block text-xs font-bold text-[#181B34] mb-1">บันทึกข้อความเพิ่มเติม (ถ้ามี)</label>
                 <input
                   type="text"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="เช่น ถ่ายคู่กับพี่กิตติ House Pegasus"
-                  className="w-full bg-[#F8F9FC] border border-[#EEEEEE] rounded-xl px-3.5 py-2.5 text-xs text-[#292929] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#212542]"
+                  className="w-full bg-[#F8F9FA] border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#181B34]"
                 />
               </div>
 
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full py-3 rounded-2xl bg-[#212542] hover:bg-[#2d335a] text-white font-bold text-xs transition shadow-md shadow-[#212542]/20 active:scale-[0.98] disabled:opacity-50"
-              >
-                {isSubmitting ? 'กำลังส่งข้อมูล...' : 'ยืนยันและส่งให้อนุมัติ'}
-              </button>
+              <div className="pt-2 flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setActiveMissionToUpload(null)}
+                  className="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition"
+                >
+                  ยกเลิก
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="flex-1 py-2.5 rounded-xl bg-[#181B34] hover:bg-[#25294e] text-white font-bold text-xs transition disabled:opacity-50"
+                >
+                  {isSubmitting ? 'กำลังส่ง...' : 'ยืนยันและส่ง'}
+                </button>
+              </div>
             </form>
           </div>
         </div>
@@ -340,3 +354,4 @@ export default function AcademyPage() {
     </div>
   );
 }
+

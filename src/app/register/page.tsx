@@ -173,35 +173,33 @@ export default function RegisterPage() {
   return (
     <div className="max-w-md mx-auto py-2">
       {/* Header Banner */}
-      <div className="bg-gradient-to-br from-[#212542] via-[#2F3563] to-[#5867E8] rounded-2xl p-5 text-white shadow-lg mb-5 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-36 h-36 bg-white/5 rounded-full blur-2xl pointer-events-none" />
-        
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/80 bg-white/20 shrink-0 shadow-inner flex items-center justify-center">
+      <div className="bg-[#181B34] rounded-2xl p-5 text-white border border-[#2A2E54] shadow-sm mb-4 relative overflow-hidden">
+        <div className="flex items-center gap-3 mb-2.5">
+          <div className="w-11 h-11 rounded-xl overflow-hidden border border-white/30 bg-white/10 shrink-0 flex items-center justify-center">
             {lineProfile?.pictureUrl ? (
               <img src={lineProfile.pictureUrl} alt="LINE Avatar" className="w-full h-full object-cover" />
             ) : (
-              <User className="w-6 h-6 text-white" />
+              <User className="w-5 h-5 text-white" />
             )}
           </div>
           <div>
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-300">
-              <ShieldCheck className="w-3.5 h-3.5" />
+            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#FB7170]">
+              <ShieldCheck className="w-3 h-3" />
               <span>ยืนยันตัวตนผ่าน LINE แล้ว</span>
             </div>
-            <h1 className="text-lg font-black tracking-tight leading-tight">
-              ลงทะเบียนสมาชิก YFTI
+            <h1 className="text-base font-black text-white leading-tight mt-0.5">
+              ลงทะเบียน Young FTI ELITE 11
             </h1>
           </div>
         </div>
 
-        <p className="text-xs text-slate-200 leading-relaxed">
-          กรอกข้อมูลประวัติผู้บริหารเพื่อเชื่อมโยงกับเครือข่าย YFTI Cohort 1 และรับแต้มสะสมกิจกรรมทันที
+        <p className="text-xs text-slate-300 leading-relaxed">
+          กรอกข้อมูลประวัติผู้บริหารเพื่อเชื่อมต่อทำเนียบรุ่นและรับแต้มสะสมทันที
         </p>
       </div>
 
       {errorMsg && (
-        <div className="mb-4 p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl font-medium">
+        <div className="mb-3 p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl font-medium">
           {errorMsg}
         </div>
       )}
