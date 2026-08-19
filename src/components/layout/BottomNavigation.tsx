@@ -16,6 +16,10 @@ export const BottomNavigation: React.FC = () => {
   const pathname = usePathname();
   const { profile } = useLiffAuth();
 
+  if (pathname === '/register') {
+    return null;
+  }
+
   const isAdmin = profile?.role === 'SUPER_ADMIN' || profile?.role === 'HOUSE_ADMIN';
 
   const navItems = [

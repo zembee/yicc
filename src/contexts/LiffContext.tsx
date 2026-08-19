@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import type { Liff } from '@line/liff';
 import { UserProfile } from '@/types';
 import { mockCurrentUser } from '@/lib/mockData';
@@ -11,6 +12,7 @@ interface LiffContextType {
   profile: UserProfile | null;
   lineProfile: { userId: string; displayName: string; pictureUrl?: string } | null;
   isLoggedIn: boolean;
+  isRegistered: boolean;
   isLoading: boolean;
   error: string | null;
   isMockMode: boolean;
@@ -24,6 +26,7 @@ const LiffContext = createContext<LiffContextType>({
   profile: null,
   lineProfile: null,
   isLoggedIn: false,
+  isRegistered: true,
   isLoading: true,
   error: null,
   isMockMode: true,
@@ -33,9 +36,13 @@ const LiffContext = createContext<LiffContextType>({
 });
 
 export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [liffObject, setLiffObject] = useState<Liff | null>(null);
   const [lineProfile, setLineProfile] = useState<{ userId: string; displayName: string; pictureUrl?: string } | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [isRegistered, setIsRegistered] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isMockMode, setIsMockMode] = useState<boolean>(true);
@@ -46,24 +53,29 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .from('profiles')
         .select('*, house:houses(*), profile_attendance_stats(attendance_percentage)')
         .eq('line_user_id', lineUser.userId)
-        .single();
+        .maybeSingle();
 
-      if (fetchErr && fetchErr.code === 'PGRST116') {
-        const { data: newUser, error: createErr } = await supabase
-          .from('profiles')
-          .insert({
-            line_user_id: lineUser.userId,
-            display_name: lineUser.displayName,
-            picture_url: lineUser.pictureUrl,
-            role: 'MEMBER',
-          })
-          .select('*, house:houses(*)')
-          .single();
+      if (!data) {
+        // First time user: not yet registered
+        setIsRegistered(false);
+        setProfile({
+          id: '',
+          line_user_id: lineUser.userId,
+          display_name: lineUser.displayName,
+          picture_url: lineUser.pictureUrl,
+          cohort_batch: 'YFTI Cohort 1',
+          role: 'MEMBER',
+          points_balance: 0,
+          xp_balance: 0,
+          attendance_rate: 100,
+        });
 
-        if (createErr) throw createErr;
-        setProfile({ ...newUser, attendance_rate: 100 });
-      } else if (data) {
-        if (data.display_name !== lineUser.displayName || data.picture_url !== lineUser.pictureUrl) {
+        if (pathname !== '/register') {
+          router.push('/register');
+        }
+      } else {
+        // User exists
+        if (data.display_name !== lineUser.displayName || (lineUser.pictureUrl && data.picture_url !== lineUser.pictureUrl)) {
           await supabase
             .from('profiles')
             .update({ display_name: lineUser.displayName, picture_url: lineUser.pictureUrl })
@@ -74,11 +86,19 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
           ? data.profile_attendance_stats[0]?.attendance_percentage ?? 100
           : 100;
 
+        // If user has not filled company_name or phone_number, consider them uncompleted
+        const registered = Boolean(data.company_name && data.phone_number);
+        setIsRegistered(registered);
+
         setProfile({ ...data, attendance_rate: attendance });
+
+        if (!registered && pathname !== '/register') {
+          router.push('/register');
+        }
       }
     } catch (err: any) {
       console.warn('Supabase sync error (fallback to local state):', err);
-      // Fallback
+      setIsRegistered(true);
       setProfile((prev) => prev || {
         ...mockCurrentUser,
         line_user_id: lineUser.userId,
@@ -86,7 +106,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
         picture_url: lineUser.pictureUrl || mockCurrentUser.picture_url,
       });
     }
-  }, []);
+  }, [pathname, router]);
 
   const initLiff = useCallback(async () => {
     const liffId = process.env.NEXT_PUBLIC_LIFF_ID;
@@ -171,6 +191,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
         profile,
         lineProfile,
         isLoggedIn: !!profile,
+        isRegistered,
         isLoading,
         error,
         isMockMode,
