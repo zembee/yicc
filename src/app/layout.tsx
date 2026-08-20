@@ -7,6 +7,19 @@ import { BottomNavigation } from '@/components/layout/BottomNavigation';
 export const metadata: Metadata = {
   title: 'Young FTI ELITE 11 | Member Connect Hub',
   description: 'หลักสูตรนักอุตสาหกรรมรุ่นใหม่ Young FTI ELITE 11 - Executive Cohort Portal',
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: {
+      index: false,
+      follow: false,
+      noimageindex: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'none',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export const viewport: Viewport = {
