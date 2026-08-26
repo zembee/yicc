@@ -10,10 +10,10 @@ import { Lock, User, Key, CheckCircle, AlertCircle, ShieldCheck, ArrowRight } fr
 export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const { profile, isLoading, loginWithCredentials, loginWithLine, isMockMode } = useLiffAuth();
+  const { profile, loginWithCredentials, loginWithLine, isMockMode } = useLiffAuth();
   
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('yfti11');
+  const [password, setPassword] = useState('yfti@11');
   const [rememberMe, setRememberMe] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -23,34 +23,24 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
     return <>{children}</>;
   }
 
-  // If loading session state, show smooth loader
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center p-4">
-        <div className="w-12 h-12 border-4 border-[#1E2538] border-t-[#FB7170] rounded-full animate-spin mb-4" />
-        <p className="text-sm font-bold text-[#1E2538]">กำลังตรวจสอบสิทธิ์การเข้าใช้งาน...</p>
-      </div>
-    );
-  }
-
   // If authenticated, render actual website pages
   if (profile) {
     return <>{children}</>;
   }
 
   // If NOT authenticated, render the official YFTI Login Screen matching yfticonnect.com
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleLogin = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setIsSubmitting(true);
     setErrorMessage(null);
 
-    setTimeout(() => {
-      const ok = loginWithCredentials(username, password);
-      if (!ok) {
-        setErrorMessage('ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง');
-      }
-      setIsSubmitting(false);
-    }, 200);
+    const user = (document.querySelector<HTMLInputElement>('input[name="username"]')?.value || username).trim();
+    const pass = (document.querySelector<HTMLInputElement>('input[name="password"]')?.value || password).trim();
+    const ok = loginWithCredentials(user, pass);
+    if (!ok) {
+      setErrorMessage('ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง');
+    }
+    setIsSubmitting(false);
   };
 
   const handleLineAuth = () => {
@@ -121,7 +111,7 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
           )}
 
           {/* Standard Credentials Form */}
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleLogin} action="javascript:void(0)" className="space-y-4">
             {/* Field 1: Username */}
             <div className="space-y-1.5">
               <label className="block text-xs font-bold text-slate-700">
@@ -130,6 +120,7 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
               <div className="relative">
                 <input
                   type="text"
+                  name="username"
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -147,6 +138,7 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
               <div className="relative">
                 <input
                   type="password"
+                  name="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -174,6 +166,7 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
             <div className="pt-2">
               <button
                 type="submit"
+                onClick={handleLogin}
                 disabled={isSubmitting}
                 className="w-full sm:w-auto px-8 py-3 bg-[#1E2538] hover:bg-[#2B3550] text-white font-bold text-sm rounded-xl transition shadow-md hover:shadow-lg disabled:opacity-50 flex items-center justify-center gap-2"
               >

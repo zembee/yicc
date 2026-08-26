@@ -47,9 +47,25 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const [liffObject, setLiffObject] = useState<Liff | null>(null);
   const [lineProfile, setLineProfile] = useState<{ userId: string; displayName: string; pictureUrl?: string } | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [isRegistered, setIsRegistered] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [profile, setProfile] = useState<UserProfile | null>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('yfti_auth_session');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.display_name) return parsed;
+        }
+      } catch (e) {}
+    }
+    return null;
+  });
+  const [isRegistered, setIsRegistered] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return Boolean(localStorage.getItem('yfti_auth_session'));
+    }
+    return false;
+  });
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [isMockMode, setIsMockMode] = useState<boolean>(true);
 

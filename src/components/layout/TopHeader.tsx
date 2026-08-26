@@ -31,7 +31,7 @@ export const TopHeader: React.FC = () => {
         <div className="max-w-7xl mx-auto flex items-center justify-between h-20 sm:h-24 px-4 sm:px-6 lg:px-8">
           {/* Left: Signature White Trapezoid Logo Block matching yfticonnect.com */}
           <div className="flex items-center h-full">
-            <Link href="/about" className="flex items-center h-full group">
+            <Link href="/" className="flex items-center h-full group">
               <div 
                 className="bg-white h-full px-5 sm:px-8 flex items-center justify-center transition-all group-hover:bg-slate-50 relative -ml-4 sm:-ml-6 lg:-ml-8"
                 style={{
@@ -39,15 +39,11 @@ export const TopHeader: React.FC = () => {
                   paddingRight: '2.5rem'
                 }}
               >
-                <div className="relative w-12 h-12 sm:w-14 sm:h-14">
-                  <Image 
-                    src="/YFTI-11-Logo.jpg" 
-                    alt="Young FTI Elite 11" 
-                    fill
-                    className="object-contain" 
-                    priority
-                  />
-                </div>
+                <img 
+                  src="/YFTI-11-Logo.jpg" 
+                  alt="Young FTI Elite 11" 
+                  className="h-12 w-auto max-h-12 object-contain" 
+                />
               </div>
             </Link>
           </div>
