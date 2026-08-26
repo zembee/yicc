@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { mockEvents } from '@/lib/mockData';
 import { EventCardWithQrModal } from '@/components/events/EventCardWithQrModal';
-import { Calendar } from 'lucide-react';
+import { Calendar, CheckCircle2, Clock } from 'lucide-react';
 
 export default function EventsPage() {
   const [filter, setFilter] = useState<'ALL' | 'MANDATORY' | 'COMPLETED'>('ALL');
@@ -15,32 +15,31 @@ export default function EventsPage() {
   });
 
   return (
-    <div className="space-y-4 pb-6">
+    <div className="space-y-8 sm:space-y-10 pb-12">
       {/* Header Info */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-base font-extrabold text-[#181B34]">กิจกรรมโครงการ</h1>
-          <p className="text-xs text-slate-500">ตารางเรียนและกิจกรรมสัมมนาเครือข่าย Young FTI ELITE</p>
-        </div>
-        <div className="w-8 h-8 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-[#181B34]">
-          <Calendar className="w-4 h-4 text-[#FB7170]" />
-        </div>
+      <div className="text-center space-y-2 pt-2">
+        <h1 className="text-2xl sm:text-4xl font-extrabold text-[#1E2538] tracking-tight">
+          กิจกรรมโครงการ
+        </h1>
+        <p className="text-xs sm:text-sm text-slate-500 max-w-xl mx-auto">
+          ตารางอบรม สัมมนาเชิงปฏิบัติการ ทริปกระชับมิตร และการเช็คชื่อเข้าร่วมกิจกรรม
+        </p>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto py-1 no-scrollbar">
+      <div className="flex items-center justify-center gap-2 overflow-x-auto py-1 no-scrollbar">
         {[
-          { key: 'ALL', label: 'ทั้งหมด' },
-          { key: 'MANDATORY', label: 'วิชาบังคับ (80%)' },
-          { key: 'COMPLETED', label: 'เช็คชื่อแล้ว' },
+          { key: 'ALL', label: 'กิจกรรมทั้งหมด' },
+          { key: 'MANDATORY', label: 'วิชาบังคับ (เกณฑ์ 80%)' },
+          { key: 'COMPLETED', label: 'เช็คชื่อ / สำเร็จแล้ว' },
         ].map((tab) => (
           <button
             key={tab.key}
             onClick={() => setFilter(tab.key as any)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition ${
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition shadow-sm ${
               filter === tab.key
-                ? 'bg-[#181B34] text-white shadow-sm'
-                : 'bg-white text-slate-600 border border-slate-200 hover:text-[#181B34]'
+                ? 'bg-[#1E2538] text-white'
+                : 'bg-white text-slate-600 border border-slate-200 hover:text-[#1E2538] hover:bg-slate-50'
             }`}
           >
             {tab.label}
@@ -48,8 +47,8 @@ export default function EventsPage() {
         ))}
       </div>
 
-      {/* Events List */}
-      <div className="space-y-3.5 pt-1">
+      {/* Events List Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredEvents.map((ev) => (
           <EventCardWithQrModal key={ev.id} event={ev} />
         ))}
@@ -57,4 +56,3 @@ export default function EventsPage() {
     </div>
   );
 }
-

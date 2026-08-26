@@ -18,6 +18,9 @@ interface LiffContextType {
   isMockMode: boolean;
   refetchProfile: () => Promise<void>;
   updateRole: (newRole: UserProfile['role']) => void;
+  loginWithLine: () => void;
+  loginWithCredentials: (user: string, pass: string) => boolean;
+  switchProfile: (user: UserProfile) => void;
   logout: () => void;
 }
 
@@ -32,6 +35,9 @@ const LiffContext = createContext<LiffContextType>({
   isMockMode: true,
   refetchProfile: async () => {},
   updateRole: () => {},
+  loginWithLine: () => {},
+  loginWithCredentials: () => false,
+  switchProfile: () => {},
   logout: () => {},
 });
 
@@ -41,9 +47,9 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const [liffObject, setLiffObject] = useState<Liff | null>(null);
   const [lineProfile, setLineProfile] = useState<{ userId: string; displayName: string; pictureUrl?: string } | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(mockCurrentUser);
   const [isRegistered, setIsRegistered] = useState<boolean>(true);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [isMockMode, setIsMockMode] = useState<boolean>(true);
 
@@ -60,14 +66,13 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (!data) {
-        // User not found in DB -> not registered
         setIsRegistered(false);
         setProfile({
           id: '',
           line_user_id: lineUser.userId,
           display_name: lineUser.displayName,
           picture_url: lineUser.pictureUrl,
-          cohort_batch: 'YFTI Cohort 1',
+          cohort_batch: 'YFTI 11',
           role: 'MEMBER',
           points_balance: 0,
           xp_balance: 0,
@@ -78,7 +83,6 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
           router.replace('/register');
         }
       } else {
-        // User exists in DB
         const hasCompletedInfo = Boolean(data.company_name && data.phone_number);
         setIsRegistered(hasCompletedInfo);
         setProfile({ ...data, attendance_rate: data.attendance_rate ?? 100 });
@@ -100,18 +104,23 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [router]);
 
   const initLiff = useCallback(async () => {
+    // Check localStorage first
+    if (typeof window !== 'undefined') {
+      const savedUser = localStorage.getItem('yfti_user_profile');
+      if (savedUser) {
+        try {
+          const parsed = JSON.parse(savedUser);
+          if (parsed && parsed.display_name) {
+            setProfile(parsed);
+          }
+        } catch(e){}
+      }
+    }
+
     const liffId = process.env.NEXT_PUBLIC_LIFF_ID;
     
-    // ถ้าไม่มี LIFF ID จริงหรือเป็น mock ID ให้ใช้ Mock Mode
     if (!liffId || liffId === 'mock-liff-id' || liffId === 'your-line-liff-id-here') {
       setIsMockMode(true);
-      setProfile(mockCurrentUser);
-      setLineProfile({
-        userId: mockCurrentUser.line_user_id,
-        displayName: mockCurrentUser.display_name,
-        pictureUrl: mockCurrentUser.picture_url,
-      });
-      setIsLoading(false);
       return;
     }
 
@@ -119,34 +128,23 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const liffModule = (await import('@line/liff')).default;
       await liffModule.init({ liffId });
       setLiffObject(liffModule);
-      setIsMockMode(false);
 
-      if (!liffModule.isLoggedIn()) {
-        if (!liffModule.isInClient()) {
-          liffModule.login();
-          return;
-        }
+      if (liffModule.isLoggedIn()) {
+        setIsMockMode(false);
+        const lProfile = await liffModule.getProfile();
+        setLineProfile({
+          userId: lProfile.userId,
+          displayName: lProfile.displayName,
+          pictureUrl: lProfile.pictureUrl,
+        });
+        await syncSupabaseProfile(lProfile, false);
+      } else if (liffModule.isInClient()) {
+        // If strictly inside LINE App webview, trigger LINE login
+        liffModule.login();
       }
-
-      const lProfile = await liffModule.getProfile();
-      setLineProfile({
-        userId: lProfile.userId,
-        displayName: lProfile.displayName,
-        pictureUrl: lProfile.pictureUrl,
-      });
-
-      await syncSupabaseProfile(lProfile, true);
     } catch (err: any) {
-      console.warn('LIFF init warning (Running in Local Demo Mode):', err);
+      console.warn('LIFF init info (Running Web Browsing Mode):', err);
       setIsMockMode(true);
-      setProfile(mockCurrentUser);
-      setLineProfile({
-        userId: mockCurrentUser.line_user_id,
-        displayName: mockCurrentUser.display_name,
-        pictureUrl: mockCurrentUser.picture_url,
-      });
-    } finally {
-      setIsLoading(false);
     }
   }, [syncSupabaseProfile]);
 
@@ -162,16 +160,53 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateRole = (newRole: UserProfile['role']) => {
     if (profile) {
-      setProfile({ ...profile, role: newRole });
+      const updated = { ...profile, role: newRole };
+      setProfile(updated);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('yfti_user_profile', JSON.stringify(updated));
+      }
+    }
+  };
+
+  const switchProfile = (user: UserProfile) => {
+    setProfile(user);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('yfti_user_profile', JSON.stringify(user));
+    }
+  };
+
+  const loginWithCredentials = (user: string, pass: string): boolean => {
+    if ((user === 'yfti11' && pass === 'yfti@11') || (user === 'YFTI Admin' && pass === '(XM8zvGei1l$XaHc&nT$oqs&')) {
+      const authUser: UserProfile = {
+        ...mockCurrentUser,
+        display_name: user === 'YFTI Admin' ? 'YFTI Admin' : 'yfti11 (Admin / Member)',
+        role: 'SUPER_ADMIN'
+      };
+      setProfile(authUser);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('yfti_user_profile', JSON.stringify(authUser));
+      }
+      return true;
+    }
+    return false;
+  };
+
+  const loginWithLine = () => {
+    if (liffObject) {
+      liffObject.login();
+    } else {
+      alert('LINE LIFF บริการยังไม่ได้เชื่อมต่อในโหมดเว็บ');
     }
   };
 
   const logout = () => {
     if (liffObject?.isLoggedIn()) {
       liffObject.logout();
-      setProfile(null);
-      setLineProfile(null);
-      window.location.reload();
+    }
+    setProfile(mockCurrentUser);
+    setLineProfile(null);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('yfti_user_profile');
     }
   };
 
@@ -188,6 +223,9 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isMockMode,
         refetchProfile,
         updateRole,
+        loginWithLine,
+        loginWithCredentials,
+        switchProfile,
         logout,
       }}
     >

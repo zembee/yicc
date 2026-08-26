@@ -70,3 +70,42 @@ export interface MissionSubmission {
   reviewer_feedback?: string;
   created_at: string;
 }
+
+export interface Participant {
+  id: number | string;
+  slug?: string;
+  name_thai: string;
+  nickname_eng: string;
+  fullname_eng: string;
+  tel_number?: string;
+  gen?: string;
+  gen_label?: string;
+  star_group?: string;
+  star_group_label?: string;
+  company_prefix?: string;
+  company_name_thai?: string;
+  company_name_eng?: string;
+  founded_year?: string;
+  business_position?: string;
+  industrial_groups?: string;
+  industrial_groups_label?: string;
+  business_categories?: string;
+  business_categories_label?: string;
+  company_description?: string;
+  company_address?: string;
+  comp_tel_number?: string;
+  profile_picture_url?: string;
+  company_logo_url?: string;
+  raw_meta?: any;
+}
+
+export interface NewsItem {
+  id: string;
+  title: string;
+  date: string;
+  category: string;
+  summary: string;
+  content: string;
+  image_url: string;
+  author?: string;
+}

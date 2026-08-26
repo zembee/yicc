@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useLiffAuth } from '@/contexts/LiffContext';
+import { mockHouses, yftiParticipants } from '@/lib/mockData';
 import { 
   Coins, 
   Award, 
@@ -12,123 +13,177 @@ import {
   Phone, 
   LogOut,
   RefreshCw,
-  Building2
+  Building2,
+  MapPin,
+  CheckCircle2,
+  Users
 } from 'lucide-react';
+import { WebLoginModal } from '@/components/layout/WebLoginModal';
 
 export default function ProfilePage() {
   const { profile, updateRole, logout } = useLiffAuth();
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   if (!profile) {
     return (
-      <div className="p-6 text-center text-slate-500">
-        ไม่พบข้อมูลโปรไฟล์
+      <div className="p-12 text-center text-slate-500 bg-white rounded-3xl border border-slate-200">
+        <p className="font-bold text-base text-slate-700">ไม่พบข้อมูลโปรไฟล์</p>
+        <button
+          onClick={() => setIsLoginModalOpen(true)}
+          className="mt-4 px-5 py-2.5 bg-[#1E2538] text-white rounded-xl text-xs font-bold"
+        >
+          เข้าสู่ระบบ
+        </button>
+        <WebLoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
       </div>
     );
   }
 
   return (
-    <div className="space-y-4 pb-8">
-      {/* Header Profile Banner (Deep Navy Brand Card) */}
-      <div className="bg-[#181B34] text-white p-5 rounded-2xl border border-[#2A2E54] shadow-sm flex flex-col items-center text-center relative overflow-hidden">
-        <div className="relative mb-2.5">
+    <div className="space-y-8 sm:space-y-10 pb-12">
+      {/* Profile Header Banner */}
+      <div className="bg-[#1E2538] text-white p-6 sm:p-10 rounded-3xl border border-[#2A334E] shadow-xl flex flex-col md:flex-row items-center md:items-start gap-6 relative overflow-hidden">
+        <div className="relative shrink-0">
           {profile.picture_url ? (
             <img
               src={profile.picture_url}
               alt={profile.display_name}
-              className="w-18 h-18 rounded-2xl object-cover border-2 border-white shadow-lg"
+              className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl object-cover border-4 border-white/20 shadow-2xl"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + profile.display_name;
+              }}
             />
           ) : (
-            <div className="w-18 h-18 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center font-bold text-lg text-white">
+            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-white/10 border border-white/20 flex items-center justify-center font-black text-2xl text-white">
               {profile.display_name.charAt(0)}
             </div>
           )}
-          <span className="absolute -bottom-1 -right-1 px-2 py-0.5 bg-[#FB7170] rounded-full text-[9px] text-white font-bold shadow">
-            ELITE 11
+          <span className="absolute -bottom-1 -right-1 px-3 py-1 bg-[#FB7170] rounded-full text-[10px] text-white font-black shadow-md uppercase">
+            YFTI 11
           </span>
         </div>
 
-        <h1 className="text-base font-black text-white">{profile.display_name}</h1>
-        <p className="text-xs text-[#FB7170] font-semibold mt-0.5">{profile.position}</p>
-        <p className="text-xs text-slate-300">{profile.company_name}</p>
-
-        {/* Badges */}
-        <div className="flex items-center gap-2 mt-3">
-          {profile.house && (
-            <span
-              className="text-[10px] font-bold px-2.5 py-0.5 rounded-lg bg-white/10 text-white border border-white/15"
-            >
-              {profile.house.name}
+        <div className="flex-1 text-center md:text-left space-y-2">
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
+            <h1 className="text-xl sm:text-2xl font-black text-white">{profile.display_name}</h1>
+            <span className="text-[10px] font-bold bg-[#FB7170] text-white px-2.5 py-0.5 rounded-full flex items-center gap-1">
+              <Shield className="w-3 h-3" />
+              {profile.role}
             </span>
-          )}
-          <span className="text-[10px] font-bold bg-[#FB7170] text-white px-2.5 py-0.5 rounded-lg flex items-center gap-1">
-            <Shield className="w-3 h-3" />
-            {profile.role}
-          </span>
+            {profile.house && (
+              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-white/10 text-white border border-white/15">
+                {profile.house.name}
+              </span>
+            )}
+          </div>
+
+          <p className="text-xs sm:text-sm text-[#FB7170] font-bold">{profile.position || 'Executive Member'}</p>
+          <p className="text-xs text-slate-300 flex items-center justify-center md:justify-start gap-1">
+            <Building2 className="w-3.5 h-3.5 text-slate-400" />
+            {profile.company_name || 'Young FTI ELITE 11'}
+          </p>
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            onClick={() => setIsLoginModalOpen(true)}
+            className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/15 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+          >
+            <Users className="w-3.5 h-3.5 text-[#FB7170]" />
+            <span>สลับผู้ใช้</span>
+          </button>
         </div>
       </div>
 
-      {/* Stats Breakdown */}
-      <div className="grid grid-cols-3 gap-2">
-        <div className="bg-white border border-slate-200 p-3 rounded-xl text-center shadow-sm">
-          <Coins className="w-4 h-4 text-[#FB7170] mx-auto mb-1" />
-          <p className="text-[10px] text-slate-500 font-medium">Coins</p>
-          <p className="text-sm font-bold text-[#181B34]">{profile.points_balance}</p>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-white border border-slate-200 p-5 rounded-3xl text-center shadow-card space-y-1">
+          <div className="w-10 h-10 rounded-2xl bg-rose-50 text-[#FB7170] flex items-center justify-center mx-auto mb-2">
+            <Coins className="w-5 h-5" />
+          </div>
+          <p className="text-xs text-slate-500 font-bold">Reward Points</p>
+          <p className="text-2xl font-black text-[#1E2538] font-mono">{profile.points_balance}</p>
+          <p className="text-[10px] text-slate-400">ใช้แลกสิทธิประโยชน์ในโครงการ</p>
         </div>
 
-        <div className="bg-white border border-slate-200 p-3 rounded-xl text-center shadow-sm">
-          <Award className="w-4 h-4 text-[#FB7170] mx-auto mb-1" />
-          <p className="text-[10px] text-slate-500 font-medium">Total XP</p>
-          <p className="text-sm font-bold text-[#181B34]">{profile.xp_balance}</p>
+        <div className="bg-white border border-slate-200 p-5 rounded-3xl text-center shadow-card space-y-1">
+          <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-2">
+            <Award className="w-5 h-5" />
+          </div>
+          <p className="text-xs text-slate-500 font-bold">Executive XP</p>
+          <p className="text-2xl font-black text-[#1E2538] font-mono">{profile.xp_balance}</p>
+          <p className="text-[10px] text-slate-400">สะสมประสบการณ์ประจำรุ่น</p>
         </div>
 
-        <div className="bg-white border border-slate-200 p-3 rounded-xl text-center shadow-sm">
-          <GraduationCap className="w-4 h-4 text-emerald-600 mx-auto mb-1" />
-          <p className="text-[10px] text-slate-500 font-medium">Attendance</p>
-          <p className="text-sm font-bold text-[#181B34]">{profile.attendance_rate}%</p>
-        </div>
-      </div>
-
-      {/* Details List */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-2.5 shadow-sm">
-        <h2 className="text-xs font-bold text-[#181B34] uppercase tracking-wider mb-2">ข้อมูลการติดต่อและธุรกิจ</h2>
-
-        <div className="flex items-center gap-3 text-xs text-slate-700 py-1 border-b border-slate-100">
-          <Mail className="w-4 h-4 text-slate-400 shrink-0" />
-          <span className="text-slate-500">อีเมล:</span>
-          <span className="font-semibold text-[#181B34] ml-auto">{profile.email || 'panupong@techcorp.co'}</span>
-        </div>
-
-        <div className="flex items-center gap-3 text-xs text-slate-700 py-1 border-b border-slate-100">
-          <Phone className="w-4 h-4 text-slate-400 shrink-0" />
-          <span className="text-slate-500">เบอร์โทรศัพท์:</span>
-          <span className="font-semibold text-[#181B34] ml-auto">{profile.phone_number || '081-234-5678'}</span>
-        </div>
-
-        <div className="flex items-center gap-3 text-xs text-slate-700 py-1">
-          <Briefcase className="w-4 h-4 text-slate-400 shrink-0" />
-          <span className="text-slate-500">อุตสาหกรรม:</span>
-          <span className="font-semibold text-[#181B34] ml-auto">{profile.industry || 'Technology & Software'}</span>
+        <div className="bg-white border border-slate-200 p-5 rounded-3xl text-center shadow-card space-y-1">
+          <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-2">
+            <GraduationCap className="w-5 h-5" />
+          </div>
+          <p className="text-xs text-slate-500 font-bold">Attendance Rate</p>
+          <p className="text-2xl font-black text-[#1E2538] font-mono">{profile.attendance_rate}%</p>
+          <p className="text-[10px] text-emerald-600 font-bold">✓ ผ่านเกณฑ์ขั้นต่ำ 80%</p>
         </div>
       </div>
 
-      {/* Role Simulator (Dev/Demo Switcher) */}
-      <div className="bg-white border border-slate-200 p-3.5 rounded-2xl shadow-sm">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-bold text-[#181B34] flex items-center gap-1.5">
+      {/* Contact & Business Info */}
+      <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-card space-y-4">
+        <h2 className="text-sm font-extrabold text-[#1E2538] uppercase tracking-wider border-b border-slate-100 pb-3">
+          ข้อมูลการติดต่อและธุรกิจ
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+          <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl">
+            <Mail className="w-4 h-4 text-slate-400 shrink-0" />
+            <div>
+              <span className="text-slate-400 text-[11px] block">อีเมล</span>
+              <span className="font-bold text-slate-800">{profile.email || 'yfti11@yfticonnect.com'}</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl">
+            <Phone className="w-4 h-4 text-slate-400 shrink-0" />
+            <div>
+              <span className="text-slate-400 text-[11px] block">เบอร์โทรศัพท์</span>
+              <span className="font-bold text-slate-800 font-mono">{profile.phone_number || '082-269-9962'}</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl">
+            <Briefcase className="w-4 h-4 text-slate-400 shrink-0" />
+            <div>
+              <span className="text-slate-400 text-[11px] block">กลุ่มอุตสาหกรรม</span>
+              <span className="font-bold text-slate-800">{profile.industry || 'เทคโนโลยี'}</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl">
+            <Building2 className="w-4 h-4 text-slate-400 shrink-0" />
+            <div>
+              <span className="text-slate-400 text-[11px] block">รุ่นที่เข้าร่วม</span>
+              <span className="font-bold text-slate-800">{profile.cohort_batch || 'YFTI Cohort 11'}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Role Switcher */}
+      <div className="bg-white border border-slate-200 p-6 rounded-3xl shadow-card space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-extrabold text-[#1E2538] flex items-center gap-1.5">
             <RefreshCw className="w-3.5 h-3.5 text-[#FB7170]" />
             สลับสิทธิ์จำลอง (Role Simulator)
           </span>
-          <span className="text-[10px] text-slate-400 font-mono">DEMO</span>
+          <span className="text-[10px] text-slate-400 font-mono">DEVELOPER / DEMO</span>
         </div>
-        <div className="grid grid-cols-3 gap-1.5">
+        <div className="grid grid-cols-3 gap-2">
           {(['MEMBER', 'HOUSE_ADMIN', 'SUPER_ADMIN'] as const).map((roleOption) => (
             <button
               key={roleOption}
               onClick={() => updateRole(roleOption)}
-              className={`py-1.5 px-2 rounded-lg text-[11px] font-bold border transition ${
+              className={`py-2 px-3 rounded-xl text-xs font-bold border transition ${
                 profile.role === roleOption
-                  ? 'bg-[#181B34] text-white border-[#181B34]'
-                  : 'bg-slate-50 text-slate-600 border-slate-200 hover:text-[#181B34]'
+                  ? 'bg-[#1E2538] text-white border-[#1E2538] shadow-sm'
+                  : 'bg-slate-50 text-slate-600 border-slate-200 hover:text-[#1E2538]'
               }`}
             >
               {roleOption === 'SUPER_ADMIN' ? 'Super Admin' : roleOption === 'HOUSE_ADMIN' ? 'House Admin' : 'Member'}
@@ -137,15 +192,16 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Logout button */}
+      {/* Logout */}
       <button
         onClick={logout}
-        className="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold transition flex items-center justify-center gap-2"
+        className="w-full py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-2"
       >
         <LogOut className="w-4 h-4 text-slate-400" />
         ออกจากระบบ
       </button>
+
+      <WebLoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
     </div>
   );
 }
-

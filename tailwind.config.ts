@@ -47,7 +47,7 @@ const config: Config = {
         }
       },
       fontFamily: {
-        sans: ['Inter', 'Prompt', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+        sans: ['Kanit', 'Prompt', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
         'card': '0 4px 20px -2px rgba(33, 37, 66, 0.05), 0 2px 6px -1px rgba(33, 37, 66, 0.03)',
