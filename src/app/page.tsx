@@ -39,7 +39,7 @@ const EVENTS = [
     id: 'e1',
     date: '24 พ.ค. 2025',
     title: 'พิธีปิดหลักสูตร YOUNG FTI ELITE รุ่นที่ 11',
-    image: '/images/home/event_closing.jpg',
+    image: '/images/about/history_group.webp',
     link: '/events'
   },
   {
@@ -59,14 +59,14 @@ const EVENTS = [
 ];
 
 const GALLERY_PHOTOS = [
-  { img: '/images/home/gallery_1.jpg', span: 'col-span-1 row-span-1' },
-  { img: '/images/home/gallery_2.jpg', span: 'col-span-1 row-span-1' },
-  { img: '/images/home/gallery_3.jpg', span: 'col-span-1 row-span-1' },
-  { img: '/images/home/gallery_4.jpg', span: 'col-span-1 row-span-1' },
-  { img: '/images/home/gallery_5.jpg', span: 'col-span-1 row-span-1' },
+  { img: '/images/about/act_lecture.webp', span: 'col-span-1 row-span-1' },
+  { img: '/images/about/act_icebreaking.webp', span: 'col-span-1 row-span-1' },
+  { img: '/images/about/act_csr.webp', span: 'col-span-1 row-span-1' },
+  { img: '/images/about/Young-FTI-11-979.jpg', span: 'col-span-1 row-span-1' },
+  { img: '/images/home/hero_leaders.jpg', span: 'col-span-1 row-span-1' },
   { img: '/images/home/gallery_6.jpg', span: 'col-span-1 row-span-1' },
-  { img: '/images/home/gallery_7.jpg', span: 'col-span-1 row-span-1' },
-  { img: '/images/home/gallery_8.jpg', span: 'col-span-1 row-span-1' }
+  { img: '/images/home/event_training.jpg', span: 'col-span-1 row-span-1' },
+  { img: '/images/home/event_maldives.jpg', span: 'col-span-1 row-span-1' }
 ];
 
 const INDUSTRY_SECTORS = [
