@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { LiffProvider } from '@/contexts/LiffContext';
+import { LoginGate } from '@/components/auth/LoginGate';
 import { TopHeader } from '@/components/layout/TopHeader';
 import { BottomNavigation } from '@/components/layout/BottomNavigation';
 import { Footer } from '@/components/layout/Footer';
@@ -39,14 +40,16 @@ export default function RootLayout({
     <html lang="th">
       <body className="bg-[#F8FAFC] text-[#1F2937] min-h-screen flex flex-col antialiased selection:bg-[#FB7170] selection:text-white">
         <LiffProvider>
-          <div className="w-full min-h-screen flex flex-col bg-[#F8FAFC]">
-            <TopHeader />
-            <main className="flex-1 max-w-7xl mx-auto w-full px-3.5 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 md:pb-8">
-              {children}
-            </main>
-            <Footer />
-            <BottomNavigation />
-          </div>
+          <LoginGate>
+            <div className="w-full min-h-screen flex flex-col bg-[#F8FAFC]">
+              <TopHeader />
+              <main className="flex-1 max-w-7xl mx-auto w-full px-3.5 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 md:pb-8">
+                {children}
+              </main>
+              <Footer />
+              <BottomNavigation />
+            </div>
+          </LoginGate>
         </LiffProvider>
       </body>
     </html>
