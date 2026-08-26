@@ -39,9 +39,14 @@ const INDUSTRY_SECTORS = [
 
 const HERO_SLIDES = [
   {
-    image: 'https://yfticonnect.com/wp-content/uploads/2026/05/Young-FTI-11-477-scaled.jpg',
+    image: '/images/about/Young-FTI-11-979.jpg',
     caption: 'Young FTI ELITE รุ่นที่ 11',
-    subtitle: 'ทำเนียบผู้นำอุตสาหกรรมรุ่นใหม่'
+    subtitle: 'ทำเนียบผู้นำและนักอุตสาหกรรมรุ่นใหม่แห่งประเทศไทย'
+  },
+  {
+    image: 'https://yfticonnect.com/wp-content/uploads/2026/05/Young-FTI-11-477-scaled.jpg',
+    caption: 'ปฐมนิเทศและเปิดหลักสูตร Young FTI ELITE 11',
+    subtitle: 'รวมพลัง 122 นักธุรกิจชั้นนำสู่อนาคตอุตสาหกรรมไทย'
   },
   {
     image: 'https://yfticonnect.com/wp-content/uploads/2026/05/Y11_04042025_284-scaled.jpg',

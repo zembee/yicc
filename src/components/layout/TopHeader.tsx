@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useLiffAuth } from '@/contexts/LiffContext';
 import Image from 'next/image';
-import { Search, Menu, X, Coins, Award, Shield, LogIn, User, ChevronDown } from 'lucide-react';
+import { Search, Menu, X, Coins, Award, Shield, LogIn, User, ChevronDown, LogOut, ExternalLink, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { GlobalSearchModal } from './GlobalSearchModal';
@@ -11,10 +11,11 @@ import { WebLoginModal } from './WebLoginModal';
 
 export const TopHeader: React.FC = () => {
   const pathname = usePathname();
-  const { profile, isMockMode } = useLiffAuth();
+  const { profile, isMockMode, logout } = useLiffAuth();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
   const navLinks = [
     { label: 'เกี่ยวกับเรา', href: '/about' },
@@ -26,54 +27,48 @@ export const TopHeader: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-[#1E2538] border-b border-[#2A334E] shadow-[0_4px_20px_rgba(0,0,0,0.15)] text-white select-none">
-        <div className="max-w-7xl mx-auto flex items-center justify-between h-16 sm:h-20 px-0 sm:px-4">
+      <header className="sticky top-0 z-40 bg-[#1E2538] border-b border-[#2A334E]/60 shadow-[0_4px_25px_rgba(0,0,0,0.2)] text-white select-none">
+        <div className="max-w-7xl mx-auto flex items-center justify-between h-20 sm:h-24 px-4 sm:px-6 lg:px-8">
           {/* Left: Signature White Trapezoid Logo Block matching yfticonnect.com */}
           <div className="flex items-center h-full">
-            <Link href="/academy" className="flex items-center h-full group">
-              <div className="bg-white h-full px-4 sm:px-6 clip-trapezoid-logo pr-8 sm:pr-10 flex items-center justify-center transition-all group-hover:bg-slate-50">
-                <Image 
-                  src="/YFTI-11-Logo.jpg" 
-                  alt="Young FTI Elite 11" 
-                  width={34} 
-                  height={34} 
-                  className="object-contain" 
-                  priority
-                />
-              </div>
-              <div className="hidden lg:flex flex-col pl-3 py-2">
-                <div className="flex items-center gap-1.5 leading-none">
-                  <span className="font-extrabold text-sm sm:text-base tracking-tight text-white whitespace-nowrap">
-                    Young FTI
-                  </span>
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#FB7170]">
-                    ELITE 11
-                  </span>
+            <Link href="/about" className="flex items-center h-full group">
+              <div 
+                className="bg-white h-full px-5 sm:px-8 flex items-center justify-center transition-all group-hover:bg-slate-50 relative -ml-4 sm:-ml-6 lg:-ml-8"
+                style={{
+                  clipPath: 'polygon(0 0, 100% 0, 78% 100%, 0% 100%)',
+                  paddingRight: '2.5rem'
+                }}
+              >
+                <div className="relative w-12 h-12 sm:w-14 sm:h-14">
+                  <Image 
+                    src="/YFTI-11-Logo.jpg" 
+                    alt="Young FTI Elite 11" 
+                    fill
+                    className="object-contain" 
+                    priority
+                  />
                 </div>
-                <span className="text-[10px] text-[#A5B4FC] font-medium tracking-wide mt-0.5">
-                  หลักสูตรนักอุตสาหกรรมรุ่นใหม่
-                </span>
               </div>
             </Link>
           </div>
 
-          {/* Center: Desktop Navigation Bar */}
-          <nav className="hidden md:flex items-center space-x-1 lg:space-x-3 text-sm font-semibold">
+          {/* Center: Desktop Navigation Bar matching yfticonnect.com */}
+          <nav className="hidden md:flex items-center space-x-6 lg:space-x-10 text-[17px] lg:text-[19px] font-medium">
             {navLinks.map((link) => {
-              const isActive = pathname === link.href || (link.href !== '/academy' && pathname.startsWith(link.href));
+              const isActive = pathname === link.href || (link.href === '/directory' && pathname.startsWith('/yfti_participants'));
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`px-3 py-2 rounded-xl transition-all relative ${
+                  className={`transition-colors duration-200 relative py-2 ${
                     isActive
-                      ? 'text-[#FB7170] font-bold'
-                      : 'text-slate-200 hover:text-white hover:bg-white/5'
+                      ? 'text-[#FB7170] font-semibold'
+                      : 'text-white/90 hover:text-[#FB7170]'
                   }`}
                 >
                   {link.label}
                   {isActive && (
-                    <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-[#FB7170] rounded-full" />
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FB7170] rounded-full animate-in fade-in" />
                   )}
                 </Link>
               );
@@ -81,38 +76,24 @@ export const TopHeader: React.FC = () => {
           </nav>
 
           {/* Right: Search, Stats, Profile & Login */}
-          <div className="flex items-center gap-2 sm:gap-3 pr-3 sm:pr-0">
+          <div className="flex items-center gap-3 sm:gap-4 relative">
             {/* Search Icon Trigger */}
             <button
               onClick={() => setIsSearchOpen(true)}
               aria-label="Search"
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center text-white transition shadow-sm"
+              className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white text-[#1E2538] hover:bg-slate-100 flex items-center justify-center transition shadow-md hover:scale-105"
             >
-              <Search className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+              <Search className="w-5 h-5 text-[#1E2538]" />
             </button>
 
             {/* Profile / Login Chip */}
             {profile ? (
-              <div className="flex items-center gap-2">
-                {/* Stats Pill (Desktop) */}
-                <div className="hidden lg:flex items-center bg-white/10 border border-white/15 rounded-full px-3 py-1 gap-2.5">
-                  <div className="flex items-center gap-1">
-                    <Coins className="w-3.5 h-3.5 text-[#FB7170]" />
-                    <span className="text-xs font-bold font-mono">{profile.points_balance}</span>
-                  </div>
-                  <span className="w-[1px] h-3 bg-white/20" />
-                  <div className="flex items-center gap-1">
-                    <Award className="w-3.5 h-3.5 text-[#DBDFFF]" />
-                    <span className="text-xs font-bold font-mono">{profile.xp_balance}</span>
-                  </div>
-                </div>
-
-                {/* User Dropdown / Login Trigger */}
+              <div className="relative">
                 <button
-                  onClick={() => setIsLoginOpen(true)}
-                  className="flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 transition group"
+                  onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                  className="flex items-center gap-2.5 pl-1.5 pr-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 transition group"
                 >
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden border border-white/40 group-hover:border-[#FB7170] bg-[#2A334E] flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-white/60 group-hover:border-[#FB7170] bg-[#2A334E] flex items-center justify-center shrink-0 shadow-sm">
                     {profile.picture_url ? (
                       <img
                         src={profile.picture_url}
@@ -123,18 +104,86 @@ export const TopHeader: React.FC = () => {
                       <User className="w-4 h-4 text-white" />
                     )}
                   </div>
-                  <span className="text-xs font-bold text-white max-w-[90px] sm:max-w-[120px] truncate hidden xs:inline">
-                    {profile.display_name.split(' ')[0]}
-                  </span>
-                  <ChevronDown className="w-3 h-3 text-slate-300" />
+                  <div className="flex flex-col text-left leading-tight hidden xs:flex">
+                    <span className="text-xs font-bold text-white max-w-[100px] truncate">
+                      {profile.display_name.split(' ')[0]}
+                    </span>
+                    <span className="text-[10px] text-[#FB7170] font-semibold">
+                      {profile.role === 'SUPER_ADMIN' ? 'Admin' : 'Member'}
+                    </span>
+                  </div>
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-300 transition-transform group-hover:translate-y-0.5" />
                 </button>
+
+                {/* Dropdown Menu */}
+                {isUserDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-64 bg-[#1E2538] border border-white/15 rounded-2xl shadow-2xl p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div className="p-3 border-b border-white/10 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full overflow-hidden border border-white/30 shrink-0">
+                        <img
+                          src={profile.picture_url || '/YFTI-11-Logo.jpg'}
+                          alt={profile.display_name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="overflow-hidden">
+                        <p className="text-sm font-bold text-white truncate">{profile.display_name}</p>
+                        <p className="text-xs text-slate-400 truncate">{profile.company_name || 'Young FTI ELITE 11'}</p>
+                      </div>
+                    </div>
+
+                    <div className="py-1.5 space-y-0.5">
+                      <Link
+                        href="/profile"
+                        onClick={() => setIsUserDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-200 hover:text-white hover:bg-white/10 rounded-xl transition"
+                      >
+                        <User className="w-4 h-4 text-[#FB7170]" />
+                        <span>โปรไฟล์ของฉัน (Profile)</span>
+                      </Link>
+
+                      <Link
+                        href="/admin"
+                        onClick={() => setIsUserDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-200 hover:text-white hover:bg-white/10 rounded-xl transition"
+                      >
+                        <Shield className="w-4 h-4 text-emerald-400" />
+                        <span>แดชบอร์ดแอดมิน (Admin)</span>
+                      </Link>
+
+                      <button
+                        onClick={() => {
+                          setIsUserDropdownOpen(false);
+                          setIsLoginOpen(true);
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-200 hover:text-white hover:bg-white/10 rounded-xl transition text-left"
+                      >
+                        <Settings className="w-4 h-4 text-amber-400" />
+                        <span>สลับโปรไฟล์จำลอง (Switch User)</span>
+                      </button>
+                    </div>
+
+                    <div className="pt-1.5 border-t border-white/10">
+                      <button
+                        onClick={() => {
+                          setIsUserDropdownOpen(false);
+                          logout();
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-[#FB7170] hover:bg-[#FB7170]/10 rounded-xl transition text-left"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span>ออกจากระบบ</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <button
                 onClick={() => setIsLoginOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FB7170] hover:bg-[#fa5b5a] text-white text-xs font-bold transition shadow-sm"
+                className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#FB7170] hover:bg-[#fa5b5a] text-white text-xs sm:text-sm font-bold transition shadow-md hover:scale-105"
               >
-                <LogIn className="w-3.5 h-3.5" />
+                <LogIn className="w-4 h-4" />
                 <span>เข้าสู่ระบบ</span>
               </button>
             )}
@@ -143,51 +192,33 @@ export const TopHeader: React.FC = () => {
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label="Toggle menu"
-              className="md:hidden w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center text-white transition"
+              className="md:hidden w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-white transition shadow-sm"
             >
-              {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
         {/* Mobile Navigation Drawer */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-slate-700/80 bg-[#1A1F33] px-4 py-4 space-y-2 animate-in slide-in-from-top-2 duration-200">
+          <div className="md:hidden bg-[#181E2E] border-t border-white/10 px-4 py-6 space-y-3 animate-in slide-in-from-top-4 duration-200">
             {navLinks.map((link) => {
-              const isActive = pathname === link.href || (link.href !== '/academy' && pathname.startsWith(link.href));
+              const isActive = pathname === link.href || (link.href === '/directory' && pathname.startsWith('/yfti_participants'));
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`block px-3.5 py-2.5 rounded-xl text-sm font-semibold transition ${
+                  className={`block px-4 py-3 rounded-2xl text-base font-semibold transition ${
                     isActive
                       ? 'bg-[#FB7170] text-white font-bold'
-                      : 'text-slate-200 hover:bg-white/10'
+                      : 'text-slate-200 hover:bg-white/5 hover:text-white'
                   }`}
                 >
                   {link.label}
                 </Link>
               );
             })}
-            <div className="pt-2 border-t border-slate-700/60 flex items-center justify-between">
-              <Link
-                href="/profile"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-xs font-bold text-[#FB7170] hover:underline"
-              >
-                โปรไฟล์ส่วนตัว ({profile?.display_name})
-              </Link>
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  setIsLoginOpen(true);
-                }}
-                className="text-xs text-slate-300 hover:text-white"
-              >
-                สลับผู้ใช้ / เข้าสู่ระบบ
-              </button>
-            </div>
           </div>
         )}
       </header>

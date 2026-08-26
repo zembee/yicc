@@ -7,108 +7,121 @@ import { Phone, Mail, MapPin, Facebook, Globe, Shield } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-[#1E2538] text-white border-t border-[#2A334E] mt-auto">
+    <footer className="bg-[#1E2538] text-white mt-auto select-none">
       {/* Main Footer Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
-          {/* Column 1: Organization & Address */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="bg-white p-2 rounded-xl flex items-center justify-center shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-12 items-start">
+          {/* Column 1: Organization Logo & Address */}
+          <div className="md:col-span-5 space-y-6">
+            {/* White Trapezoid Brand Box matching yfticonnect.com footer */}
+            <div 
+              className="bg-white p-4 pr-10 inline-flex items-center gap-4 rounded-xl shadow-lg relative"
+              style={{
+                clipPath: 'polygon(0 0, 100% 0, 92% 100%, 0% 100%)'
+              }}
+            >
+              <div className="w-12 h-12 relative shrink-0">
                 <Image
                   src="/YFTI-11-Logo.jpg"
-                  alt="Young FTI 11"
-                  width={36}
-                  height={36}
+                  alt="Young FTI 11 Logo"
+                  fill
                   className="object-contain"
                 />
               </div>
-              <div>
-                <h3 className="font-extrabold text-base tracking-tight text-white leading-tight">
+              <div className="flex flex-col">
+                <span className="font-extrabold text-lg sm:text-xl text-[#212542] leading-tight">
                   Young FTI ELITE
-                </h3>
-                <p className="text-xs text-[#FB7170] font-semibold">
+                </span>
+                <span className="text-xs sm:text-sm text-[#FB7170] font-medium">
                   หลักสูตรนักอุตสาหกรรมรุ่นใหม่
-                </p>
+                </span>
               </div>
             </div>
 
-            <div className="text-xs text-slate-300 space-y-2 leading-relaxed pt-2">
-              <p className="font-bold text-white flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-[#FB7170] shrink-0" />
+            {/* Address Details */}
+            <div className="space-y-2 pt-2">
+              <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
                 สำนักงานนักอุตสาหกรรมรุ่นใหม่
-              </p>
-              <p className="pl-5 text-slate-400">
+              </h3>
+              <p className="text-[#DBDFFA] text-base sm:text-lg font-light leading-relaxed max-w-md">
                 ชั้น 10 อาคารสำนักงาน เลขที่ 100/10 ถนนสุขุมวิท แขวงบางนาเหนือ เขตบางนา กรุงเทพมหานคร 10000
               </p>
             </div>
           </div>
 
-          {/* Column 2: Navigation Links */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-bold text-white tracking-wider uppercase flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#FB7170]" />
+          {/* Column 2: ทางลัดเมนู (Shortcut Menu) */}
+          <div className="md:col-span-3 space-y-4">
+            <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
               ทางลัดเมนู
-            </h4>
-            <ul className="space-y-2.5 text-xs text-slate-300 font-medium">
+            </h3>
+            <ul className="space-y-3 text-base sm:text-lg text-[#DBDFFA] font-light">
               <li>
-                <Link href="/academy" className="hover:text-[#FB7170] transition flex items-center gap-1.5">
-                  <span>→</span> เกี่ยวกับเรา / หน้าหลัก
+                <Link href="/about" className="hover:text-[#FB7170] transition duration-150 block">
+                  เกี่ยวกับเรา
                 </Link>
               </li>
               <li>
-                <Link href="/directory" className="hover:text-[#FB7170] transition flex items-center gap-1.5">
-                  <span>→</span> ธุรกิจภายในโครงการ (ทำเนียบรุ่น)
+                <Link href="/directory" className="hover:text-[#FB7170] transition duration-150 block">
+                  ธุรกิจภายในโครงการ
                 </Link>
               </li>
               <li>
-                <Link href="/events" className="hover:text-[#FB7170] transition flex items-center gap-1.5">
-                  <span>→</span> กิจกรรมโครงการ
+                <Link href="/events" className="hover:text-[#FB7170] transition duration-150 block">
+                  กิจกรรม
                 </Link>
               </li>
               <li>
-                <Link href="/news" className="hover:text-[#FB7170] transition flex items-center gap-1.5">
-                  <span>→</span> ข่าวสารโครงการ
+                <Link href="/news" className="hover:text-[#FB7170] transition duration-150 block">
+                  ข่าวสาร
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-[#FB7170] transition flex items-center gap-1.5">
-                  <span>→</span> ติดต่อเรา
+                <Link href="/contact" className="hover:text-[#FB7170] transition duration-150 block">
+                  ติดต่อเรา
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Column 3: Contact Channels */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-bold text-white tracking-wider uppercase flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#FB7170]" />
+          {/* Column 3: ช่องทางติดต่อและติดตาม (Contact & Social) */}
+          <div className="md:col-span-4 space-y-4">
+            <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
               ช่องทางติดต่อและติดตาม
-            </h4>
-            <div className="space-y-2.5 text-xs text-slate-300">
-              <div className="flex items-center gap-2.5">
-                <Phone className="w-4 h-4 text-[#FB7170] shrink-0" />
-                <span className="font-mono text-slate-300">098-765-4321, 088-888-8888</span>
+            </h3>
+            <div className="space-y-4 text-base sm:text-lg text-[#DBDFFA] font-light">
+              {/* Phone */}
+              <div className="flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-full border border-[#FB7170] flex items-center justify-center text-[#FB7170] shrink-0">
+                  <Phone className="w-5 h-5" />
+                </div>
+                <span>098-765-4321, 088-888-8888</span>
               </div>
-              <div className="flex items-center gap-2.5">
-                <Mail className="w-4 h-4 text-[#FB7170] shrink-0" />
-                <span className="font-mono text-slate-300">contact@yfticonnect.com</span>
+
+              {/* Email */}
+              <div className="flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-full border border-[#FB7170] flex items-center justify-center text-[#FB7170] shrink-0">
+                  <Mail className="w-5 h-5" />
+                </div>
+                <span>email.test@email.com</span>
               </div>
-              <div className="flex items-center gap-2.5">
-                <Globe className="w-4 h-4 text-[#FB7170] shrink-0" />
-                <a href="https://yfticonnect.com" target="_blank" rel="noreferrer" className="text-slate-300 hover:text-white underline font-mono">
-                  https://yfticonnect.com
-                </a>
+
+              {/* Facebook */}
+              <div className="flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-full border border-[#FB7170] flex items-center justify-center text-[#FB7170] shrink-0">
+                  <Facebook className="w-5 h-5" />
+                </div>
+                <span>Young FTI ELITE</span>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Bottom Copyright Bar */}
-        <div className="border-t border-slate-700/60 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
-          <p>Young FTI ELITE — สภาอุตสาหกรรมแห่งประเทศไทย</p>
-          <p>Copyright © 2025 by exvention | All rights reserved.</p>
-        </div>
+      {/* Bottom Sub-Footer Bar matching yfticonnect.com */}
+      <div className="bg-white py-4 px-4 text-center">
+        <p className="text-xs sm:text-sm text-[#212542] font-light">
+          Copyright ©2025 by exvention
+        </p>
       </div>
     </footer>
   );

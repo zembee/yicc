@@ -72,10 +72,10 @@ export default function AboutPage() {
 
         {/* Right Group Photo */}
         <div className="lg:col-span-6">
-          <div className="rounded-3xl overflow-hidden border-2 border-slate-200/80 shadow-lg relative aspect-[16/11] bg-slate-900">
+          <div className="rounded-3xl overflow-hidden border-2 border-slate-200/80 shadow-lg relative aspect-[16/9] bg-slate-900">
             <img
-              src="/images/about/history_group.webp"
-              alt="Young FTI Elite พิธีปิดหลักสูตร"
+              src="/images/about/Young-FTI-11-979.jpg"
+              alt="Young FTI Elite 11 คณะผู้เข้าร่วมหลักสูตร"
               className="w-full h-full object-cover"
             />
           </div>
