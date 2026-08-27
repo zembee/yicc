@@ -1,0 +1,108 @@
+<mxfile host="app.diagrams.net" modified="2026-08-27T14:16:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram id="yfti-auth-flow" name="LINE-First Auth Flow">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="#F8FAFC" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- HEADER BANNER -->
+        <mxCell id="header" value="&lt;font style=&quot;font-size: 20px; font-weight: 900; color: #FFFFFF;&quot;&gt;Young FTI ELITE 11 • LINE-First Auth &amp;amp; Registration Flow&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 12px; color: #94A3B8;&quot;&gt;Flow การทำงาน: LINE LIFF ➔ ค้นหาเบอร์โทรศัพท์ ➔ ยืนยัน OTP (123456) ➔ ผูกบัญชีสมาชิก หรือ รอ Admin อนุมัติ&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E2538;strokeColor=none;arcSize=12;shadow=1;align=left;spacingLeft=30;" vertex="1" parent="1">
+          <mxGeometry x="60" y="30" width="1040" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- STEP 1: LINE LOGIN -->
+        <mxCell id="step1" value="&lt;font style=&quot;font-size: 14px; font-weight: 800; color: #FFFFFF;&quot;&gt;1. เข้าสู่ระบบผ่าน LINE LIFF&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px; color: #E8F9EE;&quot;&gt;เชื่อมต่อ LINE Profile &amp;amp; Auto-Sync ชื่อ/รูป&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#06C755;strokeColor=none;arcSize=20;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="150" width="280" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- STEP 2: PHONE INPUT -->
+        <mxCell id="step2" value="&lt;font style=&quot;font-size: 14px; font-weight: 800; color: #1E2538;&quot;&gt;📱 2. ระบุเบอร์โทรศัพท์ (10 หลัก)&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px; color: #64748B;&quot;&gt;กรอกเบอร์ที่ลงทะเบียนไว้กับโครงการ&lt;br&gt;&lt;b style=&quot;color: #D97706;&quot;&gt;💡 ทดสอบด้วยเบอร์: 082-269-9962&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.5;arcSize=15;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="430" y="260" width="300" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ARROW: Step 1 -> Step 2 -->
+        <mxCell id="arrow1_2" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#06C755;strokeWidth=3;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step1" target="step2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- DECISION DIAMOND -->
+        <mxCell id="decision" value="&lt;font style=&quot;font-size: 13px; font-weight: 800; color: #FFFFFF;&quot;&gt;ค้นหาเบอร์&lt;br&gt;ในระบบ?&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px; color: #94A3B8;&quot;&gt;(122 รายชื่อสมาชิก)&lt;/font&gt;" style="rhombus;whiteSpace=wrap;html=1;fillColor=#1E2538;strokeColor=#475569;strokeWidth=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="490" y="380" width="180" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- ARROW: Step 2 -> Decision -->
+        <mxCell id="arrow2_dec" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#64748B;strokeWidth=3;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step2" target="decision">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ================= LEFT BRANCH: FOUND ================= -->
+        <!-- STEP 3A: MATCH FOUND -->
+        <mxCell id="step3a" value="&lt;font style=&quot;font-size: 14px; font-weight: 800; color: #065F46;&quot;&gt;🎯 3A. พบข้อมูลสมาชิกในระบบ&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px; color: #334155;&quot;&gt;แสดงชื่อ, บริษัท, ตำแหน่ง, กลุ่มดวงดาว&lt;br&gt;ส่งรหัส OTP 6 หลักไปยังเบอร์มือถือ&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECFDF5;strokeColor=#06C755;strokeWidth=2;arcSize=15;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="530" width="300" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- ARROW: Decision -> 3A (YES) -->
+        <mxCell id="arrow_yes" value="&lt;b style=&quot;color: #065F46;&quot;&gt;✓ พบข้อมูลสมาชิก&lt;/b&gt;" style="endArrow=classic;html=1;rounded=1;strokeColor=#06C755;strokeWidth=3;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="decision" target="step3a">
+          <mxGeometry x="-0.2" y="10" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- STEP 4A: ENTER OTP -->
+        <mxCell id="step4a" value="&lt;font style=&quot;font-size: 14px; font-weight: 800; color: #1E2538;&quot;&gt;4A. กรอกรหัสยืนยัน OTP 6 หลัก&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 12px; font-weight: 800; color: #92400E;&quot;&gt;🔑 รหัสทดสอบ: 123456&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px; color: #64748B;&quot;&gt;ระบบตรวจสอบความถูกต้องทันที&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.5;arcSize=15;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="660" width="300" height="85" as="geometry" />
+        </mxCell>
+
+        <!-- ARROW: 3A -> 4A -->
+        <mxCell id="arrow3a_4a" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#06C755;strokeWidth=3;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step3a" target="step4a">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- STEP 5A: LINK SUCCESS -->
+        <mxCell id="step5a" value="&lt;font style=&quot;font-size: 15px; font-weight: 900; color: #FFFFFF;&quot;&gt;🎉 5A. ผูกบัญชีสำเร็จ &amp;amp; เข้าสู่ระบบ&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px; color: #E6FFFA;&quot;&gt;• ผูก LINE User ID เข้ากับ Profile สมาชิก&lt;br&gt;• ปรับ Role: MEMBER + ได้รับ 100 Coins / 300 XP&lt;br&gt;&lt;b style=&quot;color: #FEF08A;&quot;&gt;➔ นำเข้าสู่หน้าหลัก (/about)&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#10B981;strokeColor=none;arcSize=15;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="785" width="340" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- ARROW: 4A -> 5A -->
+        <mxCell id="arrow4a_5a" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#10B981;strokeWidth=3;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step4a" target="step5a">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+
+        <!-- ================= RIGHT BRANCH: NOT FOUND ================= -->
+        <!-- STEP 3B: REGISTRATION FORM -->
+        <mxCell id="step3b" value="&lt;font style=&quot;font-size: 14px; font-weight: 800; color: #9F1239;&quot;&gt;📝 3B. กรอกข้อมูลขออนุมัติใช้งาน&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px; color: #334155;&quot;&gt;ระบุชื่อ-สกุล, บริษัท, ตำแหน่ง, กลุ่มดาว&lt;br&gt;&lt;i style=&quot;color: #64748B;&quot;&gt;Auto Pre-fill ชื่อจาก LINE Profile&lt;/i&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF1F2;strokeColor=#FB7170;strokeWidth=2;arcSize=15;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="740" y="530" width="300" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- ARROW: Decision -> 3B (NO) -->
+        <mxCell id="arrow_no" value="&lt;b style=&quot;color: #9F1239;&quot;&gt;✕ ไม่พบเบอร์ในระบบ&lt;/b&gt;" style="endArrow=classic;html=1;rounded=1;strokeColor=#FB7170;strokeWidth=3;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="decision" target="step3b">
+          <mxGeometry x="-0.2" y="-10" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- STEP 4B: SUBMIT DB -->
+        <mxCell id="step4b" value="&lt;font style=&quot;font-size: 14px; font-weight: 800; color: #1E2538;&quot;&gt;4B. บันทึกข้อมูลลงฐานข้อมูล&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 12px; font-weight: 800; color: #D97706;&quot;&gt;⏳ กำหนด Role: PENDING&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px; color: #64748B;&quot;&gt;ส่งเรื่องเข้าตาราง profiles เพื่อรอตรวจสอบ&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.5;arcSize=15;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="740" y="660" width="300" height="85" as="geometry" />
+        </mxCell>
+
+        <!-- ARROW: 3B -> 4B -->
+        <mxCell id="arrow3b_4b" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#FB7170;strokeWidth=3;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step3b" target="step4b">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- STEP 5B: PENDING SCREEN -->
+        <mxCell id="step5b" value="&lt;font style=&quot;font-size: 15px; font-weight: 900; color: #FFFFFF;&quot;&gt;⏳ 5B. หน้าจอรอ Admin อนุมัติ&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px; color: #FFFBEB;&quot;&gt;• แสดง Timeline สถานะรอการตรวจสอบ&lt;br&gt;• มีปุ่มติดต่อทีมงานผ่าน LINE Official&lt;br&gt;&lt;b style=&quot;color: #FFFFFF;&quot;&gt;➔ Admin กด Approve เพื่อปลดล็อกสิทธิ์&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F59E0B;strokeColor=none;arcSize=15;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="720" y="785" width="340" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- ARROW: 4B -> 5B -->
+        <mxCell id="arrow4b_5b" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#F59E0B;strokeWidth=3;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step4b" target="step5b">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

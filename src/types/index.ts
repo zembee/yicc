@@ -1,4 +1,4 @@
-export type UserRole = 'MEMBER' | 'HOUSE_ADMIN' | 'SUPER_ADMIN';
+export type UserRole = 'MEMBER' | 'HOUSE_ADMIN' | 'SUPER_ADMIN' | 'PENDING';
 export type SubmissionStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 export type EventStatus = 'UPCOMING' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
 export type TransactionType = 'EVENT_ATTENDANCE' | 'MISSION_REWARD' | 'MANUAL_ADJUST' | 'REDEEM';
@@ -25,6 +25,7 @@ export interface UserProfile {
   house_id?: string;
   house?: House;
   role: UserRole;
+  approval_status?: 'APPROVED' | 'PENDING' | 'REJECTED';
   points_balance: number;
   xp_balance: number;
   attendance_rate: number;
