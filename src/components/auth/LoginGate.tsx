@@ -12,6 +12,7 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
   const router = useRouter();
   const { profile, loginWithCredentials, loginWithLine, isMockMode } = useLiffAuth();
   
+  const [mounted, setMounted] = useState(false);
   const [authenticated, setAuthenticated] = useState<boolean>(true);
   const [username, setUsername] = useState('yfti11');
   const [password, setPassword] = useState('yfti@11');
@@ -20,6 +21,7 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   React.useEffect(() => {
+    setMounted(true);
     if (typeof window !== 'undefined') {
       const session = localStorage.getItem('yfti_auth_session');
       if (session || profile) {
@@ -30,8 +32,8 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
     }
   }, [profile]);
 
-  // If user is accessing the registration page, allow them through immediately!
-  if (pathname === '/register') {
+  // If user is accessing the registration page or during SSR before mount, allow children through cleanly
+  if (pathname === '/register' || !mounted) {
     return <>{children}</>;
   }
 
@@ -92,6 +94,7 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
                   src="/YFTI-11-Logo.jpg"
                   alt="Young FTI Elite 11"
                   fill
+                  sizes="56px"
                   className="object-contain"
                   priority
                 />

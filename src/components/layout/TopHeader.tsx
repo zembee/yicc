@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLiffAuth } from '@/contexts/LiffContext';
 import Image from 'next/image';
 import { Search, Menu, X, Coins, Award, Shield, LogIn, User, ChevronDown, LogOut, ExternalLink, Settings } from 'lucide-react';
@@ -12,10 +12,15 @@ import { WebLoginModal } from './WebLoginModal';
 export const TopHeader: React.FC = () => {
   const pathname = usePathname();
   const { profile, isMockMode, logout } = useLiffAuth();
+  const [mounted, setMounted] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const navLinks = [
     { label: 'เกี่ยวกับเรา', href: '/about' },
@@ -83,7 +88,7 @@ export const TopHeader: React.FC = () => {
             </button>
 
             {/* Profile / Login Chip */}
-            {profile ? (
+            {mounted && profile ? (
               <div className="relative">
                 <button
                   onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}

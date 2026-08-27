@@ -25,6 +25,7 @@ export const Footer: React.FC = () => {
                   src="/YFTI-11-Logo.jpg"
                   alt="Young FTI 11 Logo"
                   fill
+                  sizes="48px"
                   className="object-contain"
                 />
               </div>
