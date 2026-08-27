@@ -24,52 +24,55 @@ import { useSearchParams } from 'next/navigation';
 
 const HOUSES_LIST = [
   { value: 'ALL', label: 'ดาว (ทั้งหมด)' },
-  { value: 'the_sun', label: 'The Sun' },
-  { value: 'earth', label: 'Earth' },
-  { value: 'jupiter', label: 'Jupiter' },
-  { value: 'the_mars', label: 'Mars' },
-  { value: 'mercury', label: 'Mercury' },
-  { value: 'neptune', label: 'Neptune' },
-  { value: 'saturn', label: 'Saturn' },
-  { value: 'uranus', label: 'Uranus' },
-  { value: 'venus', label: 'Venus' },
+  { value: 'The Sun', label: 'The Sun' },
+  { value: 'Earth', label: 'Earth' },
+  { value: 'Jupiter', label: 'Jupiter' },
+  { value: 'Mars', label: 'Mars' },
+  { value: 'Mercury', label: 'Mercury' },
+  { value: 'Neptune', label: 'Neptune' },
+  { value: 'Saturn', label: 'Saturn' },
+  { value: 'Uranus', label: 'Uranus' },
+  { value: 'Venus', label: 'Venus' },
 ];
 
 const INDUSTRY_GROUPS = [
   { value: 'ALL', label: 'กลุ่มอุตสาหกรรม (ทั้งหมด)' },
-  { value: 'agri', label: 'เกษตรและอุตสาหกรรมอาหาร' },
+  { value: 'agriculture_and_food_industrial', label: 'เกษตรและอุตสาหกรรมอาหาร' },
   { value: 'resources', label: 'ทรัพยากร' },
-  { value: 'tech', label: 'เทคโนโลยี' },
-  { value: 'finance', label: 'ธุรกิจการเงิน และการลงทุน' },
-  { value: 'service', label: 'บริการ' },
-  { value: 'industrial', label: 'สินค้าอุตสาหกรรม' },
-  { value: 'consumer', label: 'สินค้าอุปโภคบริโภค' },
-  { value: 'real_estate', label: 'อสังหาริมทรัพย์และก่อสร้าง' },
+  { value: 'technology', label: 'เทคโนโลยี' },
+  { value: 'financial_and_investment', label: 'ธุรกิจการเงิน และการลงทุน' },
+  { value: 'services', label: 'บริการ' },
+  { value: 'industrial_goods', label: 'สินค้าอุตสาหกรรม' },
+  { value: 'consumer_goods', label: 'สินค้าอุปโภคบริโภค' },
+  { value: 'real_estate_and_construction', label: 'อสังหาริมทรัพย์และก่อสร้าง' },
 ];
 
 const BUSINESS_CATEGORIES = [
   { value: 'ALL', label: 'หมวดธุรกิจ (ทั้งหมด)' },
-  { value: 'Software ICT', label: 'Software ICT' },
-  { value: 'การท่องเที่ยวและสันทนาการ', label: 'การท่องเที่ยวและสันทนาการ' },
-  { value: 'การพิมพ์ และบรรจุภัณฑ์', label: 'การพิมพ์ และบรรจุภัณฑ์' },
-  { value: 'การแพทย์', label: 'การแพทย์' },
-  { value: 'ขนส่งและโลจิสติกส์', label: 'ขนส่งและโลจิสติกส์' },
-  { value: 'ของใช้ในครัวเรือนและสำนักงาน', label: 'ของใช้ในครัวเรือนและสำนักงาน' },
-  { value: 'เครื่องสำอาง ยา และเครื่องมือแพทย์', label: 'เครื่องสำอาง ยา และเครื่องมือแพทย์' },
-  { value: 'ชิ้นส่วนอิเล็กทรอนิกส์', label: 'ชิ้นส่วนอิเล็กทรอนิกส์' },
-  { value: 'ธุรกิจการเกษตร', label: 'ธุรกิจการเกษตร' },
-  { value: 'ธุรกิจการเงิน และการลงทุน', label: 'ธุรกิจการเงิน และการลงทุน' },
-  { value: 'บริการเฉพาะกิจ', label: 'บริการเฉพาะกิจ' },
-  { value: 'บริการรับเหมาก่อสร้าง', label: 'บริการรับเหมาก่อสร้าง' },
-  { value: 'ปิโตรเคมีและเคมีภัณฑ์', label: 'ปิโตรเคมีและเคมีภัณฑ์' },
-  { value: 'พลังงานและสาธารณูปโภค', label: 'พลังงานและสาธารณูปโภค' },
-  { value: 'พัฒนาอสังหาริมทรัพย์', label: 'พัฒนาอสังหาริมทรัพย์' },
-  { value: 'พาณิชย์', label: 'พาณิชย์' },
-  { value: 'แฟชั่น', label: 'แฟชั่น eg. เครื่องนุ่งห่ม รองเท้า' },
-  { value: 'ยานยนต์', label: 'ยานยนต์ รวมถึง ชิ้นส่วนและอะไหล่' },
-  { value: 'วัสดุก่อสร้าง', label: 'วัสดุก่อสร้าง' },
-  { value: 'อาหารและเครื่องดื่ม', label: 'อาหารและเครื่องดื่ม' },
-  { value: 'อื่นๆ', label: 'อื่นๆ' },
+  { value: 'software_ict', label: 'Software ICT' },
+  { value: 'tourism_and_recreation', label: 'การท่องเที่ยวและสันทนาการ' },
+  { value: 'printing_and_packaging', label: 'การพิมพ์ และบรรจุภัณฑ์' },
+  { value: 'medicine', label: 'การแพทย์' },
+  { value: 'transportation_and_logistics', label: 'ขนส่งและโลจิสติกส์' },
+  { value: 'household_and_office_supplies', label: 'ของใช้ในครัวเรือนและสำนักงาน' },
+  { value: 'cosmetics_medicines_medical_equipment', label: 'เครื่องสำอาง ยา และเครื่องมือแพทย์' },
+  { value: 'electronic_parts', label: 'ชิ้นส่วนอิเล็กทรอนิกส์' },
+  { value: 'agriculture_business', label: 'ธุรกิจการเกษตร' },
+  { value: 'financial_and_investment', label: 'ธุรกิจการเงิน และการลงทุน' },
+  { value: 'special_services', label: 'บริการเฉพาะกิจ' },
+  { value: 'construction_contracting_services', label: 'บริการรับเหมาก่อสร้าง' },
+  { value: 'petrochemicals_and_chemicals', label: 'ปิโตรเคมีและเคมีภัณฑ์' },
+  { value: 'energy_and_utilities', label: 'พลังงานและสาธารณูปโภค' },
+  { value: 'real_estate_development', label: 'พัฒนาอสังหาริมทรัพย์' },
+  { value: 'commerce', label: 'พาณิชย์' },
+  { value: 'fashion', label: 'แฟชั่น eg. เครื่องนุ่งห่ม รองเท้า' },
+  { value: 'automative', label: 'ยานยนต์ รวมถึง ชิ้นส่วนและอะไหล่ยานยนต์' },
+  { value: 'instruction_materials', label: 'วัสดุก่อสร้าง' },
+  { value: 'industial_materials_machinery', label: 'วัสดุอุตสาหกรรมและเครื่องจักร' },
+  { value: 'metal_products', label: 'เหล็ก และ ผลิตภัณฑ์โลหะ' },
+  { value: 'mine', label: 'เหมืองแร่' },
+  { value: 'food_and_baverage', label: 'อาหารและเครื่องดื่ม รวมถึง อาหารสัตว์เลี้ยง' },
+  { value: 'others', label: 'อื่นๆ' },
 ];
 
 const COHORT_LIST = [
@@ -96,63 +99,105 @@ function DirectoryContent() {
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [selectedCohort, setSelectedCohort] = useState('ALL');
 
-  // Load from Supabase DB on mount
+  // Load from Supabase DB on mount (with fallback to 122 participants)
   useEffect(() => {
     async function loadData() {
       const data = await getParticipants();
-      setParticipants(data);
+      if (data && data.length > 0) {
+        setParticipants(data);
+      }
     }
     loadData();
   }, []);
 
   useEffect(() => {
-    const indParam = searchParams?.get('industry');
+    const indParam = searchParams?.get('industry') || searchParams?.get('q') || searchParams?.get('search');
     if (indParam) {
       setSearchQuery(indParam);
     }
+    const houseParam = searchParams?.get('house') || searchParams?.get('star');
+    if (houseParam) {
+      setSelectedHouse(houseParam);
+    }
   }, [searchParams]);
-
-  const filteredParticipants = useMemo(() => {
-    return participants.filter((p) => {
-      const q = searchQuery.toLowerCase().trim();
-      const matchesSearch =
-        !q ||
-        p.name_thai.toLowerCase().includes(q) ||
-        (p.nickname_eng && p.nickname_eng.toLowerCase().includes(q)) ||
-        (p.fullname_eng && p.fullname_eng.toLowerCase().includes(q)) ||
-        (p.company_name_thai && p.company_name_thai.toLowerCase().includes(q)) ||
-        (p.company_name_eng && p.company_name_eng.toLowerCase().includes(q)) ||
-        (p.industrial_groups_label && p.industrial_groups_label.toLowerCase().includes(q)) ||
-        (p.business_categories_label && p.business_categories_label.toLowerCase().includes(q));
-
-      const matchesHouse =
-        selectedHouse === 'ALL' ||
-        (p.star_group && p.star_group.toLowerCase() === selectedHouse.toLowerCase()) ||
-        (p.star_group_label && p.star_group_label.toLowerCase().includes(selectedHouse.toLowerCase()));
-
-      const matchesIndustry =
-        selectedIndustry === 'ALL' ||
-        (p.industrial_groups && p.industrial_groups.toLowerCase().includes(selectedIndustry.toLowerCase())) ||
-        (p.industrial_groups_label && p.industrial_groups_label.toLowerCase().includes(selectedIndustry.toLowerCase()));
-
-      const matchesCategory =
-        selectedCategory === 'ALL' ||
-        (p.business_categories && p.business_categories.toLowerCase().includes(selectedCategory.toLowerCase())) ||
-        (p.business_categories_label && p.business_categories_label.toLowerCase().includes(selectedCategory.toLowerCase()));
-
-      const matchesCohort =
-        selectedCohort === 'ALL' ||
-        (p.gen && p.gen.toLowerCase() === selectedCohort.toLowerCase()) ||
-        (p.gen_label && p.gen_label.toLowerCase().includes(selectedCohort.toLowerCase()));
-
-      return matchesSearch && matchesHouse && matchesIndustry && matchesCategory && matchesCohort;
-    });
-  }, [participants, searchQuery, selectedHouse, selectedIndustry, selectedCategory, selectedCohort]);
 
   const stripHtml = (html?: string) => {
     if (!html) return '';
     return html.replace(/<[^>]*>?/gm, '').replace(/&[a-z]+;/gi, ' ').trim();
   };
+
+  const filteredParticipants = useMemo(() => {
+    return participants.filter((p) => {
+      // 1. Text Search (Multi-token full text matching across all fields)
+      const q = searchQuery.toLowerCase().trim();
+      const tokens = q.split(/\s+/).filter(Boolean);
+
+      const searchableText = [
+        p.name_thai,
+        p.nickname_eng,
+        p.fullname_eng,
+        p.company_name_thai,
+        p.company_name_eng,
+        p.company_prefix,
+        p.business_position,
+        stripHtml(p.company_description),
+        p.company_address,
+        p.tel_number,
+        p.comp_tel_number,
+        p.star_group_label,
+        p.star_group,
+        p.industrial_groups_label,
+        p.industrial_groups,
+        p.business_categories_label,
+        p.business_categories,
+        p.gen_label,
+        p.gen,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+
+      const matchesSearch = tokens.length === 0 || tokens.every((token) => searchableText.includes(token));
+
+      // 2. House / Star Group matching (robust space/hyphen/underscore insensitive)
+      const matchesHouse = selectedHouse === 'ALL' || (() => {
+        const target = selectedHouse.toLowerCase().replace(/[\s\-_]/g, '');
+        const pStar = (p.star_group || '').toLowerCase().replace(/[\s\-_]/g, '');
+        const pStarLabel = (p.star_group_label || '').toLowerCase().replace(/[\s\-_]/g, '');
+        return (pStar && (pStar.includes(target) || target.includes(pStar))) ||
+               (pStarLabel && (pStarLabel.includes(target) || target.includes(pStarLabel)));
+      })();
+
+      // 3. Industry Group matching
+      const matchesIndustry = selectedIndustry === 'ALL' || (() => {
+        const target = selectedIndustry.toLowerCase().replace(/[\s\-_]/g, '');
+        const pGroup = (p.industrial_groups || '').toLowerCase().replace(/[\s\-_]/g, '');
+        const pGroupLabel = (p.industrial_groups_label || '').toLowerCase().replace(/[\s\-_]/g, '');
+        return (pGroup && (pGroup.includes(target) || target.includes(pGroup))) ||
+               (pGroupLabel && (pGroupLabel.includes(target) || target.includes(pGroupLabel)));
+      })();
+
+      // 4. Business Category matching
+      const matchesCategory = selectedCategory === 'ALL' || (() => {
+        const target = selectedCategory.toLowerCase().replace(/[\s\-_]/g, '');
+        const pCat = (p.business_categories || '').toLowerCase().replace(/[\s\-_]/g, '');
+        const pCatLabel = (p.business_categories_label || '').toLowerCase().replace(/[\s\-_]/g, '');
+        return (pCat && (pCat.includes(target) || target.includes(pCat))) ||
+               (pCatLabel && (pCatLabel.includes(target) || target.includes(pCatLabel)));
+      })();
+
+      // 5. Cohort Gen matching
+      const matchesCohort = selectedCohort === 'ALL' || (() => {
+        const target = selectedCohort.toLowerCase().replace(/[\s\-_]/g, '');
+        const pGen = (p.gen || '').toLowerCase().replace(/[\s\-_]/g, '');
+        const pGenLabel = (p.gen_label || '').toLowerCase().replace(/[\s\-_]/g, '');
+        return (pGen && (pGen.includes(target) || target.includes(pGen))) ||
+               (pGenLabel && (pGenLabel.includes(target) || target.includes(pGenLabel)));
+      })();
+
+      return matchesSearch && matchesHouse && matchesIndustry && matchesCategory && matchesCohort;
+    });
+  }, [participants, searchQuery, selectedHouse, selectedIndustry, selectedCategory, selectedCohort]);
 
   return (
     <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 space-y-8 sm:space-y-10 pb-16">

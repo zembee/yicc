@@ -15,25 +15,46 @@ interface GlobalSearchModalProps {
 export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, onClose, onSelectParticipant }) => {
   const [query, setQuery] = useState('');
 
+  const stripHtml = (html?: string) => {
+    if (!html) return '';
+    return html.replace(/<[^>]*>?/gm, '').replace(/&[a-z]+;/gi, ' ').trim();
+  };
+
   const searchResults = useMemo(() => {
     if (!query.trim()) return { members: [], events: [] };
     const q = query.toLowerCase().trim();
+    const tokens = q.split(/\s+/).filter(Boolean);
 
-    const members = yftiParticipants.filter(p => 
-      p.name_thai.toLowerCase().includes(q) ||
-      (p.nickname_eng && p.nickname_eng.toLowerCase().includes(q)) ||
-      (p.fullname_eng && p.fullname_eng.toLowerCase().includes(q)) ||
-      (p.company_name_thai && p.company_name_thai.toLowerCase().includes(q)) ||
-      (p.company_name_eng && p.company_name_eng.toLowerCase().includes(q)) ||
-      (p.industrial_groups_label && p.industrial_groups_label.toLowerCase().includes(q)) ||
-      (p.star_group_label && p.star_group_label.toLowerCase().includes(q))
-    );
+    const members = yftiParticipants.filter((p) => {
+      const searchableText = [
+        p.name_thai,
+        p.nickname_eng,
+        p.fullname_eng,
+        p.company_name_thai,
+        p.company_name_eng,
+        p.company_prefix,
+        p.business_position,
+        stripHtml(p.company_description),
+        p.company_address,
+        p.star_group_label,
+        p.star_group,
+        p.industrial_groups_label,
+        p.industrial_groups,
+        p.business_categories_label,
+        p.business_categories,
+        p.gen_label,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
 
-    const events = mockEvents.filter(e =>
-      e.title.toLowerCase().includes(q) ||
-      e.description.toLowerCase().includes(q) ||
-      e.location_name.toLowerCase().includes(q)
-    );
+      return tokens.every((t) => searchableText.includes(t));
+    });
+
+    const events = mockEvents.filter((e) => {
+      const eventText = `${e.title} ${e.description} ${e.location_name}`.toLowerCase();
+      return tokens.every((t) => eventText.includes(t));
+    });
 
     return { members: members.slice(0, 10), events: events.slice(0, 5) };
   }, [query]);
