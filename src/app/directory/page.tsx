@@ -12,7 +12,10 @@ import {
   Briefcase, 
   MapPin, 
   X, 
+  ChevronLeft,
   ChevronRight, 
+  ChevronsLeft,
+  ChevronsRight,
   Filter, 
   User, 
   Share2, 
@@ -90,6 +93,8 @@ const COHORT_LIST = [
   { value: 'yfti_1', label: 'YFTI 1' },
 ];
 
+const PAGE_SIZE_OPTIONS = [12, 24, 48, 96];
+
 function DirectoryContent() {
   const searchParams = useSearchParams();
   const [participants, setParticipants] = useState<Participant[]>(yftiParticipants);
@@ -98,6 +103,10 @@ function DirectoryContent() {
   const [selectedIndustry, setSelectedIndustry] = useState('ALL');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [selectedCohort, setSelectedCohort] = useState('ALL');
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(24);
 
   // Load from Supabase DB on mount (with fallback to 122 participants)
   useEffect(() => {
@@ -120,6 +129,11 @@ function DirectoryContent() {
       setSelectedHouse(houseParam);
     }
   }, [searchParams]);
+
+  // Reset to page 1 whenever any filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedHouse, selectedIndustry, selectedCategory, selectedCohort, pageSize]);
 
   const stripHtml = (html?: string) => {
     if (!html) return '';
@@ -199,19 +213,61 @@ function DirectoryContent() {
     });
   }, [participants, searchQuery, selectedHouse, selectedIndustry, selectedCategory, selectedCohort]);
 
+  // Pagination calculations
+  const totalItems = filteredParticipants.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, totalItems);
+
+  const paginatedParticipants = useMemo(() => {
+    return filteredParticipants.slice(startIndex, endIndex);
+  }, [filteredParticipants, startIndex, endIndex]);
+
+  const goToPage = (page: number) => {
+    const clamped = Math.max(1, Math.min(page, totalPages));
+    setCurrentPage(clamped);
+    const resultsElement = document.getElementById('directory-results');
+    if (resultsElement) {
+      resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  // Generate page numbers with ellipsis
+  const paginationRange = useMemo(() => {
+    const delta = 2;
+    const range: (number | string)[] = [];
+    const left = Math.max(2, currentPage - delta);
+    const right = Math.min(totalPages - 1, currentPage + delta);
+
+    range.push(1);
+    if (left > 2) {
+      range.push('...');
+    }
+    for (let i = left; i <= right; i++) {
+      range.push(i);
+    }
+    if (right < totalPages - 1) {
+      range.push('...');
+    }
+    if (totalPages > 1) {
+      range.push(totalPages);
+    }
+    return range;
+  }, [currentPage, totalPages]);
+
   return (
     <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 space-y-8 sm:space-y-10 pb-16">
       {/* 1. Header Title */}
       <div className="text-center space-y-2 pt-2">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold mb-1">
           <Database className="w-3.5 h-3.5" />
-          <span>เชื่อมต่อฐานข้อมูล Supabase ({participants.length} ท่าน)</span>
+          <span>เชื่อมต่อฐานข้อมูลสมาชิก ({participants.length.toLocaleString()} ท่าน)</span>
         </div>
         <h1 className="text-2xl sm:text-4xl font-extrabold text-[#1E2538] tracking-tight">
           ธุรกิจภายในโครงการเรา
         </h1>
         <p className="text-xs sm:text-sm text-slate-500 max-w-xl mx-auto">
-          ทำเนียบสมาชิกและธุรกิจในเครือข่าย Young FTI ELITE 11 ทั้ง 122 ท่าน (คลิกเพื่อดูหน้าประวัติเต็ม)
+          ทำเนียบสมาชิกและธุรกิจในเครือข่าย Young FTI ELITE (คลิกเพื่อดูหน้าประวัติเต็ม)
         </p>
       </div>
 
@@ -292,7 +348,7 @@ function DirectoryContent() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="ค้นหาบริษัท หรือชื่อผู้เข้าร่วม..."
+              placeholder="ค้นหาบริษัท, ชื่อผู้เข้าร่วม, ตำแหน่ง, รายละเอียดธุรกิจ, จังหวัด..."
               className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-medium text-slate-800 placeholder-slate-400 outline-none focus:ring-2 focus:ring-[#1E2538] focus:bg-white transition"
             />
             {searchQuery && (
@@ -313,28 +369,61 @@ function DirectoryContent() {
           </button>
         </div>
 
-        {/* Active Filters count */}
-        <div className="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
-          <span>พบสมาชิกทั้งหมด <strong className="text-[#1E2538]">{filteredParticipants.length}</strong> ท่าน</span>
-          {(selectedHouse !== 'ALL' || selectedIndustry !== 'ALL' || selectedCategory !== 'ALL' || selectedCohort !== 'ALL' || searchQuery) && (
-            <button
-              onClick={() => {
-                setSearchQuery('');
-                setSelectedHouse('ALL');
-                setSelectedIndustry('ALL');
-                setSelectedCategory('ALL');
-                setSelectedCohort('ALL');
-              }}
-              className="text-[#FB7170] hover:underline font-bold text-xs"
-            >
-              ล้างตัวกรองทั้งหมด
-            </button>
-          )}
+        {/* Active Filters count & Page Size Selector */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-500 pt-2 border-t border-slate-100">
+          <div className="flex items-center gap-3 flex-wrap">
+            <span>
+              พบสมาชิกทั้งหมด <strong className="text-[#1E2538]">{totalItems.toLocaleString()}</strong> ท่าน
+              {totalItems > 0 && (
+                <span className="text-slate-400 ml-1">
+                  (แสดง {startIndex + 1} - {endIndex})
+                </span>
+              )}
+            </span>
+
+            {(selectedHouse !== 'ALL' || selectedIndustry !== 'ALL' || selectedCategory !== 'ALL' || selectedCohort !== 'ALL' || searchQuery) && (
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedHouse('ALL');
+                  setSelectedIndustry('ALL');
+                  setSelectedCategory('ALL');
+                  setSelectedCohort('ALL');
+                }}
+                className="text-[#FB7170] hover:underline font-bold text-xs"
+              >
+                ล้างตัวกรองทั้งหมด
+              </button>
+            )}
+          </div>
+
+          {/* Page Size Selector */}
+          <div className="flex items-center gap-2 self-end sm:self-auto">
+            <span className="text-slate-500 font-medium">แสดงหน้าละ:</span>
+            <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg">
+              {PAGE_SIZE_OPTIONS.map((size) => (
+                <button
+                  key={size}
+                  onClick={() => setPageSize(size)}
+                  className={`px-2 py-1 rounded-md text-[11px] font-bold transition-all ${
+                    pageSize === size
+                      ? 'bg-[#1E2538] text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* 3. 122 Members Grid (Navigates to dedicated page when clicked) */}
-      {filteredParticipants.length === 0 ? (
+      {/* Target anchor for smooth scroll on page change */}
+      <div id="directory-results" className="scroll-mt-6" />
+
+      {/* 3. Members Grid (Navigates to dedicated page when clicked) */}
+      {paginatedParticipants.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 p-8 space-y-3">
           <User className="w-12 h-12 mx-auto text-slate-300" />
           <h3 className="text-base font-bold text-slate-700">ไม่พบสมาชิกที่ตรงกับเงื่อนไข</h3>
@@ -343,82 +432,171 @@ function DirectoryContent() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredParticipants.map((member) => (
-            <Link
-              key={member.id}
-              href={`/yfti_participants/${member.id}`}
-              className="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-card hover:shadow-card-hover transition-all duration-300 flex flex-col justify-between cursor-pointer group hover:-translate-y-1"
-            >
-              {/* Member Portrait */}
-              <div className="relative aspect-[4/4.5] overflow-hidden bg-slate-100">
-                <img
-                  src={member.profile_picture_url || 'https://yfticonnect.com/wp-content/uploads/2025/07/YFTI-11-Logo.webp'}
-                  alt={member.name_thai}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + member.name_thai;
-                  }}
-                />
-                {member.star_group_label && (
-                  <span className="absolute top-3 right-3 px-2.5 py-1 bg-[#1E2538]/85 backdrop-blur-sm text-white text-[10px] font-bold rounded-full border border-white/20">
-                    {member.star_group_label}
-                  </span>
-                )}
-              </div>
-
-              {/* Member Information */}
-              <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
-                <div className="space-y-1.5">
-                  <div className="flex items-baseline gap-1.5 flex-wrap">
-                    <h3 className="font-extrabold text-sm sm:text-base text-[#1E2538] group-hover:text-[#FB7170] transition-colors">
-                      {member.name_thai}
-                    </h3>
-                    {member.nickname_eng && (
-                      <span className="text-xs font-bold text-[#FB7170]">({member.nickname_eng})</span>
-                    )}
-                  </div>
-
-                  {member.company_name_thai && (
-                    <p className="text-xs font-bold text-slate-700 flex items-center gap-1.5 truncate">
-                      <Building2 className="w-3.5 h-3.5 text-[#FB7170] shrink-0" />
-                      <span className="truncate">{member.company_name_thai}</span>
-                    </p>
-                  )}
-
-                  {member.company_description && (
-                    <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed pt-1">
-                      {stripHtml(member.company_description)}
-                    </p>
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {paginatedParticipants.map((member) => (
+              <Link
+                key={member.id}
+                href={`/yfti_participants/${member.id}`}
+                className="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-card hover:shadow-card-hover transition-all duration-300 flex flex-col justify-between cursor-pointer group hover:-translate-y-1"
+              >
+                {/* Member Portrait */}
+                <div className="relative aspect-[4/4.5] overflow-hidden bg-slate-100">
+                  <img
+                    src={member.profile_picture_url || 'https://yfticonnect.com/wp-content/uploads/2025/07/YFTI-11-Logo.webp'}
+                    alt={member.name_thai}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + member.name_thai;
+                    }}
+                  />
+                  {member.star_group_label && (
+                    <span className="absolute top-3 right-3 px-2.5 py-1 bg-[#1E2538]/85 backdrop-blur-sm text-white text-[10px] font-bold rounded-full border border-white/20">
+                      {member.star_group_label}
+                    </span>
                   )}
                 </div>
 
-                {/* Badges / Tags */}
-                <div className="space-y-2 pt-3 border-t border-slate-100">
-                  <div className="flex flex-wrap gap-1">
-                    {member.industrial_groups_label && (
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 truncate max-w-full">
-                        {member.industrial_groups_label}
-                      </span>
+                {/* Member Information */}
+                <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h3 className="font-extrabold text-sm sm:text-base text-[#1E2538] group-hover:text-[#FB7170] transition-colors">
+                        {member.name_thai}
+                      </h3>
+                      {member.nickname_eng && (
+                        <span className="text-xs font-bold text-[#FB7170]">({member.nickname_eng})</span>
+                      )}
+                    </div>
+
+                    {member.company_name_thai && (
+                      <p className="text-xs font-bold text-slate-700 flex items-center gap-1.5 truncate">
+                        <Building2 className="w-3.5 h-3.5 text-[#FB7170] shrink-0" />
+                        <span className="truncate">{member.company_name_thai}</span>
+                      </p>
                     )}
-                    {member.business_categories_label && (
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-rose-50 text-[#FB7170] truncate max-w-full">
-                        {member.business_categories_label}
-                      </span>
+
+                    {member.company_description && (
+                      <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed pt-1">
+                        {stripHtml(member.company_description)}
+                      </p>
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between text-xs font-bold text-[#1E2538] group-hover:text-[#FB7170] pt-1">
-                    <span>ดูโปรไฟล์เต็ม</span>
-                    <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                  {/* Badges / Tags */}
+                  <div className="space-y-2 pt-3 border-t border-slate-100">
+                    <div className="flex flex-wrap gap-1">
+                      {member.industrial_groups_label && (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 truncate max-w-full">
+                          {member.industrial_groups_label}
+                        </span>
+                      )}
+                      {member.business_categories_label && (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-rose-50 text-[#FB7170] truncate max-w-full">
+                          {member.business_categories_label}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between text-xs font-bold text-[#1E2538] group-hover:text-[#FB7170] pt-1">
+                      <span>ดูโปรไฟล์เต็ม</span>
+                      <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                    </div>
                   </div>
                 </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* 4. Pagination Controls Bar */}
+          {totalPages > 1 && (
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
+              {/* Left: Summary */}
+              <div className="text-xs text-slate-500 font-medium">
+                หน้า <strong className="text-[#1E2538] font-bold">{currentPage}</strong> จากทั้งหมด <strong className="text-[#1E2538] font-bold">{totalPages}</strong> หน้า
+                <span className="text-slate-400 ml-1.5">
+                  ({totalItems.toLocaleString()} รายการ)
+                </span>
               </div>
-            </Link>
-          ))}
-        </div>
+
+              {/* Right: Page Buttons */}
+              <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap justify-center">
+                {/* First Page */}
+                <button
+                  onClick={() => goToPage(1)}
+                  disabled={currentPage === 1}
+                  title="หน้าแรก"
+                  className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:pointer-events-none transition"
+                >
+                  <ChevronsLeft className="w-4 h-4" />
+                </button>
+
+                {/* Previous Page */}
+                <button
+                  onClick={() => goToPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  title="หน้าก่อนหน้า"
+                  className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:pointer-events-none transition"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+
+                {/* Number Chips & Ellipsis */}
+                {paginationRange.map((page, idx) => {
+                  if (page === '...') {
+                    return (
+                      <span
+                        key={`ellipsis-${idx}`}
+                        className="px-2 py-1.5 text-xs text-slate-400 font-bold"
+                      >
+                        ...
+                      </span>
+                    );
+                  }
+
+                  const pageNum = page as number;
+                  const isActive = pageNum === currentPage;
+
+                  return (
+                    <button
+                      key={`page-${pageNum}`}
+                      onClick={() => goToPage(pageNum)}
+                      className={`min-w-[36px] h-9 px-2 rounded-xl text-xs font-bold transition-all ${
+                        isActive
+                          ? 'bg-[#1E2538] text-white shadow-md shadow-[#1E2538]/20 scale-105'
+                          : 'border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+
+                {/* Next Page */}
+                <button
+                  onClick={() => goToPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  title="หน้าถัดไป"
+                  className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:pointer-events-none transition"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+
+                {/* Last Page */}
+                <button
+                  onClick={() => goToPage(totalPages)}
+                  disabled={currentPage === totalPages}
+                  title="หน้าสุดท้าย"
+                  className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:pointer-events-none transition"
+                >
+                  <ChevronsRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

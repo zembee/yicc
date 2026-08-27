@@ -18,11 +18,11 @@ export default function EventsPage() {
     <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 space-y-8 sm:space-y-10 pb-16">
       {/* Header Info */}
       <div className="text-center space-y-2 pt-2">
-        <h1 className="text-2xl sm:text-4xl font-extrabold text-[#1E2538] tracking-tight">
-          กิจกรรมโครงการ
+        <h1 className="text-3xl sm:text-5xl font-extrabold text-[#212542] tracking-tight">
+          กิจกรรมในโครงการ
         </h1>
         <p className="text-xs sm:text-sm text-slate-500 max-w-xl mx-auto">
-          ตารางอบรม สัมมนาเชิงปฏิบัติการ ทริปกระชับมิตร และการเช็คชื่อเข้าร่วมกิจกรรม
+          ตารางอบรม สัมมนาเชิงปฏิบัติการ ทริปกระชับมิตร และการศึกษาดูงานโครงการ Young FTI ELITE
         </p>
       </div>
 

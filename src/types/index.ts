@@ -42,6 +42,12 @@ export interface EventItem {
   reward_xp: number;
   is_mandatory: boolean;
   status: EventStatus;
+  image_url?: string;
+  slug?: string;
+  published_date_text?: string;
+  author_name?: string;
+  gallery_images?: string[];
+  content_paragraphs?: string[];
   isCheckedIn?: boolean;
   isRegisteredForEvent?: boolean;
 }
