@@ -13,7 +13,18 @@ export async function getParticipants(): Promise<Participant[]> {
       .order('id', { ascending: false });
 
     if (!error && data && data.length > 0) {
-      return data as Participant[];
+      return data.map((dbP: any) => {
+        const localP = yftiParticipants.find((lp) => String(lp.id) === String(dbP.id));
+        return {
+          ...dbP,
+          companies: dbP.raw_meta?.companies || localP?.companies || undefined,
+          company_prefix: dbP.raw_meta?.company_prefix || localP?.company_prefix || 'บริษัท จำกัด',
+          website_url: dbP.raw_meta?.website_url || localP?.website_url,
+          facebook_url: dbP.raw_meta?.facebook_url || localP?.facebook_url,
+          line_id: dbP.raw_meta?.line_id || localP?.line_id,
+          product_banner_url: dbP.raw_meta?.product_banner_url || localP?.product_banner_url
+        } as Participant;
+      });
     }
   } catch (err) {
     console.warn('Supabase DB fetch failed, falling back to local dataset:', err);

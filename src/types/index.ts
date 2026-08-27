@@ -77,6 +77,26 @@ export interface MissionSubmission {
   created_at: string;
 }
 
+export interface CompanyInfo {
+  company_prefix?: string;
+  company_name_thai?: string;
+  company_name_eng?: string;
+  founded_year?: string;
+  business_position?: string;
+  industrial_groups?: string;
+  industrial_groups_label?: string;
+  business_categories?: string;
+  business_categories_label?: string;
+  company_description?: string;
+  company_address?: string;
+  comp_tel_number?: string;
+  company_logo_url?: string;
+  website_url?: string;
+  facebook_url?: string;
+  line_id?: string;
+  product_banner_url?: string;
+}
+
 export interface Participant {
   id: number | string;
   slug?: string;
@@ -84,6 +104,7 @@ export interface Participant {
   nickname_eng: string;
   fullname_eng: string;
   tel_number?: string;
+  email?: string;
   gen?: string;
   gen_label?: string;
   star_group?: string;
@@ -102,6 +123,11 @@ export interface Participant {
   comp_tel_number?: string;
   profile_picture_url?: string;
   company_logo_url?: string;
+  website_url?: string;
+  facebook_url?: string;
+  line_id?: string;
+  product_banner_url?: string;
+  companies?: CompanyInfo[];
   raw_meta?: any;
 }
 

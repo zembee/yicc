@@ -3357,7 +3357,46 @@
     "profile_picture_id": "1535",
     "company_logo_id": "1538",
     "profile_picture_url": "/images/participants/p_3038.jpg",
-    "company_logo_url": "/images/logos/logo_3038.png"
+    "company_logo_url": "https://yfticonnect.com/wp-content/uploads/2026/02/logo-glovetex-01-safety-week-011-Kanokwan-Wongchai.png",
+    "companies": [
+      {
+        "company_prefix": "บริษัท จำกัด",
+        "company_name_thai": "บริษัท กลัฟเท็กซ์ จำกัด",
+        "company_name_eng": "Glovetex",
+        "founded_year": "2543",
+        "business_position": "ผู้จัดการฝ่ายการตลาด",
+        "industrial_groups": "consumer_goods",
+        "industrial_groups_label": "สินค้าอุปโภคบริโภค",
+        "business_categories": "household_and_office_supplies",
+        "business_categories_label": "ของใช้ในครัวเรือนและสำนักงาน",
+        "company_description": "<p>บริษัท กลัฟเท็กซ์ จำกัด เราเป็นบริษัทชั้นนำของประเทศไทย ดำเนินงานมากว่า 25 ปี ในการผลิตและจัดจำหน่ายถุงมือ และอุปกรณ์ป้องกันภัยส่วนบุคคล (Personal Protective Equipment : PPE) เพื่อความปลอดภัยในการปฎิบัติงานในสถานประกอบการต่างๆ และเพื่อใช้ในชีวิตประจำวัน ภายใต้ตราสินค้า Microtex, Paragon, Indiana, ตรามังกร ฯลฯ เพื่อจำหน่ายให้กับลูกค้าและผู้ใช้งานทั้งในและต่างประเทศ ผ่านช่องทางการจัดจำหน่ายที่เรามีครบทุกช่องทาง (Multi Channel Distribution) ซึ่งได้แก่ industrial Business to Business, Modern Trade, Retails Trade, Traditional Trade และ E-Commerce.</p>\n<p>ด้วยความเชี่ยวชาญในธุรกิจและความสามารถในการตอบสนองความต้องการของลูกค้า รวมถึงการมีช่องทางการจัดจำหน่ายที่แข็งแกร่ง เราได้รับความไว้วางใจให้เป็นผู้แทนจำหน่าย ได้สิทธิ์เพื่อผลิตสินค้าเพื่อจำหน่าย ผลิตสินค้าในรูปแบบ ODM และได้รับความร่วมมือด้านการพัฒนาผลิตภัณฑ์ กับเจ้าของสินค้า/ตราสินค้าชั้นนำของโลก อาทิ Ansell, TOWA, Honeywell, No-Cry, Kimberly-Clark, ATG, Dupont-Kevlar, TEIJIN ฯลฯ</p>\n",
+        "company_address": "บริษัท กลัฟเท็กซ์ จำกัด สำนักงานใหญ่\n11 หมู่ 5 ซ.คลองมะเดื่อ 17 ถ.เศรษฐกิจ ต.ดอนไก่ดี อ.กระทุ่มแบน จ.สมุทรสาคร 74110\n\nสํานักงานขายต่างประเทศ\nITF Tower ชั่น 15 ห้อง 140/30 ถนนสีลม\nแขวงสุริยวงศ์ เขตบางรัก\nกรุงเทพมหานคร 10500\n\nบริษัท กลัฟเท็กซ์ จำกัด สาขาชลบุรี\n333/9-10 หมู่ที่ 3 ตำบลบ่อวิน อำเภอศรีราชา ชลบุรี 20230",
+        "comp_tel_number": "",
+        "company_logo_url": "https://yfticonnect.com/wp-content/uploads/2026/02/logo-glovetex-01-safety-week-011-Kanokwan-Wongchai.png",
+        "website_url": "www.glovetex.com",
+        "facebook_url": "Glovetex.Safety",
+        "line_id": "@glovetex",
+        "product_banner_url": "https://yfticonnect.com/wp-content/uploads/2026/02/ปก-01-01-Kanokwan-Wongchai-scaled.jpg"
+      },
+      {
+        "company_prefix": "บริษัท จำกัด",
+        "company_name_thai": "บริษัท พีพีอี เมท จำกัด",
+        "company_name_eng": "PPE MATE",
+        "founded_year": "2563",
+        "business_position": "ผู้จัดการฝ่ายการตลาด",
+        "industrial_groups": "consumer_goods",
+        "industrial_groups_label": "สินค้าอุปโภคบริโภค",
+        "business_categories": "other",
+        "business_categories_label": "อื่นๆ",
+        "company_description": "<p>PPEMATE ร้านค้าออนไลน์ จำหน่ายสินค้าเพื่อ ความปลอดภัยในการทำงานและสุขอนามัย เพื่อใช้ในชีวิตประจำวัน มุ่งจำหน่ายสินค้าและบริการให้กับลูกค้าโรงงานอุตสาหกรรมและขายตรงเข้าสู่ธุรกิจ เพื่อตอบสนองความต้องการของลูกค้าทีต้องการสินค้าในปริมาณไม่มาก</p>\n",
+        "company_address": "บริษัท พีพีอี เมท จำกัด\n88 หมู่ 5 ตำบลดอนไก่ดี อำเภอกระทุ่มแบน\nจังหวัดสมุทรสาคร รหัสไปรษณีย์ 74110",
+        "comp_tel_number": "",
+        "company_logo_url": "https://yfticonnect.com/wp-content/uploads/2026/02/600x600px-Kanokwan-Wongchai.png",
+        "website_url": "www.ppemate.com",
+        "facebook_url": "Ppemate Safety First",
+        "line_id": "@ppemate"
+      }
+    ]
   },
   {
     "id": 3040,
