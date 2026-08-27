@@ -26,7 +26,7 @@ const ACTIVITIES = [
 
 export default function AboutPage() {
   return (
-    <div className="space-y-12 sm:space-y-16 pb-16 animate-in fade-in duration-300">
+    <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 space-y-12 sm:space-y-16 pb-16 animate-in fade-in duration-300">
       {/* 1. Page Main Title */}
       <div className="text-center pt-2">
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#1E2538] tracking-tight">

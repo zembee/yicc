@@ -155,7 +155,7 @@ function DirectoryContent() {
   };
 
   return (
-    <div className="space-y-8 sm:space-y-10 pb-12">
+    <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 space-y-8 sm:space-y-10 pb-16">
       {/* 1. Header Title */}
       <div className="text-center space-y-2 pt-2">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold mb-1">

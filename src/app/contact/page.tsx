@@ -20,7 +20,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="space-y-8 sm:space-y-10 pb-12">
+    <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 space-y-8 sm:space-y-10 pb-16">
       {/* Header */}
       <div className="text-center space-y-2 pt-2">
         <h1 className="text-2xl sm:text-4xl font-extrabold text-[#1E2538] tracking-tight">

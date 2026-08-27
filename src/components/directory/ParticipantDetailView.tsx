@@ -93,7 +93,7 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
   }
 
   return (
-    <div className="space-y-8 pb-16 animate-in fade-in duration-300">
+    <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 space-y-8 pb-16 animate-in fade-in duration-300">
       {/* 1. Top Breadcrumb & Actions Bar */}
       <div className="flex items-center justify-between">
         <Link
