@@ -22,7 +22,20 @@ import { WebLoginModal } from '@/components/layout/WebLoginModal';
 
 export default function ProfilePage() {
   const { profile, updateRole, logout } = useLiffAuth();
+  const [mounted, setMounted] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full border-2 border-[#FB7170] border-t-transparent animate-spin" />
+      </div>
+    );
+  }
 
   if (!profile) {
     return (

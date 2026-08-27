@@ -88,7 +88,9 @@ export const TopHeader: React.FC = () => {
             </button>
 
             {/* Profile / Login Chip */}
-            {mounted && profile ? (
+            {!mounted ? (
+              <div className="w-10 h-10 sm:w-24 sm:h-10" />
+            ) : profile ? (
               <div className="relative">
                 <button
                   onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
