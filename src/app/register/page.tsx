@@ -190,14 +190,14 @@ export default function RegisterPage() {
 
     try {
       const lineUserId = lineProfile?.userId || `U_LINE_${matchedParticipant.id}_${Date.now()}`;
-      const linePicture = lineProfile?.pictureUrl || matchedParticipant.profile_picture_url;
+      const actualPicture = matchedParticipant.profile_picture_url || lineProfile?.pictureUrl || '/images/participants/p_3296.jpg';
       const targetHouse = houses.find((h) => h.id === matchedParticipant.star_group) || mockHouses[0];
 
       const linkedProfile: UserProfile = {
         id: String(matchedParticipant.id),
         line_user_id: lineUserId,
         display_name: `${matchedParticipant.name_thai} (${matchedParticipant.nickname_eng || 'Member'})`,
-        picture_url: linePicture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(matchedParticipant.name_thai)}`,
+        picture_url: actualPicture,
         phone_number: matchedParticipant.tel_number || phoneNumber,
         email: matchedParticipant.email,
         company_name: matchedParticipant.company_name_thai || 'Young FTI ELITE 11 Member',

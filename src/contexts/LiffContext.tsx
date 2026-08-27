@@ -98,7 +98,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
     ) {
       const authUser: UserProfile = {
         ...mockCurrentUser,
-        display_name: trimmedUser === 'YFTI Admin' ? 'YFTI Admin' : 'Young FTI 11 Member',
+        display_name: trimmedUser === 'YFTI Admin' ? 'YFTI Admin' : 'พงศ์พิชาญ ธนสิริพูนสิน (Golf)',
         role: trimmedUser === 'YFTI Admin' ? 'SUPER_ADMIN' : 'MEMBER',
       };
       setProfile(authUser);

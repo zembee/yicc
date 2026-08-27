@@ -26,7 +26,8 @@ import {
   Share2,
   Download,
   Star,
-  ShieldCheck
+  ShieldCheck,
+  ArrowRight
 } from 'lucide-react';
 import { WebLoginModal } from '@/components/layout/WebLoginModal';
 import Image from 'next/image';
@@ -215,11 +216,11 @@ export default function ProfilePage() {
             <div className="relative z-10 flex items-center gap-4 sm:gap-5 my-auto">
               <div className="relative shrink-0">
                 <img
-                  src={profile.picture_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + profile.display_name}
+                  src={profile.picture_url || '/images/participants/p_3296.jpg'}
                   alt={profile.display_name}
-                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-white/40 shadow-xl"
+                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-white/40 shadow-xl bg-[#2A334E]"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + profile.display_name;
+                    (e.target as HTMLImageElement).src = '/images/participants/p_3296.jpg';
                   }}
                 />
                 <span className="absolute -bottom-1 -right-1 px-2 py-0.5 bg-[#FB7170] text-white text-[9px] font-black rounded-md shadow-sm uppercase">
@@ -351,163 +352,264 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* ================= QUICK ACTION BUTTONS ================= */}
-      <div className="max-w-xl mx-auto grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-        <button
-          onClick={() => setIsFlipped(!isFlipped)}
-          className="p-3 bg-white hover:bg-slate-50 border border-slate-200 rounded-2xl text-xs font-extrabold text-[#1E2538] transition shadow-xs flex items-center justify-center gap-2"
-        >
-          <RotateCw className="w-4 h-4 text-[#FB7170]" />
-          <span>{isFlipped ? 'แสดงหน้าบัตร' : 'แสดง QR สแกน'}</span>
-        </button>
+      {/* ================= EXECUTIVE DOSSIER & BUSINESS IDENTITY ================= */}
+      <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden divide-y divide-slate-100">
+        
+        {/* Dossier Header */}
+        <div className="p-6 sm:p-8 bg-gradient-to-r from-slate-50 to-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#FB7170]" />
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400">
+                Executive Dossier • ทำเนียบผู้บริหาร
+              </span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-black text-[#1E2538] tracking-tight">
+              {profile.display_name}
+            </h2>
+            <p className="text-xs text-slate-500 font-medium">
+              {profile.position || 'กรรมการ / ผู้บริหารระดับสูง'} • <span className="font-bold text-[#1E2538]">{profile.company_name || 'Young FTI ELITE 11'}</span>
+            </p>
+          </div>
 
-        <button
-          onClick={handleCopyLink}
-          className="p-3 bg-white hover:bg-slate-50 border border-slate-200 rounded-2xl text-xs font-extrabold text-[#1E2538] transition shadow-xs flex items-center justify-center gap-2"
-        >
-          <Share2 className="w-4 h-4 text-[#FB7170]" />
-          <span>{copySuccess ? 'คัดลอกลิงก์แล้ว!' : 'แชร์บัตรสมาชิก'}</span>
-        </button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href={`/directory`}
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#1E2538] rounded-xl text-xs font-bold transition"
+            >
+              <Building2 className="w-3.5 h-3.5 text-[#FB7170]" />
+              <span>เปิดดูในทำเนียบรุ่น</span>
+              <ExternalLink className="w-3 h-3 text-slate-400" />
+            </Link>
+          </div>
+        </div>
 
-        <Link
-          href={`/directory`}
-          className="col-span-2 sm:col-span-1 p-3 bg-white hover:bg-slate-50 border border-slate-200 rounded-2xl text-xs font-extrabold text-[#1E2538] transition shadow-xs flex items-center justify-center gap-2 text-center"
-        >
-          <Building2 className="w-4 h-4 text-[#FB7170]" />
-          <span>ทำเนียบธุรกิจรุ่น</span>
-        </Link>
+        {/* Dossier Contact & Industry Grid */}
+        <div className="p-6 sm:p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="space-y-1">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+              เบอร์โทรศัพท์ติดต่อ
+            </span>
+            <p className="text-sm font-black font-mono text-[#1E2538] flex items-center gap-1.5">
+              <Phone className="w-3.5 h-3.5 text-[#FB7170]" />
+              {profile.phone_number || '082-269-9962'}
+            </p>
+          </div>
+
+          <div className="space-y-1">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+              อีเมลส่วนตัว / องค์กร
+            </span>
+            <p className="text-sm font-bold text-[#1E2538] truncate flex items-center gap-1.5">
+              <Mail className="w-3.5 h-3.5 text-[#FB7170]" />
+              {profile.email || 'yfti11@yfticonnect.com'}
+            </p>
+          </div>
+
+          <div className="space-y-1">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+              กลุ่มอุตสาหกรรม (FTI Club)
+            </span>
+            <p className="text-sm font-bold text-[#1E2538] flex items-center gap-1.5">
+              <Briefcase className="w-3.5 h-3.5 text-[#FB7170]" />
+              {profile.industry || 'อสังหาริมทรัพย์และก่อสร้าง'}
+            </p>
+          </div>
+
+          <div className="space-y-1">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+              กลุ่มดวงดาวประจำรุ่น (House)
+            </span>
+            <p className="text-sm font-black text-[#1E2538] flex items-center gap-1.5">
+              <Star className="w-3.5 h-3.5" style={{ color: houseColor }} />
+              {profile.house?.name || 'Mars'} ({profile.cohort_batch || 'YFTI 11'})
+            </p>
+          </div>
+        </div>
+
+        {/* Official Credentials & Badges Row */}
+        <div className="p-4 sm:p-6 bg-slate-50/60 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[11px] font-bold px-3 py-1 bg-white border border-slate-200 rounded-lg text-slate-700 flex items-center gap-1.5 shadow-2xs">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              ยืนยันตัวตนสมาชิกทางการ
+            </span>
+            <span className="text-[11px] font-bold px-3 py-1 bg-white border border-slate-200 rounded-lg text-slate-700 flex items-center gap-1.5 shadow-2xs">
+              <Sparkles className="w-3.5 h-3.5 text-[#FB7170]" />
+              Cohort 11 Executive Track
+            </span>
+          </div>
+
+          <button
+            onClick={handleCopyLink}
+            className="text-xs font-bold text-slate-600 hover:text-[#1E2538] flex items-center gap-1.5 transition ml-auto"
+          >
+            <Share2 className="w-3.5 h-3.5 text-[#FB7170]" />
+            <span>{copySuccess ? 'คัดลอกลิงก์โปรไฟล์แล้ว' : 'คัดลอกลิงก์โปรไฟล์'}</span>
+          </button>
+        </div>
       </div>
 
-      {/* ================= EXECUTIVE STATS CARDS ================= */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-        {/* Card 1: Reward Points */}
-        <div className="bg-white border border-slate-200 p-6 rounded-3xl text-center shadow-card space-y-1 relative overflow-hidden group hover:-translate-y-0.5 transition">
-          <div className="w-12 h-12 rounded-2xl bg-rose-50 text-[#FB7170] flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition">
-            <Coins className="w-6 h-6" />
+      {/* ================= BENTO GRID: ACADEMIC & REWARDS ================= */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        
+        {/* Left Bento (7 Cols): Academic Attendance & Graduation Meter */}
+        <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-7 shadow-sm flex flex-col justify-between space-y-6">
+          <div className="flex items-start justify-between gap-3">
+            <div className="space-y-1">
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#FB7170]">
+                Academic &amp; Completion Status
+              </span>
+              <h3 className="text-lg font-black text-[#1E2538]">
+                สถิติการเข้าร่วมกิจกรรม &amp; สิทธิ์รับวุฒิบัตร
+              </h3>
+            </div>
+            <span className="px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200/60 rounded-full text-xs font-black shrink-0 flex items-center gap-1">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              ผ่านเกณฑ์
+            </span>
           </div>
-          <p className="text-xs text-slate-500 font-bold">Reward Coins สะสม</p>
-          <p className="text-3xl font-black text-[#1E2538] font-mono">{profile.points_balance}</p>
-          <p className="text-[11px] text-slate-400">ใช้แลกสิทธิประโยชน์ &amp; ของรางวัลโครงการ</p>
+
+          {/* Progress Bar & Numerical Metrics */}
+          <div className="space-y-3">
+            <div className="flex justify-between items-baseline">
+              <span className="text-xs text-slate-500 font-bold">
+                อัตราการเข้าเรียนสะสม (Attendance Rate)
+              </span>
+              <span className="text-2xl font-black font-mono text-[#1E2538]">
+                {profile.attendance_rate}%
+              </span>
+            </div>
+
+            {/* Visual Gauge Bar */}
+            <div className="relative w-full h-3.5 bg-slate-100 rounded-full overflow-hidden p-0.5">
+              <div 
+                className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-[#10B981] transition-all duration-1000"
+                style={{ width: `${Math.min(profile.attendance_rate, 100)}%` }}
+              />
+            </div>
+
+            <div className="flex justify-between text-[11px] text-slate-400 font-medium">
+              <span>เกณฑ์ขั้นต่ำสำหรับจบหลักสูตร: 80%</span>
+              <span className="font-bold text-emerald-700 font-mono">6/7 กิจกรรมหลัก</span>
+            </div>
+          </div>
+
+          {/* Mini Graduation Info Box */}
+          <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center shadow-2xs text-[#1E2538] shrink-0">
+              <GraduationCap className="w-4 h-4 text-[#FB7170]" />
+            </div>
+            <div className="text-xs text-slate-600 leading-relaxed">
+              <strong className="text-slate-800">สถานะวุฒิบัตร:</strong> มีสิทธิ์เข้ารับวุฒิบัตรหลักสูตรนักอุตสาหกรรมรุ่นใหม่ รุ่นที่ 11 ในพิธีปิด
+            </div>
+          </div>
         </div>
 
-        {/* Card 2: Executive XP */}
-        <div className="bg-white border border-slate-200 p-6 rounded-3xl text-center shadow-card space-y-1 relative overflow-hidden group hover:-translate-y-0.5 transition">
-          <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition">
-            <Award className="w-6 h-6" />
+        {/* Right Bento (5 Cols): Coins & XP Vault */}
+        <div className="lg:col-span-5 bg-[#1E2538] text-white rounded-3xl p-6 sm:p-7 shadow-lg flex flex-col justify-between space-y-6 relative overflow-hidden">
+          {/* Subtle Ambient Light */}
+          <div className="absolute top-0 right-0 w-48 h-48 bg-[#FB7170]/15 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="relative z-10 flex items-start justify-between gap-2">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#FB7170]">
+                Executive Loyalty Vault
+              </span>
+              <h3 className="text-lg font-black text-white">
+                ยอดเหรียญ &amp; คะแนนสะสม
+              </h3>
+            </div>
+            <span className="px-2.5 py-0.5 bg-white/10 text-slate-200 border border-white/15 rounded-full text-[10px] font-bold">
+              Level 4 Executive
+            </span>
           </div>
-          <p className="text-xs text-slate-500 font-bold">Executive XP</p>
-          <p className="text-3xl font-black text-[#1E2538] font-mono">{profile.xp_balance}</p>
-          <p className="text-[11px] text-slate-400">ระดับเลเวลประสบการณ์ประจำรุ่น 11</p>
+
+          {/* Balances Display */}
+          <div className="relative z-10 grid grid-cols-2 gap-3 py-1">
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+              <div className="flex items-center gap-1.5 text-amber-400 text-xs font-bold mb-1">
+                <Coins className="w-3.5 h-3.5" />
+                <span>Coins สะสม</span>
+              </div>
+              <p className="text-2xl sm:text-3xl font-black font-mono text-white">
+                {profile.points_balance}
+              </p>
+              <span className="text-[10px] text-slate-400 mt-1 block">
+                ใช้แลกของที่ระลึก
+              </span>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+              <div className="flex items-center gap-1.5 text-indigo-300 text-xs font-bold mb-1">
+                <Award className="w-3.5 h-3.5" />
+                <span>Executive XP</span>
+              </div>
+              <p className="text-2xl sm:text-3xl font-black font-mono text-white">
+                {profile.xp_balance}
+              </p>
+              <span className="text-[10px] text-slate-400 mt-1 block">
+                แต้มกิจกรรมประจำรุ่น
+              </span>
+            </div>
+          </div>
+
+          {/* Action Link */}
+          <div className="relative z-10 pt-1">
+            <Link
+              href="/events"
+              className="w-full py-2.5 px-4 bg-white hover:bg-slate-100 text-[#1E2538] rounded-xl text-xs font-bold transition flex items-center justify-center gap-2"
+            >
+              <span>ดูกิจกรรมสะสมแต้มเพิ่มเติม</span>
+              <ArrowRight className="w-3.5 h-3.5 text-[#FB7170]" />
+            </Link>
+          </div>
         </div>
 
-        {/* Card 3: Attendance Rate */}
-        <div className="bg-white border border-slate-200 p-6 rounded-3xl text-center shadow-card space-y-1 relative overflow-hidden group hover:-translate-y-0.5 transition">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition">
-            <GraduationCap className="w-6 h-6" />
+      </div>
+
+      {/* ================= ACCOUNT GOVERNANCE & ROLE SIMULATOR ================= */}
+      <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-7 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <RefreshCw className="w-4 h-4 text-[#FB7170]" />
+            <h4 className="text-sm font-black text-[#1E2538]">
+              สิทธิ์การเข้าถึงระบบ (Role Permission)
+            </h4>
           </div>
-          <p className="text-xs text-slate-500 font-bold">สถิติการเข้าเรียน (Attendance)</p>
-          <p className="text-3xl font-black text-[#1E2538] font-mono">{profile.attendance_rate}%</p>
-          <p className="text-[11px] text-emerald-600 font-bold flex items-center justify-center gap-1">
-            <CheckCircle2 className="w-3.5 h-3.5" /> ผ่านเกณฑ์จบหลักสูตร (&gt;80%)
+          <p className="text-xs text-slate-500">
+            จำลองมุมมองการใช้งานเพื่อทดสอบระบบตามระดับสิทธิ์ของผู้บริหาร
           </p>
         </div>
-      </div>
 
-      {/* ================= CONTACT & BUSINESS INFORMATION ================= */}
-      <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-card space-y-5">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-          <h2 className="text-sm font-black text-[#1E2538] uppercase tracking-wider flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#FB7170]" />
-            ข้อมูลการติดต่อและประวัติธุรกิจ (Official Profile)
-          </h2>
-          <span className="text-xs font-bold text-slate-400 font-mono">
-            {profile.cohort_batch || 'YFTI 11'}
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
-          <div className="flex items-center gap-3.5 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-2xs text-[#1E2538] shrink-0">
-              <Mail className="w-4 h-4" />
-            </div>
-            <div className="min-w-0">
-              <span className="text-slate-400 text-[11px] font-semibold block">อีเมลสำหรับติดต่อ</span>
-              <span className="font-bold text-slate-800 truncate block">{profile.email || 'yfti11@yfticonnect.com'}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3.5 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-2xs text-[#1E2538] shrink-0">
-              <Phone className="w-4 h-4" />
-            </div>
-            <div className="min-w-0">
-              <span className="text-slate-400 text-[11px] font-semibold block">เบอร์โทรศัพท์มือถือ</span>
-              <span className="font-bold text-slate-800 font-mono block">{profile.phone_number || '082-269-9962'}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3.5 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-2xs text-[#1E2538] shrink-0">
-              <Briefcase className="w-4 h-4" />
-            </div>
-            <div className="min-w-0">
-              <span className="text-slate-400 text-[11px] font-semibold block">ตำแหน่งในองค์กร</span>
-              <span className="font-bold text-slate-800 truncate block">{profile.position || 'Executive Member'}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3.5 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-2xs text-[#1E2538] shrink-0">
-              <Building2 className="w-4 h-4" />
-            </div>
-            <div className="min-w-0">
-              <span className="text-slate-400 text-[11px] font-semibold block">ชื่อบริษัท / กิจการ</span>
-              <span className="font-bold text-slate-800 truncate block">{profile.company_name || 'Young FTI ELITE 11 Member'}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ================= ROLE SIMULATOR & LOGOUT ================= */}
-      <div className="bg-white border border-slate-200 p-6 rounded-3xl shadow-card space-y-4">
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-black text-[#1E2538] flex items-center gap-1.5">
-            <RefreshCw className="w-3.5 h-3.5 text-[#FB7170]" />
-            สลับสิทธิ์จำลอง (Role Simulator)
-          </span>
-          <span className="text-[10px] text-slate-400 font-mono font-bold bg-slate-100 px-2 py-0.5 rounded">
-            CURRENT: {profile.role}
-          </span>
-        </div>
-
-        <div className="grid grid-cols-3 gap-2.5">
+        <div className="flex flex-wrap items-center gap-2">
           {(['MEMBER', 'HOUSE_ADMIN', 'SUPER_ADMIN'] as const).map((roleOption) => (
             <button
               key={roleOption}
               onClick={() => updateRole(roleOption)}
-              className={`py-2.5 px-3 rounded-2xl text-xs font-bold border transition ${
+              className={`py-2 px-3.5 rounded-xl text-xs font-bold transition border ${
                 profile.role === roleOption
-                  ? 'bg-[#1E2538] text-white border-[#1E2538] shadow-sm'
-                  : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-slate-300'
+                  ? 'bg-[#1E2538] text-white border-[#1E2538] shadow-xs'
+                  : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
               }`}
             >
               {roleOption === 'SUPER_ADMIN' ? 'Super Admin' : roleOption === 'HOUSE_ADMIN' ? 'House Admin' : 'Member'}
             </button>
           ))}
+
+          <button
+            onClick={logout}
+            className="py-2 px-3.5 rounded-xl text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition flex items-center gap-1.5 ml-auto sm:ml-2"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>ออกจากระบบ</span>
+          </button>
         </div>
       </div>
-
-      {/* Logout Button */}
-      <button
-        onClick={logout}
-        className="w-full py-3.5 rounded-2xl bg-rose-50 hover:bg-rose-100 border border-rose-100 text-rose-700 text-xs font-extrabold transition flex items-center justify-center gap-2"
-      >
-        <LogOut className="w-4 h-4 text-rose-500" />
-        <span>ออกจากระบบ</span>
-      </button>
 
       {/* Switch User Modal */}
       <WebLoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
     </div>
   );
 }
+

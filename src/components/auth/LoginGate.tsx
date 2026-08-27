@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useLiffAuth } from '@/contexts/LiffContext';
+import { mockCurrentUser } from '@/lib/mockData';
 import { Lock, User, Key, CheckCircle, AlertCircle, ShieldCheck, ArrowRight, Phone, Clock, ChevronDown, ChevronUp } from 'lucide-react';
 
 export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -109,13 +110,9 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
       (user === 'YFTI Admin' && pass === '(XM8zvGei1l$XaHc&nT$oqs&')
     ) {
       const authUser = {
-        id: 'u-yfti11',
-        display_name: user === 'YFTI Admin' ? 'YFTI Admin' : 'Young FTI 11 Member',
-        role: user === 'YFTI Admin' ? 'SUPER_ADMIN' : 'MEMBER',
-        cohort_batch: 'YFTI 11',
-        points_balance: 450,
-        xp_balance: 1820,
-        attendance_rate: 92,
+        ...mockCurrentUser,
+        display_name: user === 'YFTI Admin' ? 'YFTI Admin' : 'พงศ์พิชาญ ธนสิริพูนสิน (Golf)',
+        role: user === 'YFTI Admin' ? ('SUPER_ADMIN' as const) : ('MEMBER' as const),
       };
       if (typeof window !== 'undefined') {
         localStorage.setItem('yfti_auth_session', JSON.stringify(authUser));
