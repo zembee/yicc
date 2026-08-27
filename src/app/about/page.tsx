@@ -42,25 +42,25 @@ export default function AboutPage() {
         {/* ------------------------------------------------------------------------------ */}
         {/* SECTION 2: WHAT'S YOUNG FTI ELITE BANNER (.elementor-element-9946fc6)           */}
         {/* ------------------------------------------------------------------------------ */}
-        <div 
-          className="rounded-[12px] overflow-hidden shadow-card border border-slate-200 grid grid-cols-1 md:grid-cols-12 items-center"
-          style={{
-            backgroundImage: 'linear-gradient(120deg, #212542 45%, #FAFAFA 45%)'
-          }}
-        >
-          {/* Left Dark Navy Block (45%) */}
-          <div className="md:col-span-5 p-8 sm:p-12 text-white flex flex-col justify-center min-h-[160px] md:min-h-[200px]">
+        <div className="relative rounded-[12px] overflow-hidden shadow-card border border-slate-200 bg-[#FAFAFA] grid grid-cols-1 md:grid-cols-12 items-center">
+          {/* Slanted Navy Background for Desktop */}
+          <div 
+            className="hidden md:block absolute inset-y-0 left-0 w-[42%] lg:w-[40%] bg-[#212542] [clip-path:polygon(0_0,100%_0,84%_100%,0_100%)] z-0 pointer-events-none" 
+          />
+
+          {/* Left Dark Navy Block */}
+          <div className="md:col-span-5 bg-[#212542] md:bg-transparent p-8 sm:p-10 lg:p-12 text-white flex flex-col justify-center min-h-[160px] md:min-h-[200px] relative z-10">
             <span className="text-[20px] sm:text-[24px] lg:text-[28px] font-semibold leading-[1.3] text-white">
               What’s
             </span>
-            <h2 className="text-[32px] sm:text-[40px] lg:text-[48px] font-semibold leading-[1.2] text-white">
+            <h2 className="text-[32px] sm:text-[40px] lg:text-[46px] font-semibold leading-[1.2] text-white">
               Young FTI ELITE
             </h2>
           </div>
 
-          {/* Right Lead Text (55%) */}
-          <div className="md:col-span-7 p-6 sm:p-10 pl-6 md:pl-8 bg-[#FAFAFA] md:bg-transparent">
-            <p className="text-[18px] sm:text-[20px] lg:text-[24px] font-light text-[#292929] leading-[1.5]">
+          {/* Right Lead Text */}
+          <div className="md:col-span-7 p-6 sm:p-8 md:p-8 md:pl-10 lg:pl-14 bg-[#FAFAFA] md:bg-transparent relative z-10">
+            <p className="text-[18px] sm:text-[20px] lg:text-[22px] font-light text-[#292929] leading-[1.5]">
               <strong className="font-semibold text-[#212542]">Young FTI</strong> เป็นหลักสูตรสำหรับนักอุตสาหกรรมรุ่นใหม่ที่ไม่หยุดนิ่งในการพัฒนาตนเองและมีแนวคิดที่จะนำพาภาคอุตสาหกรรมไทยก้าวเดินไปข้างหน้า
             </p>
           </div>

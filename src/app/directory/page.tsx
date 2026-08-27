@@ -256,7 +256,7 @@ function DirectoryContent() {
   }, [currentPage, totalPages]);
 
   return (
-    <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 space-y-8 sm:space-y-10 pb-16">
+    <div className="max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8 py-6 space-y-6 sm:space-y-10 pb-16">
       {/* 1. Header Title */}
       <div className="text-center space-y-2 pt-2">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold mb-1">
@@ -433,12 +433,12 @@ function DirectoryContent() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
             {paginatedParticipants.map((member) => (
               <Link
                 key={member.id}
                 href={`/yfti_participants/${member.id}`}
-                className="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-card hover:shadow-card-hover transition-all duration-300 flex flex-col justify-between cursor-pointer group hover:-translate-y-1"
+                className="bg-white rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200 shadow-card hover:shadow-card-hover transition-all duration-300 flex flex-col justify-between cursor-pointer group hover:-translate-y-1"
               >
                 {/* Member Portrait */}
                 <div className="relative aspect-[4/4.5] overflow-hidden bg-slate-100">
@@ -453,56 +453,56 @@ function DirectoryContent() {
                     }}
                   />
                   {member.star_group_label && (
-                    <span className="absolute top-3 right-3 px-2.5 py-1 bg-[#1E2538]/85 backdrop-blur-sm text-white text-[10px] font-bold rounded-full border border-white/20">
+                    <span className="absolute top-2 right-2 sm:top-3 sm:right-3 px-2 sm:px-2.5 py-0.5 sm:py-1 bg-[#1E2538]/85 backdrop-blur-sm text-white text-[9px] sm:text-[10px] font-bold rounded-full border border-white/20">
                       {member.star_group_label}
                     </span>
                   )}
                 </div>
 
                 {/* Member Information */}
-                <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h3 className="font-extrabold text-sm sm:text-base text-[#1E2538] group-hover:text-[#FB7170] transition-colors">
+                <div className="p-3 sm:p-5 flex-1 flex flex-col justify-between space-y-2 sm:space-y-3">
+                  <div className="space-y-1 sm:space-y-1.5">
+                    <div className="flex items-baseline gap-1 sm:gap-1.5 flex-wrap">
+                      <h3 className="font-extrabold text-xs sm:text-base text-[#1E2538] group-hover:text-[#FB7170] transition-colors leading-snug line-clamp-1 sm:line-clamp-none">
                         {member.name_thai}
                       </h3>
                       {member.nickname_eng && (
-                        <span className="text-xs font-bold text-[#FB7170]">({member.nickname_eng})</span>
+                        <span className="text-[10px] sm:text-xs font-bold text-[#FB7170]">({member.nickname_eng})</span>
                       )}
                     </div>
 
                     {member.company_name_thai && (
-                      <p className="text-xs font-bold text-slate-700 flex items-center gap-1.5 truncate">
-                        <Building2 className="w-3.5 h-3.5 text-[#FB7170] shrink-0" />
+                      <p className="text-[11px] sm:text-xs font-bold text-slate-700 flex items-center gap-1 sm:gap-1.5 truncate">
+                        <Building2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#FB7170] shrink-0" />
                         <span className="truncate">{member.company_name_thai}</span>
                       </p>
                     )}
 
                     {member.company_description && (
-                      <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed pt-1">
+                      <p className="text-[10px] sm:text-[11px] text-slate-500 line-clamp-2 leading-relaxed pt-0.5 sm:pt-1">
                         {stripHtml(member.company_description)}
                       </p>
                     )}
                   </div>
 
                   {/* Badges / Tags */}
-                  <div className="space-y-2 pt-3 border-t border-slate-100">
+                  <div className="space-y-1.5 sm:space-y-2 pt-2 sm:pt-3 border-t border-slate-100">
                     <div className="flex flex-wrap gap-1">
                       {member.industrial_groups_label && (
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 truncate max-w-full">
+                        <span className="text-[9px] sm:text-[10px] font-semibold px-1.5 sm:px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 truncate max-w-full">
                           {member.industrial_groups_label}
                         </span>
                       )}
                       {member.business_categories_label && (
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-rose-50 text-[#FB7170] truncate max-w-full">
+                        <span className="text-[9px] sm:text-[10px] font-semibold px-1.5 sm:px-2 py-0.5 rounded-full bg-rose-50 text-[#FB7170] truncate max-w-full">
                           {member.business_categories_label}
                         </span>
                       )}
                     </div>
 
-                    <div className="flex items-center justify-between text-xs font-bold text-[#1E2538] group-hover:text-[#FB7170] pt-1">
+                    <div className="flex items-center justify-between text-[11px] sm:text-xs font-bold text-[#1E2538] group-hover:text-[#FB7170] pt-0.5 sm:pt-1">
                       <span>ดูโปรไฟล์เต็ม</span>
-                      <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                      <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 transition-transform group-hover:translate-x-1" />
                     </div>
                   </div>
                 </div>
