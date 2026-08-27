@@ -22,6 +22,11 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  other: {
+    robots: 'noindex, nofollow, noarchive, nosnippet, noimageindex, notranslate',
+    googlebot: 'noindex, nofollow, noarchive, nosnippet, noimageindex',
+    bingbot: 'noindex, nofollow, noarchive, nosnippet',
+  },
 };
 
 export const viewport: Viewport = {
