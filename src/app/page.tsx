@@ -94,9 +94,9 @@ export default function HomePage() {
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
 
   return (
-    <div className="space-y-16 sm:space-y-24 pb-16 animate-in fade-in duration-300">
-      {/* 1. Hero Carousel matching yfticonnect.com */}
-      <section className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-200 aspect-[16/9] max-h-[560px] bg-slate-950">
+    <div className="space-y-16 sm:space-y-24 w-full">
+      {/* 1. Hero Multi-Slide Carousel (Full-Width Edge-to-Edge & Full-Height Viewport) */}
+      <section className="relative w-full h-[calc(100vh-80px)] sm:h-[calc(100vh-96px)] min-h-[520px] max-h-[920px] overflow-hidden shadow-xl bg-slate-900">
         {HERO_SLIDES.map((slide, idx) => (
           <div
             key={idx}
@@ -116,14 +116,14 @@ export default function HomePage() {
         <button
           onClick={prevSlide}
           aria-label="Previous Slide"
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-sm transition shadow-lg"
+          className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-sm transition shadow-lg"
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
         <button
           onClick={nextSlide}
           aria-label="Next Slide"
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-sm transition shadow-lg"
+          className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-sm transition shadow-lg"
         >
           <ChevronRight className="w-6 h-6" />
         </button>
@@ -144,7 +144,7 @@ export default function HomePage() {
       </section>
 
       {/* 2. Brand Ribbon Heading & Leaders Celebration Photo */}
-      <section className="space-y-8 text-center">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 text-center">
         <div className="space-y-1">
           <h1 className="text-3xl sm:text-5xl font-black text-[#1E2538] tracking-tight">
             Young FTI ELITE 11
@@ -164,7 +164,7 @@ export default function HomePage() {
       </section>
 
       {/* 3. ข่าวสารโครงการ (Project News) */}
-      <section className="space-y-6 text-center">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 text-center">
         <h2 className="text-2xl sm:text-4xl font-extrabold text-[#1E2538] tracking-tight">
           ข่าวสารโครงการ
         </h2>
@@ -174,7 +174,7 @@ export default function HomePage() {
       </section>
 
       {/* 4. กิจกรรมโครงการ (Project Activities) */}
-      <section className="space-y-8">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="text-center">
           <h2 className="text-2xl sm:text-4xl font-extrabold text-[#1E2538] tracking-tight">
             กิจกรรมโครงการ
@@ -211,15 +211,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 5. บรรยากาศกิจกรรม (Activity Atmosphere Gallery) matching yfticonnect.com */}
-      <section className="bg-[#1E2538] text-white -mx-3.5 sm:-mx-6 lg:-mx-8 px-4 sm:px-8 py-16 sm:py-20 rounded-3xl shadow-2xl space-y-10">
+      {/* 5. บรรยากาศกิจกรรม (Activity Atmosphere Gallery) - Full Width Dark Container */}
+      <section className="w-full bg-[#1E2538] text-white py-16 sm:py-24 px-4 sm:px-8 lg:px-12 space-y-10 shadow-2xl">
         <div className="text-center">
           <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-white">
             บรรยากาศกิจกรรม
           </h2>
         </div>
 
-        <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
           {GALLERY_PHOTOS.map((photo, idx) => (
             <div
               key={idx}
@@ -238,7 +238,7 @@ export default function HomePage() {
       </section>
 
       {/* 6. ธุรกิจที่เกี่ยวข้อง (Related Industry Sectors) */}
-      <section className="space-y-8">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Slanted Ribbon Header matching yfticonnect.com */}
         <div 
           className="bg-[#1E2538] text-white py-4 px-8 inline-block shadow-md rounded-l-2xl"
