@@ -23,16 +23,16 @@ export const TopHeader: React.FC = () => {
   }, []);
 
   const navLinks = [
-    { label: 'เกี่ยวกับเรา', href: '/about' },
+    { label: 'หน้าแรก', href: '/' },
+    { label: 'สิทธิพิเศษ', href: '/privileges' },
     { label: 'ธุรกิจภายในโครงการ', href: '/directory' },
     { label: 'กิจกรรม', href: '/events' },
-    { label: 'ข่าวสาร', href: '/news' },
-    { label: 'ติดต่อเรา', href: '/contact' },
+    { label: 'เกี่ยวกับเรา', href: '/about' },
   ];
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-[#1E2538] border-b border-[#2A334E]/60 shadow-[0_4px_25px_rgba(0,0,0,0.2)] text-white select-none">
+      <header className="hidden md:block sticky top-0 z-40 bg-[#1E2538] border-b border-[#2A334E]/60 shadow-[0_4px_25px_rgba(0,0,0,0.2)] text-white select-none">
         <div className="max-w-7xl mx-auto flex items-center justify-between h-20 sm:h-24 px-4 sm:px-6 lg:px-8">
           {/* Left: Signature White Trapezoid Logo Block matching yfticonnect.com */}
           <div className="flex items-center h-full">

@@ -63,15 +63,27 @@ export const QrScannerModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) 
       const payload = JSON.parse(decodedText);
       const now = Date.now();
 
-      // ตรวจสอบความถูกต้องของ Token
-      if (payload.ts && Math.abs(now - payload.ts) > 60000) {
+      // ตรวจสอบความถูกต้องของ Token (เฉพาะ Rolling QR ที่มีอายุ 60 วินาที)
+      if (payload.rolling && payload.ts && Math.abs(now - payload.ts) > 60000) {
         setScanError('QR Code นี้หมดอายุแล้ว (กรุณาให้สมาชิกเปิดหน้าจอสด)');
         setIsProcessing(false);
         return;
       }
 
-      setScanResult(payload);
-      onSuccess(payload);
+      const normalizedPayload = {
+        ...payload,
+        profileId: payload.profileId || payload.memberId,
+        displayName: payload.displayName || payload.name || 'สมาชิก Cohort',
+        lineUserId: payload.lineUserId || payload.memberId || 'Verified',
+        eventTitle:
+          payload.eventTitle ||
+          (payload.type === 'YFTI_MEMBER_PASSPORT'
+            ? `Member Passport (${payload.house || 'YFTI 11'})`
+            : 'กิจกรรมพิเศษ'),
+      };
+
+      setScanResult(normalizedPayload);
+      onSuccess(normalizedPayload);
     } catch (e) {
       setScanError('รูปแบบ QR Code ไม่ถูกต้องสำหรับระบบ YFTI');
     } finally {

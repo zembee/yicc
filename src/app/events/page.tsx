@@ -1,45 +1,91 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { mockEvents } from '@/lib/mockData';
+import { EventItem } from '@/types';
 import { EventCardWithQrModal } from '@/components/events/EventCardWithQrModal';
-import { Calendar, CheckCircle2, Clock } from 'lucide-react';
+import { Ticket, CalendarDays } from 'lucide-react';
 
-export default function EventsPage() {
-  const [filter, setFilter] = useState<'ALL' | 'MANDATORY' | 'COMPLETED'>('ALL');
+type EventFilter = 'ALL' | 'GENERAL' | 'COURSE' | 'COMPLETED';
 
-  const filteredEvents = mockEvents.filter((ev) => {
-    if (filter === 'MANDATORY') return ev.is_mandatory;
+function EventsContent() {
+  const searchParams = useSearchParams();
+  const [filter, setFilter] = useState<EventFilter>('ALL');
+  const [allEvents, setAllEvents] = useState<EventItem[]>(mockEvents);
+
+  useEffect(() => {
+    const cat = searchParams?.get('category');
+    if (cat === 'course') setFilter('COURSE');
+    else if (cat === 'general') setFilter('GENERAL');
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const custom: EventItem[] = JSON.parse(localStorage.getItem('yfti_custom_events') || '[]');
+        if (Array.isArray(custom) && custom.length > 0) {
+          setAllEvents([...custom, ...mockEvents]);
+        }
+      } catch {}
+    }
+  }, []);
+
+  const filteredEvents = allEvents.filter((ev) => {
+    if (filter === 'GENERAL') return ev.event_type !== 'course';
+    if (filter === 'COURSE') return ev.event_type === 'course';
     if (filter === 'COMPLETED') return ev.isCheckedIn || ev.status === 'COMPLETED';
     return true;
   });
 
   return (
-    <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 space-y-8 sm:space-y-10 pb-16">
-      {/* Header Info */}
-      <div className="text-center space-y-2 pt-2">
-        <h1 className="text-3xl sm:text-5xl font-extrabold text-[#212542] tracking-tight">
-          กิจกรรมในโครงการ
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-500 max-w-xl mx-auto">
-          ตารางอบรม สัมมนาเชิงปฏิบัติการ ทริปกระชับมิตร และการศึกษาดูงานโครงการ Young FTI ELITE
-        </p>
+    <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-5 sm:space-y-6 pb-24">
+      {/* Executive Navy Header with Integrated My Tickets & Calendar Buttons */}
+      <div className="bg-[#1E2538] text-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Events</h1>
+          <p className="text-xs text-slate-300 mt-0.5">
+            กิจกรรมและคอร์สเรียนหลักสูตร Young FTI ELITE 11
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 max-w-md">
+          <Link
+            href="/events/my-tickets"
+            className="py-2.5 px-4 rounded-full bg-[#C59B38] hover:bg-[#b38a2e] text-white text-xs font-bold flex items-center justify-center gap-2 transition shadow-sm"
+          >
+            <Ticket className="w-4 h-4" />
+            <span>บัตรของฉัน</span>
+          </Link>
+
+          <Link
+            href="/events/calendar"
+            className="py-2.5 px-4 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-white text-xs font-bold flex items-center justify-center gap-2 transition"
+          >
+            <CalendarDays className="w-4 h-4" />
+            <span>ปฏิทิน</span>
+          </Link>
+        </div>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="flex items-center justify-center gap-2 overflow-x-auto py-1 no-scrollbar">
-        {[
-          { key: 'ALL', label: 'กิจกรรมทั้งหมด' },
-          { key: 'MANDATORY', label: 'วิชาบังคับ (เกณฑ์ 80%)' },
-          { key: 'COMPLETED', label: 'เช็คชื่อ / สำเร็จแล้ว' },
-        ].map((tab) => (
+      {/* Category Filter Pills */}
+      <div className="flex items-center justify-start gap-2 overflow-x-auto py-1 no-scrollbar">
+        {(
+          [
+            { key: 'ALL', label: 'ทั้งหมด' },
+            { key: 'GENERAL', label: 'กิจกรรมทั่วไป' },
+            { key: 'COURSE', label: 'คอร์สเรียน' },
+            { key: 'COMPLETED', label: 'เช็กชื่อ / สำเร็จ' },
+          ] as const
+        ).map((tab) => (
           <button
             key={tab.key}
-            onClick={() => setFilter(tab.key as any)}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition shadow-sm ${
+            onClick={() => setFilter(tab.key)}
+            className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition ${
               filter === tab.key
-                ? 'bg-[#1E2538] text-white'
-                : 'bg-white text-slate-600 border border-slate-200 hover:text-[#1E2538] hover:bg-slate-50'
+                ? 'bg-[#C59B38] text-white shadow-sm'
+                : 'bg-white text-slate-600 border border-slate-200 hover:text-[#1E2538]'
             }`}
           >
             {tab.label}
@@ -48,11 +94,25 @@ export default function EventsPage() {
       </div>
 
       {/* Events List Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {filteredEvents.map((ev) => (
           <EventCardWithQrModal key={ev.id} event={ev} />
         ))}
       </div>
     </div>
+  );
+}
+
+export default function EventsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-[60vh] flex items-center justify-center">
+          <div className="w-9 h-9 border-4 border-[#1E2538] border-t-transparent rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <EventsContent />
+    </Suspense>
   );
 }

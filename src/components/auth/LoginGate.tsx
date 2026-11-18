@@ -33,8 +33,8 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
     }
   }, [profile]);
 
-  // If user is accessing the registration page or during SSR before mount, allow children through cleanly
-  if (pathname === '/register' || !mounted) {
+  // If user is accessing registration/privileges or during SSR before mount, allow children through cleanly
+  if (pathname === '/register' || pathname?.startsWith('/privileges') || !mounted) {
     return <>{children}</>;
   }
 
@@ -102,21 +102,8 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
     setIsSubmitting(true);
     setErrorMessage(null);
 
-    const user = username.trim();
-    const pass = password.trim();
-
-    if (
-      (user.toLowerCase() === 'yfti11' && pass === 'yfti@11') ||
-      (user === 'YFTI Admin' && pass === '(XM8zvGei1l$XaHc&nT$oqs&')
-    ) {
-      const authUser = {
-        ...mockCurrentUser,
-        display_name: user === 'YFTI Admin' ? 'YFTI Admin' : 'พงศ์พิชาญ ธนสิริพูนสิน (Golf)',
-        role: user === 'YFTI Admin' ? ('SUPER_ADMIN' as const) : ('MEMBER' as const),
-      };
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('yfti_auth_session', JSON.stringify(authUser));
-      }
+    const ok = loginWithCredentials(username, password);
+    if (ok) {
       setAuthenticated(true);
     } else {
       setErrorMessage('ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง');
@@ -154,18 +141,18 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
             </div>
 
             {/* Brand Title in Center */}
-            <div className="flex items-center gap-2 pr-6 sm:pr-8 z-10">
-              <span className="text-lg sm:text-xl font-black text-[#1E2538] tracking-tight">
+            <div className="flex items-center gap-2 pr-24 sm:pr-36 z-10">
+              <span className="text-base sm:text-xl font-black text-[#1E2538] tracking-tight">
                 Young FTI <span className="font-extrabold">ELITE</span>
               </span>
-              <span className="text-xs sm:text-sm font-semibold text-[#FB7170]">
+              <span className="text-xs sm:text-sm font-semibold text-[#C59B38] shrink-0">
                 รุ่นที่ 11
               </span>
             </div>
 
             {/* Slanted Navy Decorative Polygon */}
             <div
-              className="absolute right-0 top-0 bottom-0 w-28 sm:w-36 bg-[#1E2538]"
+              className="absolute right-0 top-0 bottom-0 w-20 sm:w-32 bg-[#1E2538]"
               style={{
                 clipPath: 'polygon(35% 0, 100% 0, 100% 100%, 0% 100%)'
               }}

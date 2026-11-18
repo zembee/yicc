@@ -1,18 +1,18 @@
-import { UserProfile, House, EventItem, Mission, MissionSubmission, Participant, NewsItem } from '@/types';
+import { UserProfile, House, EventItem, Mission, MissionSubmission, Participant, NewsItem, PrivilegeItem, NotificationItem } from '@/types';
 import participantsRaw from './yftiParticipantsData.json';
 
 export const yftiParticipants: Participant[] = participantsRaw as Participant[];
 
 export const mockHouses: House[] = [
-  { id: 'the_sun', name: 'The Sun ☀️', color_hex: '#F59E0B', total_points: 1850 },
-  { id: 'earth', name: 'Earth 🌍', color_hex: '#10B981', total_points: 1720 },
-  { id: 'jupiter', name: 'Jupiter 🪐', color_hex: '#EA580C', total_points: 1980 },
-  { id: 'the_mars', name: 'Mars 🔴', color_hex: '#EF4444', total_points: 1640 },
-  { id: 'mercury', name: 'Mercury ⚪', color_hex: '#64748B', total_points: 1530 },
-  { id: 'neptune', name: 'Neptune 🌊', color_hex: '#2563EB', total_points: 1890 },
-  { id: 'saturn', name: 'Saturn 🪐', color_hex: '#D97706', total_points: 1610 },
-  { id: 'uranus', name: 'Uranus ❄️', color_hex: '#06B6D4', total_points: 1490 },
-  { id: 'venus', name: 'Venus ✨', color_hex: '#EC4899', total_points: 1760 },
+  { id: 'the_sun', name: 'The Sun', color_hex: '#F59E0B', total_points: 1850 },
+  { id: 'earth', name: 'Earth', color_hex: '#10B981', total_points: 1720 },
+  { id: 'jupiter', name: 'Jupiter', color_hex: '#EA580C', total_points: 1980 },
+  { id: 'the_mars', name: 'Mars', color_hex: '#EF4444', total_points: 1640 },
+  { id: 'mercury', name: 'Mercury', color_hex: '#64748B', total_points: 1530 },
+  { id: 'neptune', name: 'Neptune', color_hex: '#2563EB', total_points: 1890 },
+  { id: 'saturn', name: 'Saturn', color_hex: '#D97706', total_points: 1610 },
+  { id: 'uranus', name: 'Uranus', color_hex: '#06B6D4', total_points: 1490 },
+  { id: 'venus', name: 'Venus', color_hex: '#EC4899', total_points: 1760 },
 ];
 
 export const mockCurrentUser: UserProfile = {
@@ -37,6 +37,77 @@ export const mockCurrentUser: UserProfile = {
 };
 
 export const mockEvents: EventItem[] = [
+  {
+    id: 'e-up-1',
+    slug: 'ai-industrial-transformation-course',
+    title: 'คอร์สเรียน: AI & Automation for Modern Industry',
+    description: 'เจาะลึกการนำ AI และระบบอัตโนมัติมาประยุกต์ใช้จริงในโรงงานและธุรกิจอุตสาหกรรมยุคใหม่ พร้อม Workshop ลงมือปฏิบัติจริง',
+    location_name: 'สภาอุตสาหกรรมแห่งประเทศไทย (FTI Tower) ห้อง 801',
+    google_maps_url: 'https://maps.app.goo.gl/fti-tower',
+    start_time: '2026-12-05T09:00:00.000Z',
+    end_time: '2026-12-05T16:30:00.000Z',
+    reward_points: 120,
+    reward_xp: 300,
+    is_mandatory: true,
+    status: 'UPCOMING',
+    event_type: 'course',
+    fee_member: 1500,
+    fee_guest: 2500,
+    image_url: '/images/home/event_training.jpg',
+    author_name: 'YFTI Academy',
+    published_date_text: '5 ธันวาคม 2026',
+    content_paragraphs: [
+      'หลักสูตรเข้มข้นสำหรับผู้บริหารรุ่นใหม่ในการวางกลยุทธ์ด้าน AI และ Smart Factory เพื่อลดต้นทุนและเพิ่มขีดความสามารถในการแข่งขันระดับสากล',
+    ],
+    isRegisteredForEvent: true,
+  },
+  {
+    id: 'e-up-2',
+    slug: 'global-supply-chain-strategy-course',
+    title: 'คอร์สเรียน: Global Supply Chain & ESG Leadership',
+    description: 'กลยุทธ์การบริหารจัดการซัพพลายเชนระดับโลกและการปรับตัวสู่ธุรกิจคาร์บอนต่ำสำหรับผู้ประกอบการอุตสาหกรรม',
+    location_name: 'โรงแรมสยาม เคมปินสกี้ กรุงเทพฯ',
+    google_maps_url: 'https://maps.app.goo.gl/siam-kempinski',
+    start_time: '2026-12-12T09:00:00.000Z',
+    end_time: '2026-12-12T17:00:00.000Z',
+    reward_points: 120,
+    reward_xp: 280,
+    is_mandatory: false,
+    status: 'UPCOMING',
+    event_type: 'course',
+    fee_member: 1900,
+    fee_guest: 3200,
+    image_url: '/images/home/hero_leaders.jpg',
+    author_name: 'YFTI Academy',
+    published_date_text: '12 ธันวาคม 2026',
+    content_paragraphs: [
+      'เรียนรู้แนวทาง ESG ที่เป็นมาตรฐานสากลจากผู้เชี่ยวชาญ พร้อมกรณีศึกษาจริงจากบริษัทในเครือสภาอุตสาหกรรมฯ',
+    ],
+  },
+  {
+    id: 'e-up-3',
+    slug: 'yfti-business-networking-gala-2026',
+    title: 'YFTI 11 Business Networking & Gala Night 2026',
+    description: 'งานสังสรรค์เชื่อมความสัมพันธ์และ Business Matching ส่งท้ายปีของสมาชิก Young FTI ELITE รุ่นที่ 11 และศิษย์เก่าทุกรุ่น',
+    location_name: 'Gaysorn Urban Resort, ชั้น 19 กรุงเทพฯ',
+    google_maps_url: 'https://maps.app.goo.gl/gaysorn',
+    start_time: '2026-12-19T18:00:00+07:00',
+    end_time: '2026-12-19T22:30:00+07:00',
+    reward_points: 100,
+    reward_xp: 250,
+    is_mandatory: false,
+    status: 'UPCOMING',
+    event_type: 'general',
+    fee_member: 1200,
+    fee_guest: 2200,
+    image_url: '/images/home/Young-FTI-11-979-scaled-e1779826560403-1536x863.jpg',
+    author_name: 'YFTI Committee',
+    published_date_text: '19 ธันวาคม 2026',
+    content_paragraphs: [
+      'ร่วมพบปะแลกเปลี่ยนโอกาสทางธุรกิจในบรรยากาศสุดเอ็กซ์คลูซีฟ พร้อมกิจกรรม Lucky Draw และมินิคอนเสิร์ต',
+    ],
+    isRegisteredForEvent: true,
+  },
   {
     id: 'e1',
     slug: 'พิธีปิดหลักสูตร-young-fti-elite-รุ่นท',
@@ -264,6 +335,16 @@ export const mockNews: NewsItem[] = [
     category: 'ประกาศโครงการ',
     summary: 'สภาอุตสาหกรรมแห่งประเทศไทยเปิดรับสมัครผู้บริหารและทายาทธุรกิจอุตสาหกรรมเข้าร่วมโครงการ',
     content: 'หลักสูตรพัฒนาศักยภาพผู้บริหารระดับสูงและทายาทธุรกิจอุตสาหกรรมรุ่นใหม่ เพื่อสร้างเครือข่ายความร่วมมือและขับเคลื่อนเศรษฐกิจไทยสู่เวทีสากล',
+    content_paragraphs: [
+      'สภาอุตสาหกรรมแห่งประเทศไทย (ส.อ.ท.) เปิดรับสมัครผู้บริหารรุ่นใหม่ เจ้าของกิจการ และทายาทธุรกิจอุตสาหกรรม เข้าร่วมหลักสูตร Young FTI ELITE เพื่อยกระดับศักยภาพทางการบริหารและสร้างพันธมิตรทางธุรกิจระดับประเทศ',
+      'ตลอดระยะเวลาหลักสูตร ผู้เข้าร่วมจะได้เรียนรู้จากวิทยากรผู้ทรงคุณวุฒิ ผู้นำองค์กรชั้นนำของประเทศไทย พร้อมศึกษาดูงานโรงงานและองค์กรต้นแบบทั้งในและต่างประเทศ ควบคู่กับกิจกรรมสร้างความสัมพันธ์ระหว่าง 9 กลุ่มดวงดาว',
+      'ผู้ที่สนใจสามารถตรวจสอบคุณสมบัติและเตรียมเอกสารประกอบการสมัครได้ผ่านช่องทางประชาสัมพันธ์ของสภาอุตสาหกรรมแห่งประเทศไทย หรือติดต่อสอบถามคณะกรรมการรุ่น Young FTI ELITE 11'
+    ],
+    gallery_images: [
+      'https://yfticonnect.com/wp-content/uploads/2026/05/Young-FTI-11-477-scaled.jpg',
+      'https://yfticonnect.com/wp-content/uploads/2026/05/Young-FTI-11-480-scaled.jpg',
+      'https://yfticonnect.com/wp-content/uploads/2026/05/Young-FTI-11-308-scaled.jpg'
+    ],
     image_url: 'https://yfticonnect.com/wp-content/uploads/2026/05/Young-FTI-11-477-scaled.jpg',
     author: 'YFTI Committee'
   },
@@ -274,6 +355,16 @@ export const mockNews: NewsItem[] = [
     category: 'ข่าวสารความสำเร็จ',
     summary: 'สมาชิกในรุ่นสามารถจับคู่ธุรกิจ (Synergy) และสร้างโครงการร่วมมือใหม่มากกว่า 40 โครงการ',
     content: 'ตลอดระยะเวลาของหลักสูตร สมาชิกทั้ง 9 กลุ่มดวงดาว ได้ร่วมกันทำภารกิจและสร้างเครือข่ายธุรกิจที่เข้มแข็ง ส่งเสริมการเติบโตอย่างยั่งยืน',
+    content_paragraphs: [
+      'ความสำเร็จของรุ่นที่ 11 สะท้อนผ่านการต่อยอดทางธุรกิจจริงระหว่างสมาชิกกว่า 122 ท่าน ครอบคลุม 8 กลุ่มอุตสาหกรรมหลัก ตั้งแต่เทคโนโลยี การผลิต เกษตรและอาหาร ไปจนถึงอสังหาริมทรัพย์และการเงิน',
+      'กิจกรรม Business Matching และ Cross-Collab ช่วยให้เกิดความร่วมมือทางธุรกิจมากกว่า 40 โครงการ รวมมูลค่าทางเศรษฐกิจกว่า 500 ล้านบาทภายในระยะเวลาไม่ถึง 1 ปี',
+      'นอกจากนี้ สมาชิกยังได้ร่วมกันทำกิจกรรมเพื่อสังคม (CSR) และแบ่งปันองค์ความรู้ด้านนวัตกรรมอุตสาหกรรมอย่างต่อเนื่อง'
+    ],
+    gallery_images: [
+      'https://yfticonnect.com/wp-content/uploads/2026/05/Y11_04042025_284-scaled.jpg',
+      'https://yfticonnect.com/wp-content/uploads/2026/05/Y11_04042025_365-scaled.jpg',
+      'https://yfticonnect.com/wp-content/uploads/2026/05/Y11_04042025_113-scaled.jpg'
+    ],
     image_url: 'https://yfticonnect.com/wp-content/uploads/2026/05/Y11_04042025_284-scaled.jpg',
     author: 'YFTI News'
   },
@@ -284,6 +375,14 @@ export const mockNews: NewsItem[] = [
     category: 'กิจกรรมสัมพันธ์',
     summary: 'กิจกรรมแลกเปลี่ยนประสบการณ์และสร้างความผูกพันระหว่างสมาชิก ณ Hard Rock Hotel Maldives',
     content: 'สมาชิก YFTI 11 ได้ร่วมกิจกรรม Team Building และเจรจาโอกาสทางธุรกิจในบรรยากาศผ่อนคลายริมทะเล',
+    content_paragraphs: [
+      'ทริปพิเศษ Y11 Friendship ณ สาธารณรัฐมัลดีฟส์ เป็นอีกหนึ่งหมุดหมายสำคัญที่ช่วยกระชับความสัมพันธ์ของเพื่อนร่วมรุ่นทั้ง 9 กลุ่มดวงดาวให้แน่นแฟ้นยิ่งขึ้น',
+      'ตลอดการเดินทาง สมาชิกได้ร่วมกิจกรรม Team Building, Gala Dinner และวงสนทนาแลกเปลี่ยนวิสัยทัศน์ธุรกิจท่ามกลางบรรยากาศสุดพิเศษ ณ Hard Rock Hotel Maldives'
+    ],
+    gallery_images: [
+      'https://yfticonnect.com/wp-content/uploads/2026/05/Maldives-Davilsnap-Day2-3_461-scaled.jpg',
+      'https://yfticonnect.com/wp-content/uploads/2026/05/Maldives-Davilsnap-Day2-3_220-scaled.jpg'
+    ],
     image_url: 'https://yfticonnect.com/wp-content/uploads/2026/05/Maldives-Davilsnap-Day2-3_461-scaled.jpg',
     author: 'YFTI Media'
   }
@@ -379,5 +478,179 @@ export const mockPendingSubmissions: MissionSubmission[] = [
     notes: 'ถ่ายรูปคู่กระชับมิตรกับทีม Jupiter ในช่วงคลาสเช้า',
     status: 'PENDING',
     created_at: new Date(Date.now() - 3600000 * 8).toISOString(),
+  },
+];
+
+export const mockPrivileges: PrivilegeItem[] = [
+  {
+    id: 'priv-1',
+    title: 'ส่วนลด 15% ห้องอาหาร Copper Beyond Buffet',
+    merchant: 'Copper Beyond Buffet',
+    discount_label: 'ลด 15%',
+    category: 'Food & Drink',
+    points_required: 100,
+    expiry_date: '31 ธ.ค. 2026',
+    image_url: '/images/home/unsplash_hEC6zxdFF0M.webp',
+    description: 'รับส่วนลดค่าอาหาร 15% เมื่อมาใช้บริการตั้งแต่ 2 ท่านขึ้นไป ที่สาขา Gaysorn Amarin หรือ The Sense Pinklao',
+    conditions: [
+      'แสดง QR Code สิทธิพิเศษจากแอป YFTI-CONNECT ก่อนชำระเงิน',
+      'จำกัด 1 สิทธิ์ / 1 ใบเสร็จ / วัน',
+      'ไม่สามารถใช้ร่วมกับโปรโมชั่นอื่นของทางร้านได้',
+    ],
+    how_to_use: [
+      'กดปุ่ม "แลก Point" เพื่อรับรหัส QR / Barcode',
+      'แสดงรหัสแก่พนักงานก่อนเรียกเก็บเงินภายในเวลาที่กำหนด',
+    ],
+    is_featured: true,
+  },
+  {
+    id: 'priv-2',
+    title: 'ฟรี! เข้าใช้บริการ Coral Executive Lounge',
+    merchant: 'The Coral Executive Lounge',
+    discount_label: 'ฟรี 1 สิทธิ์',
+    category: 'Travel',
+    points_required: 250,
+    expiry_date: '31 ธ.ค. 2026',
+    image_url: '/images/home/Maldives-Davilsnap-Day2-3_461-scaled.jpg',
+    description: 'สิทธิพิเศษสำหรับสมาชิก Young FTI ELITE 11 เข้าใช้บริการเลานจ์สนามบินสุวรรณภูมิและดอนเมืองฟรี 3 ชั่วโมง',
+    conditions: [
+      'สำหรับสมาชิก Young FTI ELITE 11 ที่ยืนยันตัวตนแล้วเท่านั้น',
+      'แสดง Boarding Pass และ QR Code ที่เคาน์เตอร์ต้อนรับ',
+    ],
+    how_to_use: [
+      'กดปุ่ม "แลก Point" เพื่อเปิดใช้งานบัตรเข้าเลานจ์',
+      'แสดง QR Code ต่อเจ้าหน้าที่หน้าทางเข้า',
+    ],
+    is_featured: true,
+  },
+  {
+    id: 'priv-3',
+    title: 'ส่วนลด 1,000 บาท สมัครงาน FTI Business Summit',
+    merchant: 'สภาอุตสาหกรรมแห่งประเทศไทย',
+    discount_label: 'ลด ฿1,000',
+    category: 'Events',
+    points_required: 150,
+    expiry_date: '15 ม.ค. 2027',
+    image_url: '/images/home/hero_leaders.jpg',
+    description: 'ใช้คะแนนสะสมแลกรับส่วนลดบัตรเข้าร่วมงานสัมมนาประจำปี FTI Business Summit สำหรับผู้บริหาร',
+    conditions: [
+      'ใช้ลดค่าลงทะเบียนได้ทั้งสมาชิกและผู้ติดตาม 1 ท่าน',
+      'แลกสิทธิ์แล้วไม่สามารถขอคืนคะแนนได้',
+    ],
+    how_to_use: [
+      'กด "แลก Point" เพื่อรับโค้ดส่วนลด',
+      'กรอกโค้ดในขั้นตอนสมัครเข้าร่วมงาน',
+    ],
+    is_featured: true,
+  },
+  {
+    id: 'priv-4',
+    title: 'ส่วนลด 20% ตรวจสุขภาพ Executive Check-up',
+    merchant: 'โรงพยาบาลบำรุงราษฎร์ / BDMS Partner',
+    discount_label: 'ลด 20%',
+    category: 'Lifestyle',
+    points_required: 200,
+    expiry_date: '31 มี.ค. 2027',
+    image_url: '/images/home/unsplash_FO7JIlwjOtU.webp',
+    description: 'แพ็กเกจตรวจสุขภาพผู้บริหารครอบคลุม 25 รายการ พร้อมสิทธิ์ Fast Track นัดหมายล่วงหน้า',
+    conditions: [
+      'กรุณานัดหมายล่วงหน้าอย่างน้อย 3 วันทำการ',
+      'แสดงบัตรสมาชิกและ QR Code ในวันเข้ารับบริการ',
+    ],
+    how_to_use: [
+      'กด "แลก Point" เพื่อรับคูปองดิจิทัล',
+      'แจ้งรหัสคูปองเมื่อนัดหมายกับโรงพยาบาล',
+    ],
+  },
+  {
+    id: 'priv-5',
+    title: 'ส่วนลด 500 บาท Central / Siam Paragon Gift Voucher',
+    merchant: 'Central Department Store',
+    discount_label: '฿500 Voucher',
+    category: 'Shopping',
+    points_required: 300,
+    expiry_date: '28 ก.พ. 2027',
+    image_url: '/images/home/unsplash_PLH1lwjWvVg.webp',
+    description: 'แลกคูปองแทนเงินสดมูลค่า 500 บาท สำหรับช้อปปิ้งสินค้าทุกแผนกที่เซ็นทรัลและสยามพารากอน',
+    conditions: [
+      'ใช้แทนเงินสดได้ทันทีเมื่อมียอดซื้อขั้นต่ำ 1,500 บาท',
+      'คูปองมีอายุ 60 วันนับจากวันที่กดแลก',
+    ],
+    how_to_use: [
+      'กด "แลก Point" เพื่อรับ Barcode',
+      'ให้พนักงานสแกน Barcode ที่จุดแคชเชียร์',
+    ],
+  },
+  {
+    id: 'priv-6',
+    title: 'บัตรชมภาพยนตร์ VIP First Class 1 แถม 1',
+    merchant: 'SF Cinema / Major Cineplex',
+    discount_label: '1 แถม 1',
+    category: 'Entertainment',
+    points_required: 180,
+    expiry_date: '31 ธ.ค. 2026',
+    image_url: '/images/home/unsplash_8Eiq70dFgU0.webp',
+    description: 'รับสิทธิ์ซื้อบัตรชมภาพยนตร์ระดับ VIP First Class 1 แถม 1 พร้อมชุดป๊อปคอร์นและเครื่องดื่มในเลานจ์',
+    conditions: [
+      'ใช้ได้เฉพาะวันจันทร์ - ศุกร์ ยกเว้นวันหยุดนักขัตฤกษ์',
+      'จำกัด 2 สิทธิ์ต่อเดือน',
+    ],
+    how_to_use: [
+      'กด "แลก Point" เพื่อรับรหัสโปรโมชั่น',
+      'สแกน QR Code ที่ตู้จำหน่ายบัตรอัตโนมัติหรือเคาน์เตอร์ VIP',
+    ],
+  },
+];
+
+export const mockNotifications: NotificationItem[] = [
+  {
+    id: 'notif-1',
+    title: 'กิจกรรมใกล้มาถึง: AI & Automation for Modern Industry',
+    message: 'เหลือเวลาอีก 2 วัน เตรียมบัตรเข้าร่วมงานของคุณให้พร้อมสำหรับการเช็กชื่อหน้างาน',
+    category: 'general',
+    time_ago: '2 ชั่วโมงที่แล้ว',
+    is_read: false,
+    link: '/events/e-up-1',
+    icon_type: 'event',
+  },
+  {
+    id: 'notif-2',
+    title: 'อนุมัติการสมัครเข้าร่วมงานเรียบร้อยแล้ว',
+    message: 'สลิปการโอนเงินสำหรับงาน YFTI 11 Business Networking & Gala Night 2026 ได้รับการอนุมัติแล้ว',
+    category: 'general',
+    time_ago: '5 ชั่วโมงที่แล้ว',
+    is_read: false,
+    link: '/events/e-up-3',
+    icon_type: 'reward',
+  },
+  {
+    id: 'notif-3',
+    title: 'ข้อความใหม่จาก พิชญา เตชะกิจเกรียงไกร (Bam)',
+    message: 'สวัสดีค่ะคุณกอล์ฟ สนใจพูดคุยเรื่อง Business Synergy ร่วมกันในคลาสหน้าค่ะ',
+    category: 'chat',
+    time_ago: '1 วันที่แล้ว',
+    is_read: false,
+    link: '/chat/3294',
+    icon_type: 'chat',
+  },
+  {
+    id: 'notif-4',
+    title: 'ข้อความใหม่จาก ภูม กฤษณาวารินทร์ (Phoom)',
+    message: 'ส่งรายละเอียด Company Profile ให้ทางแชทแล้วนะครับ',
+    category: 'chat',
+    time_ago: '3 วันที่แล้ว',
+    is_read: true,
+    link: '/chat/3292',
+    icon_type: 'chat',
+  },
+  {
+    id: 'notif-5',
+    title: 'สิทธิพิเศษใหม่สำหรับสมาชิก Gold & Platinum',
+    message: 'แลกรับส่วนลด 15% ที่ Copper Beyond Buffet ได้แล้ววันนี้ที่หน้า Privileges',
+    category: 'general',
+    time_ago: '5 วันที่แล้ว',
+    is_read: true,
+    link: '/privileges/priv-1',
+    icon_type: 'announcement',
   },
 ];

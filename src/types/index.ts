@@ -29,6 +29,9 @@ export interface UserProfile {
   points_balance: number;
   xp_balance: number;
   attendance_rate: number;
+  following_count?: number;
+  follower_count?: number;
+  tier?: 'Silver' | 'Gold' | 'Platinum';
 }
 
 export interface EventItem {
@@ -51,6 +54,9 @@ export interface EventItem {
   content_paragraphs?: string[];
   isCheckedIn?: boolean;
   isRegisteredForEvent?: boolean;
+  event_type?: 'general' | 'course';
+  fee_member?: number;
+  fee_guest?: number;
 }
 
 export interface Mission {
@@ -139,6 +145,45 @@ export interface NewsItem {
   category: string;
   summary: string;
   content: string;
+  content_paragraphs?: string[];
+  gallery_images?: string[];
   image_url: string;
   author?: string;
+}
+
+export type PrivilegeCategory =
+  | 'All'
+  | 'Events'
+  | 'Food & Drink'
+  | 'Shopping'
+  | 'Entertainment'
+  | 'Travel'
+  | 'Lifestyle';
+
+export interface PrivilegeItem {
+  id: string;
+  title: string;
+  merchant: string;
+  discount_label: string;
+  category: Exclude<PrivilegeCategory, 'All'>;
+  points_required: number;
+  expiry_date: string;
+  image_url: string;
+  description: string;
+  conditions: string[];
+  how_to_use: string[];
+  is_featured?: boolean;
+}
+
+export type NotificationCategory = 'general' | 'chat';
+
+export interface NotificationItem {
+  id: string;
+  title: string;
+  message: string;
+  category: NotificationCategory;
+  time_ago: string;
+  is_read: boolean;
+  link?: string;
+  icon_type?: 'birthday' | 'announcement' | 'event' | 'chat' | 'reward';
 }

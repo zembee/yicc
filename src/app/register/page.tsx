@@ -444,7 +444,7 @@ export default function RegisterPage() {
                       key={demoTel}
                       type="button"
                       onClick={() => setPhoneNumber(demoTel)}
-                      className="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-700 hover:border-[#1E2538] hover:text-[#1E2538] transition shadow-2xs font-mono"
+                      className="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-700 hover:border-[#1E2538] hover:text-[#1E2538] transition shadow-sm font-mono"
                     >
                       {demoTel}
                     </button>
@@ -476,7 +476,7 @@ export default function RegisterPage() {
           {step === 'OTP_VERIFY' && matchedParticipant && (
             <form onSubmit={handleVerifyOtp} className="space-y-5">
               {/* Matched Profile Preview Card */}
-              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex items-center gap-3.5 shadow-2xs">
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex items-center gap-3.5 shadow-sm">
                 <img
                   src={matchedParticipant.profile_picture_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + matchedParticipant.name_thai}
                   alt={matchedParticipant.name_thai}

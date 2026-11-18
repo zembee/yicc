@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, notFound } from 'next/navigation';
-import { mockEvents } from '@/lib/mockData';
+import { mockEvents, mockMissions } from '@/lib/mockData';
+import { useLiffAuth } from '@/contexts/LiffContext';
+import { EventItem } from '@/types';
 import { 
   Calendar, 
   MapPin, 
@@ -17,18 +19,75 @@ import {
   ChevronRight, 
   Maximize2,
   Share2,
-  Sparkles
+  Sparkles,
+  Target,
+  Upload,
+  Ticket,
+  Hourglass
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 
 export default function EventDetailPage() {
   const params = useParams();
+  const { profile } = useLiffAuth();
   const rawId = decodeURIComponent((params.id as string) || '');
 
+  const [customEvents, setCustomEvents] = useState<EventItem[]>([]);
+  const [registrationStatus, setRegistrationStatus] = useState<'NONE' | 'PENDING' | 'APPROVED' | 'REJECTED'>('NONE');
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  const [applicantName, setApplicantName] = useState('');
+  const [applicantPhone, setApplicantPhone] = useState('');
+  const [ticketType, setTicketType] = useState<'member' | 'guest'>('member');
+  const [slipFileName, setSlipFileName] = useState('');
+  const [slipDataUrl, setSlipDataUrl] = useState('');
+
+  useEffect(() => {
+    if (profile) {
+      setApplicantName(profile.display_name || '');
+      setApplicantPhone(profile.phone_number || '');
+    }
+  }, [profile]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const custom: EventItem[] = JSON.parse(localStorage.getItem('yfti_custom_events') || '[]');
+        if (Array.isArray(custom)) setCustomEvents(custom);
+      } catch {}
+    }
+  }, []);
+
   // Find event by ID or Slug
-  const event = mockEvents.find(
+  const allEvents = [...customEvents, ...mockEvents];
+  const event = allEvents.find(
     (ev) => ev.id === rawId || ev.slug === rawId || encodeURIComponent(ev.slug || '') === rawId
   );
+
+  useEffect(() => {
+    if (!event || typeof window === 'undefined') return;
+    const paramsQuery = new URLSearchParams(window.location.search);
+    const autoOpenRegister = paramsQuery.get('register') === '1';
+
+    if (event.isRegisteredForEvent) {
+      setRegistrationStatus('APPROVED');
+      return;
+    }
+    try {
+      const regs = JSON.parse(localStorage.getItem('yfti_event_registrations') || '[]');
+      const found = regs.find((r: any) => r.eventId === event.id);
+      if (found) {
+        setRegistrationStatus(found.status);
+        if (found.status === 'REJECTED' && autoOpenRegister && event.status === 'UPCOMING') {
+          setIsRegisterModalOpen(true);
+        }
+        return;
+      }
+    } catch {}
+
+    if (autoOpenRegister && event.status === 'UPCOMING') {
+      setIsRegisterModalOpen(true);
+    }
+  }, [event]);
 
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
@@ -81,8 +140,8 @@ export default function EventDetailPage() {
         </div>
       )}
 
-      {/* Hero Header (.elementor-element-e358069) */}
-      <div className="bg-gradient-to-b from-[#181B34] via-[#212542] to-[#2B3054] text-white pt-8 pb-14 px-4 sm:px-6 lg:px-8 border-b border-slate-800 shadow-md">
+      {/* Hero Header */}
+      <div className="bg-gradient-to-b from-[#111827] via-[#1E2538] to-[#252E46] text-white pt-8 pb-14 px-4 sm:px-6 lg:px-8 border-b border-slate-800 shadow-md">
         <div className="max-w-5xl mx-auto space-y-6">
           {/* Breadcrumb & Navigation */}
           <div className="flex items-center justify-between">
@@ -100,11 +159,11 @@ export default function EventDetailPage() {
             </button>
           </div>
 
-          {/* Title (.elementor-element-7decc6f) */}
+          {/* Title */}
           <div className="space-y-3 pt-2">
             <div className="flex flex-wrap items-center gap-2">
               {event.is_mandatory ? (
-                <span className="px-3 py-0.5 rounded-full bg-[#FB7170] text-white text-[11px] font-bold tracking-wider uppercase shadow-sm">
+                <span className="px-3 py-0.5 rounded-full bg-[#C59B38] text-white text-[11px] font-bold tracking-wider uppercase shadow-sm">
                   วิชาบังคับ (80%)
                 </span>
               ) : (
@@ -124,19 +183,19 @@ export default function EventDetailPage() {
             </h1>
           </div>
 
-          {/* Meta Info Bar (.elementor-element-76b53b8) */}
+          {/* Meta Info Bar */}
           <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-xs sm:text-sm text-slate-300 pt-2 border-t border-white/10">
             <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-[#FB7170]" />
+              <Calendar className="w-4 h-4 text-[#E5C158]" />
               <span>เผยแพร่ {event.published_date_text || '24 พฤษภาคม 2025'}</span>
             </div>
             <div className="flex items-center gap-2">
-              <User className="w-4 h-4 text-[#FB7170]" />
+              <User className="w-4 h-4 text-[#E5C158]" />
               <span>ผู้เขียน {event.author_name || 'admin'}</span>
             </div>
             {event.location_name && (
               <div className="flex items-center gap-2 truncate max-w-md">
-                <MapPin className="w-4 h-4 text-[#FB7170] shrink-0" />
+                <MapPin className="w-4 h-4 text-[#E5C158] shrink-0" />
                 <span className="truncate">{event.location_name}</span>
               </div>
             )}
@@ -166,10 +225,10 @@ export default function EventDetailPage() {
         {/* Action Panel: Calendar & QR Check-in */}
         <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="space-y-1 text-center sm:text-left">
-            <div className="text-xs font-bold text-[#FB7170] uppercase tracking-wider">
+            <div className="text-xs font-bold text-[#B38728] uppercase tracking-wider">
               Young FTI Elite Activity Pass
             </div>
-            <div className="text-base sm:text-lg font-bold text-[#212542]">
+            <div className="text-base sm:text-lg font-bold text-[#1E2538]">
               {event.isCheckedIn ? 'คุณได้ทำการเช็คชื่อกิจกรรมนี้แล้ว' : 'เข้าร่วมกิจกรรมและสะสมคะแนน'}
             </div>
             <p className="text-xs text-slate-500">
@@ -177,7 +236,7 @@ export default function EventDetailPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="flex items-center gap-3 w-full sm:w-auto flex-wrap">
             <a
               href={googleCalendarUrl}
               target="_blank"
@@ -187,20 +246,40 @@ export default function EventDetailPage() {
               <ExternalLink className="w-4 h-4 text-slate-500" />
               ลง Google Calendar
             </a>
-            <button
-              onClick={() => setIsQrModalOpen(true)}
-              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#212542] hover:bg-[#2e335b] text-white text-xs sm:text-sm font-bold transition shadow-sm"
-            >
-              <QrCode className="w-4 h-4 text-[#FB7170]" />
-              {event.isCheckedIn ? 'ดู QR Code' : 'เปิด QR เช็คชื่อ'}
-            </button>
+
+            {event.status === 'UPCOMING' && (registrationStatus === 'NONE' || registrationStatus === 'REJECTED') && (
+              <button
+                onClick={() => setIsRegisterModalOpen(true)}
+                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#B89138] hover:bg-[#a37f2d] text-white text-xs sm:text-sm font-bold transition shadow-sm"
+              >
+                <Ticket className="w-4 h-4" />
+                {registrationStatus === 'REJECTED' ? 'ส่งสลิปสมัครใหม่อีกครั้ง' : 'สมัครเข้าร่วม + แนบสลิป'}
+              </button>
+            )}
+
+            {event.status === 'UPCOMING' && registrationStatus === 'PENDING' && (
+              <span className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#FBF6EC] border border-[#EFE2C2] text-[#9A7320] text-xs sm:text-sm font-bold">
+                <Hourglass className="w-4 h-4" />
+                รอแอดมินอนุมัติสลิป
+              </span>
+            )}
+
+            {(event.status !== 'UPCOMING' || registrationStatus === 'APPROVED') && (
+              <button
+                onClick={() => setIsQrModalOpen(true)}
+                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#1E2538] hover:bg-[#2B3550] text-white text-xs sm:text-sm font-bold transition shadow-sm"
+              >
+                <QrCode className="w-4 h-4 text-[#E5C158]" />
+                {event.isCheckedIn ? 'ดู QR Code' : 'เปิด QR บัตรเข้าร่วม'}
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Paragraph & Description (.elementor-element-cd17c64) */}
+        {/* Paragraph & Description */}
         <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200/80 space-y-4">
-          <h3 className="text-lg sm:text-xl font-bold text-[#212542] border-b border-slate-100 pb-3 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-[#FB7170]" />
+          <h3 className="text-lg sm:text-xl font-bold text-[#1E2538] border-b border-slate-100 pb-3 flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-[#B38728]" />
             รายละเอียดกิจกรรม
           </h3>
           {event.content_paragraphs && event.content_paragraphs.length > 0 ? (
@@ -236,37 +315,79 @@ export default function EventDetailPage() {
           )}
         </div>
 
-        {/* Photo Gallery Grid (.wp-block-gallery) */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xl sm:text-2xl font-bold text-[#212542] font-kanit">
-              ภาพบรรยากาศ ({gallery.length} ภาพ)
+        {/* In-Event Missions & Points */}
+        <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200/80 space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 className="text-lg sm:text-xl font-bold text-[#1E2538] flex items-center gap-2">
+              <Target className="w-5 h-5 text-[#B38728]" />
+              ภารกิจและคะแนนภายในกิจกรรม
             </h3>
-            <span className="text-xs text-slate-500">คลิกที่ภาพเพื่อดูขนาดเต็ม</span>
+            <span className="text-xs font-black text-amber-600 bg-amber-50 px-3 py-1 rounded-full">
+              รับสูงสุด +{event.reward_points + 260} Pts
+            </span>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-            {gallery.map((imgUrl, index) => (
+          <div className="space-y-2.5">
+            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs sm:text-sm font-extrabold text-[#1E2538]">เช็กชื่อเข้าร่วมกิจกรรม</p>
+                <p className="text-[11px] text-slate-500">สแกน QR บัตรเข้าร่วมกับทีมงานหน้างาน</p>
+              </div>
+              <span className="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-black shrink-0">
+                +{event.reward_points} Pts
+              </span>
+            </div>
+
+            {mockMissions.map((m) => (
               <div
-                key={index}
-                onClick={() => setLightboxIndex(index)}
-                className="group relative h-48 sm:h-56 rounded-xl overflow-hidden bg-slate-100 cursor-pointer shadow-sm hover:shadow-md transition-all duration-300 border border-slate-200/60"
+                key={m.id}
+                className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3"
               >
-                <img
-                  src={imgUrl}
-                  alt={`ภาพที่ ${index + 1}`}
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                  <span className="p-2.5 rounded-full bg-white/90 text-[#212542] shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform">
-                    <Maximize2 className="w-4 h-4" />
-                  </span>
+                <div>
+                  <p className="text-xs sm:text-sm font-extrabold text-[#1E2538]">{m.title}</p>
+                  <p className="text-[11px] text-slate-500">{m.description}</p>
                 </div>
+                <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-black shrink-0">
+                  +{m.reward_points} Pts
+                </span>
               </div>
             ))}
           </div>
         </div>
+
+        {/* Photo Gallery Grid (Only shown after event has started/completed) */}
+        {event.status !== 'UPCOMING' && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl sm:text-2xl font-bold text-[#212542] font-kanit">
+                ภาพบรรยากาศ ({gallery.length} ภาพ)
+              </h3>
+              <span className="text-xs text-slate-500">คลิกที่ภาพเพื่อดูขนาดเต็ม</span>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+              {gallery.map((imgUrl, index) => (
+                <div
+                  key={index}
+                  onClick={() => setLightboxIndex(index)}
+                  className="group relative h-48 sm:h-56 rounded-xl overflow-hidden bg-slate-100 cursor-pointer shadow-sm hover:shadow-md transition-all duration-300 border border-slate-200/60"
+                >
+                  <img
+                    src={imgUrl}
+                    alt={`ภาพที่ ${index + 1}`}
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                    <span className="p-2.5 rounded-full bg-white/90 text-[#212542] shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform">
+                      <Maximize2 className="w-4 h-4" />
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Other Activities Grid (.elementor-element-bf59698) */}
         <div className="pt-8 border-t border-slate-200 space-y-6">
@@ -402,7 +523,16 @@ export default function EventDetailPage() {
 
             <div className="p-4 bg-white border border-slate-100 rounded-2xl shadow-inner flex items-center justify-center">
               <QRCodeSVG
-                value={`yfti://event-checkin?eventId=${event.id}&token=${Date.now()}`}
+                value={JSON.stringify({
+                  version: 1,
+                  type: 'EVENT_CHECKIN',
+                  profileId: profile?.id || '3296',
+                  lineUserId: profile?.line_user_id || 'U_SIM_3296',
+                  displayName: profile?.display_name || applicantName || 'สมาชิก YFTI 11',
+                  eventId: event.id,
+                  eventTitle: event.title,
+                  ts: Date.now(),
+                })}
                 size={200}
                 level="H"
                 includeMargin
@@ -420,6 +550,169 @@ export default function EventDetailPage() {
             >
               ปิดหน้าต่าง
             </button>
+          </div>
+        </div>
+      )}
+      {/* Registration & Slip Upload Modal */}
+      {isRegisterModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-0 sm:p-4"
+          onClick={() => setIsRegisterModalOpen(false)}
+        >
+          <div
+            className="w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl p-6 space-y-4 max-h-[90vh] overflow-y-auto relative shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setIsRegisterModalOpen(false)}
+              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-slate-100 text-slate-500"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#FB7170]">
+                Event Registration
+              </span>
+              <h3 className="text-base font-black text-[#1E2538]">{event.title}</h3>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const amount =
+                  ticketType === 'member'
+                    ? event.fee_member ?? 1500
+                    : event.fee_guest ?? 2500;
+                const newReg = {
+                  id: `reg-${Date.now()}`,
+                  eventId: event.id,
+                  eventTitle: event.title,
+                  applicantName: applicantName || 'สมาชิก YFTI 11',
+                  applicantPhone: applicantPhone || '082-269-9962',
+                  ticketType: ticketType === 'member' ? 'สมาชิก YFTI' : 'บุคคลทั่วไป',
+                  amount,
+                  slipName: slipFileName || 'transfer-slip.jpg',
+                  slipDataUrl: slipDataUrl || undefined,
+                  status: 'PENDING',
+                  createdAt: new Date().toLocaleString('th-TH'),
+                };
+                if (typeof window !== 'undefined') {
+                  const existing = JSON.parse(
+                    localStorage.getItem('yfti_event_registrations') || '[]'
+                  );
+                  const filtered = existing.filter((r: any) => String(r.eventId) !== String(event.id));
+                  filtered.unshift(newReg);
+                  localStorage.setItem('yfti_event_registrations', JSON.stringify(filtered));
+                }
+                setRegistrationStatus('PENDING');
+                setIsRegisterModalOpen(false);
+              }}
+              className="space-y-3"
+            >
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">ชื่อ-นามสกุลผู้เข้าร่วม</label>
+                <input
+                  type="text"
+                  required
+                  value={applicantName}
+                  onChange={(e) => setApplicantName(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">เบอร์โทรศัพท์</label>
+                <input
+                  type="tel"
+                  required
+                  value={applicantPhone}
+                  onChange={(e) => setApplicantPhone(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">ประเภทบัตร</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setTicketType('member')}
+                    className={`p-3 rounded-xl border text-left transition ${
+                      ticketType === 'member'
+                        ? 'border-[#1E2538] bg-[#1E2538]/5'
+                        : 'border-slate-200'
+                    }`}
+                  >
+                    <span className="text-xs font-bold text-[#1E2538] block">สมาชิก YFTI</span>
+                    <span className="text-xs font-black text-[#FB7170]">
+                      ฿{(event.fee_member ?? 1500).toLocaleString()}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTicketType('guest')}
+                    className={`p-3 rounded-xl border text-left transition ${
+                      ticketType === 'guest'
+                        ? 'border-[#1E2538] bg-[#1E2538]/5'
+                        : 'border-slate-200'
+                    }`}
+                  >
+                    <span className="text-xs font-bold text-[#1E2538] block">บุคคลทั่วไป</span>
+                    <span className="text-xs font-black text-[#FB7170]">
+                      ฿{(event.fee_guest ?? 2500).toLocaleString()}
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs space-y-1">
+                <p className="font-bold text-[#1E2538]">ข้อมูลการโอนเงิน</p>
+                <p className="text-slate-600">ธนาคารกสิกรไทย: 055-8-96255-9 (สภาอุตสาหกรรมฯ)</p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">แนบสลิปโอนเงิน</label>
+                <label className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 border-dashed border-slate-300 hover:border-[#FB7170] bg-slate-50 cursor-pointer transition text-xs font-bold text-slate-600">
+                  {slipDataUrl ? (
+                    <img
+                      src={slipDataUrl}
+                      alt="ตัวอย่างสลิปโอนเงิน"
+                      className="max-h-40 rounded-xl object-contain border border-slate-200 bg-white"
+                    />
+                  ) : null}
+                  <div className="flex items-center gap-2">
+                    <Upload className="w-4 h-4 text-[#FB7170]" />
+                    <span>{slipFileName || 'เลือกไฟล์รูปภาพสลิปโอนเงิน'}</span>
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) {
+                        setSlipFileName(f.name);
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                          if (typeof reader.result === 'string') {
+                            setSlipDataUrl(reader.result);
+                          }
+                        };
+                        reader.readAsDataURL(f);
+                      }
+                    }}
+                  />
+                </label>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3 rounded-2xl bg-[#1E2538] hover:bg-[#2B3550] text-white text-xs sm:text-sm font-black transition shadow-md"
+              >
+                ส่งใบสมัครและรอแอดมินอนุมัติ
+              </button>
+            </form>
           </div>
         </div>
       )}

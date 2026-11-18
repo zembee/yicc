@@ -22,8 +22,8 @@ export const MissionReviewList: React.FC = () => {
   return (
     <div className="space-y-3.5">
       <div className="flex items-center justify-between pb-1">
-        <h3 className="text-xs font-bold text-[#181B34] flex items-center gap-1.5 uppercase tracking-wide">
-          <Clock className="w-3.5 h-3.5 text-[#FB7170]" />
+        <h3 className="text-xs font-bold text-[#1E2538] flex items-center gap-1.5 uppercase tracking-wide">
+          <Clock className="w-3.5 h-3.5 text-[#B38728]" />
           คำขอตรวจภารกิจรออนุมัติ ({pendingList.length})
         </h3>
       </div>
@@ -48,19 +48,19 @@ export const MissionReviewList: React.FC = () => {
                     className="w-8 h-8 rounded-lg object-cover border border-slate-200"
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-lg bg-slate-100 text-[#181B34] flex items-center justify-center font-bold text-xs">
+                  <div className="w-8 h-8 rounded-lg bg-slate-100 text-[#1E2538] flex items-center justify-center font-bold text-xs">
                     {item.user_name?.charAt(0)}
                   </div>
                 )}
                 <div>
-                  <h4 className="text-xs font-bold text-[#181B34]">{item.user_name}</h4>
+                  <h4 className="text-xs font-bold text-[#1E2538]">{item.user_name}</h4>
                   <p className="text-[10px] text-slate-400">
                     ส่งเมื่อ {format(new Date(item.created_at), 'd MMM HH:mm', { locale: th })}
                   </p>
                 </div>
               </div>
 
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-50 text-[#FB7170] border border-rose-100">
+              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2]">
                 {item.mission_title}
               </span>
             </div>
@@ -82,8 +82,8 @@ export const MissionReviewList: React.FC = () => {
                 alt="Mission proof"
                 className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
               />
-              <div className="absolute inset-0 bg-[#181B34]/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                <span className="text-xs font-bold text-white bg-[#181B34]/90 px-3 py-1 rounded-full flex items-center gap-1.5 backdrop-blur-sm">
+              <div className="absolute inset-0 bg-[#1E2538]/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                <span className="text-xs font-bold text-white bg-[#1E2538]/90 px-3 py-1 rounded-full flex items-center gap-1.5 backdrop-blur-sm">
                   <ImageIcon className="w-3.5 h-3.5" /> ดูภาพขนาดเต็ม
                 </span>
               </div>
@@ -99,9 +99,9 @@ export const MissionReviewList: React.FC = () => {
               </button>
               <button
                 onClick={() => handleAction(item.id, 'APPROVED')}
-                className="flex-1 py-2 px-3 rounded-lg bg-[#181B34] hover:bg-[#25294e] text-white text-xs font-bold transition flex items-center justify-center gap-1.5"
+                className="flex-1 py-2 px-3 rounded-lg bg-[#1E2538] hover:bg-[#2B3550] text-white text-xs font-bold transition flex items-center justify-center gap-1.5"
               >
-                <Check className="w-3.5 h-3.5 text-[#FB7170]" /> อนุมัติแต้ม
+                <Check className="w-3.5 h-3.5 text-[#E5C158]" /> อนุมัติแต้ม
               </button>
             </div>
           </div>

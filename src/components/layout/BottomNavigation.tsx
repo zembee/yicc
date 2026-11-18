@@ -4,11 +4,11 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
-  GraduationCap, 
+  Home,
+  Gift,
   CalendarDays, 
   Users, 
   User, 
-  Newspaper,
   ShieldCheck 
 } from 'lucide-react';
 import { useLiffAuth } from '@/contexts/LiffContext';
@@ -24,10 +24,10 @@ export const BottomNavigation: React.FC = () => {
   const isAdmin = profile?.role === 'SUPER_ADMIN' || profile?.role === 'HOUSE_ADMIN';
 
   const navItems = [
-    { label: 'เกี่ยวกับเรา', href: '/academy', icon: GraduationCap },
+    { label: 'หน้าแรก', href: '/', icon: Home },
+    { label: 'สิทธิพิเศษ', href: '/privileges', icon: Gift },
     { label: 'ธุรกิจ', href: '/directory', icon: Users },
     { label: 'กิจกรรม', href: '/events', icon: CalendarDays },
-    { label: 'ข่าวสาร', href: '/news', icon: Newspaper },
     { label: 'โปรไฟล์', href: '/profile', icon: User },
     ...(isAdmin ? [{ label: 'Admin', href: '/admin', icon: ShieldCheck }] : []),
   ];
@@ -37,7 +37,7 @@ export const BottomNavigation: React.FC = () => {
       <div className="max-w-md mx-auto flex items-center justify-around px-2 py-1.5">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href || (item.href !== '/academy' && pathname.startsWith(item.href));
+          const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
           
           return (
             <Link
@@ -60,7 +60,7 @@ export const BottomNavigation: React.FC = () => {
                 {item.label}
               </span>
               {isActive && (
-                <span className="w-1.5 h-1.5 rounded-full bg-[#FB7170] mt-0.5" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#C59B38] mt-0.5" />
               )}
             </Link>
           );

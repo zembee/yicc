@@ -1,600 +1,598 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import Link from 'next/link';
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  X,
-  Maximize2
+import { useLiffAuth } from '@/contexts/LiffContext';
+import { mockHouses, mockMissions, mockEvents, mockPrivileges, mockNotifications } from '@/lib/mockData';
+import { EventItem } from '@/types';
+import {
+  Bell,
+  Gift,
+  GraduationCap,
+  Calendar,
+  Building2,
+  ChevronRight,
+  Coins,
+  Crown,
+  Trophy,
+  Target,
+  Clock,
+  MapPin,
+  Cpu,
+  Briefcase,
+  ShoppingBag,
+  Factory,
+  Wheat,
+  HardHat,
+  Zap,
+  Landmark,
+  Info,
+  CheckCircle2,
+  BadgeCheck,
 } from 'lucide-react';
+import { WebLoginModal } from '@/components/layout/WebLoginModal';
 
-// Hero Swiper Slides
-const HERO_SLIDES = [
-  {
-    image: '/images/home/Young-FTI-11-979-scaled-e1779826560403-1536x863.jpg',
-    alt: 'Young FTI ELITE รุ่นที่ 11'
-  },
-  {
-    image: '/images/home/hero_leaders.jpg',
-    alt: 'พิธีเปิดและสัมมนาผู้บริหารระดับสูง Young FTI 11'
-  },
-  {
-    image: '/images/home/event_training.jpg',
-    alt: 'ภาพบรรยากาศการอบรมโครงการ Young FTI Elite รุ่นที่ 11'
-  }
-];
-
-// กิจกรรมโครงการ (Activities)
-const ACTIVITIES = [
-  {
-    id: 'act-1',
-    date: '24 พ.ค. 2025',
-    title: 'พิธีปิดหลักสูตร YOUNG FTI ELITE รุ่นที่ 11',
-    image: '/images/home/25680523-Y11-YoungFTI_1683-scaled.jpg',
-    link: '/events'
-  },
-  {
-    id: 'act-2',
-    date: '17 พ.ค. 2025',
-    title: 'ภาพบรรยากาศการอบรมโครงการ Young FTI Elite รุ่นที่ 11',
-    image: '/images/home/Y11-YoungFTI-Earth_225-scaled.jpg',
-    link: '/events'
-  },
-  {
-    id: 'act-3',
-    date: '28 เม.ย. 2025',
-    title: 'กิจกรรม Y11 Friendship ณ Hard rock Maldives',
-    image: '/images/home/Maldives-Davilsnap-Day2-3_627-scaled.jpg',
-    link: '/events'
-  }
-];
-
-// บรรยากาศกิจกรรม (Gallery Photos - 11 photos matching Elementor mosaic puzzle layout)
-const GALLERY_ITEMS = [
-  // Left Column - Row 1
-  { id: 1, img: '/images/home/Y11_04042025_284-1024x1536.jpg', title: 'Y11_04042025_284' },
-  { id: 2, img: '/images/home/Y11_04042025_365-scaled.jpg', title: 'Y11_04042025_365' },
-  { id: 3, img: '/images/home/Y11_04042025_113-scaled.jpg', title: 'Y11_04042025_113' },
-
-  // Right Column - Row 1
-  { id: 4, img: '/images/home/KIM05966-scaled.jpg', title: 'KIM05966' },
-  { id: 5, img: '/images/home/DSC00451-scaled.jpg', title: 'DSC00451' },
-
-  // Left Column - Row 2
-  { id: 6, img: '/images/home/YFTI-Pattaya-24-Jan-25-130-scaled.jpg', title: 'YFTI Pattaya (24 Jan 25)-130' },
-  { id: 7, img: '/images/home/Young-FTI-11-477-scaled.jpg', title: 'Young FTI 11-477' },
-  { id: 8, img: '/images/home/Young-FTI-11-480-scaled.jpg', title: 'Young FTI 11-480' },
-
-  // Right Column - Row 2
-  { id: 9, img: '/images/home/Maldives-Davilsnap-Day2-3_461-scaled.jpg', title: 'Maldives Davilsnap Day2-3_461' },
-  { id: 10, img: '/images/home/Maldives-Davilsnap-Day2-3_220-scaled.jpg', title: 'Maldives Davilsnap Day2-3_220' },
-  { id: 11, img: '/images/home/Young-FTI-11-308-scaled.jpg', title: 'Young FTI 11-308' },
-];
-
-// ธุรกิจที่เกี่ยวข้อง (8 Industry Sectors matching Elementor Card Grid with exact images)
-const INDUSTRY_SECTORS = [
-  {
-    nameTh: 'เทคโนโลยี',
-    nameEn: 'Technology',
-    img: '/images/home/unsplash_FO7JIlwjOtU.webp',
-    query: 'เทคโนโลยี'
-  },
-  {
-    nameTh: 'บริการ',
-    nameEn: 'Service',
-    img: '/images/home/unsplash_hEC6zxdFF0M.webp',
-    query: 'บริการ'
-  },
-  {
-    nameTh: 'สินค้าอุปโภคบริโภค',
-    nameEn: 'Consumer Products',
-    img: '/images/home/unsplash_PLH1lwjWvVg.webp',
-    query: 'สินค้าอุปโภคบริโภค'
-  },
-  {
-    nameTh: 'สินค้าอุตสาหกรรม',
-    nameEn: 'Industrial Goods',
-    img: '/images/home/unsplash_lqx_D7xIZ2o.webp',
-    query: 'สินค้าอุตสาหกรรม'
-  },
-  {
-    nameTh: 'การเกษตร / อาหาร',
-    nameEn: 'Agriculture / Food',
-    img: '/images/home/3684-684x1024.jpg',
-    query: 'เกษตร'
-  },
-  {
-    nameTh: 'การก่อสร้าง',
-    nameEn: 'Real Estate / Construction',
-    img: '/images/home/unsplash_VAhJP5c-XdI.webp',
-    query: 'ก่อสร้าง'
-  },
-  {
-    nameTh: 'ทรัพยากร',
-    nameEn: 'Resources',
-    img: '/images/home/unsplash_dXbteDwOUG8.webp',
-    query: 'ทรัพยากร'
-  },
-  {
-    nameTh: 'ธุรกิจการเงิน / ลงทุน',
-    nameEn: 'Financials / Investment',
-    img: '/images/home/unsplash_8Eiq70dFgU0.webp',
-    query: 'การเงิน'
-  }
+const INDUSTRY_CATEGORIES = [
+  { name: 'เทคโนโลยี', query: 'technology', icon: Cpu },
+  { name: 'บริการ', query: 'services', icon: Briefcase },
+  { name: 'อุปโภคบริโภค', query: 'consumer_goods', icon: ShoppingBag },
+  { name: 'อุตสาหกรรม', query: 'industrial_goods', icon: Factory },
+  { name: 'เกษตร / อาหาร', query: 'agriculture_and_food_industrial', icon: Wheat },
+  { name: 'ก่อสร้าง', query: 'real_estate_and_construction', icon: HardHat },
+  { name: 'ทรัพยากร', query: 'resources', icon: Zap },
+  { name: 'การเงิน / ลงทุน', query: 'financial_and_investment', icon: Landmark },
 ];
 
 export default function HomePage() {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [selectedLightboxImg, setSelectedLightboxImg] = useState<{ img: string; title: string } | null>(null);
+  const { profile } = useLiffAuth();
+  const [mounted, setMounted] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [readNotificationIds, setReadNotificationIds] = useState<string[]>([]);
+  const [customEvents, setCustomEvents] = useState<EventItem[]>([]);
+  const [missionOverrides, setMissionOverrides] = useState<Record<string, 'APPROVED' | 'PENDING' | 'NOT_STARTED'>>({});
 
-  // Auto slide effect
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, 5000);
-    return () => clearInterval(timer);
+    setMounted(true);
+    if (typeof window !== 'undefined') {
+      try {
+        const readIds = JSON.parse(localStorage.getItem('yfti_notifications_read') || '[]');
+        if (Array.isArray(readIds)) setReadNotificationIds(readIds);
+
+        const custom = JSON.parse(localStorage.getItem('yfti_custom_events') || '[]');
+        if (Array.isArray(custom)) setCustomEvents(custom);
+
+        const savedMissions = JSON.parse(localStorage.getItem('yfti_mission_submissions') || '{}');
+        if (savedMissions && typeof savedMissions === 'object') {
+          setMissionOverrides(savedMissions);
+        }
+      } catch {}
+    }
   }, []);
 
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+  const unreadCount = useMemo(
+    () => mockNotifications.filter((n) => !n.is_read && !readNotificationIds.includes(n.id)).length,
+    [readNotificationIds]
+  );
+
+  const sortedHouses = useMemo(
+    () => [...mockHouses].sort((a, b) => b.total_points - a.total_points),
+    []
+  );
+
+  const allEvents = useMemo(() => [...customEvents, ...mockEvents], [customEvents]);
+
+  const courses = useMemo(
+    () => allEvents.filter((e) => e.event_type === 'course'),
+    [allEvents]
+  );
+
+  const generalEvents = useMemo(
+    () => allEvents.filter((e) => e.event_type !== 'course').slice(0, 4),
+    [allEvents]
+  );
+
+  const upcomingItems = useMemo(
+    () => allEvents.filter((e) => e.status === 'UPCOMING'),
+    [allEvents]
+  );
+
+  const mergedMissions = useMemo(
+    () =>
+      mockMissions.map((m) => ({
+        ...m,
+        status: missionOverrides[m.id] || m.status || 'NOT_STARTED',
+      })),
+    [missionOverrides]
+  );
+
+  const completedMissionsCount = useMemo(
+    () => mergedMissions.filter((m) => m.status === 'APPROVED').length,
+    [mergedMissions]
+  );
+
+  const activeProfile = mounted ? profile : null;
+  const normalizedHouseId = (activeProfile?.house_id || activeProfile?.house?.id || '').replace(/-/g, '_');
+  const displayHouseName =
+    mockHouses.find((h) => h.id === normalizedHouseId)?.name || activeProfile?.house?.name || 'YFTI 11';
+
+  const xp = activeProfile?.xp_balance ?? 0;
+  const tier = activeProfile?.tier || (xp >= 2000 ? 'Platinum' : xp >= 1000 ? 'Gold' : 'Silver');
+  const points = activeProfile?.points_balance ?? 0;
 
   return (
-    <div className="w-full bg-[#FAFAFA] text-[#292929] font-['Kanit',sans-serif] select-none">
-      {/* -------------------------------------------------------------------------------- */}
-      {/* SECTION 1: TOP HERO NESTED CAROUSEL (Full Width Edge-to-Edge)                    */}
-      {/* -------------------------------------------------------------------------------- */}
-      <section className="relative w-full min-h-[400px] md:min-h-[80vh] h-[50vw] max-h-[860px] overflow-hidden bg-[#212542]">
-        {HERO_SLIDES.map((slide, idx) => (
-          <div
-            key={idx}
-            className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-              idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
-            }`}
-          >
-            <img
-              src={slide.image}
-              alt={slide.alt}
-              className="w-full h-full object-cover object-center"
-            />
+    <div className="w-full bg-[#F7F7F5] text-[#1E2538] pb-24">
+      {/* ================= 1. EXECUTIVE NAVY HERO HEADER ================= */}
+      <section className="bg-gradient-to-b from-[#111827] to-[#1E2538] text-white pt-5 pb-14 px-4 sm:px-6 rounded-b-[28px] shadow-sm">
+        <div className="max-w-5xl mx-auto space-y-5">
+          {/* Top Brand & Tier Row */}
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <h1 className="text-lg sm:text-xl font-bold tracking-tight text-white">
+                  Young FTI ELITE 11
+                </h1>
+                <BadgeCheck className="w-4 h-4 text-[#E5C158] shrink-0" />
+              </div>
+              <p className="text-[11px] text-slate-300">สภาอุตสาหกรรมแห่งประเทศไทย</p>
+            </div>
+
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/15 bg-white/10 text-[#E5C158] text-xs font-semibold shrink-0">
+              <Crown className="w-3.5 h-3.5" />
+              <span>{tier}</span>
+            </span>
           </div>
-        ))}
 
-        {/* Carousel Navigation Arrows */}
-        <button
-          onClick={prevSlide}
-          aria-label="Previous slide"
-          className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/30 hover:bg-black/60 text-white flex items-center justify-center backdrop-blur-sm transition shadow-lg"
-        >
-          <ChevronLeft className="w-6 h-6 sm:w-7 sm:h-7" />
-        </button>
-        <button
-          onClick={nextSlide}
-          aria-label="Next slide"
-          className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/30 hover:bg-black/60 text-white flex items-center justify-center backdrop-blur-sm transition shadow-lg"
-        >
-          <ChevronRight className="w-6 h-6 sm:w-7 sm:h-7" />
-        </button>
-
-        {/* Swiper Pagination Bullets matching Elementor post-8.css */}
-        <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
-          {HERO_SLIDES.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentSlide(idx)}
-              aria-label={`Slide ${idx + 1}`}
-              className={`h-2.5 rounded-full transition-all duration-300 ${
-                idx === currentSlide
-                  ? 'w-8 bg-[#FB7170]'
-                  : 'w-2.5 bg-[#FFD7D7] hover:bg-[#FB7170]/80'
-              }`}
-            />
-          ))}
-        </div>
-      </section>
-
-      {/* -------------------------------------------------------------------------------- */}
-      {/* SECTION 2: INTRO HEADING & HERO BANNER CARD (Padding: 104px 0)                    */}
-      {/* -------------------------------------------------------------------------------- */}
-      <section className="max-w-[1200px] mx-auto px-4 sm:px-6 py-[72px] md:py-[104px]">
-        {/* Headings matching Elementor Typography */}
-        <div className="text-center space-y-1">
-          <h1 className="text-[36px] sm:text-[50px] lg:text-[64px] font-semibold text-[#212542] leading-[1.2] tracking-tight">
-            Young FTI ELITE 11
-          </h1>
-          <h2 className="text-[24px] sm:text-[30px] lg:text-[36px] font-normal text-[#FB7170] leading-[1.3]">
-            หลักสูตรนักอุตสาหกรรมรุ่นใหม่
-          </h2>
-        </div>
-
-        {/* Spacer 64px */}
-        <div className="h-10 md:h-16" />
-
-        {/* Hero Banner Box matching .elementor-element-a453397 */}
-        <div 
-          className="relative w-full min-h-[104px] sm:min-h-[212px] md:min-h-[370px] lg:min-h-[460px] rounded-[12px] overflow-hidden shadow-[0px_4px_24px_8px_rgba(0,0,0,0.25)] group"
-          style={{
-            backgroundImage: `url('/images/home/Young-FTI-11-440-1536x1022.jpg')`,
-            backgroundPosition: 'center center',
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover'
-          }}
-        >
-          {/* Overlay matching Elementor Overlay.webp */}
-          <div 
-            className="absolute inset-0 pointer-events-none mix-blend-multiply opacity-90"
-            style={{
-              backgroundImage: `url('/images/home/Overlay.webp')`,
-              backgroundPosition: 'center center',
-              backgroundRepeat: 'no-repeat',
-              backgroundSize: 'cover'
-            }}
-          />
-        </div>
-      </section>
-
-      {/* -------------------------------------------------------------------------------- */}
-      {/* SECTION 3: ข่าวสารโครงการ (Padding Bottom: 104px)                                 */}
-      {/* -------------------------------------------------------------------------------- */}
-      <section className="max-w-[1200px] mx-auto px-4 sm:px-6 pb-[72px] md:pb-[104px] text-center">
-        <h2 className="text-[32px] sm:text-[40px] lg:text-[48px] font-semibold text-[#212542] leading-[1.2]">
-          ข่าวสารโครงการ
-        </h2>
-
-        {/* Spacer 64px */}
-        <div className="h-8 md:h-16" />
-
-        {/* Loop grid empty message matching .e-loop-nothing-found-message__text */}
-        <div className="py-6 text-[18px] font-normal text-[#292929]">
-          ยังไม่มีข่าวสาร โปรดรอติดตาม เร็วๆ นี้
-        </div>
-      </section>
-
-      {/* -------------------------------------------------------------------------------- */}
-      {/* SECTION 4: กิจกรรมโครงการ (Padding Bottom: 104px)                                 */}
-      {/* -------------------------------------------------------------------------------- */}
-      <section className="max-w-[1200px] mx-auto px-4 sm:px-6 pb-[72px] md:pb-[104px]">
-        <div className="text-center">
-          <h2 className="text-[32px] sm:text-[40px] lg:text-[48px] font-semibold text-[#212542] leading-[1.2]">
-            กิจกรรมโครงการ
-          </h2>
-        </div>
-
-        {/* Spacer 64px */}
-        <div className="h-8 md:h-16" />
-
-        {/* 3-Column Activities Grid matching Elementor Loop-Grid 117 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {ACTIVITIES.map((activity) => (
-            <Link
-              key={activity.id}
-              href={activity.link}
-              className="bg-white rounded-[12px] p-[20px] flex flex-col justify-between transition-all duration-300 shadow-[0px_4px_16px_2px_rgba(0,0,0,0.15)] hover:shadow-[0px_2px_25px_0px_rgba(0,0,0,0.2)] hover:-translate-y-1 group"
-            >
-              {/* Featured Image */}
-              <div className="w-full h-[180px] sm:h-[200px] md:h-[240px] rounded-[6px] overflow-hidden bg-slate-100">
+          {/* User Profile & Bell/Points Row */}
+          <div className="flex items-center justify-between gap-3">
+            {mounted && profile ? (
+              <Link href="/profile" className="flex items-center gap-3 min-w-0 flex-1 group">
                 <img
-                  src={activity.image}
-                  alt={activity.title}
-                  loading="lazy"
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-
-              {/* Text Body */}
-              <div className="mt-[15px] mb-[15px] flex flex-col gap-2 flex-1 justify-between">
-                <p className="text-[18px] sm:text-[20px] font-normal text-[#FB7170] py-[6px] leading-tight">
-                  {activity.date}
-                </p>
-                <h4 className="text-[22px] sm:text-[26px] lg:text-[28px] font-semibold text-[#212542] leading-[1.3] group-hover:text-[#FB7170] transition-colors">
-                  {activity.title}
-                </h4>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* -------------------------------------------------------------------------------- */}
-      {/* SECTION 5: บรรยากาศกิจกรรม (Full Width Dark Navy #212542 Container)               */}
-      {/* -------------------------------------------------------------------------------- */}
-      <section className="w-full bg-[#212542] text-white py-[72px] md:py-[104px] px-4 sm:px-6">
-        <div className="max-w-[1200px] mx-auto">
-          {/* Section Heading */}
-          <div className="text-center mb-[48px] md:mb-[88px]">
-            <h2 className="text-[32px] sm:text-[40px] lg:text-[48px] font-semibold text-white leading-[1.2]">
-              บรรยากาศกิจกรรม
-            </h2>
-          </div>
-
-          {/* Mosaic Puzzle Photo Grid matching Elementor container 822967c */}
-          <div className="bg-white rounded-[12px] overflow-hidden shadow-2xl">
-            {/* Desktop Grid Layout (2 Equal Half Columns) */}
-            <div className="grid grid-cols-1 md:grid-cols-2">
-              {/* Left Column (50%) */}
-              <div className="flex flex-col">
-                {/* Row 1 (Left): 3 images (25% + 25% + 50%) */}
-                <div className="flex flex-col sm:flex-row h-auto md:h-[300px]">
-                  {/* Img 1 (25%) */}
-                  <div 
-                    onClick={() => setSelectedLightboxImg({ img: GALLERY_ITEMS[0].img, title: GALLERY_ITEMS[0].title })}
-                    className="w-full sm:w-1/4 h-[240px] sm:h-[300px] border-b-2 sm:border-b-2 sm:border-r-2 border-white cursor-pointer relative group overflow-hidden"
-                  >
-                    <img 
-                      src={GALLERY_ITEMS[0].img} 
-                      alt={GALLERY_ITEMS[0].title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                      <Maximize2 className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                  </div>
-
-                  {/* Img 2 (25%) */}
-                  <div 
-                    onClick={() => setSelectedLightboxImg({ img: GALLERY_ITEMS[1].img, title: GALLERY_ITEMS[1].title })}
-                    className="w-full sm:w-1/4 h-[240px] sm:h-[300px] border-b-2 sm:border-b-2 sm:border-r-2 border-white cursor-pointer relative group overflow-hidden"
-                  >
-                    <img 
-                      src={GALLERY_ITEMS[1].img} 
-                      alt={GALLERY_ITEMS[1].title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                      <Maximize2 className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                  </div>
-
-                  {/* Img 3 (50%) */}
-                  <div 
-                    onClick={() => setSelectedLightboxImg({ img: GALLERY_ITEMS[2].img, title: GALLERY_ITEMS[2].title })}
-                    className="w-full sm:w-1/2 h-[240px] sm:h-[300px] border-b-2 sm:border-b-2 md:border-r-2 border-white cursor-pointer relative group overflow-hidden"
-                  >
-                    <img 
-                      src={GALLERY_ITEMS[2].img} 
-                      alt={GALLERY_ITEMS[2].title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                      <Maximize2 className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Row 2 (Left): 3 images (50% + 25% + 25%) */}
-                <div className="flex flex-col sm:flex-row h-auto md:h-[300px]">
-                  {/* Img 6 (50%) */}
-                  <div 
-                    onClick={() => setSelectedLightboxImg({ img: GALLERY_ITEMS[5].img, title: GALLERY_ITEMS[5].title })}
-                    className="w-full sm:w-1/2 h-[240px] sm:h-[300px] border-b-2 sm:border-b-0 sm:border-r-2 border-white cursor-pointer relative group overflow-hidden"
-                  >
-                    <img 
-                      src={GALLERY_ITEMS[5].img} 
-                      alt={GALLERY_ITEMS[5].title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                      <Maximize2 className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                  </div>
-
-                  {/* Img 7 (25%) */}
-                  <div 
-                    onClick={() => setSelectedLightboxImg({ img: GALLERY_ITEMS[6].img, title: GALLERY_ITEMS[6].title })}
-                    className="w-full sm:w-1/4 h-[240px] sm:h-[300px] border-b-2 sm:border-b-0 sm:border-r-2 border-white cursor-pointer relative group overflow-hidden"
-                  >
-                    <img 
-                      src={GALLERY_ITEMS[6].img} 
-                      alt={GALLERY_ITEMS[6].title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                      <Maximize2 className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                  </div>
-
-                  {/* Img 8 (25%) */}
-                  <div 
-                    onClick={() => setSelectedLightboxImg({ img: GALLERY_ITEMS[7].img, title: GALLERY_ITEMS[7].title })}
-                    className="w-full sm:w-1/4 h-[240px] sm:h-[300px] md:border-r-2 border-white cursor-pointer relative group overflow-hidden"
-                  >
-                    <img 
-                      src={GALLERY_ITEMS[7].img} 
-                      alt={GALLERY_ITEMS[7].title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                      <Maximize2 className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column (50%) */}
-              <div className="flex flex-col">
-                {/* Row 1 (Right): 2 images (25% + 75%) */}
-                <div className="flex flex-col sm:flex-row h-auto md:h-[300px]">
-                  {/* Img 4 (25%) */}
-                  <div 
-                    onClick={() => setSelectedLightboxImg({ img: GALLERY_ITEMS[3].img, title: GALLERY_ITEMS[3].title })}
-                    className="w-full sm:w-1/4 h-[240px] sm:h-[300px] border-b-2 sm:border-b-2 sm:border-r-2 border-white cursor-pointer relative group overflow-hidden"
-                  >
-                    <img 
-                      src={GALLERY_ITEMS[3].img} 
-                      alt={GALLERY_ITEMS[3].title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                      <Maximize2 className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                  </div>
-
-                  {/* Img 5 (75%) */}
-                  <div 
-                    onClick={() => setSelectedLightboxImg({ img: GALLERY_ITEMS[4].img, title: GALLERY_ITEMS[4].title })}
-                    className="w-full sm:w-3/4 h-[240px] sm:h-[300px] border-b-2 sm:border-b-2 border-white cursor-pointer relative group overflow-hidden"
-                  >
-                    <img 
-                      src={GALLERY_ITEMS[4].img} 
-                      alt={GALLERY_ITEMS[4].title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                      <Maximize2 className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Row 2 (Right): 3 images (50% + 25% + 25%) */}
-                <div className="flex flex-col sm:flex-row h-auto md:h-[300px]">
-                  {/* Img 9 (50%) */}
-                  <div 
-                    onClick={() => setSelectedLightboxImg({ img: GALLERY_ITEMS[8].img, title: GALLERY_ITEMS[8].title })}
-                    className="w-full sm:w-1/2 h-[240px] sm:h-[300px] border-b-2 sm:border-b-0 sm:border-r-2 border-white cursor-pointer relative group overflow-hidden"
-                  >
-                    <img 
-                      src={GALLERY_ITEMS[8].img} 
-                      alt={GALLERY_ITEMS[8].title}
-                      className="w-full h-full object-cover object-left group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                      <Maximize2 className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                  </div>
-
-                  {/* Img 10 (25%) */}
-                  <div 
-                    onClick={() => setSelectedLightboxImg({ img: GALLERY_ITEMS[9].img, title: GALLERY_ITEMS[9].title })}
-                    className="w-full sm:w-1/4 h-[240px] sm:h-[300px] border-b-2 sm:border-b-0 sm:border-r-2 border-white cursor-pointer relative group overflow-hidden"
-                  >
-                    <img 
-                      src={GALLERY_ITEMS[9].img} 
-                      alt={GALLERY_ITEMS[9].title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                      <Maximize2 className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                  </div>
-
-                  {/* Img 11 (25%) */}
-                  <div 
-                    onClick={() => setSelectedLightboxImg({ img: GALLERY_ITEMS[10].img, title: GALLERY_ITEMS[10].title })}
-                    className="w-full sm:w-1/4 h-[240px] sm:h-[300px] cursor-pointer relative group overflow-hidden"
-                  >
-                    <img 
-                      src={GALLERY_ITEMS[10].img} 
-                      alt={GALLERY_ITEMS[10].title}
-                      className="w-full h-full object-cover object-left group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                      <Maximize2 className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* -------------------------------------------------------------------------------- */}
-      {/* SECTION 6: ธุรกิจที่เกี่ยวข้อง (Related Industry Sectors - 8 Cards)                */}
-      {/* -------------------------------------------------------------------------------- */}
-      <section className="w-full py-[72px] md:py-[104px]">
-        {/* Slanted Ribbon Header matching Elementor container aad4970 */}
-        <div className="w-full mb-[48px] md:mb-[88px]">
-          <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
-            <div 
-              className="bg-[#212542] text-white py-4 px-8 sm:px-12 inline-block rounded-l-2xl shadow-md"
-              style={{
-                clipPath: 'polygon(0 0, 100% 0, 88% 100%, 0% 100%)',
-                paddingRight: '4rem'
-              }}
-            >
-              <h2 className="text-[32px] sm:text-[40px] lg:text-[48px] font-semibold text-white leading-[1.2]">
-                ธุรกิจที่เกี่ยวข้อง
-              </h2>
-            </div>
-          </div>
-        </div>
-
-        {/* 8 Cards Grid matching Elementor container 83c2160 */}
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {INDUSTRY_SECTORS.map((sector, idx) => (
-              <Link
-                key={idx}
-                href={`/directory?industry=${encodeURIComponent(sector.query)}`}
-                className="relative min-h-[320px] rounded-[12px] overflow-hidden flex flex-col justify-end items-center p-6 text-center shadow-card hover:shadow-card-hover transition-all duration-300 group"
-                style={{
-                  backgroundImage: `url(${sector.img})`,
-                  backgroundPosition: 'center center',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundSize: 'cover'
-                }}
-              >
-                {/* Background Texture Overlay matching Elementor Overlay-Business.webp */}
-                <div 
-                  className="absolute inset-0 pointer-events-none opacity-40 mix-blend-overlay"
-                  style={{
-                    backgroundImage: `url('/images/home/Overlay-Business.webp')`,
-                    backgroundPosition: 'center center',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundSize: 'cover'
+                  src={profile.picture_url || '/images/participants/p_3296.jpg'}
+                  alt={profile.display_name || 'Member'}
+                  className="w-10 h-10 rounded-full object-cover border border-white/25 shrink-0 bg-slate-800"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/images/participants/p_3296.jpg';
                   }}
                 />
+                <div className="min-w-0">
+                  <p className="text-xs sm:text-sm font-semibold text-white truncate group-hover:text-[#E5C158] transition-colors">
+                    {profile.display_name}
+                  </p>
+                  <p className="text-[11px] text-slate-300 truncate">{displayHouseName}</p>
+                </div>
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsLoginModalOpen(true)}
+                className="text-left text-xs font-semibold text-[#E5C158] hover:underline"
+              >
+                เข้าสู่ระบบสมาชิก Young FTI ELITE 11 →
+              </button>
+            )}
 
-                {/* Default Navy Overlay (0.5 opacity) -> Hover Coral Overlay (0.7 opacity) */}
-                <div className="absolute inset-0 bg-[#212542] opacity-50 group-hover:bg-[#FB7170] group-hover:opacity-70 transition-all duration-300 mix-blend-multiply" />
+            <div className="flex items-center gap-2 shrink-0">
+              <Link
+                href="/notifications"
+                aria-label="การแจ้งเตือน"
+                className="relative w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center transition"
+              >
+                <Bell className="w-4 h-4 text-white" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#FB7170] text-white text-[10px] font-bold flex items-center justify-center tabular-nums">
+                    {unreadCount}
+                  </span>
+                )}
+              </Link>
 
-                {/* Additional gradient for text clarity */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+              <Link
+                href="/privileges"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#C59B38] hover:bg-[#b58b2e] text-white text-xs font-bold tabular-nums shadow-sm transition"
+              >
+                <Coins className="w-3.5 h-3.5" />
+                <span>{points.toLocaleString()}</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
 
-                {/* Text Content matching Elementor Headings */}
-                <div className="relative z-10 text-white space-y-1">
-                  <h3 className="text-[24px] sm:text-[28px] font-semibold text-white leading-[1.3]">
-                    {sector.nameTh}
-                  </h3>
-                  <h4 className="text-[16px] sm:text-[20px] font-light text-white leading-[1.3] opacity-90">
-                    {sector.nameEn}
-                  </h4>
+      {/* ================= 2. FLOATING SHORTCUT CARD ================= */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 -mt-8 relative z-20">
+        <div className="bg-white rounded-[22px] shadow-[0_8px_28px_rgba(15,23,42,0.07)] border border-slate-100 p-4 grid grid-cols-4 gap-2">
+          <Link
+            href="/privileges"
+            className="flex flex-col items-center text-center gap-1.5 py-1 group"
+          >
+            <div className="w-12 h-12 rounded-full bg-[#FBF6EC] text-[#B38728] flex items-center justify-center group-hover:bg-[#F5EBD6] transition">
+              <Gift className="w-5 h-5" />
+            </div>
+            <span className="text-xs font-semibold text-[#1E2538]">Privileges</span>
+          </Link>
+
+          <Link
+            href="/events?category=course"
+            className="flex flex-col items-center text-center gap-1.5 py-1 group"
+          >
+            <div className="w-12 h-12 rounded-full bg-[#FBF6EC] text-[#B38728] flex items-center justify-center group-hover:bg-[#F5EBD6] transition">
+              <GraduationCap className="w-5 h-5" />
+            </div>
+            <span className="text-xs font-semibold text-[#1E2538]">Courses</span>
+          </Link>
+
+          <Link
+            href="/events?category=general"
+            className="flex flex-col items-center text-center gap-1.5 py-1 group"
+          >
+            <div className="w-12 h-12 rounded-full bg-[#FBF6EC] text-[#B38728] flex items-center justify-center group-hover:bg-[#F5EBD6] transition">
+              <Calendar className="w-5 h-5" />
+            </div>
+            <span className="text-xs font-semibold text-[#1E2538]">Events</span>
+          </Link>
+
+          <Link
+            href="/directory"
+            className="flex flex-col items-center text-center gap-1.5 py-1 group"
+          >
+            <div className="w-12 h-12 rounded-full bg-[#FBF6EC] text-[#B38728] flex items-center justify-center group-hover:bg-[#F5EBD6] transition">
+              <Building2 className="w-5 h-5" />
+            </div>
+            <span className="text-xs font-semibold text-[#1E2538]">Business</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* ================= MAIN CONTENT SECTIONS ================= */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-6 space-y-7">
+        {/* ================= 3. PRIVILEGES SECTION ================= */}
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-base sm:text-lg font-bold text-[#1E2538]">สิทธิพิเศษ (Privileges)</h2>
+              <p className="text-xs text-slate-500">ใช้ Point แลกส่วนลดและสิทธิประโยชน์เฉพาะสมาชิก</p>
+            </div>
+            <Link
+              href="/privileges"
+              className="text-xs font-bold text-[#B38728] hover:underline flex items-center gap-0.5 shrink-0"
+            >
+              View All <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="flex gap-3.5 overflow-x-auto pb-2 snap-x no-scrollbar">
+            {mockPrivileges.slice(0, 4).map((priv) => (
+              <Link
+                key={priv.id}
+                href={`/privileges/${priv.id}`}
+                className="min-w-[230px] max-w-[240px] snap-start bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-[0_2px_12px_rgba(15,23,42,0.04)] hover:shadow-md transition flex flex-col justify-between shrink-0 group"
+              >
+                <div className="relative aspect-[4/3] bg-slate-100 overflow-hidden">
+                  <img
+                    src={priv.image_url}
+                    alt={priv.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <span className="absolute bottom-2.5 left-2.5 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/95 text-[#1E2538] text-[10px] font-bold tabular-nums shadow-sm">
+                    <Coins className="w-3 h-3 text-[#B38728]" />
+                    {priv.points_required}
+                  </span>
+                  <span className="absolute bottom-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-black/65 text-white text-[10px] font-medium">
+                    {priv.category}
+                  </span>
+                </div>
+                <div className="p-3.5 space-y-1">
+                  <span className="text-[11px] font-medium text-slate-400 uppercase block truncate">
+                    {priv.merchant}
+                  </span>
+                  <p className="text-sm font-bold text-[#1E2538]">{priv.discount_label}</p>
+                  <h3 className="text-xs text-slate-500 line-clamp-1">{priv.title}</h3>
                 </div>
               </Link>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* -------------------------------------------------------------------------------- */}
-      {/* LIGHTBOX MODAL (For viewing high-res gallery images)                             */}
-      {/* -------------------------------------------------------------------------------- */}
-      {selectedLightboxImg && (
-        <div 
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200"
-          onClick={() => setSelectedLightboxImg(null)}
-        >
-          <button
-            onClick={() => setSelectedLightboxImg(null)}
-            className="absolute top-6 right-6 text-white/80 hover:text-white p-2 rounded-full bg-white/10 hover:bg-white/20 transition z-50"
-            aria-label="Close Lightbox"
-          >
-            <X className="w-6 h-6" />
-          </button>
-
-          <div 
-            className="max-w-5xl max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl relative"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <img
-              src={selectedLightboxImg.img}
-              alt={selectedLightboxImg.title}
-              className="w-auto h-auto max-h-[85vh] max-w-full object-contain rounded-2xl"
-            />
+        {/* ================= 4. COURSES SECTION ================= */}
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-base sm:text-lg font-bold text-[#1E2538]">คอร์สเรียน / หลักสูตร (Courses)</h2>
+              <p className="text-xs text-slate-500">ดูรายละเอียดหลักสูตรและสมัครเรียนได้ทันที</p>
+            </div>
+            <Link
+              href="/events?category=course"
+              className="text-xs font-bold text-[#B38728] hover:underline flex items-center gap-0.5 shrink-0"
+            >
+              ดูทั้งหมด <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
-        </div>
-      )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            {courses.map((course) => (
+              <Link
+                key={course.id}
+                href={`/events/${course.id}`}
+                className="bg-white rounded-2xl p-3.5 border border-slate-200/80 shadow-[0_2px_12px_rgba(15,23,42,0.04)] hover:border-[#C59B38] transition flex items-center gap-3.5 group"
+              >
+                <img
+                  src={course.image_url || '/images/home/event_training.jpg'}
+                  alt={course.title}
+                  className="w-20 h-20 rounded-xl object-cover shrink-0 bg-slate-100"
+                />
+                <div className="min-w-0 flex-1 space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded-full bg-[#1E2538] text-white text-[10px] font-semibold">
+                      Course
+                    </span>
+                    <span className="text-[11px] font-bold text-[#9A7320] tabular-nums">
+                      +{course.reward_points} Pts
+                    </span>
+                  </div>
+                  <h3 className="text-xs sm:text-sm font-bold text-[#1E2538] line-clamp-2 group-hover:text-[#B38728] transition-colors">
+                    {course.title}
+                  </h3>
+                  <p className="text-[11px] text-slate-500 flex items-center gap-1 truncate">
+                    <Clock className="w-3 h-3 text-[#B38728] shrink-0" />
+                    {course.published_date_text || 'เร็วๆ นี้'}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* ================= 5. EVENTS SECTION ================= */}
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-base sm:text-lg font-bold text-[#1E2538]">กิจกรรมโครงการ (Events)</h2>
+              <p className="text-xs text-slate-500">รายการกิจกรรมที่เปิดให้สมาชิกสมัครเข้าร่วม</p>
+            </div>
+            <Link
+              href="/events?category=general"
+              className="text-xs font-bold text-[#B38728] hover:underline flex items-center gap-0.5 shrink-0"
+            >
+              ดูทั้งหมด <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="flex gap-3.5 overflow-x-auto pb-2 snap-x no-scrollbar">
+            {generalEvents.map((ev) => (
+              <Link
+                key={ev.id}
+                href={`/events/${ev.id}`}
+                className="min-w-[245px] max-w-[260px] snap-start bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-[0_2px_12px_rgba(15,23,42,0.04)] hover:border-[#C59B38] transition flex flex-col justify-between shrink-0 group"
+              >
+                <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden">
+                  <img
+                    src={ev.image_url || '/images/home/hero_leaders.jpg'}
+                    alt={ev.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <span
+                    className={`absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold shadow-sm ${
+                      ev.status === 'UPCOMING'
+                        ? 'bg-[#C59B38] text-white'
+                        : 'bg-[#1E2538]/90 text-white'
+                    }`}
+                  >
+                    {ev.status === 'UPCOMING' ? 'เปิดรับสมัคร' : 'จบกิจกรรมแล้ว'}
+                  </span>
+                </div>
+                <div className="p-3.5 space-y-1.5">
+                  <span className="text-[11px] font-semibold text-[#9A7320]">
+                    {ev.published_date_text || 'กำลังจะมาถึง'}
+                  </span>
+                  <h3 className="text-xs sm:text-sm font-bold text-[#1E2538] line-clamp-2 leading-snug">
+                    {ev.title}
+                  </h3>
+                  <p className="text-[11px] text-slate-500 flex items-center gap-1 truncate">
+                    <MapPin className="w-3 h-3 shrink-0 text-slate-400" />
+                    {ev.location_name}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* ================= 6. BUSINESS CATEGORIES CAROUSEL (8 SECTORS) ================= */}
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-base sm:text-lg font-bold text-[#1E2538]">ธุรกิจที่เกี่ยวข้อง (8 หมวดหมู่)</h2>
+              <p className="text-xs text-slate-500">กดเลือกหมวดหมู่เพื่อดูรายชื่อธุรกิจในเครือข่าย</p>
+            </div>
+            <Link
+              href="/directory"
+              className="text-xs font-bold text-[#B38728] hover:underline flex items-center gap-0.5 shrink-0"
+            >
+              ทำเนียบทั้งหมด <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="flex gap-3 overflow-x-auto pb-2 snap-x no-scrollbar">
+            {INDUSTRY_CATEGORIES.map((cat) => {
+              const Icon = cat.icon;
+              return (
+                <Link
+                  key={cat.name}
+                  href={`/directory?industry=${encodeURIComponent(cat.query)}`}
+                  className="min-w-[100px] sm:min-w-[110px] snap-start bg-white rounded-2xl p-3 border border-slate-200/80 hover:border-[#C59B38] shadow-[0_2px_12px_rgba(15,23,42,0.04)] transition flex flex-col items-center text-center gap-2 shrink-0 group"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-[#FBF6EC] text-[#B38728] flex items-center justify-center group-hover:bg-[#F5EBD6] transition">
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <span className="text-[11px] font-semibold text-[#1E2538] leading-tight line-clamp-2">
+                    {cat.name}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ================= 7. HOUSE LEADERBOARD (MOVED FROM ABOUT) ================= */}
+        <section className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-[0_2px_12px_rgba(15,23,42,0.04)] space-y-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-[#FBF6EC] text-[#B38728] flex items-center justify-center">
+              <Trophy className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-base sm:text-lg font-bold text-[#1E2538]">
+                ตารางอันดับคะแนน (House Leaderboard)
+              </h2>
+              <p className="text-xs text-slate-500">คะแนนรวมทั้ง 9 กลุ่มดวงดาว รุ่นที่ 11</p>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            {sortedHouses.map((house, index) => (
+              <div
+                key={house.id}
+                className="flex items-center justify-between gap-3 p-3 rounded-xl bg-[#FAFAF8] border border-slate-200/60"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <span
+                    className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 tabular-nums ${
+                      index === 0
+                        ? 'bg-[#C59B38] text-white'
+                        : index === 1
+                        ? 'bg-[#1E2538] text-white'
+                        : index === 2
+                        ? 'bg-[#8A6418] text-white'
+                        : 'bg-slate-200 text-slate-700'
+                    }`}
+                  >
+                    {index + 1}
+                  </span>
+                  <span
+                    className="w-2.5 h-2.5 rounded-full shrink-0"
+                    style={{ backgroundColor: house.color_hex }}
+                  />
+                  <span className="text-xs sm:text-sm font-bold text-[#1E2538] truncate">
+                    {house.name}
+                  </span>
+                </div>
+                <span className="text-xs sm:text-sm font-bold text-[#1E2538] tabular-nums shrink-0">
+                  {house.total_points.toLocaleString()}{' '}
+                  <span className="text-[11px] text-slate-400 font-medium">pts</span>
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ================= 8. MISSIONS & UPCOMING EVENTS ================= */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          {/* Missions */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-[0_2px_12px_rgba(15,23,42,0.04)] space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-[#FBF6EC] text-[#B38728] flex items-center justify-center">
+                  <Target className="w-4 h-4" />
+                </div>
+                <div>
+                  <h2 className="text-base font-bold text-[#1E2538]">ภารกิจที่ต้องเก็บ</h2>
+                  <p className="text-xs text-slate-500">
+                    สำเร็จแล้ว {completedMissionsCount}/{mergedMissions.length} ภารกิจ
+                  </p>
+                </div>
+              </div>
+              <Link href="/profile" className="text-xs font-bold text-[#B38728] hover:underline">
+                ดูทั้งหมด
+              </Link>
+            </div>
+
+            <div className="space-y-2.5">
+              {mergedMissions.map((m) => (
+                <div
+                  key={m.id}
+                  className="p-3.5 rounded-xl bg-[#FAFAF8] border border-slate-200/60 flex items-center justify-between gap-3"
+                >
+                  <div className="min-w-0">
+                    <p className="text-xs sm:text-sm font-bold text-[#1E2538] truncate">{m.title}</p>
+                    <p className="text-[11px] text-slate-500 line-clamp-1">{m.description}</p>
+                  </div>
+                  <span
+                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold shrink-0 flex items-center gap-1 tabular-nums ${
+                      m.status === 'APPROVED'
+                        ? 'bg-[#1E2538] text-white'
+                        : m.status === 'PENDING'
+                        ? 'bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2]'
+                        : 'bg-slate-200 text-slate-700'
+                    }`}
+                  >
+                    {m.status === 'APPROVED' && <CheckCircle2 className="w-3 h-3 text-[#E5C158]" />}
+                    {m.status === 'APPROVED' ? 'สำเร็จ' : m.status === 'PENDING' ? 'รอตรวจ' : `+${m.reward_points} Pts`}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Upcoming Events/Classes */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-[0_2px_12px_rgba(15,23,42,0.04)] space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-[#FBF6EC] text-[#B38728] flex items-center justify-center">
+                  <Calendar className="w-4 h-4" />
+                </div>
+                <div>
+                  <h2 className="text-base font-bold text-[#1E2538]">กิจกรรม/คลาสที่ใกล้มาถึง</h2>
+                  <p className="text-xs text-slate-500">เตรียมตัวเข้าร่วมและเช็กชื่อสะสมแต้ม</p>
+                </div>
+              </div>
+              <Link href="/events/calendar" className="text-xs font-bold text-[#B38728] hover:underline">
+                ปฏิทิน
+              </Link>
+            </div>
+
+            <div className="space-y-2.5">
+              {upcomingItems.map((ev) => (
+                <Link
+                  key={ev.id}
+                  href={`/events/${ev.id}`}
+                  className="p-3.5 rounded-xl bg-[#FAFAF8] hover:bg-slate-100 border border-slate-200/60 flex items-center justify-between gap-3 transition"
+                >
+                  <div className="min-w-0">
+                    <p className="text-xs sm:text-sm font-bold text-[#1E2538] truncate">{ev.title}</p>
+                    <p className="text-[11px] text-slate-500 truncate">
+                      {ev.published_date_text} • {ev.location_name}
+                    </p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ================= 9. BANNER ABOUT (COMPACT CARD) ================= */}
+        <Link
+          href="/about"
+          className="block bg-[#1E2538] hover:bg-[#252E46] text-white rounded-2xl p-5 shadow-sm transition group"
+        >
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center shrink-0">
+                <Info className="w-5 h-5 text-[#E5C158]" />
+              </div>
+              <div>
+                <p className="text-[11px] font-semibold text-[#E5C158]">
+                  เกี่ยวกับโครงการ Young FTI ELITE 11
+                </p>
+                <h3 className="text-sm sm:text-base font-bold text-white">
+                  ทำความรู้จักหลักสูตรนักอุตสาหกรรมรุ่นใหม่
+                </h3>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-white/70 group-hover:translate-x-0.5 transition-transform shrink-0" />
+          </div>
+        </Link>
+      </div>
+
+      <WebLoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
     </div>
   );
 }
-

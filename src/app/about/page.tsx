@@ -29,7 +29,7 @@ export default function AboutPage() {
       {/* -------------------------------------------------------------------------------- */}
       {/* SECTION 1: PAGE TITLE (Padding: 80px 0)                                          */}
       {/* -------------------------------------------------------------------------------- */}
-      <section className="max-w-[1200px] mx-auto px-4 sm:px-6 pt-[48px] md:pt-[80px] pb-[32px] md:pb-[48px] text-center">
+      <section className="max-w-[1200px] mx-auto px-5 sm:px-8 pt-[48px] md:pt-[80px] pb-[32px] md:pb-[48px] text-center">
         <h1 className="text-[32px] sm:text-[40px] lg:text-[48px] font-semibold text-[#212542] leading-[1.2]">
           เกี่ยวกับเรา
         </h1>
@@ -38,7 +38,7 @@ export default function AboutPage() {
       {/* -------------------------------------------------------------------------------- */}
       {/* MAIN CONTAINER (.elementor-element-ebeb2e9)                                       */}
       {/* -------------------------------------------------------------------------------- */}
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 space-y-[64px] md:space-y-[88px] pb-[72px] md:pb-[104px]">
+      <div className="max-w-[1200px] mx-auto px-5 sm:px-8 space-y-[64px] md:space-y-[88px] pb-[72px] md:pb-[104px]">
         {/* ------------------------------------------------------------------------------ */}
         {/* SECTION 2: WHAT'S YOUNG FTI ELITE BANNER (.elementor-element-9946fc6)           */}
         {/* ------------------------------------------------------------------------------ */}
@@ -154,8 +154,9 @@ export default function AboutPage() {
           {/* 4 Cards matching Elementor Grid .elementor-element-58c6a40 */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {COURSE_ACTIVITIES.map((activity, idx) => (
-              <div
+              <Link
                 key={idx}
+                href="/events"
                 className="relative min-h-[320px] rounded-[12px] overflow-hidden flex flex-col justify-end items-center p-6 text-center shadow-card hover:shadow-card-hover transition-all duration-300 group cursor-pointer"
                 style={{
                   backgroundImage: `url(${activity.img})`,
@@ -187,7 +188,7 @@ export default function AboutPage() {
                     {activity.title}
                   </h3>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

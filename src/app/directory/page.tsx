@@ -1,29 +1,29 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, Suspense } from 'react';
+import React, { useState, useMemo, useEffect, useRef, Suspense } from 'react';
 import { yftiParticipants } from '@/lib/mockData';
 import { getParticipants } from '@/lib/dataService';
 import { Participant } from '@/types';
+import { Html5QrcodeScanner } from 'html5-qrcode';
 import Link from 'next/link';
 import { 
   Search, 
-  Phone, 
   Building2, 
-  Briefcase, 
-  MapPin, 
   X, 
   ChevronLeft,
   ChevronRight, 
   ChevronsLeft,
   ChevronsRight,
-  Filter, 
   User, 
-  Share2, 
-  Globe, 
-  Database,
-  ArrowRight
+  QrCode,
+  ArrowUpDown,
+  UserPlus,
+  UserCheck,
+  Keyboard,
+  Camera,
+  AlertTriangle
 } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 const HOUSES_LIST = [
   { value: 'ALL', label: 'ดาว (ทั้งหมด)' },
@@ -95,18 +95,60 @@ const COHORT_LIST = [
 
 const PAGE_SIZE_OPTIONS = [12, 24, 48, 96];
 
+const COHORT_COMMITTEE_ROLES: Record<string, { role: string; order: number }> = {
+  '3090': { role: 'ประธานรุ่น', order: 1 },
+  '3296': { role: 'รองประธานรุ่น', order: 2 },
+  '3294': { role: 'เลขาธิการ', order: 3 },
+  '3292': { role: 'เหรัญญิก', order: 4 },
+  '3290': { role: 'กรรมการบริหารรุ่น', order: 5 },
+  '3285': { role: 'กรรมการบริหารรุ่น', order: 6 },
+  '3279': { role: 'กรรมการบริหารรุ่น', order: 7 },
+  '3277': { role: 'กรรมการบริหารรุ่น', order: 8 },
+  '3274': { role: 'กรรมการบริหารรุ่น', order: 9 },
+  '3264': { role: 'กรรมการบริหารรุ่น', order: 10 },
+};
+
 function DirectoryContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [participants, setParticipants] = useState<Participant[]>(yftiParticipants);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedHouse, setSelectedHouse] = useState('ALL');
   const [selectedIndustry, setSelectedIndustry] = useState('ALL');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [selectedCohort, setSelectedCohort] = useState('ALL');
+  const [sortOrder, setSortOrder] = useState<'default' | 'asc' | 'desc'>('default');
+  const [followingIds, setFollowingIds] = useState<string[]>([]);
+  const [isScanModalOpen, setIsScanModalOpen] = useState(false);
+  const [scanMode, setScanMode] = useState<'camera' | 'manual'>('camera');
+  const [scanError, setScanError] = useState<string | null>(null);
+  const [scanInput, setScanInput] = useState('');
+  const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(24);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = JSON.parse(localStorage.getItem('yfti_following_ids') || '[]');
+        if (Array.isArray(saved)) setFollowingIds(saved);
+      } catch {}
+    }
+  }, []);
+
+  const toggleFollow = (e: React.MouseEvent, pid: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setFollowingIds((prev) => {
+      const next = prev.includes(pid) ? prev.filter((id) => id !== pid) : [...prev, pid];
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('yfti_following_ids', JSON.stringify(next));
+      }
+      return next;
+    });
+  };
 
   // Load from Supabase DB on mount (with fallback to 122 participants)
   useEffect(() => {
@@ -120,15 +162,92 @@ function DirectoryContent() {
   }, []);
 
   useEffect(() => {
-    const indParam = searchParams?.get('industry') || searchParams?.get('q') || searchParams?.get('search');
+    const indParam = searchParams?.get('industry');
+    const qParam = searchParams?.get('q') || searchParams?.get('search');
     if (indParam) {
-      setSearchQuery(indParam);
+      const matched = INDUSTRY_GROUPS.find(
+        (ig) => ig.value === indParam || ig.label.includes(indParam)
+      );
+      if (matched) {
+        setSelectedIndustry(matched.value);
+        setSearchQuery('');
+      } else {
+        setSearchQuery(indParam);
+      }
+    } else if (qParam) {
+      setSearchQuery(qParam);
     }
     const houseParam = searchParams?.get('house') || searchParams?.get('star');
     if (houseParam) {
       setSelectedHouse(houseParam);
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    if (!isScanModalOpen || scanMode !== 'camera') return;
+    setScanError(null);
+
+    const timeout = setTimeout(() => {
+      try {
+        const scanner = new Html5QrcodeScanner(
+          'directory-qr-reader',
+          {
+            fps: 10,
+            qrbox: { width: 220, height: 220 },
+            aspectRatio: 1.0,
+          },
+          false
+        );
+
+        scanner.render(
+          (decodedText) => {
+            let targetId = '';
+            try {
+              const payload = JSON.parse(decodedText);
+              const raw = payload.memberId || payload.profileId;
+              if (raw) {
+                targetId = String(raw).trim().replace(/^Y11-0*/i, '');
+              }
+            } catch {
+              const urlMatch = decodedText.match(/(?:yfti_participants|directory)\/([^/?#]+)/i);
+              if (urlMatch?.[1]) {
+                targetId = urlMatch[1];
+              } else {
+                const cleaned = decodedText.trim().replace(/^Y11-0*/i, '');
+                if (/^\d+$/.test(cleaned)) {
+                  targetId = cleaned;
+                }
+              }
+            }
+
+            if (targetId) {
+              scanner.clear().catch(() => {});
+              setIsScanModalOpen(false);
+              router.push(`/yfti_participants/${targetId}`);
+            } else {
+              setScanError('ไม่พบรหัสสมาชิกใน QR Code นี้');
+            }
+          },
+          () => {
+            // ignore continuous scan frame errors
+          }
+        );
+
+        scannerRef.current = scanner;
+      } catch (err) {
+        console.error('Directory QR Scanner init error:', err);
+        setScanError('ไม่สามารถเปิดกล้องได้ กรุณากรอกรหัสสมาชิกแทน');
+      }
+    }, 200);
+
+    return () => {
+      clearTimeout(timeout);
+      if (scannerRef.current) {
+        scannerRef.current.clear().catch(() => {});
+        scannerRef.current = null;
+      }
+    };
+  }, [isScanModalOpen, scanMode, router]);
 
   // Reset to page 1 whenever any filter changes
   useEffect(() => {
@@ -142,7 +261,6 @@ function DirectoryContent() {
 
   const filteredParticipants = useMemo(() => {
     return participants.filter((p) => {
-      // 1. Text Search (Multi-token full text matching across all fields)
       const q = searchQuery.toLowerCase().trim();
       const tokens = q.split(/\s+/).filter(Boolean);
 
@@ -173,7 +291,6 @@ function DirectoryContent() {
 
       const matchesSearch = tokens.length === 0 || tokens.every((token) => searchableText.includes(token));
 
-      // 2. House / Star Group matching (robust space/hyphen/underscore insensitive)
       const matchesHouse = selectedHouse === 'ALL' || (() => {
         const target = selectedHouse.toLowerCase().replace(/[\s\-_]/g, '');
         const pStar = (p.star_group || '').toLowerCase().replace(/[\s\-_]/g, '');
@@ -182,7 +299,6 @@ function DirectoryContent() {
                (pStarLabel && (pStarLabel.includes(target) || target.includes(pStarLabel)));
       })();
 
-      // 3. Industry Group matching
       const matchesIndustry = selectedIndustry === 'ALL' || (() => {
         const target = selectedIndustry.toLowerCase().replace(/[\s\-_]/g, '');
         const pGroup = (p.industrial_groups || '').toLowerCase().replace(/[\s\-_]/g, '');
@@ -191,7 +307,6 @@ function DirectoryContent() {
                (pGroupLabel && (pGroupLabel.includes(target) || target.includes(pGroupLabel)));
       })();
 
-      // 4. Business Category matching
       const matchesCategory = selectedCategory === 'ALL' || (() => {
         const target = selectedCategory.toLowerCase().replace(/[\s\-_]/g, '');
         const pCat = (p.business_categories || '').toLowerCase().replace(/[\s\-_]/g, '');
@@ -200,7 +315,6 @@ function DirectoryContent() {
                (pCatLabel && (pCatLabel.includes(target) || target.includes(pCatLabel)));
       })();
 
-      // 5. Cohort Gen matching
       const matchesCohort = selectedCohort === 'ALL' || (() => {
         const target = selectedCohort.toLowerCase().replace(/[\s\-_]/g, '');
         const pGen = (p.gen || '').toLowerCase().replace(/[\s\-_]/g, '');
@@ -213,15 +327,40 @@ function DirectoryContent() {
     });
   }, [participants, searchQuery, selectedHouse, selectedIndustry, selectedCategory, selectedCohort]);
 
+  const sortedParticipants = useMemo(() => {
+    if (sortOrder === 'default') return filteredParticipants;
+    return [...filteredParticipants].sort((a, b) => {
+      const nameA = (a.name_thai || '').trim();
+      const nameB = (b.name_thai || '').trim();
+      return sortOrder === 'asc'
+        ? nameA.localeCompare(nameB, 'th')
+        : nameB.localeCompare(nameA, 'th');
+    });
+  }, [filteredParticipants, sortOrder]);
+
+  const committeeMembers = useMemo(() => {
+    return participants
+      .filter((p) => Boolean(COHORT_COMMITTEE_ROLES[String(p.id)]))
+      .sort(
+        (a, b) =>
+          (COHORT_COMMITTEE_ROLES[String(a.id)]?.order ?? 999) -
+          (COHORT_COMMITTEE_ROLES[String(b.id)]?.order ?? 999)
+      )
+      .map((p) => ({
+        ...p,
+        cohortRole: COHORT_COMMITTEE_ROLES[String(p.id)]?.role || 'กรรมการ',
+      }));
+  }, [participants]);
+
   // Pagination calculations
-  const totalItems = filteredParticipants.length;
+  const totalItems = sortedParticipants.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, totalItems);
 
   const paginatedParticipants = useMemo(() => {
-    return filteredParticipants.slice(startIndex, endIndex);
-  }, [filteredParticipants, startIndex, endIndex]);
+    return sortedParticipants.slice(startIndex, endIndex);
+  }, [sortedParticipants, startIndex, endIndex]);
 
   const goToPage = (page: number) => {
     const clamped = Math.max(1, Math.min(page, totalPages));
@@ -232,7 +371,6 @@ function DirectoryContent() {
     }
   };
 
-  // Generate page numbers with ellipsis
   const paginationRange = useMemo(() => {
     const delta = 2;
     const range: (number | string)[] = [];
@@ -255,176 +393,246 @@ function DirectoryContent() {
     return range;
   }, [currentPage, totalPages]);
 
+  const hasActiveFilters =
+    selectedHouse !== 'ALL' ||
+    selectedIndustry !== 'ALL' ||
+    selectedCategory !== 'ALL' ||
+    selectedCohort !== 'ALL' ||
+    Boolean(searchQuery);
+
   return (
-    <div className="max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8 py-6 space-y-6 sm:space-y-10 pb-16">
-      {/* 1. Header Title */}
-      <div className="text-center space-y-2 pt-2">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold mb-1">
-          <Database className="w-3.5 h-3.5" />
-          <span>เชื่อมต่อฐานข้อมูลสมาชิก ({participants.length.toLocaleString()} ท่าน)</span>
-        </div>
-        <h1 className="text-2xl sm:text-4xl font-extrabold text-[#1E2538] tracking-tight">
-          ธุรกิจภายในโครงการเรา
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-500 max-w-xl mx-auto">
-          ทำเนียบสมาชิกและธุรกิจในเครือข่าย Young FTI ELITE (คลิกเพื่อดูหน้าประวัติเต็ม)
-        </p>
-      </div>
-
-      {/* 2. 4-Filter Dropdown Bar matching yfticonnect.com */}
-      <div className="bg-white rounded-3xl p-5 sm:p-7 border border-slate-200 shadow-card space-y-4">
-        {/* Dropdowns Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {/* Filter 1: ดาว (House) */}
+    <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6 pb-20">
+      {/* 1. Dark Navy Header with Integrated Search & Circular QR Button */}
+      <div className="bg-[#1E2538] text-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm space-y-4">
+        <div className="flex items-center justify-between gap-3">
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">ดาว</label>
-            <select
-              value={selectedHouse}
-              onChange={(e) => setSelectedHouse(e.target.value)}
-              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-[#1E2538] focus:bg-white transition"
-            >
-              {HOUSES_LIST.map((h) => (
-                <option key={h.value} value={h.value}>
-                  {h.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Filter 2: กลุ่มอุตสาหกรรม */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">กลุ่มอุตสาหกรรม</label>
-            <select
-              value={selectedIndustry}
-              onChange={(e) => setSelectedIndustry(e.target.value)}
-              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-[#1E2538] focus:bg-white transition"
-            >
-              {INDUSTRY_GROUPS.map((ig) => (
-                <option key={ig.value} value={ig.value}>
-                  {ig.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Filter 3: หมวดธุรกิจ */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">หมวดธุรกิจ</label>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-[#1E2538] focus:bg-white transition truncate"
-            >
-              {BUSINESS_CATEGORIES.map((cat) => (
-                <option key={cat.value} value={cat.value}>
-                  {cat.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Filter 4: รุ่น */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">รุ่น</label>
-            <select
-              value={selectedCohort}
-              onChange={(e) => setSelectedCohort(e.target.value)}
-              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-[#1E2538] focus:bg-white transition"
-            >
-              {COHORT_LIST.map((c) => (
-                <option key={c.value} value={c.value}>
-                  {c.label}
-                </option>
-              ))}
-            </select>
+            <h1 className="text-lg sm:text-2xl font-bold tracking-tight">Member Directory</h1>
+            <p className="text-xs text-slate-300 mt-0.5">
+              ทำเนียบธุรกิจ Young FTI ELITE 11 ({participants.length.toLocaleString()} ท่าน)
+            </p>
           </div>
         </div>
 
-        {/* Search Input Box & Submit Button */}
-        <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
+        {/* Search Input + Circular QR Button */}
+        <div className="flex items-center gap-2.5">
           <div className="relative flex-1">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="ค้นหาบริษัท, ชื่อผู้เข้าร่วม, ตำแหน่ง, รายละเอียดธุรกิจ, จังหวัด..."
-              className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-medium text-slate-800 placeholder-slate-400 outline-none focus:ring-2 focus:ring-[#1E2538] focus:bg-white transition"
+              placeholder="ค้นหาชื่อ บริษัท หรือ keyword..."
+              className="w-full pl-10 pr-9 py-2.5 bg-white text-[#1E2538] rounded-full text-xs sm:text-sm font-medium placeholder-slate-400 outline-none focus:ring-2 focus:ring-[#C59B38]"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 rounded-full"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 rounded-full"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
+
           <button
-            onClick={() => {}}
-            className="py-3 px-8 bg-[#1E2538] hover:bg-[#2B3550] text-white font-bold text-xs sm:text-sm rounded-xl shadow-md transition flex items-center justify-center gap-2"
+            onClick={() => {
+              setScanMode('camera');
+              setScanError(null);
+              setIsScanModalOpen(true);
+            }}
+            aria-label="สแกนเพิ่มเพื่อน"
+            title="สแกนเพิ่มเพื่อน"
+            className="w-11 h-11 rounded-full bg-white hover:bg-slate-100 text-[#1E2538] flex items-center justify-center shrink-0 shadow-sm transition"
           >
-            <Search className="w-4 h-4" />
-            <span>ค้นหา</span>
+            <QrCode className="w-5 h-5" />
           </button>
         </div>
+      </div>
 
-        {/* Active Filters count & Page Size Selector */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-500 pt-2 border-t border-slate-100">
-          <div className="flex items-center gap-3 flex-wrap">
-            <span>
-              พบสมาชิกทั้งหมด <strong className="text-[#1E2538]">{totalItems.toLocaleString()}</strong> ท่าน
-              {totalItems > 0 && (
-                <span className="text-slate-400 ml-1">
-                  (แสดง {startIndex + 1} - {endIndex})
-                </span>
-              )}
-            </span>
+      {/* 2. Clean Filter Pills Bar */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+        <select
+          value={selectedIndustry}
+          onChange={(e) => setSelectedIndustry(e.target.value)}
+          className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border outline-none transition shrink-0 ${
+            selectedIndustry !== 'ALL'
+              ? 'bg-[#FBF6EC] border-[#C59B38] text-[#8A6418]'
+              : 'bg-white border-slate-200 text-slate-700'
+          }`}
+        >
+          {INDUSTRY_GROUPS.map((ig) => (
+            <option key={ig.value} value={ig.value} className="text-slate-800 bg-white">
+              {ig.label}
+            </option>
+          ))}
+        </select>
 
-            {(selectedHouse !== 'ALL' || selectedIndustry !== 'ALL' || selectedCategory !== 'ALL' || selectedCohort !== 'ALL' || searchQuery) && (
-              <button
-                onClick={() => {
-                  setSearchQuery('');
-                  setSelectedHouse('ALL');
-                  setSelectedIndustry('ALL');
-                  setSelectedCategory('ALL');
-                  setSelectedCohort('ALL');
-                }}
-                className="text-[#FB7170] hover:underline font-bold text-xs"
-              >
-                ล้างตัวกรองทั้งหมด
-              </button>
-            )}
+        <select
+          value={selectedHouse}
+          onChange={(e) => setSelectedHouse(e.target.value)}
+          className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border outline-none transition shrink-0 ${
+            selectedHouse !== 'ALL'
+              ? 'bg-[#FBF6EC] border-[#C59B38] text-[#8A6418]'
+              : 'bg-white border-slate-200 text-slate-700'
+          }`}
+        >
+          {HOUSES_LIST.map((h) => (
+            <option key={h.value} value={h.value} className="text-slate-800 bg-white">
+              {h.label}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border outline-none transition max-w-[180px] shrink-0 ${
+            selectedCategory !== 'ALL'
+              ? 'bg-[#FBF6EC] border-[#C59B38] text-[#8A6418]'
+              : 'bg-white border-slate-200 text-slate-700'
+          }`}
+        >
+          {BUSINESS_CATEGORIES.map((cat) => (
+            <option key={cat.value} value={cat.value} className="text-slate-800 bg-white">
+              {cat.label}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={selectedCohort}
+          onChange={(e) => setSelectedCohort(e.target.value)}
+          className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border outline-none transition shrink-0 ${
+            selectedCohort !== 'ALL'
+              ? 'bg-[#FBF6EC] border-[#C59B38] text-[#8A6418]'
+              : 'bg-white border-slate-200 text-slate-700'
+          }`}
+        >
+          {COHORT_LIST.map((c) => (
+            <option key={c.value} value={c.value} className="text-slate-800 bg-white">
+              {c.label}
+            </option>
+          ))}
+        </select>
+
+        {hasActiveFilters && (
+          <button
+            onClick={() => {
+              setSearchQuery('');
+              setSelectedHouse('ALL');
+              setSelectedIndustry('ALL');
+              setSelectedCategory('ALL');
+              setSelectedCohort('ALL');
+            }}
+            className="px-3 py-1.5 rounded-full text-xs font-bold text-[#9A7320] hover:underline shrink-0"
+          >
+            ล้างตัวกรอง
+          </button>
+        )}
+      </div>
+
+      {/* 3. Committee Section (กรรมการ) */}
+      {committeeMembers.length > 0 && (
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-bold text-[#1E2538]">
+              กรรมการ Young FTI ELITE 11
+            </h2>
+            <span className="text-xs text-slate-400">เลื่อนดูรายชื่อ</span>
           </div>
 
-          {/* Page Size Selector */}
-          <div className="flex items-center gap-2 self-end sm:self-auto">
-            <span className="text-slate-500 font-medium">แสดงหน้าละ:</span>
-            <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg">
-              {PAGE_SIZE_OPTIONS.map((size) => (
-                <button
-                  key={size}
-                  onClick={() => setPageSize(size)}
-                  className={`px-2 py-1 rounded-md text-[11px] font-bold transition-all ${
-                    pageSize === size
-                      ? 'bg-[#1E2538] text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
+          <div className="flex gap-3 overflow-x-auto pb-2 snap-x no-scrollbar">
+            {committeeMembers.map((cm) => {
+              const isF = followingIds.includes(String(cm.id));
+              return (
+                <Link
+                  key={cm.id}
+                  href={`/yfti_participants/${cm.id}`}
+                  className="min-w-[155px] max-w-[155px] snap-start bg-white rounded-2xl p-4 border border-slate-200/70 shadow-[0_2px_12px_rgba(15,23,42,0.04)] hover:border-[#C59B38] transition flex flex-col items-center text-center gap-2 shrink-0"
                 >
-                  {size}
-                </button>
-              ))}
-            </div>
+                  <img
+                    src={cm.profile_picture_url || '/images/participants/p_3296.jpg'}
+                    alt={cm.name_thai}
+                    className="w-16 h-16 rounded-full object-cover object-top bg-slate-100 border border-slate-200"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = '/images/participants/p_3296.jpg';
+                    }}
+                  />
+                  <div className="min-w-0 w-full space-y-1">
+                    <p className="text-xs font-bold text-[#1E2538] truncate">{cm.name_thai}</p>
+                    <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2] text-[10px] font-bold">
+                      {cm.cohortRole}
+                    </span>
+                    <p className="text-[11px] text-slate-400 truncate">{cm.company_name_thai}</p>
+                  </div>
+                  <button
+                    onClick={(e) => toggleFollow(e, String(cm.id))}
+                    className={`w-full py-1.5 rounded-full text-[10px] font-bold transition mt-auto ${
+                      isF
+                        ? 'bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2]'
+                        : 'bg-[#1E2538] text-white hover:bg-[#2B3550]'
+                    }`}
+                  >
+                    {isF ? 'Following' : '+ Follow'}
+                  </button>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* 4. Members List Header Row */}
+      <div id="directory-results" className="scroll-mt-6 flex flex-wrap items-center justify-between gap-3 pt-1">
+        <div className="text-sm font-bold text-[#1E2538] tabular-nums">
+          สมาชิกทั้งหมด ({totalItems.toLocaleString()})
+          {totalItems > 0 && (
+            <span className="text-xs font-normal text-slate-400 ml-2">
+              แสดง {startIndex + 1} - {endIndex}
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <button
+            onClick={() =>
+              setSortOrder((prev) =>
+                prev === 'default' ? 'asc' : prev === 'asc' ? 'desc' : 'default'
+              )
+            }
+            className="px-3 py-1.5 rounded-full bg-white border border-slate-200 hover:border-[#C59B38] text-[#B38728] text-xs font-bold flex items-center gap-1.5 transition"
+          >
+            <ArrowUpDown className="w-3.5 h-3.5" />
+            <span>
+              {sortOrder === 'asc'
+                ? 'Sort: ก-ฮ'
+                : sortOrder === 'desc'
+                ? 'Sort: ฮ-ก'
+                : 'Sort: Name'}
+            </span>
+          </button>
+
+          <div className="flex items-center gap-1 bg-white border border-slate-200 p-0.5 rounded-full">
+            {PAGE_SIZE_OPTIONS.map((size) => (
+              <button
+                key={size}
+                onClick={() => setPageSize(size)}
+                className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition tabular-nums ${
+                  pageSize === size
+                    ? 'bg-[#1E2538] text-white'
+                    : 'text-slate-500 hover:text-[#1E2538]'
+                }`}
+              >
+                {size}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Target anchor for smooth scroll on page change */}
-      <div id="directory-results" className="scroll-mt-6" />
-
-      {/* 3. Members Grid (Navigates to dedicated page when clicked) */}
+      {/* 5. Members Grid */}
       {paginatedParticipants.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 p-8 space-y-3">
+        <div className="text-center py-16 bg-white rounded-2xl border border-slate-200 p-8 space-y-3">
           <User className="w-12 h-12 mx-auto text-slate-300" />
           <h3 className="text-base font-bold text-slate-700">ไม่พบสมาชิกที่ตรงกับเงื่อนไข</h3>
           <p className="text-xs text-slate-400 max-w-sm mx-auto">
@@ -433,12 +641,12 @@ function DirectoryContent() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
             {paginatedParticipants.map((member) => (
               <Link
                 key={member.id}
                 href={`/yfti_participants/${member.id}`}
-                className="bg-white rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200 shadow-card hover:shadow-card-hover transition-all duration-300 flex flex-col justify-between cursor-pointer group hover:-translate-y-1"
+                className="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-[0_2px_12px_rgba(15,23,42,0.04)] hover:border-[#C59B38] transition flex flex-col justify-between cursor-pointer group"
               >
                 {/* Member Portrait */}
                 <div className="relative aspect-[4/4.5] overflow-hidden bg-slate-100">
@@ -453,56 +661,77 @@ function DirectoryContent() {
                     }}
                   />
                   {member.star_group_label && (
-                    <span className="absolute top-2 right-2 sm:top-3 sm:right-3 px-2 sm:px-2.5 py-0.5 sm:py-1 bg-[#1E2538]/85 backdrop-blur-sm text-white text-[9px] sm:text-[10px] font-bold rounded-full border border-white/20">
+                    <span className="absolute top-2 right-2 sm:top-3 sm:right-3 px-2.5 py-0.5 bg-[#1E2538]/90 text-white text-[10px] font-semibold rounded-full">
                       {member.star_group_label}
                     </span>
                   )}
                 </div>
 
                 {/* Member Information */}
-                <div className="p-3 sm:p-5 flex-1 flex flex-col justify-between space-y-2 sm:space-y-3">
-                  <div className="space-y-1 sm:space-y-1.5">
-                    <div className="flex items-baseline gap-1 sm:gap-1.5 flex-wrap">
-                      <h3 className="font-extrabold text-xs sm:text-base text-[#1E2538] group-hover:text-[#FB7170] transition-colors leading-snug line-clamp-1 sm:line-clamp-none">
+                <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between space-y-2.5">
+                  <div className="space-y-1">
+                    <div className="flex items-baseline gap-1 flex-wrap">
+                      <h3 className="font-bold text-xs sm:text-sm text-[#1E2538] group-hover:text-[#B38728] transition-colors leading-snug line-clamp-1 sm:line-clamp-none">
                         {member.name_thai}
                       </h3>
                       {member.nickname_eng && (
-                        <span className="text-[10px] sm:text-xs font-bold text-[#FB7170]">({member.nickname_eng})</span>
+                        <span className="text-[10px] sm:text-xs font-semibold text-[#9A7320]">
+                          ({member.nickname_eng})
+                        </span>
                       )}
                     </div>
 
                     {member.company_name_thai && (
-                      <p className="text-[11px] sm:text-xs font-bold text-slate-700 flex items-center gap-1 sm:gap-1.5 truncate">
-                        <Building2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#FB7170] shrink-0" />
+                      <p className="text-[11px] sm:text-xs font-medium text-slate-700 flex items-center gap-1.5 truncate">
+                        <Building2 className="w-3.5 h-3.5 text-[#B38728] shrink-0" />
                         <span className="truncate">{member.company_name_thai}</span>
                       </p>
                     )}
 
                     {member.company_description && (
-                      <p className="text-[10px] sm:text-[11px] text-slate-500 line-clamp-2 leading-relaxed pt-0.5 sm:pt-1">
+                      <p className="text-[10px] sm:text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
                         {stripHtml(member.company_description)}
                       </p>
                     )}
                   </div>
 
-                  {/* Badges / Tags */}
-                  <div className="space-y-1.5 sm:space-y-2 pt-2 sm:pt-3 border-t border-slate-100">
+                  {/* Badges / Follow Row */}
+                  <div className="space-y-2 pt-2 border-t border-slate-100">
                     <div className="flex flex-wrap gap-1">
                       {member.industrial_groups_label && (
-                        <span className="text-[9px] sm:text-[10px] font-semibold px-1.5 sm:px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 truncate max-w-full">
+                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 truncate max-w-full">
                           {member.industrial_groups_label}
                         </span>
                       )}
                       {member.business_categories_label && (
-                        <span className="text-[9px] sm:text-[10px] font-semibold px-1.5 sm:px-2 py-0.5 rounded-full bg-rose-50 text-[#FB7170] truncate max-w-full">
+                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[#FBF6EC] text-[#9A7320] truncate max-w-full">
                           {member.business_categories_label}
                         </span>
                       )}
                     </div>
 
-                    <div className="flex items-center justify-between text-[11px] sm:text-xs font-bold text-[#1E2538] group-hover:text-[#FB7170] pt-0.5 sm:pt-1">
-                      <span>ดูโปรไฟล์เต็ม</span>
-                      <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 transition-transform group-hover:translate-x-1" />
+                    <div className="flex items-center justify-between text-[11px] font-semibold text-[#1E2538]">
+                      <span className="group-hover:text-[#B38728] transition-colors">ดูโปรไฟล์</span>
+                      <button
+                        onClick={(e) => toggleFollow(e, String(member.id))}
+                        className={`px-2.5 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 transition ${
+                          followingIds.includes(String(member.id))
+                            ? 'bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2]'
+                            : 'bg-slate-100 text-[#1E2538] hover:bg-[#1E2538] hover:text-white'
+                        }`}
+                      >
+                        {followingIds.includes(String(member.id)) ? (
+                          <>
+                            <UserCheck className="w-3 h-3" />
+                            Following
+                          </>
+                        ) : (
+                          <>
+                            <UserPlus className="w-3 h-3" />
+                            Follow
+                          </>
+                        )}
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -510,63 +739,51 @@ function DirectoryContent() {
             ))}
           </div>
 
-          {/* 4. Pagination Controls Bar */}
+          {/* Pagination Controls Bar */}
           {totalPages > 1 && (
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
-              {/* Left: Summary */}
-              <div className="text-xs text-slate-500 font-medium">
-                หน้า <strong className="text-[#1E2538] font-bold">{currentPage}</strong> จากทั้งหมด <strong className="text-[#1E2538] font-bold">{totalPages}</strong> หน้า
-                <span className="text-slate-400 ml-1.5">
-                  ({totalItems.toLocaleString()} รายการ)
-                </span>
+            <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
+              <div className="text-xs text-slate-500 font-medium tabular-nums">
+                หน้า <strong className="text-[#1E2538] font-bold">{currentPage}</strong> จากทั้งหมด{' '}
+                <strong className="text-[#1E2538] font-bold">{totalPages}</strong> หน้า
+                <span className="text-slate-400 ml-1.5">({totalItems.toLocaleString()} รายการ)</span>
               </div>
 
-              {/* Right: Page Buttons */}
               <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap justify-center">
-                {/* First Page */}
                 <button
                   onClick={() => goToPage(1)}
                   disabled={currentPage === 1}
                   title="หน้าแรก"
-                  className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:pointer-events-none transition"
+                  className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition"
                 >
                   <ChevronsLeft className="w-4 h-4" />
                 </button>
-
-                {/* Previous Page */}
                 <button
                   onClick={() => goToPage(currentPage - 1)}
                   disabled={currentPage === 1}
                   title="หน้าก่อนหน้า"
-                  className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:pointer-events-none transition"
+                  className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
 
-                {/* Number Chips & Ellipsis */}
                 {paginationRange.map((page, idx) => {
                   if (page === '...') {
                     return (
-                      <span
-                        key={`ellipsis-${idx}`}
-                        className="px-2 py-1.5 text-xs text-slate-400 font-bold"
-                      >
+                      <span key={`ellipsis-${idx}`} className="px-2 py-1.5 text-xs text-slate-400 font-bold">
                         ...
                       </span>
                     );
                   }
-
                   const pageNum = page as number;
                   const isActive = pageNum === currentPage;
-
                   return (
                     <button
                       key={`page-${pageNum}`}
                       onClick={() => goToPage(pageNum)}
-                      className={`min-w-[36px] h-9 px-2 rounded-xl text-xs font-bold transition-all ${
+                      className={`min-w-[36px] h-9 px-2 rounded-xl text-xs font-bold transition tabular-nums ${
                         isActive
-                          ? 'bg-[#1E2538] text-white shadow-md shadow-[#1E2538]/20 scale-105'
-                          : 'border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300'
+                          ? 'bg-[#1E2538] text-white'
+                          : 'border border-slate-200 text-slate-700 hover:bg-slate-50'
                       }`}
                     >
                       {pageNum}
@@ -574,22 +791,19 @@ function DirectoryContent() {
                   );
                 })}
 
-                {/* Next Page */}
                 <button
                   onClick={() => goToPage(currentPage + 1)}
                   disabled={currentPage === totalPages}
                   title="หน้าถัดไป"
-                  className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:pointer-events-none transition"
+                  className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
-
-                {/* Last Page */}
                 <button
                   onClick={() => goToPage(totalPages)}
                   disabled={currentPage === totalPages}
                   title="หน้าสุดท้าย"
-                  className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:pointer-events-none transition"
+                  className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition"
                 >
                   <ChevronsRight className="w-4 h-4" />
                 </button>
@@ -598,18 +812,107 @@ function DirectoryContent() {
           )}
         </>
       )}
+
+      {/* QR Scan Add Friend Modal */}
+      {isScanModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-0 sm:p-4"
+          onClick={() => setIsScanModalOpen(false)}
+        >
+          <div
+            className="w-full max-w-sm bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl p-6 space-y-4 text-center relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setIsScanModalOpen(false)}
+              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-slate-100 text-slate-500"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="space-y-1">
+              <h3 className="text-base font-bold text-[#1E2538]">สแกนบัตรเพื่อน</h3>
+              <p className="text-xs text-slate-500">
+                เล็ง QR บัตรสมาชิก / Digital ID ของเพื่อนให้อยู่ในกรอบ
+              </p>
+            </div>
+
+            {scanMode === 'camera' ? (
+              <div className="space-y-3">
+                <div
+                  id="directory-qr-reader"
+                  className="w-full rounded-2xl overflow-hidden bg-slate-900 border border-slate-200 text-slate-800"
+                />
+                {scanError && (
+                  <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 text-xs font-bold flex items-center justify-center gap-1.5">
+                    <AlertTriangle className="w-4 h-4 shrink-0" />
+                    <span>{scanError}</span>
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setScanError(null);
+                    setScanMode('manual');
+                  }}
+                  className="inline-flex items-center justify-center gap-1.5 text-xs font-bold text-[#9A7320] hover:underline pt-1"
+                >
+                  <Keyboard className="w-3.5 h-3.5" />
+                  <span>กรอกรหัสสมาชิกแทน</span>
+                </button>
+              </div>
+            ) : (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const cleaned = scanInput.trim().replace(/^Y11-0*/i, '');
+                  if (cleaned) {
+                    setIsScanModalOpen(false);
+                    router.push(`/yfti_participants/${cleaned}`);
+                  }
+                }}
+                className="space-y-3 pt-1"
+              >
+                <input
+                  type="text"
+                  value={scanInput}
+                  onChange={(e) => setScanInput(e.target.value)}
+                  placeholder="เช่น Y11-3296 หรือ 3294"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-center font-mono focus:outline-none focus:ring-2 focus:ring-[#1E2538]"
+                />
+                <button
+                  type="submit"
+                  className="w-full py-3 rounded-xl bg-[#1E2538] hover:bg-[#2B3550] text-white text-xs font-bold transition"
+                >
+                  ค้นหาและเปิดโปรไฟล์เพื่อน
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setScanMode('camera')}
+                  className="inline-flex items-center justify-center gap-1.5 text-xs font-bold text-slate-500 hover:text-[#1E2538]"
+                >
+                  <Camera className="w-3.5 h-3.5 text-[#B38728]" />
+                  <span>เปิดกล้องสแกน QR แทน</span>
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 export default function DirectoryPage() {
   return (
-    <Suspense fallback={
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
-        <div className="w-9 h-9 border-3 border-[#1E2538] border-t-transparent rounded-full animate-spin" />
-        <p className="text-xs text-slate-500 font-medium">กำลังโหลดทำเนียบสมาชิกจาก Database...</p>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
+          <div className="w-9 h-9 border-4 border-[#1E2538] border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs text-slate-500 font-medium">กำลังโหลดทำเนียบสมาชิกจาก Database...</p>
+        </div>
+      }
+    >
       <DirectoryContent />
     </Suspense>
   );

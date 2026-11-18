@@ -17,7 +17,9 @@ import {
   MessageCircle,
   ExternalLink,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  UserPlus,
+  UserCheck
 } from 'lucide-react';
 
 interface ParticipantDetailViewProps {
@@ -28,6 +30,7 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
   const [participant, setParticipant] = useState<Participant | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -63,6 +66,27 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
     }
     load();
   }, [idOrSlug]);
+
+  useEffect(() => {
+    if (!participant || typeof window === 'undefined') return;
+    try {
+      const saved: string[] = JSON.parse(localStorage.getItem('yfti_following_ids') || '[]');
+      setIsFollowing(saved.includes(String(participant.id)));
+    } catch {}
+  }, [participant]);
+
+  const handleToggleFollow = () => {
+    if (!participant || typeof window === 'undefined') return;
+    const pid = String(participant.id);
+    try {
+      const saved: string[] = JSON.parse(localStorage.getItem('yfti_following_ids') || '[]');
+      const next = isFollowing ? saved.filter((id) => id !== pid) : [...saved, pid];
+      localStorage.setItem('yfti_following_ids', JSON.stringify(next));
+      setIsFollowing(!isFollowing);
+    } catch {
+      setIsFollowing(!isFollowing);
+    }
+  };
 
   const handleShare = () => {
     if (typeof window !== 'undefined') {
@@ -152,7 +176,7 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
           </div>
 
           {/* Name & Nickname Heading (.elementor-element-264882a) */}
-          <div className="space-y-1 pt-2">
+          <div className="space-y-2 pt-2">
             <h1 className="text-3xl sm:text-5xl font-semibold text-white font-kanit tracking-tight leading-tight">
               {participant.name_thai}
             </h1>
@@ -161,6 +185,47 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
                 ({participant.nickname_eng})
               </h2>
             )}
+
+            {/* Following / Follower & Action Buttons (Follow + Chat) */}
+            {(() => {
+              const numId = Number(String(participant.id).replace(/\D/g, '')) || 100;
+              const memberFollowingCount = 14 + (numId % 19);
+              const memberFollowerCount = 21 + ((numId * 7) % 33) + (isFollowing ? 1 : 0);
+              return (
+                <div className="flex flex-wrap items-center gap-3 pt-2">
+                  <div className="flex items-center gap-2 text-xs text-slate-300">
+                    <span className="bg-white/10 px-3 py-1 rounded-full">
+                      <strong className="text-white">{memberFollowingCount}</strong> Following
+                    </span>
+                    <span className="bg-white/10 px-3 py-1 rounded-full">
+                      <strong className="text-white">{memberFollowerCount}</strong> Follower
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2 sm:ml-auto">
+                    <button
+                      onClick={handleToggleFollow}
+                      className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm ${
+                        isFollowing
+                          ? 'bg-emerald-500 text-white hover:bg-emerald-600'
+                          : 'bg-white text-[#1E2538] hover:bg-slate-100'
+                      }`}
+                    >
+                      {isFollowing ? <UserCheck className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
+                      <span>{isFollowing ? 'Following' : 'Follow'}</span>
+                    </button>
+
+                    <Link
+                      href={`/chat/${participant.id}`}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#FB7170] hover:bg-[#fa5b5a] text-white text-xs font-bold transition shadow-sm"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      <span>Chat</span>
+                    </Link>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
 
           {/* Quick Tags Sub-bar (.elementor-element-41acba6d) */}

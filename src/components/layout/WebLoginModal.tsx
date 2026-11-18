@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useLiffAuth } from '@/contexts/LiffContext';
-import { yftiParticipants, mockCurrentUser } from '@/lib/mockData';
+import { yftiParticipants, mockHouses } from '@/lib/mockData';
 import { UserProfile } from '@/types';
-import { Lock, User, KeyRound, Shield, CheckCircle2, AlertCircle, X, Users } from 'lucide-react';
+import { Lock, User, KeyRound, Shield, CheckCircle2, AlertCircle, X, Users, Search } from 'lucide-react';
 import Image from 'next/image';
 
 interface WebLoginModalProps {
@@ -19,6 +19,19 @@ export const WebLoginModal: React.FC<WebLoginModalProps> = ({ isOpen, onClose })
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [showSwitchList, setShowSwitchList] = useState(false);
+  const [memberSearch, setMemberSearch] = useState('');
+
+  const filteredMembers = useMemo(() => {
+    const q = memberSearch.trim().toLowerCase();
+    if (!q) return yftiParticipants;
+    return yftiParticipants.filter(
+      (p) =>
+        (p.name_thai || '').toLowerCase().includes(q) ||
+        (p.nickname_eng || '').toLowerCase().includes(q) ||
+        (p.company_name_thai || '').toLowerCase().includes(q) ||
+        String(p.id).includes(q)
+    );
+  }, [memberSearch]);
 
   if (!isOpen) return null;
 
@@ -161,7 +174,9 @@ export const WebLoginModal: React.FC<WebLoginModalProps> = ({ isOpen, onClose })
           ) : (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h4 className="text-xs font-bold text-slate-700">เลือกโปรไฟล์สมาชิกที่ต้องการจำลอง:</h4>
+                <h4 className="text-xs font-bold text-slate-700">
+                  เลือกโปรไฟล์สมาชิกที่ต้องการจำลอง ({filteredMembers.length} ท่าน):
+                </h4>
                 <button
                   onClick={() => setShowSwitchList(false)}
                   className="text-xs font-bold text-[#FB7170] hover:underline"
@@ -169,43 +184,61 @@ export const WebLoginModal: React.FC<WebLoginModalProps> = ({ isOpen, onClose })
                   ย้อนกลับ
                 </button>
               </div>
+              <div className="relative">
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={memberSearch}
+                  onChange={(e) => setMemberSearch(e.target.value)}
+                  placeholder="ค้นหาชื่อ, ชื่อเล่น, บริษัท หรือรหัสสมาชิก..."
+                  className="w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium outline-none focus:ring-2 focus:ring-[#1E2538]"
+                />
+              </div>
               <div className="max-h-60 overflow-y-auto space-y-1.5 pr-1">
-                {yftiParticipants.slice(0, 30).map((p, idx) => (
-                  <button
-                    key={p.id}
-                    onClick={() => {
-                      const userObj: UserProfile = {
-                        id: String(p.id),
-                        line_user_id: `U_SIM_${p.id}`,
-                        display_name: `${p.name_thai} (${p.nickname_eng || 'Member'})`,
-                        picture_url: p.profile_picture_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + p.name_thai,
-                        phone_number: p.tel_number,
-                        company_name: p.company_name_thai,
-                        position: p.business_position,
-                        industry: p.industrial_groups_label,
-                        cohort_batch: 'YFTI 11',
-                        house_id: p.star_group || 'the_mars',
-                        role: idx === 0 ? 'SUPER_ADMIN' : 'MEMBER',
-                        points_balance: 320,
-                        xp_balance: 1200,
-                        attendance_rate: 90,
-                      };
-                      switchProfile(userObj);
-                      onClose();
-                    }}
-                    className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-100 text-left transition border border-slate-100"
-                  >
-                    <img
-                      src={p.profile_picture_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + p.name_thai}
-                      alt={p.name_thai}
-                      className="w-8 h-8 rounded-full object-cover shrink-0"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs font-bold text-slate-800 truncate">{p.name_thai} ({p.nickname_eng})</p>
-                      <p className="text-[10px] text-slate-400 truncate">{p.company_name_thai || p.industrial_groups_label}</p>
-                    </div>
-                  </button>
-                ))}
+                {filteredMembers.map((p, idx) => {
+                  const normalizedHouseId = (p.star_group || 'the_mars').replace(/-/g, '_');
+                  const matchedHouse = mockHouses.find((h) => h.id === normalizedHouseId) || mockHouses[0];
+                  return (
+                    <button
+                      key={p.id}
+                      onClick={() => {
+                        const userObj: UserProfile = {
+                          id: String(p.id),
+                          line_user_id: `U_SIM_${p.id}`,
+                          display_name: `${p.name_thai} (${p.nickname_eng || 'Member'})`,
+                          picture_url: p.profile_picture_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + p.name_thai,
+                          phone_number: p.tel_number,
+                          company_name: p.company_name_thai,
+                          position: p.business_position,
+                          industry: p.industrial_groups_label,
+                          cohort_batch: 'YFTI 11',
+                          house_id: matchedHouse.id,
+                          house: matchedHouse,
+                          role: String(p.id) === '3296' || idx === 0 ? 'SUPER_ADMIN' : 'MEMBER',
+                          approval_status: 'APPROVED',
+                          points_balance: 320,
+                          xp_balance: 1200,
+                          attendance_rate: 90,
+                        };
+                        switchProfile(userObj);
+                        onClose();
+                      }}
+                      className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-100 text-left transition border border-slate-100"
+                    >
+                      <img
+                        src={p.profile_picture_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + p.name_thai}
+                        alt={p.name_thai}
+                        className="w-8 h-8 rounded-full object-cover shrink-0"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-bold text-slate-800 truncate">{p.name_thai} ({p.nickname_eng})</p>
+                        <p className="text-[10px] text-slate-400 truncate">
+                          {matchedHouse.name} • {p.company_name_thai || p.industrial_groups_label}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}

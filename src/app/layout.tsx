@@ -43,10 +43,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="th">
-      <body className="bg-[#F8FAFC] text-[#1F2937] min-h-screen flex flex-col antialiased selection:bg-[#FB7170] selection:text-white">
+      <body className="bg-[#F7F7F5] text-[#1F2937] min-h-screen flex flex-col antialiased selection:bg-[#C59B38] selection:text-white">
         <LiffProvider>
           <LoginGate>
-            <div className="w-full min-h-screen flex flex-col bg-[#F8FAFC]">
+            <div className="w-full min-h-screen flex flex-col bg-[#F7F7F5]">
               <TopHeader />
               <main className="flex-1 w-full pb-24 md:pb-8">
                 {children}

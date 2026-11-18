@@ -16,12 +16,28 @@ export async function createRichMenu(): Promise<string> {
   const body = {
     size: { width: 2500, height: 1686 },
     selected: false,
-    name: 'YFTI‑CONNECT Main Menu',
+    name: 'YFTI‑CONNECT Main Menu v2',
     chatBarText: 'เมนู',
     areas: [
       {
-        bounds: { x: 0, y: 0, width: 2500, height: 1686 },
+        // Top Banner: Young FTI ELITE 11 -> เข้าสู่หน้าหลัก (Home)
+        bounds: { x: 0, y: 0, width: 2500, height: 840 },
         action: { type: 'uri', uri: 'https://liff.line.me/2011170570-qSzFUdyR' }
+      },
+      {
+        // Bottom Left Card: Points (คะแนนสะสม / สิทธิพิเศษ)
+        bounds: { x: 0, y: 840, width: 833, height: 846 },
+        action: { type: 'uri', uri: 'https://liff.line.me/2011170570-qSzFUdyR/privileges' }
+      },
+      {
+        // Bottom Middle Card: Activity & Course (กิจกรรมและหลักสูตร)
+        bounds: { x: 833, y: 840, width: 834, height: 846 },
+        action: { type: 'uri', uri: 'https://liff.line.me/2011170570-qSzFUdyR/events' }
+      },
+      {
+        // Bottom Right Card: Profile (โปรไฟล์ของฉัน)
+        bounds: { x: 1667, y: 840, width: 833, height: 846 },
+        action: { type: 'uri', uri: 'https://liff.line.me/2011170570-qSzFUdyR/profile' }
       }
     ]
   };
