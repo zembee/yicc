@@ -49,9 +49,20 @@ const normalizePhone = (num: string): string => {
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { lineProfile, switchProfile, isMockMode, loginWithLine } = useLiffAuth();
+  const { profile, lineProfile, switchProfile, isMockMode, loginWithLine } = useLiffAuth();
 
   const [step, setStep] = useState<FlowStep>('PHONE_LOOKUP');
+
+  useEffect(() => {
+    if (
+      profile &&
+      profile.role !== 'PENDING' &&
+      profile.approval_status !== 'PENDING' &&
+      step === 'PHONE_LOOKUP'
+    ) {
+      router.replace('/');
+    }
+  }, [profile, step, router]);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [otpCode, setOtpCode] = useState('');
   const [otpCountdown, setOtpCountdown] = useState(60);
