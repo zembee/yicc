@@ -11,7 +11,7 @@ import { Lock, User, Key, CheckCircle, AlertCircle, ShieldCheck, ArrowRight, Pho
 export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const { profile, loginWithCredentials, loginWithLine, isMockMode, logout } = useLiffAuth();
+  const { profile, loginWithCredentials, loginWithLine, refetchProfile, isMockMode, logout } = useLiffAuth();
   
   const [mounted, setMounted] = useState(false);
   const [authenticated, setAuthenticated] = useState<boolean>(true);
@@ -76,6 +76,13 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
           </div>
 
           <div className="pt-2 space-y-2">
+            <button
+              type="button"
+              onClick={() => refetchProfile()}
+              className="w-full py-3 px-4 rounded-xl bg-[#1E2538] hover:bg-[#151A28] text-white text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm"
+            >
+              <span>ตรวจสอบสถานะการอนุมัติอีกครั้ง</span>
+            </button>
             <a
               href="https://line.me/R/ti/p/@yfti11"
               target="_blank"

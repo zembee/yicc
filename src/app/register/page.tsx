@@ -49,17 +49,19 @@ const normalizePhone = (num: string): string => {
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { profile, lineProfile, switchProfile, isMockMode, loginWithLine } = useLiffAuth();
+  const { profile, lineProfile, switchProfile, refetchProfile, logout, isMockMode, loginWithLine } = useLiffAuth();
 
   const [step, setStep] = useState<FlowStep>('PHONE_LOOKUP');
 
   useEffect(() => {
-    if (
-      profile &&
-      profile.role !== 'PENDING' &&
-      profile.approval_status !== 'PENDING' &&
-      step === 'PHONE_LOOKUP'
-    ) {
+    if (!profile) return;
+    if (profile.role === 'PENDING' || profile.approval_status === 'PENDING') {
+      if (step === 'PHONE_LOOKUP') {
+        setStep('PENDING_APPROVAL');
+      }
+      return;
+    }
+    if (profile.approval_status !== 'REJECTED' && step === 'PHONE_LOOKUP') {
       router.replace('/');
     }
   }, [profile, step, router]);
@@ -326,6 +328,23 @@ export default function RegisterPage() {
         console.warn('Supabase DB notice:', dbErr);
       }
 
+      // Save application to localStorage for offline/demo Admin approval queue
+      if (typeof window !== 'undefined') {
+        try {
+          const existingRaw = localStorage.getItem('yfti_member_applications');
+          const existing = existingRaw ? (JSON.parse(existingRaw) as UserProfile[]) : [];
+          const filtered = Array.isArray(existing)
+            ? existing.filter((item) => item.line_user_id !== pendingProfile.line_user_id)
+            : [];
+          localStorage.setItem(
+            'yfti_member_applications',
+            JSON.stringify([{ ...pendingProfile, created_at: new Date().toISOString() }, ...filtered])
+          );
+        } catch {}
+      }
+
+      // Persist pending session so exiting and re-entering keeps the pending state
+      switchProfile(pendingProfile);
       setStep('PENDING_APPROVAL');
     } catch (err: any) {
       setErrorMsg(err.message || 'เกิดข้อผิดพลาดในการส่งข้อมูล');
@@ -783,12 +802,14 @@ export default function RegisterPage() {
               </div>
 
               <div className="pt-2 flex flex-col sm:flex-row gap-2.5">
-                <Link
-                  href="/"
-                  className="flex-1 py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center justify-center"
+                <button
+                  type="button"
+                  onClick={() => refetchProfile()}
+                  className="flex-1 py-3 px-4 rounded-xl bg-[#1E2538] hover:bg-[#151A28] text-white text-xs font-bold transition flex items-center justify-center gap-1.5"
                 >
-                  กลับหน้าหลัก
-                </Link>
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  ตรวจสอบสถานะอีกครั้ง
+                </button>
                 <a
                   href="https://line.me/R/ti/p/@yfti11"
                   target="_blank"
@@ -797,6 +818,24 @@ export default function RegisterPage() {
                 >
                   <span>ติดต่อเจ้าหน้าที่ผ่าน LINE</span>
                 </a>
+              </div>
+              <div className="flex items-center justify-between pt-1">
+                <Link
+                  href="/"
+                  className="text-[11px] font-bold text-slate-500 hover:text-[#1E2538] transition"
+                >
+                  กลับหน้าหลัก
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    logout();
+                    setStep('PHONE_LOOKUP');
+                  }}
+                  className="text-[11px] font-bold text-slate-400 hover:text-slate-600 transition"
+                >
+                  ออกจากระบบ / เปลี่ยนบัญชี
+                </button>
               </div>
             </div>
           )}

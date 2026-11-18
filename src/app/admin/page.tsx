@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useLiffAuth } from '@/contexts/LiffContext';
 import { QrScannerModal } from '@/components/admin/QrScannerModal';
 import { MissionReviewList } from '@/components/admin/MissionReviewList';
+import { MemberApprovalList } from '@/components/admin/MemberApprovalList';
 import { 
   QrCode, 
   Users, 
@@ -145,6 +146,9 @@ export default function AdminPage() {
         <Plus className="w-4 h-4 text-[#B38728]" />
         <span>สร้างกิจกรรม / คอร์สเรียนใหม่พร้อมแบบฟอร์มสมัคร</span>
       </button>
+
+      {/* Member Approval Queue */}
+      <MemberApprovalList />
 
       {/* Event Registration & Slip Approval Queue */}
       <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3">

@@ -80,6 +80,34 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
     []
   );
 
+  const syncProfileFromLocalApplications = useCallback(
+    (candidate: UserProfile): UserProfile => {
+      if (typeof window === 'undefined') return candidate;
+      try {
+        const raw = localStorage.getItem('yfti_member_applications');
+        if (!raw) return candidate;
+        const list = JSON.parse(raw) as UserProfile[];
+        if (!Array.isArray(list)) return candidate;
+        const match = list.find(
+          (item) =>
+            (candidate.line_user_id && item.line_user_id === candidate.line_user_id) ||
+            (candidate.id && item.id === candidate.id)
+        );
+        if (match && (match.role !== candidate.role || match.approval_status !== candidate.approval_status)) {
+          return {
+            ...candidate,
+            role: match.role,
+            approval_status: match.approval_status,
+            points_balance: match.points_balance ?? candidate.points_balance,
+            xp_balance: match.xp_balance ?? candidate.xp_balance,
+          };
+        }
+      } catch {}
+      return candidate;
+    },
+    []
+  );
+
   // Restore saved session and initialize LINE LIFF
   useEffect(() => {
     let cancelled = false;
@@ -93,13 +121,17 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
           try {
             const parsed = JSON.parse(saved) as UserProfile;
             if (parsed && parsed.display_name) {
-              savedProfile = parsed;
+              const synced = syncProfileFromLocalApplications(parsed);
+              savedProfile = synced;
+              if (synced !== parsed) {
+                localStorage.setItem('yfti_auth_session', JSON.stringify(synced));
+              }
               if (!cancelled) {
-                setProfile(parsed);
+                setProfile(synced);
                 setIsRegistered(true);
               }
-              if (parsed.role !== 'PENDING' && parsed.approval_status !== 'PENDING') {
-                syncLineRichMenu(parsed.line_user_id, 'link');
+              if (synced.role !== 'PENDING' && synced.approval_status !== 'PENDING' && synced.approval_status !== 'REJECTED') {
+                syncLineRichMenu(synced.line_user_id, 'link');
               }
             }
           } catch {
@@ -135,15 +167,21 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // If user already has a saved session (e.g. registered earlier without real LINE userId),
           // bind their real LINE userId and switch Rich Menu immediately.
           if (savedProfile) {
-            const isApproved = savedProfile.role !== 'PENDING' && savedProfile.approval_status !== 'PENDING';
-            if (!REAL_LINE_USER_ID_RE.test(savedProfile.line_user_id)) {
-              const updatedProfile: UserProfile = {
-                ...savedProfile,
-                line_user_id: lProfile.userId,
-              };
-              setProfile(updatedProfile);
+            const dbProfile = await syncProfileFromSupabase(lProfile.userId);
+            const activeProfile = dbProfile || savedProfile;
+            const isApproved =
+              activeProfile.role !== 'PENDING' &&
+              activeProfile.approval_status !== 'PENDING' &&
+              activeProfile.approval_status !== 'REJECTED';
+
+            const finalProfile: UserProfile = !REAL_LINE_USER_ID_RE.test(activeProfile.line_user_id)
+              ? { ...activeProfile, line_user_id: lProfile.userId }
+              : activeProfile;
+
+            if (!cancelled) {
+              setProfile(finalProfile);
               if (typeof window !== 'undefined') {
-                localStorage.setItem('yfti_auth_session', JSON.stringify(updatedProfile));
+                localStorage.setItem('yfti_auth_session', JSON.stringify(finalProfile));
               }
             }
             if (isApproved) {
@@ -178,7 +216,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => {
       cancelled = true;
     };
-  }, [syncLineRichMenu, syncProfileFromSupabase]);
+  }, [syncLineRichMenu, syncProfileFromSupabase, syncProfileFromLocalApplications]);
 
   const loginWithCredentials = (user: string, pass: string): boolean => {
     const trimmedUser = user.trim();
@@ -250,8 +288,16 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const refetchProfile = async () => {
-    if (lineProfile?.userId) {
-      const dbProfile = await syncProfileFromSupabase(lineProfile.userId);
+    const targetLineUserId = lineProfile?.userId || profile?.line_user_id;
+    if (profile) {
+      const localSynced = syncProfileFromLocalApplications(profile);
+      if (localSynced !== profile) {
+        switchProfile(localSynced);
+        return;
+      }
+    }
+    if (targetLineUserId) {
+      const dbProfile = await syncProfileFromSupabase(targetLineUserId);
       if (dbProfile) {
         switchProfile(dbProfile);
       }
