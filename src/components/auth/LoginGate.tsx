@@ -6,12 +6,12 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useLiffAuth } from '@/contexts/LiffContext';
 import { mockCurrentUser } from '@/lib/mockData';
-import { Lock, User, Key, CheckCircle, AlertCircle, ShieldCheck, ArrowRight, Phone, Clock, ChevronDown, ChevronUp } from 'lucide-react';
+import { Lock, User, Key, CheckCircle, AlertCircle, ShieldCheck, ArrowRight, Phone, Clock, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 
 export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const { profile, loginWithCredentials, loginWithLine, refetchProfile, isMockMode, logout } = useLiffAuth();
+  const { profile, isLoading, loginWithCredentials, loginWithLine, refetchProfile, isMockMode, logout } = useLiffAuth();
   
   const [mounted, setMounted] = useState(false);
   const [authenticated, setAuthenticated] = useState<boolean>(true);
@@ -36,6 +36,23 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
   // If user is accessing registration/privileges or during SSR before mount, allow children through cleanly
   if (pathname === '/register' || pathname?.startsWith('/privileges') || !mounted) {
     return <>{children}</>;
+  }
+
+  // Wait for LIFF + Supabase auth verification before showing Pending / Login screen
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#F1F5F9] flex flex-col items-center justify-center p-4 select-none">
+        <div className="w-full max-w-xs bg-white rounded-3xl shadow-xl border border-slate-200 p-8 text-center space-y-4">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-[#1E2538] flex items-center justify-center shadow-md">
+            <Loader2 className="w-7 h-7 text-[#E5C158] animate-spin" />
+          </div>
+          <div className="space-y-1">
+            <h2 className="text-sm font-extrabold text-[#1E2538]">Young FTI ELITE 11</h2>
+            <p className="text-xs text-slate-500">กำลังตรวจสอบสถานะสมาชิก...</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // If authenticated and approved, render actual website pages

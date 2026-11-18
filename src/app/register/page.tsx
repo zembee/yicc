@@ -49,12 +49,12 @@ const normalizePhone = (num: string): string => {
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { profile, lineProfile, switchProfile, refetchProfile, logout, isMockMode, loginWithLine } = useLiffAuth();
+  const { profile, lineProfile, isLoading: isAuthLoading, switchProfile, refetchProfile, logout, isMockMode, loginWithLine } = useLiffAuth();
 
   const [step, setStep] = useState<FlowStep>('PHONE_LOOKUP');
 
   useEffect(() => {
-    if (!profile) return;
+    if (isAuthLoading || !profile) return;
     if (profile.role === 'PENDING' || profile.approval_status === 'PENDING') {
       if (step === 'PHONE_LOOKUP') {
         setStep('PENDING_APPROVAL');
@@ -64,7 +64,7 @@ export default function RegisterPage() {
     if (profile.approval_status !== 'REJECTED' && (step === 'PHONE_LOOKUP' || step === 'PENDING_APPROVAL')) {
       router.replace('/');
     }
-  }, [profile, step, router]);
+  }, [profile, isAuthLoading, step, router]);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [otpCode, setOtpCode] = useState('');
   const [otpCountdown, setOtpCountdown] = useState(60);
@@ -363,6 +363,22 @@ export default function RegisterPage() {
       setIsLoading(false);
     }
   };
+
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center p-4 select-none">
+        <div className="w-full max-w-xs bg-white rounded-3xl shadow-xl border border-slate-200 p-8 text-center space-y-4">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-[#1E2538] flex items-center justify-center shadow-md">
+            <Loader2 className="w-7 h-7 text-[#E5C158] animate-spin" />
+          </div>
+          <div className="space-y-1">
+            <h2 className="text-sm font-extrabold text-[#1E2538]">Young FTI ELITE 11</h2>
+            <p className="text-xs text-slate-500">กำลังตรวจสอบสถานะสมาชิก...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-xl mx-auto py-6 sm:py-10 px-3 animate-in fade-in duration-300">
