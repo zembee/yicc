@@ -173,7 +173,7 @@ export default function MyTicketsPage() {
             className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm flex flex-col sm:flex-row"
           >
             <img
-              src={ev.image_url || '/images/home/event_training.jpg'}
+              src={ev.image_url || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/event_training.webp'}
               alt={ev.title}
               className="w-full sm:w-36 h-32 sm:h-auto object-cover shrink-0"
             />

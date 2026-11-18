@@ -257,11 +257,11 @@ export default function ProfilePage() {
               {/* Center Row: Member Avatar, Name & Single-Line Role + Position + House */}
               <div className="relative z-10 flex items-center gap-3.5 sm:gap-5 my-auto">
                 <img
-                  src={profile.picture_url || '/images/participants/p_3296.jpg'}
+                  src={profile.picture_url || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp'}
                   alt={profile.display_name}
                   className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border border-white/30 bg-[#141B2D] shrink-0"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = '/images/participants/p_3296.jpg';
+                    (e.target as HTMLImageElement).src = 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp';
                   }}
                 />
 
@@ -843,11 +843,11 @@ export default function ProfilePage() {
                   className="flex items-center gap-3 p-3.5 rounded-2xl border border-slate-200/80 hover:border-[#C59B38] bg-white transition"
                 >
                   <img
-                    src={m.profile_picture_url || '/images/participants/p_3296.jpg'}
+                    src={m.profile_picture_url || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp'}
                     alt={m.name_thai}
                     className="w-11 h-11 rounded-full object-cover bg-slate-200 shrink-0"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = '/images/participants/p_3296.jpg';
+                      (e.target as HTMLImageElement).src = 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp';
                     }}
                   />
                   <div className="min-w-0 flex-1">

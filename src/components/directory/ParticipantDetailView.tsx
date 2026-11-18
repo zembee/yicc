@@ -263,7 +263,7 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
             <div className="md:col-span-4 lg:col-span-4 flex flex-col items-center md:items-start space-y-3">
               <div className="w-full max-w-[280px] sm:max-w-[320px] aspect-[3/4] rounded-xl overflow-hidden bg-slate-100 shadow-md border border-slate-200/80">
                 <img
-                  src={participant.profile_picture_url || '/images/participants/p_3296.jpg'}
+                  src={participant.profile_picture_url || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp'}
                   alt={participant.name_thai}
                   className="w-full h-full object-cover object-top"
                   onError={(e) => {

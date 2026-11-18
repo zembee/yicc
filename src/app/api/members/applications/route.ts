@@ -1,59 +1,101 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
-import path from 'path';
+import { createClient } from '@supabase/supabase-js';
 import { UserProfile } from '@/types';
 import { linkRichMenuToUser, unlinkRichMenuFromUser } from '@/lib/lineRichMenu';
+import { readJsonStore, writeJsonStore } from '@/lib/serverJsonStore';
 
 export interface StoredMemberApplication extends UserProfile {
   created_at?: string;
   updated_at?: string;
 }
 
+const STORE_FILE = 'member-applications.json';
 const REAL_LINE_USER_ID_RE = /^U[0-9a-f]{32}$/i;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-function getStorageFilePath(): string {
-  const localDir = path.join(process.cwd(), '.data');
-  try {
-    if (!existsSync(localDir)) {
-      mkdirSync(localDir, { recursive: true });
-    }
-    return path.join(localDir, 'member-applications.json');
-  } catch {
-    return '/tmp/yfti-member-applications.json';
-  }
+function getSupabaseServerClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  if (!url || !key || url.includes('mock-yicc')) return null;
+  return createClient(url, key);
 }
 
-function readApplications(): StoredMemberApplication[] {
-  const filePath = getStorageFilePath();
-  if (!existsSync(filePath)) return [];
-  try {
-    const raw = readFileSync(filePath, 'utf8');
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
+function normalizeRowToApplication(row: any): StoredMemberApplication {
+  const isPendingBatch =
+    typeof row.cohort_batch === 'string' && row.cohort_batch.includes('PENDING');
+  const isRejectedBatch =
+    typeof row.cohort_batch === 'string' && row.cohort_batch.includes('REJECTED');
 
-function writeApplications(list: StoredMemberApplication[]): void {
-  const filePath = getStorageFilePath();
-  writeFileSync(filePath, JSON.stringify(list, null, 2), 'utf8');
+  return {
+    ...row,
+    role: row.role === 'PENDING' || isPendingBatch ? 'PENDING' : row.role || 'MEMBER',
+    approval_status: isRejectedBatch
+      ? 'REJECTED'
+      : row.role === 'PENDING' || isPendingBatch
+      ? 'PENDING'
+      : 'APPROVED',
+  };
 }
 
 export async function GET(req: NextRequest) {
   try {
     const lineUserId = req.nextUrl.searchParams.get('lineUserId')?.trim();
-    const applications = readApplications();
+    const localApps = readJsonStore<StoredMemberApplication[]>(STORE_FILE, []);
+    const mergedMap = new Map<string, StoredMemberApplication>();
+
+    localApps.forEach((a) => {
+      if (a.line_user_id) mergedMap.set(a.line_user_id, a);
+    });
+
+    let supabaseReachable = false;
+    const sb = getSupabaseServerClient();
+    if (sb) {
+      try {
+        const query = sb
+          .from('profiles')
+          .select('*')
+          .order('updated_at', { ascending: false })
+          .limit(100);
+
+        const { data, error } = lineUserId
+          ? await sb.from('profiles').select('*').eq('line_user_id', lineUserId).maybeSingle()
+          : await query;
+
+        if (!error) {
+          supabaseReachable = true;
+          const rows = lineUserId ? (data ? [data] : []) : Array.isArray(data) ? data : [];
+          rows.forEach((row: any) => {
+            const app = normalizeRowToApplication(row);
+            if (
+              lineUserId ||
+              app.role === 'PENDING' ||
+              app.approval_status === 'PENDING' ||
+              app.approval_status === 'REJECTED' ||
+              mergedMap.has(app.line_user_id)
+            ) {
+              mergedMap.set(app.line_user_id, app);
+            }
+          });
+        }
+      } catch {
+        supabaseReachable = false;
+      }
+    }
+
+    const applications = Array.from(mergedMap.values());
 
     if (lineUserId) {
       const match = applications.find((a) => a.line_user_id === lineUserId) || null;
-      return NextResponse.json({ application: match });
+      return NextResponse.json({ application: match, supabaseReachable });
     }
 
-    return NextResponse.json({ applications });
+    return NextResponse.json({ applications, supabaseReachable });
   } catch (error) {
     console.error('GET /api/members/applications error:', error);
-    return NextResponse.json({ applications: [] }, { status: 500 });
+    return NextResponse.json({ applications: [], supabaseReachable: false }, { status: 500 });
   }
 }
 
@@ -65,16 +107,12 @@ export async function POST(req: NextRequest) {
     }
 
     const now = new Date().toISOString();
-    const applications = readApplications();
+    const applications = readJsonStore<StoredMemberApplication[]>(STORE_FILE, []);
     const existingIndex = applications.findIndex((a) => a.line_user_id === body.line_user_id);
 
-    // Do not overwrite an already-approved or rejected status back to PENDING on passive sync
     if (existingIndex >= 0) {
       const existing = applications[existingIndex];
-      if (
-        existing.approval_status === 'APPROVED' ||
-        existing.approval_status === 'REJECTED'
-      ) {
+      if (existing.approval_status === 'APPROVED' || existing.approval_status === 'REJECTED') {
         return NextResponse.json({ ok: true, application: existing });
       }
     }
@@ -92,9 +130,46 @@ export async function POST(req: NextRequest) {
     } else {
       applications.unshift(record);
     }
+    writeJsonStore(STORE_FILE, applications);
 
-    writeApplications(applications);
-    return NextResponse.json({ ok: true, application: record });
+    // Sync to Supabase if reachable (handle user_role enum without PENDING & UUID house_id)
+    let supabaseSaved = false;
+    const sb = getSupabaseServerClient();
+    if (sb) {
+      try {
+        const basePayload = {
+          line_user_id: record.line_user_id,
+          display_name: record.display_name,
+          picture_url: record.picture_url || null,
+          phone_number: record.phone_number || null,
+          email: record.email || null,
+          company_name: record.company_name || null,
+          position: record.position || null,
+          industry: record.industry || null,
+          house_id: record.house_id && UUID_RE.test(record.house_id) ? record.house_id : null,
+          cohort_batch: 'YFTI 11 (PENDING)',
+          points_balance: 0,
+          xp_balance: 0,
+          updated_at: now,
+        };
+
+        const { error: pendingErr } = await sb
+          .from('profiles')
+          .upsert({ ...basePayload, role: 'PENDING' }, { onConflict: 'line_user_id' });
+
+        if (!pendingErr) {
+          supabaseSaved = true;
+        } else {
+          // Fallback if Postgres user_role enum only permits MEMBER/HOUSE_ADMIN/SUPER_ADMIN
+          const { error: memberErr } = await sb
+            .from('profiles')
+            .upsert({ ...basePayload, role: 'MEMBER' }, { onConflict: 'line_user_id' });
+          if (!memberErr) supabaseSaved = true;
+        }
+      } catch {}
+    }
+
+    return NextResponse.json({ ok: true, application: record, supabaseSaved });
   } catch (error) {
     console.error('POST /api/members/applications error:', error);
     return NextResponse.json(
@@ -118,30 +193,51 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
     }
 
-    const applications = readApplications();
+    const now = new Date().toISOString();
+    const applications = readJsonStore<StoredMemberApplication[]>(STORE_FILE, []);
     const idx = applications.findIndex((a) => a.line_user_id === lineUserId);
-    if (idx < 0) {
-      return NextResponse.json({ error: 'Application not found' }, { status: 404 });
-    }
 
-    const current = applications[idx];
+    const current = idx >= 0 ? applications[idx] : ({ line_user_id: lineUserId, display_name: lineUserId } as StoredMemberApplication);
     const updated: StoredMemberApplication = {
       ...current,
       role: decision === 'APPROVED' ? 'MEMBER' : 'PENDING',
       approval_status: decision,
       points_balance: decision === 'APPROVED' ? Math.max(current.points_balance || 0, 100) : 0,
       xp_balance: decision === 'APPROVED' ? Math.max(current.xp_balance || 0, 300) : 0,
-      updated_at: new Date().toISOString(),
+      updated_at: now,
     };
 
-    applications[idx] = updated;
-    writeApplications(applications);
+    if (idx >= 0) {
+      applications[idx] = updated;
+    } else {
+      applications.unshift(updated);
+    }
+    writeJsonStore(STORE_FILE, applications);
+
+    // Update Supabase if reachable
+    const sb = getSupabaseServerClient();
+    if (sb) {
+      try {
+        await sb
+          .from('profiles')
+          .update({
+            role: 'MEMBER',
+            cohort_batch: decision === 'APPROVED' ? 'YFTI 11' : 'YFTI 11 (REJECTED)',
+            points_balance: updated.points_balance,
+            xp_balance: updated.xp_balance,
+            updated_at: now,
+          })
+          .eq('line_user_id', lineUserId);
+      } catch {}
+    }
 
     // Update LINE Rich Menu if this is a real LINE userId
     if (REAL_LINE_USER_ID_RE.test(lineUserId) && process.env.LINE_CHANNEL_ACCESS_TOKEN) {
       try {
-        if (decision === 'APPROVED' && process.env.LINE_RICH_MENU_LOGGED_IN_ID) {
-          await linkRichMenuToUser(lineUserId, process.env.LINE_RICH_MENU_LOGGED_IN_ID);
+        const loggedInRichMenuId =
+          process.env.LINE_RICH_MENU_LOGGED_IN_ID || 'richmenu-4677488aeef077f1b275f3fc7694f69b';
+        if (decision === 'APPROVED') {
+          await linkRichMenuToUser(lineUserId, loggedInRichMenuId);
         } else if (decision === 'REJECTED') {
           await unlinkRichMenuFromUser(lineUserId);
         }

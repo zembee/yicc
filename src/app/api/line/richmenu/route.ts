@@ -22,10 +22,8 @@ export async function POST(req: NextRequest) {
     }
 
     if (action === 'link') {
-      const loggedInRichMenuId = process.env.LINE_RICH_MENU_LOGGED_IN_ID;
-      if (!loggedInRichMenuId) {
-        return NextResponse.json({ ok: true, skipped: true, reason: 'missing_logged_in_rich_menu_id' });
-      }
+      const loggedInRichMenuId =
+        process.env.LINE_RICH_MENU_LOGGED_IN_ID || 'richmenu-4677488aeef077f1b275f3fc7694f69b';
       await linkRichMenuToUser(lineUserId, loggedInRichMenuId);
     } else {
       await unlinkRichMenuFromUser(lineUserId);

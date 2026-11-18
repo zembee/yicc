@@ -19,7 +19,7 @@ export const mockCurrentUser: UserProfile = {
   id: '3296',
   line_user_id: 'U_demo_yfti11',
   display_name: 'พงศ์พิชาญ ธนสิริพูนสิน (Golf)',
-  picture_url: '/images/participants/p_3296.jpg',
+  picture_url: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp',
   email: 'golf.mpcivil@gmail.com',
   phone_number: '082-269-9962',
   linkedin_url: 'https://linkedin.com',
@@ -53,7 +53,7 @@ export const mockEvents: EventItem[] = [
     event_type: 'course',
     fee_member: 1500,
     fee_guest: 2500,
-    image_url: '/images/home/event_training.jpg',
+    image_url: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/event_training.webp',
     author_name: 'YFTI Academy',
     published_date_text: '5 ธันวาคม 2026',
     content_paragraphs: [
@@ -77,7 +77,7 @@ export const mockEvents: EventItem[] = [
     event_type: 'course',
     fee_member: 1900,
     fee_guest: 3200,
-    image_url: '/images/home/hero_leaders.jpg',
+    image_url: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/hero_leaders.webp',
     author_name: 'YFTI Academy',
     published_date_text: '12 ธันวาคม 2026',
     content_paragraphs: [
@@ -100,7 +100,7 @@ export const mockEvents: EventItem[] = [
     event_type: 'general',
     fee_member: 1200,
     fee_guest: 2200,
-    image_url: '/images/home/Young-FTI-11-979-scaled-e1779826560403-1536x863.jpg',
+    image_url: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/Young-FTI-11-979-scaled-e1779826560403-1536x863.webp',
     author_name: 'YFTI Committee',
     published_date_text: '19 ธันวาคม 2026',
     content_paragraphs: [
@@ -121,63 +121,63 @@ export const mockEvents: EventItem[] = [
     reward_xp: 350,
     is_mandatory: true,
     status: 'COMPLETED',
-    image_url: '/images/events/25680523-Y11-YoungFTI_1683-scaled.jpg',
+    image_url: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp',
     author_name: 'admin',
     published_date_text: '24 พฤษภาคม 2025',
     content_paragraphs: [
       'รวบรวมภาพกิจกรรม บรรยากาศความสนุก และความประทับใจตลอดงานพิธีปิดหลักสูตร YOUNG FTI ELITE รุ่นที่ 11 การมอบประกาศนียบัตร และฉลองจบหลักสูตร ณ โรงแรมเรเนซองส์ กรุงเทพ ราชประสงค์ จัดขึ้นเมื่อวันที่ 23 พฤษภาคม 2568'
     ],
     gallery_images: [
-      '/images/events/gallery-closing/2R6_0973-1024x776.jpg',
-      '/images/events/gallery-closing/2R6_1346-1024x776.jpg',
-      '/images/events/gallery-closing/2R6_1497-1024x776.jpg',
-      '/images/events/gallery-closing/2R6_1751-1024x776.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_22-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_29-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_39-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_102-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_105-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_113-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_155-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_158-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_167-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_168-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_174-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_220-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_249-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_264-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_267-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_287-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_304-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_311-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_334-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_371-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_387-683x1024.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_401-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_407-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_432-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_446-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_461-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_476-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_499-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_529-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_534-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_563-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_566-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_593-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_605-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_614-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_621-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_638-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_641-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_656-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_725-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_738-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_780-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_804-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_830-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_872-1024x683.jpg',
-      '/images/events/gallery-closing/25680523-Y11-YoungFTI_884-1024x683.jpg'
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/2R6_0973-1024x776.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/2R6_1346-1024x776.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/2R6_1497-1024x776.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/2R6_1751-1024x776.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_22-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_29-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_39-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_102-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_105-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_113-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_155-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_158-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_167-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_168-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_174-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_220-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_249-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_264-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_267-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_287-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_304-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_311-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_334-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_371-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_387-683x1024.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_401-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_407-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_432-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_446-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_461-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_476-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_499-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_529-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_534-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_563-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_566-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_593-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_605-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_614-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_621-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_638-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_641-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_656-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_725-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_738-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_780-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_804-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_830-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_872-1024x683.webp',
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/gallery-closing/25680523-Y11-YoungFTI_884-1024x683.webp'
     ],
     isCheckedIn: true,
   },
@@ -194,14 +194,14 @@ export const mockEvents: EventItem[] = [
     reward_xp: 250,
     is_mandatory: true,
     status: 'COMPLETED',
-    image_url: '/images/events/Y11-YoungFTI-Earth_225-scaled.jpg',
+    image_url: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/Y11-YoungFTI-Earth_225-scaled.webp',
     author_name: 'admin',
     published_date_text: '17 พฤษภาคม 2025',
     content_paragraphs: [
       'ประมวลภาพบรรยากาศการอบรมและสัมมนาเข้มข้นในโครงการ Young FTI Elite รุ่นที่ 11 ซึ่งมุ่งเน้นการสร้างวิสัยทัศน์ผู้บริหารยุคใหม่ การแลกเปลี่ยนประสบการณ์จริง และการสร้างความร่วมมือข้ามภาคอุตสาหกรรม'
     ],
     gallery_images: [
-      '/images/events/Y11-YoungFTI-Earth_225-scaled.jpg'
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/Y11-YoungFTI-Earth_225-scaled.webp'
     ],
     isCheckedIn: true,
   },
@@ -218,14 +218,14 @@ export const mockEvents: EventItem[] = [
     reward_xp: 500,
     is_mandatory: false,
     status: 'COMPLETED',
-    image_url: '/images/events/Maldives-Davilsnap-Day2-3_627-scaled.jpg',
+    image_url: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/Maldives-Davilsnap-Day2-3_627-scaled.webp',
     author_name: 'admin',
     published_date_text: '28 เมษายน 2025',
     content_paragraphs: [
       'ภาพความประทับใจทริป Young FTI Elite 11 ณ มัลดีฟส์ กิจกรรมกระชับมิตร สานต่อความสัมพันธ์ทางธุรกิจ และการสร้างพันธมิตรเครือข่ายระดับสากล'
     ],
     gallery_images: [
-      '/images/events/Maldives-Davilsnap-Day2-3_627-scaled.jpg'
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/Maldives-Davilsnap-Day2-3_627-scaled.webp'
     ],
     isCheckedIn: true,
   },
@@ -242,14 +242,14 @@ export const mockEvents: EventItem[] = [
     reward_xp: 250,
     is_mandatory: false,
     status: 'COMPLETED',
-    image_url: '/images/events/Y11_04042025_366-scaled.jpg',
+    image_url: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/Y11_04042025_366-scaled.webp',
     author_name: 'admin',
     published_date_text: '5 เมษายน 2025',
     content_paragraphs: [
       'ศึกษาดูงาน ณ บริษัท ธนากรผลิตภัณฑ์น้ำมันพืช จำกัด เพื่อศึกษาเทคโนโลยีการผลิตที่ทันสมัย มาตรฐานความปลอดภัยระดับสากล และแนวทางการขับเคลื่อนอุตสาหกรรมที่เป็นมิตรต่อสิ่งแวดล้อม'
     ],
     gallery_images: [
-      '/images/events/Y11_04042025_366-scaled.jpg'
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/Y11_04042025_366-scaled.webp'
     ],
     isCheckedIn: false,
   },
@@ -266,14 +266,14 @@ export const mockEvents: EventItem[] = [
     reward_xp: 600,
     is_mandatory: false,
     status: 'COMPLETED',
-    image_url: '/images/events/KIM05966-1-scaled.jpg',
+    image_url: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/KIM05966-1-scaled.webp',
     author_name: 'admin',
     published_date_text: '17 มีนาคม 2025',
     content_paragraphs: [
       'ทริปการศึกษาดูงานองค์กรและอุตสาหกรรมชั้นนำในประเทศฝรั่งเศส เสริมสร้างความรู้ด้าน Green Transition และ Digital Transformation ในระดับสากล'
     ],
     gallery_images: [
-      '/images/events/KIM05966-1-scaled.jpg'
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/KIM05966-1-scaled.webp'
     ],
     isCheckedIn: false,
   },
@@ -290,14 +290,14 @@ export const mockEvents: EventItem[] = [
     reward_xp: 350,
     is_mandatory: true,
     status: 'COMPLETED',
-    image_url: '/images/events/YFTI-Pattaya-24-Jan-25-557-scaled.jpg',
+    image_url: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/YFTI-Pattaya-24-Jan-25-557-scaled.webp',
     author_name: 'admin',
     published_date_text: '27 มกราคม 2025',
     content_paragraphs: [
       'กิจกรรม Ice Breaking ณ พัทยา ชลบุรี เสริมสร้างความสนิทสนม การทำงานร่วมกันเป็นทีม และการรวมพลังของนักอุตสาหกรรมรุ่นใหม่'
     ],
     gallery_images: [
-      '/images/events/YFTI-Pattaya-24-Jan-25-557-scaled.jpg'
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/YFTI-Pattaya-24-Jan-25-557-scaled.webp'
     ],
     isCheckedIn: true,
   },
@@ -314,14 +314,14 @@ export const mockEvents: EventItem[] = [
     reward_xp: 350,
     is_mandatory: true,
     status: 'COMPLETED',
-    image_url: '/images/events/Young-FTI-11-995-scaled.jpg',
+    image_url: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/Young-FTI-11-995-scaled.webp',
     author_name: 'admin',
     published_date_text: '18 มกราคม 2025',
     content_paragraphs: [
       'พิธีเปิดหลักสูตร Young FTI ELITE รุ่นที่ 11 และการปฐมนิเทศอย่างเป็นทางการ ณ โรงแรม ดิ แอทธินี โฮเทล แบงค็อก'
     ],
     gallery_images: [
-      '/images/events/Young-FTI-11-995-scaled.jpg'
+      'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/Young-FTI-11-995-scaled.webp'
     ],
     isCheckedIn: true,
   }
@@ -490,7 +490,7 @@ export const mockPrivileges: PrivilegeItem[] = [
     category: 'Food & Drink',
     points_required: 100,
     expiry_date: '31 ธ.ค. 2026',
-    image_url: '/images/home/unsplash_hEC6zxdFF0M.webp',
+    image_url: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/unsplash_hEC6zxdFF0M.webp',
     description: 'รับส่วนลดค่าอาหาร 15% เมื่อมาใช้บริการตั้งแต่ 2 ท่านขึ้นไป ที่สาขา Gaysorn Amarin หรือ The Sense Pinklao',
     conditions: [
       'แสดง QR Code สิทธิพิเศษจากแอป YFTI-CONNECT ก่อนชำระเงิน',
@@ -511,7 +511,7 @@ export const mockPrivileges: PrivilegeItem[] = [
     category: 'Travel',
     points_required: 250,
     expiry_date: '31 ธ.ค. 2026',
-    image_url: '/images/home/Maldives-Davilsnap-Day2-3_461-scaled.jpg',
+    image_url: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/Maldives-Davilsnap-Day2-3_461-scaled.webp',
     description: 'สิทธิพิเศษสำหรับสมาชิก Young FTI ELITE 11 เข้าใช้บริการเลานจ์สนามบินสุวรรณภูมิและดอนเมืองฟรี 3 ชั่วโมง',
     conditions: [
       'สำหรับสมาชิก Young FTI ELITE 11 ที่ยืนยันตัวตนแล้วเท่านั้น',
@@ -531,7 +531,7 @@ export const mockPrivileges: PrivilegeItem[] = [
     category: 'Events',
     points_required: 150,
     expiry_date: '15 ม.ค. 2027',
-    image_url: '/images/home/hero_leaders.jpg',
+    image_url: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/hero_leaders.webp',
     description: 'ใช้คะแนนสะสมแลกรับส่วนลดบัตรเข้าร่วมงานสัมมนาประจำปี FTI Business Summit สำหรับผู้บริหาร',
     conditions: [
       'ใช้ลดค่าลงทะเบียนได้ทั้งสมาชิกและผู้ติดตาม 1 ท่าน',
@@ -551,7 +551,7 @@ export const mockPrivileges: PrivilegeItem[] = [
     category: 'Lifestyle',
     points_required: 200,
     expiry_date: '31 มี.ค. 2027',
-    image_url: '/images/home/unsplash_FO7JIlwjOtU.webp',
+    image_url: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/unsplash_FO7JIlwjOtU.webp',
     description: 'แพ็กเกจตรวจสุขภาพผู้บริหารครอบคลุม 25 รายการ พร้อมสิทธิ์ Fast Track นัดหมายล่วงหน้า',
     conditions: [
       'กรุณานัดหมายล่วงหน้าอย่างน้อย 3 วันทำการ',
@@ -570,7 +570,7 @@ export const mockPrivileges: PrivilegeItem[] = [
     category: 'Shopping',
     points_required: 300,
     expiry_date: '28 ก.พ. 2027',
-    image_url: '/images/home/unsplash_PLH1lwjWvVg.webp',
+    image_url: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/unsplash_PLH1lwjWvVg.webp',
     description: 'แลกคูปองแทนเงินสดมูลค่า 500 บาท สำหรับช้อปปิ้งสินค้าทุกแผนกที่เซ็นทรัลและสยามพารากอน',
     conditions: [
       'ใช้แทนเงินสดได้ทันทีเมื่อมียอดซื้อขั้นต่ำ 1,500 บาท',
@@ -589,7 +589,7 @@ export const mockPrivileges: PrivilegeItem[] = [
     category: 'Entertainment',
     points_required: 180,
     expiry_date: '31 ธ.ค. 2026',
-    image_url: '/images/home/unsplash_8Eiq70dFgU0.webp',
+    image_url: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/unsplash_8Eiq70dFgU0.webp',
     description: 'รับสิทธิ์ซื้อบัตรชมภาพยนตร์ระดับ VIP First Class 1 แถม 1 พร้อมชุดป๊อปคอร์นและเครื่องดื่มในเลานจ์',
     conditions: [
       'ใช้ได้เฉพาะวันจันทร์ - ศุกร์ ยกเว้นวันหยุดนักขัตฤกษ์',

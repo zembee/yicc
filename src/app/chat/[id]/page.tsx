@@ -86,11 +86,11 @@ export default function PrivateChatPage() {
           <ArrowLeft className="w-4 h-4" />
         </Link>
         <img
-          src={participant.profile_picture_url || '/images/participants/p_3296.jpg'}
+          src={participant.profile_picture_url || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp'}
           alt={participant.name_thai}
           className="w-10 h-10 rounded-full object-cover border border-white/30 shrink-0"
           onError={(e) => {
-            (e.target as HTMLImageElement).src = '/images/participants/p_3296.jpg';
+            (e.target as HTMLImageElement).src = 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp';
           }}
         />
         <div className="min-w-0 flex-1">

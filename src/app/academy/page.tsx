@@ -39,7 +39,7 @@ const INDUSTRY_SECTORS = [
 
 const HERO_SLIDES = [
   {
-    image: '/images/about/Young-FTI-11-979.jpg',
+    image: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/about/Young-FTI-11-979.webp',
     caption: 'Young FTI ELITE รุ่นที่ 11',
     subtitle: 'ทำเนียบผู้นำและนักอุตสาหกรรมรุ่นใหม่แห่งประเทศไทย'
   },

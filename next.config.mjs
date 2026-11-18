@@ -26,6 +26,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'yfticonnect.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'ygtiouphuajowaistiru.supabase.co',
+      },
     ],
   },
   async headers() {

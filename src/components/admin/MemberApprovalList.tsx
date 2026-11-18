@@ -26,6 +26,7 @@ export const MemberApprovalList: React.FC = () => {
   const [filter, setFilter] = useState<FilterMode>('PENDING');
   const [isLoading, setIsLoading] = useState(false);
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [supabaseReachable, setSupabaseReachable] = useState<boolean | null>(null);
 
   const loadApplications = useCallback(async () => {
     setIsLoading(true);
@@ -36,7 +37,13 @@ export const MemberApprovalList: React.FC = () => {
       try {
         const res = await fetch('/api/members/applications');
         if (res.ok) {
-          const json = (await res.json()) as { applications?: MemberApplication[] };
+          const json = (await res.json()) as {
+            applications?: MemberApplication[];
+            supabaseReachable?: boolean;
+          };
+          if (typeof json.supabaseReachable === 'boolean') {
+            setSupabaseReachable(json.supabaseReachable);
+          }
           if (Array.isArray(json.applications)) {
             json.applications.forEach((item) => {
               if (item.line_user_id) {
@@ -228,27 +235,34 @@ export const MemberApprovalList: React.FC = () => {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex gap-1.5">
-        {(
-          [
-            { key: 'PENDING', label: `รออนุมัติ (${pendingCount})` },
-            { key: 'APPROVED', label: 'อนุมัติแล้ว' },
-            { key: 'ALL', label: 'ทั้งหมด' },
-          ] as { key: FilterMode; label: string }[]
-        ).map((tab) => (
-          <button
-            key={tab.key}
-            type="button"
-            onClick={() => setFilter(tab.key)}
-            className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition ${
-              filter === tab.key
-                ? 'bg-[#1E2538] text-white'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex gap-1.5">
+          {(
+            [
+              { key: 'PENDING', label: `รออนุมัติ (${pendingCount})` },
+              { key: 'APPROVED', label: 'อนุมัติแล้ว' },
+              { key: 'ALL', label: 'ทั้งหมด' },
+            ] as { key: FilterMode; label: string }[]
+          ).map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setFilter(tab.key)}
+              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition ${
+                filter === tab.key
+                  ? 'bg-[#1E2538] text-white'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        {supabaseReachable === false && (
+          <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200">
+            Local Fallback Mode (เชื่อมต่อ Supabase ไม่ได้)
+          </span>
+        )}
       </div>
 
       {filteredApps.length === 0 ? (

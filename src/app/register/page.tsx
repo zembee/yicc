@@ -61,7 +61,7 @@ export default function RegisterPage() {
       }
       return;
     }
-    if (profile.approval_status !== 'REJECTED' && step === 'PHONE_LOOKUP') {
+    if (profile.approval_status !== 'REJECTED' && (step === 'PHONE_LOOKUP' || step === 'PENDING_APPROVAL')) {
       router.replace('/');
     }
   }, [profile, step, router]);
@@ -203,7 +203,7 @@ export default function RegisterPage() {
 
     try {
       const lineUserId = lineProfile?.userId || `U_LINE_${matchedParticipant.id}_${Date.now()}`;
-      const actualPicture = matchedParticipant.profile_picture_url || lineProfile?.pictureUrl || '/images/participants/p_3296.jpg';
+      const actualPicture = matchedParticipant.profile_picture_url || lineProfile?.pictureUrl || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp';
       const targetHouse = houses.find((h) => h.id === matchedParticipant.star_group) || mockHouses[0];
 
       const linkedProfile: UserProfile = {

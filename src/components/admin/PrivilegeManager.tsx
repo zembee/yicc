@@ -32,7 +32,7 @@ const EMPTY_FORM = {
   category: 'Food & Drink' as PrivilegeItem['category'],
   points_required: '100',
   expiry_date: '31 ธ.ค. 2026',
-  image_url: '/images/home/unsplash_hEC6zxdFF0M.webp',
+  image_url: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/unsplash_hEC6zxdFF0M.webp',
   description: '',
   conditionsText: 'แสดง QR Code สิทธิพิเศษจากแอป YFTI-CONNECT ก่อนรับบริการ',
   is_featured: false,
@@ -102,7 +102,7 @@ export const PrivilegeManager: React.FC<{ onCountChange?: (count: number) => voi
         category: form.category,
         points_required: Number(form.points_required) || 100,
         expiry_date: form.expiry_date.trim() || '31 ธ.ค. 2026',
-        image_url: form.image_url.trim() || '/images/home/unsplash_hEC6zxdFF0M.webp',
+        image_url: form.image_url.trim() || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/unsplash_hEC6zxdFF0M.webp',
         description: form.description.trim(),
         conditions: form.conditionsText
           .split('\n')
@@ -199,7 +199,7 @@ export const PrivilegeManager: React.FC<{ onCountChange?: (count: number) => voi
                 src={item.image_url}
                 alt={item.title}
                 onError={(e) => {
-                  (e.currentTarget as HTMLImageElement).src = '/images/home/unsplash_hEC6zxdFF0M.webp';
+                  (e.currentTarget as HTMLImageElement).src = 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/unsplash_hEC6zxdFF0M.webp';
                 }}
                 className="w-14 h-14 rounded-xl object-cover border border-slate-200 shrink-0 bg-white"
               />

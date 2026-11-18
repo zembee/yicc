@@ -1,19 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { mockEvents } from '@/lib/mockData';
 import { EventItem } from '@/types';
-import { readJsonStore, writeJsonStore } from '@/lib/serverJsonStore';
+import { readCloudJsonStore, writeCloudJsonStore } from '@/lib/serverJsonStore';
 
 const STORE_FILE = 'events.json';
 
-function loadEvents(): EventItem[] {
-  const stored = readJsonStore<EventItem[] | null>(STORE_FILE, null);
+async function loadEvents(): Promise<EventItem[]> {
+  const stored = await readCloudJsonStore<EventItem[] | null>(STORE_FILE, null);
   if (Array.isArray(stored)) return stored;
   return [...mockEvents];
 }
 
 export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get('id')?.trim();
-  const events = loadEvents();
+  const events = await loadEvents();
   if (id) {
     const item = events.find((e) => e.id === id) || null;
     return NextResponse.json({ event: item });
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'กรุณาระบุชื่อกิจกรรม / คอร์สเรียน' }, { status: 400 });
     }
 
-    const events = loadEvents();
+    const events = await loadEvents();
     const startIso = body.start_time || new Date(Date.now() + 86400000 * 7).toISOString();
     const endIso =
       body.end_time || new Date(new Date(startIso).getTime() + 3600000 * 3).toISOString();
@@ -44,14 +44,14 @@ export async function POST(req: NextRequest) {
       reward_xp: Number(body.reward_xp) || 100,
       is_mandatory: Boolean(body.is_mandatory),
       status: body.status || 'UPCOMING',
-      image_url: body.image_url?.trim() || '/images/home/unsplash_hEC6zxdFF0M.webp',
+      image_url: body.image_url?.trim() || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/unsplash_hEC6zxdFF0M.webp',
       event_type: body.event_type || 'course',
       fee_member: body.fee_member !== undefined ? Number(body.fee_member) : 1500,
       fee_guest: body.fee_guest !== undefined ? Number(body.fee_guest) : 2500,
     };
 
     const next = [newEvent, ...events];
-    writeJsonStore(STORE_FILE, next);
+    await writeCloudJsonStore(STORE_FILE, next);
     return NextResponse.json({ ok: true, event: newEvent, events: next });
   } catch (error) {
     return NextResponse.json(
@@ -68,7 +68,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Missing event id' }, { status: 400 });
     }
 
-    const events = loadEvents();
+    const events = await loadEvents();
     const idx = events.findIndex((e) => e.id === body.id);
     if (idx < 0) {
       return NextResponse.json({ error: 'Event not found' }, { status: 404 });
@@ -85,7 +85,7 @@ export async function PATCH(req: NextRequest) {
     };
 
     events[idx] = updated;
-    writeJsonStore(STORE_FILE, events);
+    await writeCloudJsonStore(STORE_FILE, events);
     return NextResponse.json({ ok: true, event: updated, events });
   } catch (error) {
     return NextResponse.json(
@@ -101,9 +101,9 @@ export async function DELETE(req: NextRequest) {
     if (!id) {
       return NextResponse.json({ error: 'Missing event id' }, { status: 400 });
     }
-    const events = loadEvents();
+    const events = await loadEvents();
     const next = events.filter((e) => e.id !== id);
-    writeJsonStore(STORE_FILE, next);
+    await writeCloudJsonStore(STORE_FILE, next);
     return NextResponse.json({ ok: true, events: next });
   } catch (error) {
     return NextResponse.json(

@@ -114,18 +114,18 @@ export const EventCardWithQrModal: React.FC<Props> = ({ event }) => {
   // Event Cover Photos
   const eventCover = event.image_url || (
     event.id === 'e1'
-      ? '/images/events/25680523-Y11-YoungFTI_1683-scaled.jpg'
+      ? 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp'
       : event.id === 'e2'
-      ? '/images/events/Y11-YoungFTI-Earth_225-scaled.jpg'
+      ? 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/Y11-YoungFTI-Earth_225-scaled.webp'
       : event.id === 'e3'
-      ? '/images/events/Maldives-Davilsnap-Day2-3_627-scaled.jpg'
+      ? 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/Maldives-Davilsnap-Day2-3_627-scaled.webp'
       : event.id === 'e4'
-      ? '/images/events/Y11_04042025_366-scaled.jpg'
+      ? 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/Y11_04042025_366-scaled.webp'
       : event.id === 'e5'
-      ? '/images/events/KIM05966-1-scaled.jpg'
+      ? 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/KIM05966-1-scaled.webp'
       : event.id === 'e6'
-      ? '/images/events/YFTI-Pattaya-24-Jan-25-557-scaled.jpg'
-      : '/images/events/Young-FTI-11-995-scaled.jpg'
+      ? 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/YFTI-Pattaya-24-Jan-25-557-scaled.webp'
+      : 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/Young-FTI-11-995-scaled.webp'
   );
 
   return (

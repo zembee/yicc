@@ -7,19 +7,19 @@ import { Users, ChevronRight } from 'lucide-react';
 const COURSE_ACTIVITIES = [
   {
     title: 'กิจกรรมละลาย\nพฤติกรรม',
-    img: '/images/about/post-mock-cover-1.webp',
+    img: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/about/post-mock-cover-1.webp',
   },
   {
     title: 'รับฟังการบรรยายหัวข้อต่างๆ จากวิทยากร',
-    img: '/images/about/IMG-4.webp',
+    img: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/about/IMG-4.webp',
   },
   {
     title: 'การศึกษาดูงานทั้งภายในประเทศและกิจกรรม CSR',
-    img: '/images/about/IMG-6.webp',
+    img: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/about/IMG-6.webp',
   },
   {
     title: 'กิจกรรมดูงาน\nต่างประเทศ',
-    img: '/images/about/image_1920x_66cbfa0338994.webp',
+    img: 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/about/image_1920x_66cbfa0338994.webp',
   },
 ];
 
@@ -80,7 +80,7 @@ export default function AboutPage() {
           {/* Right Image */}
           <div className="flex justify-center">
             <img
-              src="/images/about/IMG-9-1024x683.webp"
+              src="https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/about/IMG-9-1024x683.webp"
               alt="Young FTI Elite Activity"
               className="w-full rounded-[12px] shadow-md object-cover"
             />
@@ -94,7 +94,7 @@ export default function AboutPage() {
           {/* Left Portrait Photo (30%) */}
           <div className="md:col-span-4 flex justify-center">
             <img
-              src="/images/about/Young-FTI-11-480-681x1024.jpg"
+              src="https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/about/Young-FTI-11-480-681x1024.webp"
               alt="คุณกร กรกฤช จุฬางกูร"
               className="w-full max-w-[340px] md:max-w-none rounded-[12px] shadow-md object-cover"
             />
@@ -123,7 +123,7 @@ export default function AboutPage() {
           {/* Left President Photo (35%) */}
           <div className="md:col-span-4 flex justify-center">
             <img
-              src="/images/about/118.อภินันท์-ตรีรัตน์พิจารณ์-683x1024.jpg"
+              src="https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/about/118-683x1024.webp"
               alt="คุณอภินันท์ ตรีรัตน์พิจารณ์"
               className="w-full max-w-[300px] md:max-w-[400px] rounded-[12px] shadow-[4px_4px_12px_0px_rgba(0,0,0,0.15)] object-cover"
             />
@@ -169,7 +169,7 @@ export default function AboutPage() {
                 <div 
                   className="absolute inset-0 pointer-events-none opacity-40 mix-blend-overlay"
                   style={{
-                    backgroundImage: `url('/images/home/Overlay-Business.webp')`,
+                    backgroundImage: `url('https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/Overlay-Business.webp')`,
                     backgroundPosition: 'center center',
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: 'cover'

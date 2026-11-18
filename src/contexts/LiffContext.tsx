@@ -70,7 +70,20 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .maybeSingle();
 
         if (!fetchErr && data && data.display_name) {
-          return data as UserProfile;
+          const isPendingBatch =
+            typeof data.cohort_batch === 'string' && data.cohort_batch.includes('PENDING');
+          const isRejectedBatch =
+            typeof data.cohort_batch === 'string' && data.cohort_batch.includes('REJECTED');
+
+          return {
+            ...(data as UserProfile),
+            role: data.role === 'PENDING' || isPendingBatch ? 'PENDING' : data.role,
+            approval_status: isRejectedBatch
+              ? 'REJECTED'
+              : data.role === 'PENDING' || isPendingBatch
+              ? 'PENDING'
+              : 'APPROVED',
+          };
         }
       } catch {
         // Ignore Supabase fallback errors in local/offline mode
@@ -323,22 +336,22 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const refetchProfile = async () => {
     const targetLineUserId = lineProfile?.userId || profile?.line_user_id;
-    if (profile) {
-      const localSynced = syncProfileFromLocalApplications(profile);
-      if (localSynced !== profile) {
-        switchProfile(localSynced);
+    if (targetLineUserId) {
+      const dbProfile = await syncProfileFromSupabase(targetLineUserId);
+      if (dbProfile) {
+        switchProfile(dbProfile);
         return;
       }
-    }
-    if (targetLineUserId) {
       const serverApp = await syncApplicationFromServer(targetLineUserId, profile || undefined);
       if (serverApp) {
         switchProfile(serverApp);
         return;
       }
-      const dbProfile = await syncProfileFromSupabase(targetLineUserId);
-      if (dbProfile) {
-        switchProfile(dbProfile);
+    }
+    if (profile) {
+      const localSynced = syncProfileFromLocalApplications(profile);
+      if (localSynced !== profile) {
+        switchProfile(localSynced);
       }
     }
   };

@@ -551,11 +551,11 @@ function DirectoryContent() {
                   className="min-w-[155px] max-w-[155px] snap-start bg-white rounded-2xl p-4 border border-slate-200/70 shadow-[0_2px_12px_rgba(15,23,42,0.04)] hover:border-[#C59B38] transition flex flex-col items-center text-center gap-2 shrink-0"
                 >
                   <img
-                    src={cm.profile_picture_url || '/images/participants/p_3296.jpg'}
+                    src={cm.profile_picture_url || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp'}
                     alt={cm.name_thai}
                     className="w-16 h-16 rounded-full object-cover object-top bg-slate-100 border border-slate-200"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = '/images/participants/p_3296.jpg';
+                      (e.target as HTMLImageElement).src = 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp';
                     }}
                   />
                   <div className="min-w-0 w-full space-y-1">

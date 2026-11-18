@@ -1,19 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { mockPrivileges } from '@/lib/mockData';
 import { PrivilegeItem } from '@/types';
-import { readJsonStore, writeJsonStore } from '@/lib/serverJsonStore';
+import { readCloudJsonStore, writeCloudJsonStore } from '@/lib/serverJsonStore';
 
 const STORE_FILE = 'privileges.json';
 
-function loadPrivileges(): PrivilegeItem[] {
-  const stored = readJsonStore<PrivilegeItem[] | null>(STORE_FILE, null);
+async function loadPrivileges(): Promise<PrivilegeItem[]> {
+  const stored = await readCloudJsonStore<PrivilegeItem[] | null>(STORE_FILE, null);
   if (Array.isArray(stored)) return stored;
   return [...mockPrivileges];
 }
 
 export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get('id')?.trim();
-  const privileges = loadPrivileges();
+  const privileges = await loadPrivileges();
   if (id) {
     const item = privileges.find((p) => p.id === id) || null;
     return NextResponse.json({ privilege: item });
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'กรุณาระบุชื่อสิทธิพิเศษและชื่อร้านค้า' }, { status: 400 });
     }
 
-    const privileges = loadPrivileges();
+    const privileges = await loadPrivileges();
     const newItem: PrivilegeItem = {
       id: body.id || `priv-${Date.now()}`,
       title: body.title.trim(),
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       category: body.category || 'Lifestyle',
       points_required: Number(body.points_required) || 100,
       expiry_date: body.expiry_date?.trim() || '31 ธ.ค. 2026',
-      image_url: body.image_url?.trim() || '/images/home/unsplash_hEC6zxdFF0M.webp',
+      image_url: body.image_url?.trim() || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/unsplash_hEC6zxdFF0M.webp',
       description: body.description?.trim() || '',
       conditions: Array.isArray(body.conditions) && body.conditions.length > 0
         ? body.conditions
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     };
 
     const next = [newItem, ...privileges];
-    writeJsonStore(STORE_FILE, next);
+    await writeCloudJsonStore(STORE_FILE, next);
     return NextResponse.json({ ok: true, privilege: newItem, privileges: next });
   } catch (error) {
     return NextResponse.json(
@@ -66,7 +66,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Missing privilege id' }, { status: 400 });
     }
 
-    const privileges = loadPrivileges();
+    const privileges = await loadPrivileges();
     const idx = privileges.findIndex((p) => p.id === body.id);
     if (idx < 0) {
       return NextResponse.json({ error: 'Privilege not found' }, { status: 404 });
@@ -82,7 +82,7 @@ export async function PATCH(req: NextRequest) {
     };
 
     privileges[idx] = updated;
-    writeJsonStore(STORE_FILE, privileges);
+    await writeCloudJsonStore(STORE_FILE, privileges);
     return NextResponse.json({ ok: true, privilege: updated, privileges });
   } catch (error) {
     return NextResponse.json(
@@ -98,9 +98,9 @@ export async function DELETE(req: NextRequest) {
     if (!id) {
       return NextResponse.json({ error: 'Missing privilege id' }, { status: 400 });
     }
-    const privileges = loadPrivileges();
+    const privileges = await loadPrivileges();
     const next = privileges.filter((p) => p.id !== id);
-    writeJsonStore(STORE_FILE, next);
+    await writeCloudJsonStore(STORE_FILE, next);
     return NextResponse.json({ ok: true, privileges: next });
   } catch (error) {
     return NextResponse.json(

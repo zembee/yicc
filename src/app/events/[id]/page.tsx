@@ -110,7 +110,7 @@ export default function EventDetailPage() {
 
   const gallery = event.gallery_images && event.gallery_images.length > 0
     ? event.gallery_images
-    : [event.image_url || '/images/events/25680523-Y11-YoungFTI_1683-scaled.jpg'];
+    : [event.image_url || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp'];
 
   const otherEvents = mockEvents.filter((ev) => ev.id !== event.id).slice(0, 3);
 
@@ -403,7 +403,7 @@ export default function EventDetailPage() {
               >
                 <div className="relative h-36 w-full rounded-[6px] overflow-hidden bg-slate-900 mb-3">
                   <img
-                    src={ev.image_url || '/images/events/25680523-Y11-YoungFTI_1683-scaled.jpg'}
+                    src={ev.image_url || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp'}
                     alt={ev.title}
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                   />

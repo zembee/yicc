@@ -147,11 +147,11 @@ export default function HomePage() {
             {mounted && profile ? (
               <Link href="/profile" className="flex items-center gap-3 min-w-0 flex-1 group">
                 <img
-                  src={profile.picture_url || '/images/participants/p_3296.jpg'}
+                  src={profile.picture_url || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp'}
                   alt={profile.display_name || 'Member'}
                   className="w-10 h-10 rounded-full object-cover border border-white/25 shrink-0 bg-slate-800"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = '/images/participants/p_3296.jpg';
+                    (e.target as HTMLImageElement).src = 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp';
                   }}
                 />
                 <div className="min-w-0">
@@ -315,7 +315,7 @@ export default function HomePage() {
                 className="bg-white rounded-2xl p-3.5 border border-slate-200/80 shadow-[0_2px_12px_rgba(15,23,42,0.04)] hover:border-[#C59B38] transition flex items-center gap-3.5 group"
               >
                 <img
-                  src={course.image_url || '/images/home/event_training.jpg'}
+                  src={course.image_url || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/event_training.webp'}
                   alt={course.title}
                   className="w-20 h-20 rounded-xl object-cover shrink-0 bg-slate-100"
                 />
@@ -365,7 +365,7 @@ export default function HomePage() {
               >
                 <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden">
                   <img
-                    src={ev.image_url || '/images/home/hero_leaders.jpg'}
+                    src={ev.image_url || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/hero_leaders.webp'}
                     alt={ev.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />

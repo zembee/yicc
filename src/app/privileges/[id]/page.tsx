@@ -189,7 +189,7 @@ export default function PrivilegeDetailPage() {
             src={privilege.image_url}
             alt={privilege.title}
             onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src = '/images/home/unsplash_hEC6zxdFF0M.webp';
+              (e.currentTarget as HTMLImageElement).src = 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/unsplash_hEC6zxdFF0M.webp';
             }}
             className="w-full h-full object-cover"
           />
