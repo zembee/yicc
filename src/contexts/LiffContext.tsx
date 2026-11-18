@@ -95,12 +95,22 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return false;
   };
 
+  const syncLineRichMenu = (lineUserId: string | undefined, action: 'link' | 'unlink') => {
+    if (!lineUserId) return;
+    fetch('/api/line/richmenu', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lineUserId, action }),
+    }).catch(() => {});
+  };
+
   const switchProfile = (user: UserProfile) => {
     setProfile(user);
     setIsRegistered(true);
     if (typeof window !== 'undefined') {
       localStorage.setItem('yfti_auth_session', JSON.stringify(user));
     }
+    syncLineRichMenu(user.line_user_id, 'link');
   };
 
   const updateRole = (newRole: UserProfile['role']) => {
@@ -114,6 +124,8 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
+    const activeLineUserId = profile?.line_user_id || lineProfile?.userId;
+    syncLineRichMenu(activeLineUserId, 'unlink');
     setProfile(null);
     setLineProfile(null);
     setIsRegistered(false);
