@@ -53,9 +53,18 @@ function PrivilegesContent() {
   const [isBenefitsModalOpen, setIsBenefitsModalOpen] = useState(false);
   const [history, setHistory] = useState<RedemptionRecord[]>([]);
   const [selectedActivePrivilege, setSelectedActivePrivilege] = useState<ActivePrivilegeData | null>(null);
+  const [privileges, setPrivileges] = useState(mockPrivileges);
 
   useEffect(() => {
     setMounted(true);
+    fetch('/api/privileges')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && Array.isArray(data.privileges)) {
+          setPrivileges(data.privileges);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -71,8 +80,8 @@ function PrivilegesContent() {
   }, [searchParams]);
 
   const featuredPrivileges = useMemo(
-    () => mockPrivileges.filter((p) => p.is_featured),
-    []
+    () => privileges.filter((p) => p.is_featured),
+    [privileges]
   );
 
   useEffect(() => {
@@ -93,7 +102,7 @@ function PrivilegesContent() {
   }, [featuredPrivileges.length]);
 
   const filteredPrivileges = useMemo(() => {
-    return mockPrivileges.filter((p) => {
+    return privileges.filter((p) => {
       const matchCat = selectedCategory === 'All' || p.category === selectedCategory;
       const q = searchQuery.trim().toLowerCase();
       const matchQuery =
@@ -103,7 +112,7 @@ function PrivilegesContent() {
         p.category.toLowerCase().includes(q);
       return matchCat && matchQuery;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [privileges, selectedCategory, searchQuery]);
 
   const activeProfile = mounted ? profile : null;
   const isMember = mounted
@@ -341,7 +350,7 @@ function PrivilegesContent() {
                 <p className="text-xs text-slate-400 text-center py-8">ยังไม่มีประวัติการแลกสิทธิพิเศษ</p>
               ) : (
                 history.map((h) => {
-                  const matchedPriv = mockPrivileges.find((p) => p.id === h.privilegeId);
+                  const matchedPriv = privileges.find((p) => p.id === h.privilegeId);
                   const discountLabel = h.discountLabel || matchedPriv?.discount_label;
                   return (
                     <button

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useLiffAuth } from '@/contexts/LiffContext';
 import { mockPrivileges } from '@/lib/mockData';
+import { PrivilegeItem } from '@/types';
 import { ActivePrivilegeModal, ActivePrivilegeData } from '@/components/privileges/ActivePrivilegeModal';
 import {
   ArrowLeft,
@@ -18,8 +19,10 @@ export default function PrivilegeDetailPage() {
   const params = useParams();
   const id = String(params?.id || '');
   const { profile, switchProfile } = useLiffAuth();
-  const privilege = mockPrivileges.find((p) => p.id === id) || mockPrivileges[0];
+  const initialPrivilege = mockPrivileges.find((p) => p.id === id) || null;
 
+  const [privilege, setPrivilege] = useState<PrivilegeItem | null>(initialPrivilege);
+  const [isFetchingPrivilege, setIsFetchingPrivilege] = useState<boolean>(!initialPrivilege);
   const [mounted, setMounted] = useState(false);
   const [activePrivilege, setActivePrivilege] = useState<ActivePrivilegeData | null>(null);
   const [savedRedemption, setSavedRedemption] = useState<ActivePrivilegeData | null>(null);
@@ -27,37 +30,69 @@ export default function PrivilegeDetailPage() {
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    let cancelled = false;
+
+    async function loadPrivilege() {
+      try {
+        const res = await fetch(`/api/privileges?id=${encodeURIComponent(id)}`);
+        if (res.ok) {
+          const data = (await res.json()) as { privilege?: PrivilegeItem | null };
+          if (!cancelled && data.privilege) {
+            setPrivilege(data.privilege);
+          }
+        }
+      } catch {
+        // Fallback to mockPrivileges already set
+      } finally {
+        if (!cancelled) setIsFetchingPrivilege(false);
+      }
+    }
+
+    if (id) {
+      loadPrivilege();
+    } else {
+      setIsFetchingPrivilege(false);
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const existing = JSON.parse(localStorage.getItem('yfti_redemptions') || '[]');
-        const found = Array.isArray(existing)
-          ? existing.find((r: any) => r.privilegeId === privilege.id)
-          : null;
-        if (found) {
-          setSavedRedemption({
-            title: found.title,
-            merchant: found.merchant,
-            discountLabel: found.discountLabel || privilege.discount_label,
-            code: found.code,
-            redeemedAt: found.redeemedAt,
-          });
-        }
-      } catch {}
-    }
-  }, [privilege.id, privilege.discount_label]);
+    if (!privilege || typeof window === 'undefined') return;
+    try {
+      const existing = JSON.parse(localStorage.getItem('yfti_redemptions') || '[]');
+      const found = Array.isArray(existing)
+        ? existing.find((r: any) => r.privilegeId === privilege.id)
+        : null;
+      if (found) {
+        setSavedRedemption({
+          title: found.title,
+          merchant: found.merchant,
+          discountLabel: found.discountLabel || privilege.discount_label,
+          code: found.code,
+          redeemedAt: found.redeemedAt,
+        });
+      }
+    } catch {}
+  }, [privilege]);
 
   const activeProfile = mounted ? profile : null;
   const isMember = mounted
-    ? Boolean(activeProfile && activeProfile.role !== 'PENDING' && activeProfile.approval_status !== 'REJECTED')
-    : true;
+    ? Boolean(
+        activeProfile &&
+          activeProfile.role !== 'PENDING' &&
+          activeProfile.approval_status !== 'PENDING' &&
+          activeProfile.approval_status !== 'REJECTED'
+      )
+    : false;
   const userPoints = activeProfile?.points_balance ?? 0;
-  const canAfford = userPoints >= privilege.points_required;
+  const canAfford = privilege ? userPoints >= privilege.points_required : false;
 
   const handleRedeem = () => {
     setErrorMsg(null);
+    if (!privilege) return;
     if (!isMember || !profile) {
       setErrorMsg('กรุณาสมัครสมาชิกและเข้าสู่ระบบก่อนกดแลกสิทธิพิเศษ');
       return;
@@ -88,9 +123,10 @@ export default function PrivilegeDetailPage() {
 
     if (typeof window !== 'undefined') {
       try {
-        const existing = JSON.parse(localStorage.getItem('yfti_redemptions') || '[]');
-        existing.unshift(record);
-        localStorage.setItem('yfti_redemptions', JSON.stringify(existing));
+        const parsed = JSON.parse(localStorage.getItem('yfti_redemptions') || '[]');
+        const list = Array.isArray(parsed) ? parsed : [];
+        list.unshift(record);
+        localStorage.setItem('yfti_redemptions', JSON.stringify(list));
       } catch {}
     }
 
@@ -104,6 +140,29 @@ export default function PrivilegeDetailPage() {
     setSavedRedemption(modalData);
     setActivePrivilege(modalData);
   };
+
+  if (!privilege && isFetchingPrivilege) {
+    return (
+      <div className="max-w-2xl mx-auto w-full px-4 sm:px-6 py-12 text-center text-xs font-bold text-slate-400">
+        กำลังโหลดข้อมูลสิทธิพิเศษ...
+      </div>
+    );
+  }
+
+  if (!privilege) {
+    return (
+      <div className="max-w-2xl mx-auto w-full px-4 sm:px-6 py-12 text-center space-y-4">
+        <p className="text-sm font-bold text-[#1E2538]">ไม่พบสิทธิพิเศษที่ต้องการ</p>
+        <Link
+          href="/privileges"
+          className="inline-flex items-center gap-2 text-xs font-bold text-white bg-[#1E2538] px-4 py-2.5 rounded-full"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          กลับหน้า Privileges
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto w-full px-4 sm:px-6 py-4 pb-24 space-y-5">
@@ -129,6 +188,9 @@ export default function PrivilegeDetailPage() {
           <img
             src={privilege.image_url}
             alt={privilege.title}
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).src = '/images/home/unsplash_hEC6zxdFF0M.webp';
+            }}
             className="w-full h-full object-cover"
           />
           <span className="absolute bottom-4 left-4 px-3.5 py-1 rounded-full bg-[#B89138] text-white text-xs font-bold shadow-sm">
