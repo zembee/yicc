@@ -108,6 +108,30 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
     []
   );
 
+  const syncApplicationFromServer = useCallback(
+    async (lineUserId: string, fallbackPending?: UserProfile): Promise<UserProfile | null> => {
+      try {
+        const res = await fetch(`/api/members/applications?lineUserId=${encodeURIComponent(lineUserId)}`);
+        if (res.ok) {
+          const data = (await res.json()) as { application?: UserProfile | null };
+          if (data.application) {
+            return data.application;
+          }
+        }
+        // If user already had a local PENDING session before the API existed, push it to the server
+        if (fallbackPending && (fallbackPending.role === 'PENDING' || fallbackPending.approval_status === 'PENDING')) {
+          await fetch('/api/members/applications', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(fallbackPending),
+          });
+        }
+      } catch {}
+      return null;
+    },
+    []
+  );
+
   // Restore saved session and initialize LINE LIFF
   useEffect(() => {
     let cancelled = false;
@@ -132,6 +156,16 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
               }
               if (synced.role !== 'PENDING' && synced.approval_status !== 'PENDING' && synced.approval_status !== 'REJECTED') {
                 syncLineRichMenu(synced.line_user_id, 'link');
+              } else {
+                const serverApp = await syncApplicationFromServer(synced.line_user_id, synced);
+                if (!cancelled && serverApp && (serverApp.role !== synced.role || serverApp.approval_status !== synced.approval_status)) {
+                  savedProfile = serverApp;
+                  setProfile(serverApp);
+                  localStorage.setItem('yfti_auth_session', JSON.stringify(serverApp));
+                  if (serverApp.role !== 'PENDING' && serverApp.approval_status !== 'PENDING' && serverApp.approval_status !== 'REJECTED') {
+                    syncLineRichMenu(serverApp.line_user_id, 'link');
+                  }
+                }
               }
             }
           } catch {
@@ -216,7 +250,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => {
       cancelled = true;
     };
-  }, [syncLineRichMenu, syncProfileFromSupabase, syncProfileFromLocalApplications]);
+  }, [syncLineRichMenu, syncProfileFromSupabase, syncProfileFromLocalApplications, syncApplicationFromServer]);
 
   const loginWithCredentials = (user: string, pass: string): boolean => {
     const trimmedUser = user.trim();
@@ -297,6 +331,11 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     }
     if (targetLineUserId) {
+      const serverApp = await syncApplicationFromServer(targetLineUserId, profile || undefined);
+      if (serverApp) {
+        switchProfile(serverApp);
+        return;
+      }
       const dbProfile = await syncProfileFromSupabase(targetLineUserId);
       if (dbProfile) {
         switchProfile(dbProfile);

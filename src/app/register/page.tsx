@@ -328,6 +328,17 @@ export default function RegisterPage() {
         console.warn('Supabase DB notice:', dbErr);
       }
 
+      // Save application to server API so Admin on any device sees it immediately
+      try {
+        await fetch('/api/members/applications', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(pendingProfile),
+        });
+      } catch (apiErr) {
+        console.warn('Member application API notice:', apiErr);
+      }
+
       // Save application to localStorage for offline/demo Admin approval queue
       if (typeof window !== 'undefined') {
         try {

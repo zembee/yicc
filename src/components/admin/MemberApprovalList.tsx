@@ -32,14 +32,29 @@ export const MemberApprovalList: React.FC = () => {
     try {
       const mergedMap = new Map<string, MemberApplication>();
 
-      // 1. Load local applications (fallback / offline mode)
+      // 1. Load from server API (shared across all browsers/devices)
+      try {
+        const res = await fetch('/api/members/applications');
+        if (res.ok) {
+          const json = (await res.json()) as { applications?: MemberApplication[] };
+          if (Array.isArray(json.applications)) {
+            json.applications.forEach((item) => {
+              if (item.line_user_id) {
+                mergedMap.set(item.line_user_id, item);
+              }
+            });
+          }
+        }
+      } catch {}
+
+      // 2. Load local applications (fallback / offline mode)
       if (typeof window !== 'undefined') {
         try {
           const raw = localStorage.getItem('yfti_member_applications');
           const parsed = raw ? (JSON.parse(raw) as MemberApplication[]) : [];
           if (Array.isArray(parsed)) {
             parsed.forEach((item) => {
-              if (item.line_user_id) {
+              if (item.line_user_id && !mergedMap.has(item.line_user_id)) {
                 mergedMap.set(item.line_user_id, item);
               }
             });
@@ -47,7 +62,7 @@ export const MemberApprovalList: React.FC = () => {
         } catch {}
       }
 
-      // 2. Load from Supabase profiles (PENDING or recently registered)
+      // 3. Load from Supabase profiles (if reachable)
       try {
         const { data, error } = await supabase
           .from('profiles')
@@ -127,7 +142,19 @@ export const MemberApprovalList: React.FC = () => {
         xp_balance: decision === 'APPROVED' ? Math.max(app.xp_balance || 0, 300) : 0,
       };
 
-      // 1. Update Supabase if configured
+      // 1. Update server API store + LINE Rich Menu
+      try {
+        await fetch('/api/members/applications', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            lineUserId: app.line_user_id,
+            decision,
+          }),
+        });
+      } catch {}
+
+      // 2. Update Supabase if configured
       try {
         await supabase
           .from('profiles')
