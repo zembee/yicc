@@ -7,6 +7,7 @@ import { BottomNavigation } from '@/components/layout/BottomNavigation';
 import { Footer } from '@/components/layout/Footer';
 import { RouteProgressBar } from '@/components/layout/RouteProgressBar';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { ModalScrollLock } from '@/components/layout/ModalScrollLock';
 
 export const metadata: Metadata = {
   title: 'Young FTI ELITE 11 | Member Connect Hub',
@@ -55,6 +56,7 @@ export default function RootLayout({
       </head>
       <body className="bg-[#F7F7F5] text-[#1F2937] min-h-screen flex flex-col antialiased selection:bg-[#C59B38] selection:text-white">
         <RouteProgressBar />
+        <ModalScrollLock />
         <LiffProvider>
           <LoginGate>
             <div className="w-full min-h-screen flex flex-col bg-[#F7F7F5]">

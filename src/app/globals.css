@@ -143,6 +143,12 @@ body {
   animation: skeletonShimmer 1.4s ease-in-out infinite;
 }
 
+/* Prevent scroll chaining from modals to background page */
+[aria-modal="true"],
+.fixed.inset-0.z-50 {
+  overscroll-behavior: contain;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .page-transition-enter,
   .fade-in-soft,

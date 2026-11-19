@@ -14,7 +14,6 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
   const { profile, isLoading, loginWithCredentials, loginWithLine, refetchProfile, isMockMode, logout } = useLiffAuth();
   
   const [mounted, setMounted] = useState(false);
-  const [authenticated, setAuthenticated] = useState<boolean>(true);
   const [showPasswordLogin, setShowPasswordLogin] = useState(false);
   const [username, setUsername] = useState('yfti11');
   const [password, setPassword] = useState('yfti@11');
@@ -23,28 +22,21 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
 
   React.useEffect(() => {
     setMounted(true);
-    if (typeof window !== 'undefined') {
-      const session = localStorage.getItem('yfti_auth_session');
-      if (session || profile) {
-        setAuthenticated(true);
-      } else {
-        setAuthenticated(false);
-      }
-    }
-  }, [profile]);
+  }, []);
 
-  // If user is accessing registration/privileges or during SSR before mount, allow children through cleanly
-  if (pathname === '/register' || pathname?.startsWith('/privileges') || !mounted) {
+  // Public routes that do not require auth gate
+  if (pathname === '/register' || pathname?.startsWith('/privileges')) {
     return <>{children}</>;
   }
 
-  // Wait for LIFF + Supabase auth verification only when we don't already have an approved session
+  // Wait for hydration + auth verification before rendering protected routes or login screen
+  // This prevents flashing protected pages on initial SSR/mount before auth state is resolved.
   const hasApprovedSession =
-    authenticated && profile && profile.role !== 'PENDING' && profile.approval_status !== 'PENDING';
+    Boolean(profile) && profile?.role !== 'PENDING' && profile?.approval_status !== 'PENDING';
 
-  if (isLoading && !hasApprovedSession) {
+  if (!mounted || (isLoading && !hasApprovedSession)) {
     return (
-      <div className="min-h-screen bg-[#F7F7F5] flex flex-col items-center justify-center p-4 select-none fade-in-soft">
+      <div className="min-h-screen bg-[#F7F7F5] flex flex-col items-center justify-center p-4 select-none">
         <div className="w-full max-w-xs bg-white/95 backdrop-blur-sm rounded-3xl shadow-lg border border-slate-200/80 p-8 text-center space-y-4">
           <div className="relative w-14 h-14 mx-auto rounded-2xl bg-[#1E2538] flex items-center justify-center shadow-md">
             <Loader2 className="w-7 h-7 text-[#E5C158] animate-spin" />
@@ -130,9 +122,7 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
     setErrorMessage(null);
 
     const ok = loginWithCredentials(username, password);
-    if (ok) {
-      setAuthenticated(true);
-    } else {
+    if (!ok) {
       setErrorMessage('ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง');
     }
     setIsSubmitting(false);
