@@ -4,7 +4,8 @@ import React, { useState, useMemo, useEffect, useRef, Suspense } from 'react';
 import { yftiParticipants } from '@/lib/mockData';
 import { getParticipants } from '@/lib/dataService';
 import { Participant } from '@/types';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import type { Html5QrcodeScanner } from 'html5-qrcode';
+import { DirectoryPageSkeleton } from '@/components/ui/PageSkeletons';
 import Link from 'next/link';
 import { 
   Search, 
@@ -186,10 +187,14 @@ function DirectoryContent() {
   useEffect(() => {
     if (!isScanModalOpen || scanMode !== 'camera') return;
     setScanError(null);
+    let cancelled = false;
 
-    const timeout = setTimeout(() => {
+    const timeout = setTimeout(async () => {
       try {
-        const scanner = new Html5QrcodeScanner(
+        const { Html5QrcodeScanner: QrScanner } = await import('html5-qrcode');
+        if (cancelled) return;
+
+        const scanner = new QrScanner(
           'directory-qr-reader',
           {
             fps: 10,
@@ -236,11 +241,14 @@ function DirectoryContent() {
         scannerRef.current = scanner;
       } catch (err) {
         console.error('Directory QR Scanner init error:', err);
-        setScanError('ไม่สามารถเปิดกล้องได้ กรุณากรอกรหัสสมาชิกแทน');
+        if (!cancelled) {
+          setScanError('ไม่สามารถเปิดกล้องได้ กรุณากรอกรหัสสมาชิกแทน');
+        }
       }
     }, 200);
 
     return () => {
+      cancelled = true;
       clearTimeout(timeout);
       if (scannerRef.current) {
         scannerRef.current.clear().catch(() => {});
@@ -905,14 +913,7 @@ function DirectoryContent() {
 
 export default function DirectoryPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
-          <div className="w-9 h-9 border-4 border-[#1E2538] border-t-transparent rounded-full animate-spin" />
-          <p className="text-xs text-slate-500 font-medium">กำลังโหลดทำเนียบสมาชิกจาก Database...</p>
-        </div>
-      }
-    >
+    <Suspense fallback={<DirectoryPageSkeleton />}>
       <DirectoryContent />
     </Suspense>
   );

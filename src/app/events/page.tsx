@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { mockEvents } from '@/lib/mockData';
 import { EventItem } from '@/types';
 import { EventCardWithQrModal } from '@/components/events/EventCardWithQrModal';
+import { EventsPageSkeleton } from '@/components/ui/PageSkeletons';
 import { Ticket, CalendarDays } from 'lucide-react';
 
 type EventFilter = 'ALL' | 'GENERAL' | 'COURSE' | 'COMPLETED';
@@ -105,13 +106,7 @@ function EventsContent() {
 
 export default function EventsPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-[60vh] flex items-center justify-center">
-          <div className="w-9 h-9 border-4 border-[#1E2538] border-t-transparent rounded-full animate-spin" />
-        </div>
-      }
-    >
+    <Suspense fallback={<EventsPageSkeleton />}>
       <EventsContent />
     </Suspense>
   );

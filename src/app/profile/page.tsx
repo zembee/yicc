@@ -19,6 +19,7 @@ import { useLiffAuth } from '@/contexts/LiffContext';
 import { mockHouses, mockEvents, mockMissions, yftiParticipants } from '@/lib/mockData';
 import { EventItem } from '@/types';
 import { WebLoginModal } from '@/components/layout/WebLoginModal';
+import { ProfilePageSkeleton } from '@/components/ui/PageSkeletons';
 import { MemberCard } from '@/components/profile/MemberCard';
 import { HouseMembersModal } from '@/components/profile/HouseMembersModal';
 import {
@@ -180,11 +181,7 @@ export default function ProfilePage() {
   );
 
   if (!mounted) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="w-9 h-9 rounded-full border-4 border-[#C59B38] border-t-transparent animate-spin" />
-      </div>
-    );
+    return <ProfilePageSkeleton />;
   }
 
   if (!profile) {

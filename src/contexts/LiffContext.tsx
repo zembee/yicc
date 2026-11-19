@@ -168,6 +168,8 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 setIsRegistered(true);
               }
               if (synced.role !== 'PENDING' && synced.approval_status !== 'PENDING' && synced.approval_status !== 'REJECTED') {
+                // Approved cached session exists — unblock UI immediately while LIFF/Supabase sync in background
+                if (!cancelled) setIsLoading(false);
                 syncLineRichMenu(synced.line_user_id, 'link');
               } else {
                 const serverApp = await syncApplicationFromServer(synced.line_user_id, synced);

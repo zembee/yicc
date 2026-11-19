@@ -38,12 +38,15 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
     return <>{children}</>;
   }
 
-  // Wait for LIFF + Supabase auth verification before showing Pending / Login screen
-  if (isLoading) {
+  // Wait for LIFF + Supabase auth verification only when we don't already have an approved session
+  const hasApprovedSession =
+    authenticated && profile && profile.role !== 'PENDING' && profile.approval_status !== 'PENDING';
+
+  if (isLoading && !hasApprovedSession) {
     return (
-      <div className="min-h-screen bg-[#F1F5F9] flex flex-col items-center justify-center p-4 select-none">
-        <div className="w-full max-w-xs bg-white rounded-3xl shadow-xl border border-slate-200 p-8 text-center space-y-4">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-[#1E2538] flex items-center justify-center shadow-md">
+      <div className="min-h-screen bg-[#F7F7F5] flex flex-col items-center justify-center p-4 select-none fade-in-soft">
+        <div className="w-full max-w-xs bg-white/95 backdrop-blur-sm rounded-3xl shadow-lg border border-slate-200/80 p-8 text-center space-y-4">
+          <div className="relative w-14 h-14 mx-auto rounded-2xl bg-[#1E2538] flex items-center justify-center shadow-md">
             <Loader2 className="w-7 h-7 text-[#E5C158] animate-spin" />
           </div>
           <div className="space-y-1">
@@ -56,7 +59,7 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
   }
 
   // If authenticated and approved, render actual website pages
-  if (authenticated && profile && profile.role !== 'PENDING' && profile.approval_status !== 'PENDING') {
+  if (hasApprovedSession) {
     return <>{children}</>;
   }
 

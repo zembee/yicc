@@ -5,6 +5,8 @@ import { LoginGate } from '@/components/auth/LoginGate';
 import { TopHeader } from '@/components/layout/TopHeader';
 import { BottomNavigation } from '@/components/layout/BottomNavigation';
 import { Footer } from '@/components/layout/Footer';
+import { RouteProgressBar } from '@/components/layout/RouteProgressBar';
+import { PageTransition } from '@/components/layout/PageTransition';
 
 export const metadata: Metadata = {
   title: 'Young FTI ELITE 11 | Member Connect Hub',
@@ -43,13 +45,22 @@ export default function RootLayout({
 }) {
   return (
     <html lang="th">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Prompt:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+        />
+      </head>
       <body className="bg-[#F7F7F5] text-[#1F2937] min-h-screen flex flex-col antialiased selection:bg-[#C59B38] selection:text-white">
+        <RouteProgressBar />
         <LiffProvider>
           <LoginGate>
             <div className="w-full min-h-screen flex flex-col bg-[#F7F7F5]">
               <TopHeader />
               <main className="flex-1 w-full pb-24 md:pb-8">
-                {children}
+                <PageTransition>{children}</PageTransition>
               </main>
               <Footer />
               <BottomNavigation />

@@ -7,6 +7,7 @@ import { useLiffAuth } from '@/contexts/LiffContext';
 import { mockPrivileges } from '@/lib/mockData';
 import { PrivilegeCategory } from '@/types';
 import { ActivePrivilegeModal, ActivePrivilegeData } from '@/components/privileges/ActivePrivilegeModal';
+import { PrivilegesPageSkeleton } from '@/components/ui/PageSkeletons';
 import {
   ArrowLeft,
   Search,
@@ -447,13 +448,7 @@ function PrivilegesContent() {
 
 export default function PrivilegesPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-[60vh] flex items-center justify-center">
-          <div className="w-9 h-9 border-4 border-[#1E2538] border-t-transparent rounded-full animate-spin" />
-        </div>
-      }
-    >
+    <Suspense fallback={<PrivilegesPageSkeleton />}>
       <PrivilegesContent />
     </Suspense>
   );
