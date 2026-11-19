@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import { X, Copy, Check, AlertCircle, CheckCircle2 } from 'lucide-react';
 
@@ -66,7 +67,16 @@ function Barcode1DSvg({ code }: { code: string }) {
 export const ActivePrivilegeModal: React.FC<ActivePrivilegeModalProps> = ({ data, onClose }) => {
   const [copied, setCopied] = useState(false);
 
-  if (!data) return null;
+  useEffect(() => {
+    if (!data) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [data, onClose]);
+
+  if (!data || typeof document === 'undefined') return null;
 
   const handleCopy = () => {
     if (typeof window !== 'undefined' && navigator.clipboard) {
@@ -76,9 +86,12 @@ export const ActivePrivilegeModal: React.FC<ActivePrivilegeModalProps> = ({ data
     }
   };
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/75 backdrop-blur-sm p-0 sm:p-4 animate-in fade-in duration-200"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Active Privilege"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/75 backdrop-blur-sm p-0 sm:p-4 fade-in-soft"
       onClick={onClose}
     >
       <div
@@ -165,6 +178,7 @@ export const ActivePrivilegeModal: React.FC<ActivePrivilegeModalProps> = ({ data
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

@@ -4,29 +4,48 @@ import { useEffect } from 'react';
 
 const MODAL_SELECTOR = '[aria-modal="true"], .fixed.inset-0.z-50';
 
+function findScrollableAncestor(target: EventTarget | null, boundary: Element): HTMLElement | null {
+  let el = target instanceof HTMLElement ? target : null;
+  while (el && el !== boundary && el !== document.body) {
+    const style = window.getComputedStyle(el);
+    const overflowY = style.overflowY;
+    const isScrollable =
+      (overflowY === 'auto' || overflowY === 'scroll') && el.scrollHeight > el.clientHeight;
+    if (isScrollable) {
+      return el;
+    }
+    el = el.parentElement;
+  }
+  return null;
+}
+
 export const ModalScrollLock: React.FC = () => {
   useEffect(() => {
     let isLocked = false;
-    let savedScrollY = 0;
     let rafId: number | null = null;
 
     const prevStyles = {
       htmlOverflow: '',
       htmlOverscroll: '',
       bodyOverflow: '',
-      bodyPosition: '',
-      bodyTop: '',
-      bodyLeft: '',
-      bodyRight: '',
-      bodyWidth: '',
       bodyPaddingRight: '',
       bodyOverscroll: '',
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isLocked) return;
+      const modal = document.querySelector(MODAL_SELECTOR);
+      if (!modal) return;
+
+      const scrollable = findScrollableAncestor(e.target, modal);
+      if (!scrollable) {
+        e.preventDefault();
+      }
     };
 
     const lockScroll = () => {
       if (isLocked) return;
       isLocked = true;
-      savedScrollY = window.scrollY || window.pageYOffset || 0;
 
       const html = document.documentElement;
       const body = document.body;
@@ -35,11 +54,6 @@ export const ModalScrollLock: React.FC = () => {
       prevStyles.htmlOverflow = html.style.overflow;
       prevStyles.htmlOverscroll = html.style.overscrollBehavior;
       prevStyles.bodyOverflow = body.style.overflow;
-      prevStyles.bodyPosition = body.style.position;
-      prevStyles.bodyTop = body.style.top;
-      prevStyles.bodyLeft = body.style.left;
-      prevStyles.bodyRight = body.style.right;
-      prevStyles.bodyWidth = body.style.width;
       prevStyles.bodyPaddingRight = body.style.paddingRight;
       prevStyles.bodyOverscroll = body.style.overscrollBehavior;
 
@@ -47,19 +61,18 @@ export const ModalScrollLock: React.FC = () => {
       html.style.overscrollBehavior = 'none';
       body.style.overflow = 'hidden';
       body.style.overscrollBehavior = 'none';
-      body.style.position = 'fixed';
-      body.style.top = `-${savedScrollY}px`;
-      body.style.left = '0';
-      body.style.right = '0';
-      body.style.width = '100%';
       if (scrollbarWidth > 0) {
         body.style.paddingRight = `${scrollbarWidth}px`;
       }
+
+      document.addEventListener('touchmove', handleTouchMove, { passive: false });
     };
 
     const unlockScroll = () => {
       if (!isLocked) return;
       isLocked = false;
+
+      document.removeEventListener('touchmove', handleTouchMove);
 
       const html = document.documentElement;
       const body = document.body;
@@ -68,14 +81,7 @@ export const ModalScrollLock: React.FC = () => {
       html.style.overscrollBehavior = prevStyles.htmlOverscroll;
       body.style.overflow = prevStyles.bodyOverflow;
       body.style.overscrollBehavior = prevStyles.bodyOverscroll;
-      body.style.position = prevStyles.bodyPosition;
-      body.style.top = prevStyles.bodyTop;
-      body.style.left = prevStyles.bodyLeft;
-      body.style.right = prevStyles.bodyRight;
-      body.style.width = prevStyles.bodyWidth;
       body.style.paddingRight = prevStyles.bodyPaddingRight;
-
-      window.scrollTo({ top: savedScrollY, left: 0, behavior: 'instant' as ScrollBehavior });
     };
 
     const syncLockState = () => {

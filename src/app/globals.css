@@ -90,7 +90,7 @@ body {
   }
   100% {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
+    transform: none;
   }
 }
 
@@ -113,8 +113,7 @@ body {
 }
 
 .page-transition-enter {
-  animation: pageEnter 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  will-change: opacity, transform;
+  animation: pageEnter 240ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
 .fade-in-soft {
