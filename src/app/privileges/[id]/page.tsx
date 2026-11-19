@@ -176,138 +176,166 @@ export default function PrivilegeDetailPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto w-full px-4 sm:px-6 py-4 pb-24 space-y-5">
-      {/* Top Bar */}
-      <div className="flex items-center justify-between">
-        <Link
-          href="/privileges"
-          className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#1E2538] hover:text-[#B38728] transition px-3.5 py-2 rounded-full bg-white border border-slate-200/80 shadow-sm"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>กลับหน้า Privileges</span>
-        </Link>
+    <div className="w-full min-h-screen bg-[#F6F4EF] text-[#161C2C] pb-24">
+      {/* ================= 1. FULL-BLEED LUXURY PHOTO HERO ================= */}
+      <div className="relative w-full h-[270px] sm:h-[340px] bg-[#0D1321] overflow-hidden">
+        <img
+          src={privilege.image_url}
+          alt={privilege.title}
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).src =
+              'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/unsplash_hEC6zxdFF0M.webp';
+          }}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(180deg, rgba(11,16,29,0.68) 0%, rgba(11,16,29,0.18) 45%, rgba(11,16,29,0.88) 100%)',
+          }}
+        />
 
-        <div className="px-3.5 py-1.5 rounded-full bg-[#FBF6EC] border border-[#EFE2C2] text-[#9A7320] text-xs font-bold flex items-center gap-1.5 tabular-nums">
-          <Coins className="w-3.5 h-3.5" />
-          <span>คงเหลือ {userPoints.toLocaleString()} Pts</span>
+        {/* Floating Top Navigation & Points Bar */}
+        <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 pt-4 flex items-center justify-between gap-2">
+          <Link
+            href="/privileges"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-[#0D1321]/65 hover:bg-[#0D1321]/85 backdrop-blur-md px-3.5 py-2 rounded-full transition"
+          >
+            <ArrowLeft className="w-4 h-4 text-[#ECD28E]" />
+            <span>สิทธิพิเศษ</span>
+          </Link>
+
+          <div className="px-3.5 py-1.5 rounded-full badge-gold-metallic text-xs font-bold flex items-center gap-1.5 tabular-nums">
+            <Coins className="w-3.5 h-3.5" />
+            <span>{userPoints.toLocaleString()} Pts</span>
+          </div>
+        </div>
+
+        {/* Bottom-Left Hero Title & Discount Pill */}
+        <div className="absolute inset-x-0 bottom-10 z-10 max-w-3xl mx-auto px-4 sm:px-6 space-y-1.5 text-white">
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#0D1321]/85 border border-[#ECD28E]/40 text-[#ECD28E] text-[10px] font-bold uppercase tracking-wider">
+              {privilege.category}
+            </span>
+            <span className="px-2.5 py-0.5 rounded-full luxury-gold-btn text-[10px] font-extrabold">
+              {privilege.discount_label}
+            </span>
+          </div>
+          <p className="text-xs font-semibold text-slate-200 uppercase tracking-wide drop-shadow-sm">
+            {privilege.merchant}
+          </p>
+          <h1 className="text-lg sm:text-2xl font-extrabold text-white leading-snug drop-shadow-sm line-clamp-2">
+            {privilege.title}
+          </h1>
         </div>
       </div>
 
-      {/* Main Card */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-[0_2px_12px_rgba(15,23,42,0.04)] overflow-hidden">
-        <div className="relative aspect-[16/9] bg-slate-100">
-          <img
-            src={privilege.image_url}
-            alt={privilege.title}
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src = 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/unsplash_hEC6zxdFF0M.webp';
-            }}
-            className="w-full h-full object-cover"
-          />
-          <span className="absolute bottom-4 left-4 px-3.5 py-1 rounded-full bg-[#B89138] text-white text-xs font-bold shadow-sm">
-            {privilege.discount_label}
-          </span>
-        </div>
-
-        <div className="p-5 sm:p-7 space-y-5">
-          {/* Header Info */}
-          <div className="space-y-2">
-            <span className="text-xs font-semibold text-slate-400 uppercase">{privilege.merchant}</span>
-            <h1 className="text-lg sm:text-2xl font-bold text-[#1E2538] leading-snug">
-              {privilege.title}
-            </h1>
-
-            <div className="grid grid-cols-3 gap-2.5 pt-2">
-              <div className="p-3 rounded-xl bg-[#FBF6EC] border border-[#EFE2C2]">
-                <span className="text-[10px] font-semibold text-[#9A7320] block">ใช้คะแนนแลก</span>
-                <span className="text-sm sm:text-base font-bold text-[#1E2538] tabular-nums">
-                  {privilege.points_required} Pts
-                </span>
-              </div>
-              <div className="p-3 rounded-xl bg-[#F8FAFC] border border-slate-200/70">
-                <span className="text-[10px] font-semibold text-slate-500 block">คะแนนของคุณ</span>
-                <span className="text-sm sm:text-base font-bold text-[#1E2538] tabular-nums">
-                  {userPoints.toLocaleString()} Pts
-                </span>
-              </div>
-              <div className="p-3 rounded-xl bg-[#F8FAFC] border border-slate-200/70">
-                <span className="text-[10px] font-semibold text-slate-500 block">วันหมดอายุ</span>
-                <span className="text-xs sm:text-sm font-bold text-[#1E2538] flex items-center gap-1 mt-0.5">
-                  <Clock className="w-3 h-3 text-[#B38728] shrink-0" />
-                  {privilege.expiry_date}
-                </span>
-              </div>
+      {/* ================= 2. OVERLAPPING WARM IVORY SHEET ================= */}
+      <div className="relative z-20 -mt-6 luxury-sheet rounded-t-[30px] pt-5 px-4 sm:px-6 min-h-[60vh]">
+        <div className="max-w-3xl mx-auto space-y-4">
+          {/* 3 Borderless Stat Tiles */}
+          <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
+            <div className="p-3.5 rounded-2xl bg-white shadow-[0_6px_20px_rgba(13,19,33,0.05)]">
+              <span className="text-[10px] font-semibold text-[#9A742B] block">ใช้คะแนนแลก</span>
+              <span className="text-sm sm:text-base font-extrabold text-[#161C2C] tabular-nums mt-0.5 block">
+                {privilege.points_required} Pts
+              </span>
+            </div>
+            <div className="p-3.5 rounded-2xl bg-white shadow-[0_6px_20px_rgba(13,19,33,0.05)]">
+              <span className="text-[10px] font-semibold text-slate-500 block">คะแนนของคุณ</span>
+              <span className="text-sm sm:text-base font-extrabold text-[#161C2C] tabular-nums mt-0.5 block">
+                {userPoints.toLocaleString()} Pts
+              </span>
+            </div>
+            <div className="p-3.5 rounded-2xl bg-white shadow-[0_6px_20px_rgba(13,19,33,0.05)]">
+              <span className="text-[10px] font-semibold text-slate-500 block">วันหมดอายุ</span>
+              <span className="text-xs sm:text-sm font-extrabold text-[#161C2C] flex items-center gap-1 mt-0.5 truncate">
+                <Clock className="w-3 h-3 text-[#B18A3B] shrink-0" />
+                <span className="truncate">{privilege.expiry_date}</span>
+              </span>
             </div>
           </div>
 
-          {/* Description */}
-          <div className="space-y-1.5 pt-3 border-t border-slate-100">
-            <h2 className="text-sm font-bold text-[#1E2538]">รายละเอียด</h2>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              {privilege.description}
-            </p>
-          </div>
-
-          {/* Conditions */}
-          <div className="space-y-2 pt-3 border-t border-slate-100">
-            <h2 className="text-sm font-bold text-[#1E2538]">เงื่อนไขการใช้สิทธิ์</h2>
-            <ul className="space-y-1.5 text-xs sm:text-sm text-slate-600">
-              {privilege.conditions.map((cond, idx) => (
-                <li key={idx} className="flex items-start gap-2">
-                  <span className="text-[#B38728] font-bold">•</span>
-                  <span>{cond}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* How to use */}
-          <div className="space-y-2 pt-3 border-t border-slate-100">
-            <h2 className="text-sm font-bold text-[#1E2538]">วิธีการใช้ Point</h2>
-            <ol className="space-y-1.5 text-xs sm:text-sm text-slate-600 list-decimal list-inside">
-              {privilege.how_to_use.map((step, idx) => (
-                <li key={idx}>{step}</li>
-              ))}
-            </ol>
-          </div>
-
-          {errorMsg && (
-            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 shrink-0" />
-              <span>{errorMsg}</span>
+          {/* Borderless Main Content Card */}
+          <div className="bg-white rounded-[24px] p-5 sm:p-7 shadow-[0_6px_24px_rgba(13,19,33,0.055)] space-y-5">
+            {/* Description */}
+            <div className="space-y-1.5">
+              <h2 className="text-sm font-extrabold text-[#161C2C]">รายละเอียดสิทธิพิเศษ</h2>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                {privilege.description}
+              </p>
             </div>
-          )}
 
-          {/* Redeem Button */}
-          {!isMember ? (
-            <Link
-              href="/register"
-              className="block w-full py-3.5 rounded-xl bg-[#1E2538] hover:bg-[#2B3550] text-white text-center text-sm font-bold transition shadow-sm"
-            >
-              สมัครสมาชิกเพื่อแลกสิทธิพิเศษ
-            </Link>
-          ) : (
-            <div className="space-y-2.5">
-              {savedRedemption && (
-                <button
-                  onClick={() => setActivePrivilege(savedRedemption)}
-                  className="w-full py-3 rounded-xl bg-[#1E2538] hover:bg-[#2B3550] text-white text-xs sm:text-sm font-bold transition shadow-sm flex items-center justify-center gap-2"
+            {/* Conditions */}
+            <div className="space-y-2 pt-4 border-t border-[#F1ECE2]">
+              <h2 className="text-sm font-extrabold text-[#161C2C]">เงื่อนไขการใช้สิทธิ์</h2>
+              <ul className="space-y-1.5 text-xs sm:text-sm text-slate-600">
+                {privilege.conditions.map((cond, idx) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <span className="text-[#B18A3B] font-bold">•</span>
+                    <span>{cond}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* How to use */}
+            <div className="space-y-2 pt-4 border-t border-[#F1ECE2]">
+              <h2 className="text-sm font-extrabold text-[#161C2C]">วิธีการใช้สิทธิ์</h2>
+              <ol className="space-y-1.5 text-xs sm:text-sm text-slate-600 list-decimal list-inside">
+                {privilege.how_to_use.map((step, idx) => (
+                  <li key={idx}>{step}</li>
+                ))}
+              </ol>
+            </div>
+
+            {errorMsg && (
+              <div className="p-3.5 rounded-2xl bg-rose-50 text-rose-700 text-xs font-bold flex items-center gap-2">
+                <ShieldAlert className="w-4 h-4 shrink-0" />
+                <span>{errorMsg}</span>
+              </div>
+            )}
+
+            {/* Redeem CTA */}
+            <div className="pt-2">
+              {!isMember ? (
+                <Link
+                  href="/register"
+                  className="block w-full py-3.5 rounded-full bg-[#0D1321] hover:bg-[#18223A] text-white text-center text-sm font-bold transition shadow-md"
                 >
-                  <QrCode className="w-4 h-4 text-[#E5C158]" />
-                  <span>ดูรหัสที่แลกไว้แล้ว (QR / Barcode)</span>
-                </button>
+                  สมัครสมาชิกเพื่อแลกสิทธิพิเศษ
+                </Link>
+              ) : (
+                <div className="space-y-2.5">
+                  {savedRedemption && (
+                    <button
+                      type="button"
+                      onClick={() => setActivePrivilege(savedRedemption)}
+                      className="w-full py-3 rounded-full bg-[#0D1321] hover:bg-[#18223A] text-white text-xs sm:text-sm font-bold transition flex items-center justify-center gap-2"
+                    >
+                      <QrCode className="w-4 h-4 text-[#ECD28E]" />
+                      <span>ดูรหัสที่แลกไว้แล้ว (QR / Barcode)</span>
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleRedeem}
+                    disabled={!canAfford}
+                    className={`w-full py-3.5 rounded-full text-sm font-bold transition ${
+                      canAfford
+                        ? 'luxury-gold-btn'
+                        : 'bg-[#E6E0D4] text-slate-500 cursor-not-allowed'
+                    }`}
+                  >
+                    {canAfford
+                      ? `แลก ${privilege.points_required} Points ทันที`
+                      : `คะแนนสะสมไม่พอ (ขาดอีก ${privilege.points_required - userPoints} Pts)`}
+                  </button>
+                </div>
               )}
-              <button
-                onClick={handleRedeem}
-                disabled={!canAfford}
-                className="w-full py-3.5 rounded-xl bg-[#B89138] hover:bg-[#a37f2d] disabled:bg-slate-200 disabled:text-slate-400 text-white text-sm font-bold transition shadow-sm"
-              >
-                {canAfford
-                  ? `แลก ${privilege.points_required} Points ทันที`
-                  : `คะแนนสะสมไม่พอ (ขาดอีก ${privilege.points_required - userPoints} Pts)`}
-              </button>
             </div>
-          )}
+          </div>
         </div>
       </div>
 

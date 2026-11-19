@@ -33,7 +33,8 @@ import {
   Hourglass,
   Clock,
   AlertCircle,
-  ImagePlus
+  ImagePlus,
+  Trophy
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 
@@ -262,54 +263,54 @@ export default function EventDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pb-24 font-sans">
+    <div className="min-h-screen bg-[#F6F4EF] text-[#161C2C] pb-24">
       {/* Toast */}
       {toastMessage && (
-        <div className="fixed top-5 right-5 z-50 bg-[#212542] text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+        <div className="fixed top-5 right-5 z-50 bg-[#0D1321] text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
+          <CheckCircle2 className="w-4 h-4 text-[#ECD28E]" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* Hero Header */}
-      <div className="bg-gradient-to-b from-[#141A2C] via-[#1E2538] to-[#252E46] text-white pt-8 pb-14 px-4 sm:px-6 lg:px-8 border-b-[3px] border-[#FB7170] shadow-[0_10px_30px_rgba(20,26,44,0.18)]">
-        <div className="max-w-5xl mx-auto space-y-6">
+      {/* Obsidian Luxury Hero Header */}
+      <div className="luxury-stage text-white pt-6 pb-14 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto space-y-5">
           {/* Breadcrumb & Navigation */}
           <div className="flex items-center justify-between">
             <Link
               href="/events"
-              className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition bg-white/10 hover:bg-white/15 px-3.5 py-1.5 rounded-full backdrop-blur-sm"
+              className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-200 hover:text-white transition bg-white/10 hover:bg-white/15 px-3.5 py-1.5 rounded-full backdrop-blur-sm"
             >
-              <ArrowLeft className="w-4 h-4" /> กลับหน้ารวมกิจกรรม
+              <ArrowLeft className="w-4 h-4 text-[#ECD28E]" /> กลับหน้ารวมกิจกรรม
             </Link>
             <button
               onClick={handleShare}
-              className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-slate-300 hover:text-white bg-white/10 hover:bg-white/15 px-3.5 py-1.5 rounded-full transition backdrop-blur-sm"
+              className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-slate-200 hover:text-white bg-white/10 hover:bg-white/15 px-3.5 py-1.5 rounded-full transition backdrop-blur-sm"
             >
-              <Share2 className="w-3.5 h-3.5" /> แชร์กิจกรรม
+              <Share2 className="w-3.5 h-3.5 text-[#ECD28E]" /> แชร์กิจกรรม
             </button>
           </div>
 
           {/* Title */}
-          <div className="space-y-3 pt-2">
+          <div className="space-y-3 pt-1">
             <div className="flex flex-wrap items-center gap-2">
               {event.is_mandatory ? (
                 <span className="px-3 py-0.5 rounded-full badge-gold-metallic text-[11px] font-extrabold tracking-wider uppercase">
                   วิชาบังคับ (80%)
                 </span>
               ) : (
-                <span className="px-3 py-0.5 rounded-full bg-white/20 text-white text-[11px] font-bold backdrop-blur-sm">
+                <span className="px-3 py-0.5 rounded-full bg-white/15 text-white text-[11px] font-bold backdrop-blur-sm">
                   กิจกรรมทั่วไป
                 </span>
               )}
               {event.isCheckedIn && (
-                <span className="px-3 py-0.5 rounded-full bg-emerald-500 text-white text-[11px] font-bold flex items-center gap-1 shadow-sm">
+                <span className="px-3 py-0.5 rounded-full bg-emerald-500/90 text-white text-[11px] font-bold flex items-center gap-1">
                   <CheckCircle2 className="w-3 h-3" /> เข้าร่วมแล้ว
                 </span>
               )}
             </div>
 
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight font-kanit tracking-tight">
+            <h1 className="text-xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight tracking-tight">
               {event.title}
             </h1>
           </div>
@@ -317,16 +318,16 @@ export default function EventDetailPage() {
           {/* Meta Info Bar */}
           <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-xs sm:text-sm text-slate-300 pt-2 border-t border-white/10">
             <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-[#E5C158]" />
+              <Calendar className="w-4 h-4 text-[#ECD28E]" />
               <span>เผยแพร่ {event.published_date_text || '24 พฤษภาคม 2025'}</span>
             </div>
             <div className="flex items-center gap-2">
-              <User className="w-4 h-4 text-[#E5C158]" />
+              <User className="w-4 h-4 text-[#ECD28E]" />
               <span>ผู้เขียน {event.author_name || 'admin'}</span>
             </div>
             {event.location_name && (
               <div className="flex items-center gap-2 truncate max-w-md">
-                <MapPin className="w-4 h-4 text-[#E5C158] shrink-0" />
+                <MapPin className="w-4 h-4 text-[#ECD28E] shrink-0" />
                 <span className="truncate">{event.location_name}</span>
               </div>
             )}
@@ -334,255 +335,312 @@ export default function EventDetailPage() {
         </div>
       </div>
 
-      {/* Main Content Container */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 space-y-10">
-        {/* Main Featured Photo (.elementor-element-38ee6e9) */}
-        <div className="relative w-full h-[280px] sm:h-[420px] lg:h-[500px] rounded-2xl overflow-hidden shadow-[0px_8px_30px_rgba(0,0,0,0.18)] bg-slate-900 border-4 border-white">
-          <img
-            src={event.image_url || gallery[0]}
-            alt={event.title}
-            className="w-full h-full object-cover object-center"
-          />
-          <div className="absolute bottom-4 right-4 flex items-center gap-2">
-            <span className="text-xs font-bold text-white bg-black/70 backdrop-blur-md px-3 py-1 rounded-lg border border-white/20">
-              +{event.reward_points} Points
-            </span>
-            <span className="text-xs font-bold text-white bg-black/70 backdrop-blur-md px-3 py-1 rounded-lg border border-white/20 font-mono">
-              +{event.reward_xp} XP
-            </span>
-          </div>
-        </div>
-
-        {/* Action Panel: Calendar & QR Check-in */}
-        <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="space-y-1 text-center sm:text-left">
-            <div className="text-xs font-bold text-[#B38728] uppercase tracking-wider">
-              Young FTI Elite Activity Pass
-            </div>
-            <div className="text-base sm:text-lg font-bold text-[#1E2538]">
-              {event.isCheckedIn ? 'คุณได้ทำการเช็คชื่อกิจกรรมนี้แล้ว' : 'เข้าร่วมกิจกรรมและสะสมคะแนน'}
-            </div>
-            <p className="text-xs text-slate-500">
-              บันทึกลงปฏิทินส่วนตัว หรือเปิด QR Code สำหรับการเช็คชื่อหน้างาน
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3 w-full sm:w-auto flex-wrap">
-            <a
-              href={googleCalendarUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-bold transition shadow-sm"
-            >
-              <ExternalLink className="w-4 h-4 text-slate-500" />
-              ลง Google Calendar
-            </a>
-
-            {event.status === 'UPCOMING' && (registrationStatus === 'NONE' || registrationStatus === 'REJECTED') && (
-              <button
-                onClick={() => setIsRegisterModalOpen(true)}
-                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#B89138] hover:bg-[#a37f2d] text-white text-xs sm:text-sm font-bold transition shadow-sm"
-              >
-                <Ticket className="w-4 h-4" />
-                {registrationStatus === 'REJECTED' ? 'ส่งสลิปสมัครใหม่อีกครั้ง' : 'สมัครเข้าร่วม + แนบสลิป'}
-              </button>
-            )}
-
-            {event.status === 'UPCOMING' && registrationStatus === 'PENDING' && (
-              <span className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#FBF6EC] border border-[#EFE2C2] text-[#9A7320] text-xs sm:text-sm font-bold">
-                <Hourglass className="w-4 h-4" />
-                รอแอดมินอนุมัติสลิป
+      {/* Overlapping Warm Limestone Sheet */}
+      <div className="relative z-20 -mt-6 bg-[#F4F1EA] rounded-t-[24px] pt-5 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto space-y-8">
+          {/* Main Featured Photo (Borderless) */}
+          <div className="relative w-full h-[240px] sm:h-[380px] lg:h-[440px] rounded-[24px] overflow-hidden shadow-[0_12px_30px_rgba(13,19,33,0.14)] bg-[#0D1321]">
+            <img
+              src={event.image_url || gallery[0]}
+              alt={event.title}
+              className="w-full h-full object-cover object-center"
+            />
+            <div className="absolute bottom-3.5 right-3.5 flex items-center gap-2">
+              <span className="text-xs font-bold text-[#ECD28E] bg-[#0D1321]/85 backdrop-blur-md px-3 py-1 rounded-full">
+                +{event.reward_points} Points
               </span>
-            )}
-
-            {(event.status !== 'UPCOMING' || registrationStatus === 'APPROVED') && (
-              <button
-                onClick={() => setIsQrModalOpen(true)}
-                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#1E2538] hover:bg-[#2B3550] text-white text-xs sm:text-sm font-bold transition shadow-sm"
-              >
-                <QrCode className="w-4 h-4 text-[#E5C158]" />
-                {event.isCheckedIn ? 'ดู QR Code' : 'เปิด QR บัตรเข้าร่วม'}
-              </button>
-            )}
+              <span className="text-xs font-bold text-white bg-[#0D1321]/85 backdrop-blur-md px-3 py-1 rounded-full font-mono">
+                +{event.reward_xp} XP
+              </span>
+            </div>
           </div>
-        </div>
 
-        {/* Paragraph & Description */}
-        <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200/80 space-y-4">
-          <h3 className="text-lg sm:text-xl font-bold text-[#1E2538] border-b border-slate-100 pb-3 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-[#B38728]" />
-            รายละเอียดกิจกรรม
-          </h3>
-          {event.content_paragraphs && event.content_paragraphs.length > 0 ? (
-            event.content_paragraphs.map((p, idx) => (
-              <p key={idx} className="text-slate-700 text-sm sm:text-base leading-relaxed leading-7 font-normal">
-                {p}
+          {/* Action Panel: Editorial Activity Pass (Direct on #F4F1EA, Sharp 4px Buttons, Zero Wrapping) */}
+          <div className="pb-6 border-b border-black/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-1 text-left">
+              <div className="text-[10px] font-medium text-[#8E7338] uppercase tracking-[0.26em]">
+                ACTIVITY PASS
+              </div>
+              <div className="text-base sm:text-lg font-bold text-[#0F1521] tracking-tight">
+                {event.isCheckedIn ? 'คุณเช็กชื่อเข้าร่วมกิจกรรมนี้แล้ว' : 'เข้าร่วมกิจกรรมและสะสมคะแนน'}
+              </div>
+              <p className="text-xs text-[#64625A]">
+                บันทึกลงปฏิทินส่วนตัว หรือเปิด QR Code สำหรับเช็กชื่อหน้างาน
               </p>
-            ))
-          ) : (
-            <p className="text-slate-700 text-sm sm:text-base leading-relaxed leading-7 font-normal">
-              {event.description}
-            </p>
-          )}
+            </div>
 
-          {event.location_name && (
-            <div className="mt-4 pt-4 border-t border-slate-100 flex items-start gap-2.5 text-xs sm:text-sm text-slate-600">
-              <MapPin className="w-4 h-4 text-[#FB7170] shrink-0 mt-0.5" />
-              <div>
-                <span className="font-semibold text-slate-800">สถานที่: </span>
-                <span>{event.location_name}</span>
+            <div className="flex items-center gap-2.5 w-full sm:w-auto">
+              <a
+                href={googleCalendarUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-[4px] border border-[#0F1521]/20 hover:border-[#0F1521] text-[#0F1521] text-xs font-semibold whitespace-nowrap transition"
+              >
+                <Calendar className="w-3.5 h-3.5 text-[#8E7338] shrink-0" strokeWidth={1.5} />
+                <span>เพิ่มลงปฏิทิน</span>
+              </a>
+
+              {event.status === 'UPCOMING' && (registrationStatus === 'NONE' || registrationStatus === 'REJECTED') && (
+                <button
+                  onClick={() => setIsRegisterModalOpen(true)}
+                  className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-[4px] bg-[#0F1521] hover:bg-[#1A2438] text-[#C4A052] text-xs font-semibold whitespace-nowrap transition"
+                >
+                  <Ticket className="w-3.5 h-3.5 shrink-0" strokeWidth={1.5} />
+                  <span>{registrationStatus === 'REJECTED' ? 'ส่งสลิปใหม่' : 'สมัครเข้าร่วม'}</span>
+                </button>
+              )}
+
+              {event.status === 'UPCOMING' && registrationStatus === 'PENDING' && (
+                <span className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-[4px] border border-[#8E7338]/40 text-[#8E7338] text-xs font-semibold whitespace-nowrap">
+                  <Hourglass className="w-3.5 h-3.5 shrink-0" strokeWidth={1.5} />
+                  <span>รออนุมัติสลิป</span>
+                </span>
+              )}
+
+              {(event.status !== 'UPCOMING' || registrationStatus === 'APPROVED') && (
+                <button
+                  onClick={() => setIsQrModalOpen(true)}
+                  className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-[4px] bg-[#0F1521] hover:bg-[#1A2438] text-white text-xs font-semibold whitespace-nowrap transition"
+                >
+                  <QrCode className="w-3.5 h-3.5 text-[#C4A052] shrink-0" strokeWidth={1.5} />
+                  <span>{event.isCheckedIn ? 'ดู QR Code' : 'เปิด QR เข้าร่วม'}</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* ================= EVENT OVERVIEW (CLASSIC EDITORIAL — DIRECTLY ON #F4F1EA CANVAS) ================= */}
+          <section className="pt-2 space-y-5">
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-medium uppercase tracking-[0.26em] text-[#8E7338] block">
+                EVENT OVERVIEW
+              </span>
+              <h3 className="text-lg sm:text-xl font-bold text-[#0F1521] tracking-tight">
+                รายละเอียดกิจกรรม
+              </h3>
+            </div>
+
+            <div className="space-y-3.5">
+              {event.content_paragraphs && event.content_paragraphs.length > 0 ? (
+                event.content_paragraphs.map((p, idx) => (
+                  <p key={idx} className="text-[#2C3342] text-sm sm:text-[15px] leading-relaxed font-normal">
+                    {p}
+                  </p>
+                ))
+              ) : (
+                <p className="text-[#2C3342] text-sm sm:text-[15px] leading-relaxed font-normal">
+                  {event.description}
+                </p>
+              )}
+            </div>
+
+            {event.location_name && (
+              <div className="pt-4 border-t border-black/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                <div className="flex items-start gap-2.5 min-w-0">
+                  <MapPin
+                    className="w-4 h-4 text-[#8E7338] shrink-0 mt-0.5"
+                    strokeWidth={1.5}
+                  />
+                  <div className="min-w-0">
+                    <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#7A756A] block">
+                      สถานที่จัดงาน
+                    </span>
+                    <p className="text-xs sm:text-sm font-medium text-[#0F1521] leading-snug mt-0.5">
+                      {event.location_name}
+                    </p>
+                  </div>
+                </div>
                 {event.google_maps_url && (
                   <a
                     href={event.google_maps_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#3B82F6] hover:underline ml-2 inline-flex items-center gap-1 font-semibold"
+                    className="text-xs font-semibold text-[#0F1521] hover:text-[#8E7338] underline underline-offset-4 decoration-[#8E7338]/60 pl-6 sm:pl-0 shrink-0 transition"
                   >
-                    ดูแผนที่ Google Maps <ExternalLink className="w-3 h-3" />
+                    ดูแผนที่ →
                   </a>
                 )}
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </section>
 
-        {/* In-Event Missions & Points */}
-        <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200/80 space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 className="text-lg sm:text-xl font-bold text-[#1E2538] flex items-center gap-2">
-              <Target className="w-5 h-5 text-[#B38728]" />
-              ภารกิจและคะแนนภายในกิจกรรม
-            </h3>
-            <span className="text-xs font-black text-amber-600 bg-amber-50 px-3 py-1 rounded-full">
-              รับสูงสุด +{event.reward_points + 260} Pts
-            </span>
-          </div>
-
-          <div className="space-y-2.5">
-            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3">
-              <div>
-                <p className="text-xs sm:text-sm font-extrabold text-[#1E2538]">เช็กชื่อเข้าร่วมกิจกรรม</p>
-                <p className="text-[11px] text-slate-500">สแกน QR บัตรเข้าร่วมกับทีมงานหน้างาน</p>
+          {/* ================= IN-EVENT MISSIONS (EDITORIAL PRIVATE CLUB LIST — NO NESTED CARDS) ================= */}
+          <section className="space-y-1">
+            {/* Flat #0F1521 Sharp Title Bar (No Gradient, No Glows, No Pill Capsule) */}
+            <div className="bg-[#0F1521] text-white rounded-[4px] px-4 py-3.5 sm:px-5 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <Trophy
+                  className="w-4 h-4 text-[#C4A052] shrink-0"
+                  strokeWidth={1.5}
+                />
+                <div className="min-w-0">
+                  <h3 className="text-sm sm:text-[15px] font-semibold text-white tracking-tight truncate">
+                    ภารกิจสะสมแต้มในกิจกรรม
+                  </h3>
+                  <p className="text-[11px] text-slate-400 truncate">
+                    แตะที่รายการเพื่อส่งหลักฐานรับคะแนน
+                  </p>
+                </div>
               </div>
-              <span className="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-black shrink-0">
-                +{event.reward_points} Pts
+              <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#C4A052] tabular-nums shrink-0">
+                +{event.reward_points + 260} PTS
               </span>
             </div>
 
-            {mockMissions.map((m) => {
-              const record = missionRecords[m.id];
-              const resolvedStatus = record?.status || m.status || 'NOT_STARTED';
-              return (
-                <button
-                  key={m.id}
-                  type="button"
-                  onClick={() => openMissionModal(m)}
-                  className="w-full text-left p-3.5 rounded-2xl bg-slate-50 hover:bg-[#FBF6EC]/70 border border-slate-100 hover:border-[#C59B38]/60 flex items-center justify-between gap-3 transition group cursor-pointer"
-                >
-                  <div className="min-w-0 flex-1 space-y-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <p className="text-xs sm:text-sm font-extrabold text-[#1E2538] group-hover:text-[#9A7320] transition-colors">
-                        {m.title}
-                      </p>
-                      {resolvedStatus === 'APPROVED' && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold">
-                          <CheckCircle2 className="w-3 h-3" /> สำเร็จแล้ว
-                        </span>
-                      )}
-                      {resolvedStatus === 'PENDING' && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2] text-[10px] font-bold">
-                          <Clock className="w-3 h-3" /> รอตรวจสอบ
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-[11px] text-slate-500">{m.description}</p>
-                  </div>
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-black">
-                      +{m.reward_points} Pts
-                    </span>
-                    <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#9A7320] group-hover:translate-x-0.5 transition" />
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Photo Gallery Grid (Only shown after event has started/completed) */}
-        {event.status !== 'UPCOMING' && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl sm:text-2xl font-bold text-[#212542] font-kanit">
-                ภาพบรรยากาศ ({gallery.length} ภาพ)
-              </h3>
-              <span className="text-xs text-slate-500">คลิกที่ภาพเพื่อดูขนาดเต็ม</span>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-              {gallery.map((imgUrl, index) => (
-                <div
-                  key={index}
-                  onClick={() => setLightboxIndex(index)}
-                  className="group relative h-48 sm:h-56 rounded-xl overflow-hidden bg-slate-100 cursor-pointer shadow-sm hover:shadow-md transition-all duration-300 border border-slate-200/60"
-                >
-                  <img
-                    src={imgUrl}
-                    alt={`ภาพที่ ${index + 1}`}
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                    <span className="p-2.5 rounded-full bg-white/90 text-[#212542] shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform">
-                      <Maximize2 className="w-4 h-4" />
-                    </span>
+            {/* Borderless Hairline Editorial List Directly on #F4F1EA */}
+            <div className="divide-y divide-black/[0.07] border-b border-black/[0.07]">
+              {/* 01 Check-in Row */}
+              <div className="py-4 px-1 flex items-start justify-between gap-4">
+                <div className="flex items-start gap-3.5 min-w-0 flex-1">
+                  <span className="text-[11px] font-mono text-[#8E7338] tabular-nums pt-0.5 shrink-0">
+                    01
+                  </span>
+                  <div className="min-w-0 space-y-1">
+                    <p className="text-sm font-semibold text-[#0F1521] leading-snug">
+                      เช็กชื่อเข้าร่วมกิจกรรม
+                    </p>
+                    <p className="text-xs text-[#64625A] leading-relaxed">
+                      สแกน QR บัตรเข้าร่วมกับทีมงานหน้างาน
+                    </p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
+                <span className="text-xs font-semibold uppercase tracking-[0.08em] text-[#0F1521] tabular-nums pt-0.5 shrink-0">
+                  +{event.reward_points} PTS
+                </span>
+              </div>
 
-        {/* Other Activities Grid (.elementor-element-bf59698) */}
-        <div className="pt-8 border-t border-slate-200 space-y-6">
-          <h3 className="text-xl sm:text-2xl font-bold text-[#212542] font-kanit">
-            กิจกรรมอื่นๆ ในโครงการ
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {otherEvents.map((ev) => (
-              <Link
-                key={ev.id}
-                href={`/events/${ev.id}`}
-                className="bg-white rounded-[12px] p-4 shadow-[0px_4px_16px_2px_rgba(0,0,0,0.10)] hover:shadow-[0px_2px_25px_0px_rgba(0,0,0,0.18)] transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1 border border-slate-100"
-              >
-                <div className="relative h-36 w-full rounded-[6px] overflow-hidden bg-slate-900 mb-3">
+              {mockMissions.map((m, idx) => {
+                const record = missionRecords[m.id];
+                const resolvedStatus = record?.status || m.status || 'NOT_STARTED';
+                const cleanTitle = m.title.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]|[\u2600-\u27BF]/g, '').trim();
+                const rowNumber = String(idx + 2).padStart(2, '0');
+                return (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => openMissionModal(m)}
+                    className="w-full text-left py-4 px-1 hover:bg-black/[0.025] flex items-start justify-between gap-4 transition group cursor-pointer"
+                  >
+                    <div className="flex items-start gap-3.5 min-w-0 flex-1">
+                      <span className="text-[11px] font-mono text-[#8E7338] tabular-nums pt-0.5 shrink-0">
+                        {rowNumber}
+                      </span>
+                      <div className="min-w-0 space-y-1">
+                        <div className="flex items-baseline gap-2.5 flex-wrap">
+                          <p className="text-sm font-semibold text-[#0F1521] group-hover:text-[#8E7338] transition-colors leading-snug">
+                            {cleanTitle}
+                          </p>
+                          {resolvedStatus === 'APPROVED' && (
+                            <span className="text-[11px] font-medium text-[#4A7558] tracking-wide">
+                              • สำเร็จแล้ว
+                            </span>
+                          )}
+                          {resolvedStatus === 'PENDING' && (
+                            <span className="text-[11px] font-medium text-[#9B7B38] tracking-wide">
+                              • รอตรวจสอบ
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-[#64625A] leading-relaxed">
+                          {m.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    <span className="text-xs font-semibold uppercase tracking-[0.08em] text-[#8E7338] tabular-nums pt-0.5 shrink-0">
+                      +{m.reward_points} PTS
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* Photo Gallery Grid (Only shown after event has started/completed) */}
+          {event.status !== 'UPCOMING' && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg sm:text-xl font-extrabold text-[#161C2C]">
+                  ภาพบรรยากาศ ({gallery.length} ภาพ)
+                </h3>
+                <span className="text-xs text-slate-500">คลิกที่ภาพเพื่อดูขนาดเต็ม</span>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                {gallery.map((imgUrl, index) => (
+                  <div
+                    key={index}
+                    onClick={() => setLightboxIndex(index)}
+                    className="group relative h-44 sm:h-52 rounded-2xl overflow-hidden bg-[#0D1321] cursor-pointer shadow-[0_6px_18px_rgba(13,19,33,0.08)] transition-all duration-300"
+                  >
+                    <img
+                      src={imgUrl}
+                      alt={`ภาพที่ ${index + 1}`}
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                      <span className="p-2.5 rounded-full bg-white/90 text-[#161C2C] shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform">
+                        <Maximize2 className="w-4 h-4" />
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Other Activities Grid (Full-Bleed Text-Over-Image Poster Cards matching Home) */}
+          <div className="pt-4 space-y-4">
+            <h3 className="text-lg sm:text-xl font-extrabold text-[#161C2C]">
+              กิจกรรมอื่นๆ ในโครงการ
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {otherEvents.map((ev) => (
+                <Link
+                  key={ev.id}
+                  href={`/events/${ev.id}`}
+                  className="relative h-[200px] sm:h-[214px] rounded-[22px] overflow-hidden bg-[#0D1321] shadow-[0_6px_18px_rgba(13,19,33,0.10)] hover:shadow-[0_12px_28px_rgba(13,19,33,0.16)] transition-all duration-300 group hover:-translate-y-0.5 block"
+                >
                   <img
                     src={ev.image_url || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp'}
                     alt={ev.title}
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                    className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute top-2 left-2">
-                    {ev.is_mandatory ? (
-                      <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-[#FB7170] text-white shadow-sm">
-                        วิชาบังคับ
-                      </span>
-                    ) : (
-                      <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-[#212542]/85 text-white">
-                        กิจกรรมทั่วไป
-                      </span>
-                    )}
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        'linear-gradient(180deg, rgba(9,14,26,0.22) 0%, rgba(9,14,26,0.38) 45%, rgba(9,14,26,0.94) 100%)',
+                    }}
+                  />
+
+                  <div className="relative z-10 h-full p-4 flex flex-col justify-between text-white">
+                    <div>
+                      {ev.is_mandatory ? (
+                        <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#0D1321]/80 backdrop-blur-md text-[#ECD28E]">
+                          วิชาบังคับ
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#0D1321]/75 backdrop-blur-md text-white">
+                          กิจกรรมทั่วไป
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="space-y-1">
+                      <p className="text-[11px] font-bold text-[#ECD28E]">
+                        {ev.published_date_text || '2026'}
+                      </p>
+                      <h4 className="text-sm font-extrabold text-white line-clamp-2 leading-snug">
+                        {ev.title}
+                      </h4>
+                    </div>
                   </div>
-                </div>
-                <div className="space-y-1">
-                  <div className="text-xs text-[#FB7170] font-normal">
-                    {ev.published_date_text || '2025'}
-                  </div>
-                  <h4 className="text-sm font-semibold text-[#212542] group-hover:text-[#FB7170] transition-colors line-clamp-2 leading-snug">
-                    {ev.title}
-                  </h4>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>

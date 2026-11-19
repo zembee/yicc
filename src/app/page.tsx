@@ -39,13 +39,13 @@ import {
 } from '@/components/profile/profileUtils';
 
 const INDUSTRY_CIRCLES = [
-  { name: 'เทคโนโลยี', query: 'technology', iconSrc: '/images/icons/tech.webp' },
-  { name: 'บริการ', query: 'services', iconSrc: '/images/icons/services.webp' },
-  { name: 'อุตสาหกรรม', query: 'industrial_goods', iconSrc: '/images/icons/industrial.webp' },
-  { name: 'ก่อสร้าง', query: 'real_estate_and_construction', iconSrc: '/images/icons/construction.webp' },
-  { name: 'การเงิน', query: 'financial_and_investment', iconSrc: '/images/icons/finance.webp' },
-  { name: 'เกษตร/อาหาร', query: 'agriculture_and_food_industrial', iconSrc: '/images/icons/agriculture.webp' },
-  { name: 'อุปโภคบริโภค', query: 'consumer_goods', iconSrc: '/images/icons/consumer.webp' },
+  { name: 'เทคโนโลยี', query: 'technology', iconSrc: '/images/icons/tech.webp?v=2' },
+  { name: 'บริการ', query: 'services', iconSrc: '/images/icons/services.webp?v=2' },
+  { name: 'อุตสาหกรรม', query: 'industrial_goods', iconSrc: '/images/icons/industrial.webp?v=2' },
+  { name: 'ก่อสร้าง', query: 'real_estate_and_construction', iconSrc: '/images/icons/construction.webp?v=2' },
+  { name: 'การเงิน', query: 'financial_and_investment', iconSrc: '/images/icons/finance.webp?v=2' },
+  { name: 'เกษตร/อาหาร', query: 'agriculture_and_food_industrial', iconSrc: '/images/icons/agriculture.webp?v=2' },
+  { name: 'อุปโภคบริโภค', query: 'consumer_goods', iconSrc: '/images/icons/consumer.webp?v=2' },
 ];
 
 const PRIVILEGE_FILTERS: { label: string; value: PrivilegeCategory }[] = [
@@ -214,44 +214,18 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Interactive 3D Member Card with Stacked Wallet Peek */}
-          <div className="pt-1 relative">
+          {/* Single Slim VIP Member Card (1 Account = 1 Card) */}
+          <div className="pt-1">
             {activeProfile ? (
-              <div className="relative max-w-xl mx-auto">
-                <div
-                  aria-hidden="true"
-                  className="hidden sm:block absolute top-3 -right-3 bottom-3 w-10 rounded-r-3xl bg-gradient-to-b from-[#D8B45A]/85 via-[#C59B38]/75 to-[#8C6A20]/70 border border-[#E5C158]/40 shadow-lg pointer-events-none"
-                />
-                <div className="relative z-10">
-                  <MemberCard
-                    profile={activeProfile}
-                    houseName={displayHouseName}
-                    memberCode={memberCode}
-                    tier={tier}
-                    isFlipped={isCardFlipped}
-                    onToggleFlip={() => setIsCardFlipped((prev) => !prev)}
-                    showFlipButton={false}
-                  />
-                </div>
-                <div className="flex items-center justify-center gap-1.5 mt-3">
-                  <button
-                    type="button"
-                    aria-label="หน้าบัตรสมาชิก"
-                    onClick={() => setIsCardFlipped(false)}
-                    className={`h-1.5 rounded-full transition-all ${
-                      !isCardFlipped ? 'w-5 bg-[#ECD28E]' : 'w-1.5 bg-white/30'
-                    }`}
-                  />
-                  <button
-                    type="button"
-                    aria-label="หลังบัตรและ QR"
-                    onClick={() => setIsCardFlipped(true)}
-                    className={`h-1.5 rounded-full transition-all ${
-                      isCardFlipped ? 'w-5 bg-[#ECD28E]' : 'w-1.5 bg-white/30'
-                    }`}
-                  />
-                </div>
-              </div>
+              <MemberCard
+                profile={activeProfile}
+                houseName={displayHouseName}
+                memberCode={memberCode}
+                tier={tier}
+                isFlipped={isCardFlipped}
+                onToggleFlip={() => setIsCardFlipped((prev) => !prev)}
+                showFlipButton={false}
+              />
             ) : (
               <div className="mx-auto w-full max-w-xl rounded-3xl p-6 sm:p-7 border border-[#C5A059]/40 bg-gradient-to-br from-[#0E1424] via-[#172038] to-[#1E2A46] shadow-[0_14px_34px_rgba(0,0,0,0.28)] space-y-5">
                 <div className="flex items-center justify-between gap-3">
@@ -345,9 +319,9 @@ export default function HomePage() {
               className="flex flex-col items-center text-center gap-1.5 py-1.5 rounded-xl hover:bg-[#F6F4EF] transition group"
             >
               <img
-                src="/images/icons/privileges.webp"
+                src="/images/icons/privileges.webp?v=2"
                 alt="สิทธิพิเศษ"
-                className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl shadow-sm group-hover:-translate-y-0.5 transition-transform"
+                className="w-12 h-12 sm:w-14 sm:h-14 object-contain group-hover:-translate-y-0.5 transition-transform"
               />
               <span className="text-[11px] sm:text-xs font-bold text-[#161C2C]">สิทธิพิเศษ</span>
             </Link>
@@ -357,9 +331,9 @@ export default function HomePage() {
               className="flex flex-col items-center text-center gap-1.5 py-1.5 rounded-xl hover:bg-[#F6F4EF] transition group"
             >
               <img
-                src="/images/icons/business.webp"
+                src="/images/icons/business.webp?v=2"
                 alt="ทำเนียบธุรกิจ"
-                className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl shadow-sm group-hover:-translate-y-0.5 transition-transform"
+                className="w-12 h-12 sm:w-14 sm:h-14 object-contain group-hover:-translate-y-0.5 transition-transform"
               />
               <span className="text-[11px] sm:text-xs font-bold text-[#161C2C]">ทำเนียบธุรกิจ</span>
             </Link>
@@ -369,9 +343,9 @@ export default function HomePage() {
               className="flex flex-col items-center text-center gap-1.5 py-1.5 rounded-xl hover:bg-[#F6F4EF] transition group"
             >
               <img
-                src="/images/icons/events.webp"
+                src="/images/icons/events.webp?v=2"
                 alt="กิจกรรม"
-                className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl shadow-sm group-hover:-translate-y-0.5 transition-transform"
+                className="w-12 h-12 sm:w-14 sm:h-14 object-contain group-hover:-translate-y-0.5 transition-transform"
               />
               <span className="text-[11px] sm:text-xs font-bold text-[#161C2C]">กิจกรรม</span>
             </Link>
@@ -381,9 +355,9 @@ export default function HomePage() {
               className="flex flex-col items-center text-center gap-1.5 py-1.5 rounded-xl hover:bg-[#F6F4EF] transition group"
             >
               <img
-                src="/images/icons/points.webp"
+                src="/images/icons/points.webp?v=2"
                 alt="คูปองของฉัน"
-                className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl shadow-sm group-hover:-translate-y-0.5 transition-transform"
+                className="w-12 h-12 sm:w-14 sm:h-14 object-contain group-hover:-translate-y-0.5 transition-transform"
               />
               <span className="text-[11px] sm:text-xs font-bold text-[#161C2C]">คูปองของฉัน</span>
             </Link>
@@ -434,7 +408,7 @@ export default function HomePage() {
             <Link
               key={priv.id}
               href={`/privileges/${priv.id}`}
-              className="relative w-[268px] sm:w-[290px] h-[248px] sm:h-[264px] snap-start rounded-[24px] overflow-hidden bg-[#0D1321] shadow-[0_6px_16px_rgba(13,19,33,0.10)] ring-1 ring-inset ring-white/15 transition shrink-0 group block"
+              className="relative w-[268px] sm:w-[290px] h-[248px] sm:h-[264px] snap-start rounded-[24px] overflow-hidden bg-[#0D1321] shadow-[0_6px_16px_rgba(13,19,33,0.10)] transition shrink-0 group block"
             >
               {/* Full-Bleed Background Photo */}
               <img
@@ -561,7 +535,7 @@ export default function HomePage() {
             <Link
               key={`spot-${priv.id}`}
               href={`/privileges/${priv.id}`}
-              className="relative w-[308px] sm:w-[380px] h-[176px] sm:h-[204px] snap-start rounded-[24px] overflow-hidden bg-[#0D1321] shadow-[0_6px_16px_rgba(13,19,33,0.10)] ring-1 ring-inset ring-white/15 shrink-0 group block"
+              className="relative w-[308px] sm:w-[380px] h-[176px] sm:h-[204px] snap-start rounded-[24px] overflow-hidden bg-[#0D1321] shadow-[0_6px_16px_rgba(13,19,33,0.10)] shrink-0 group block"
             >
               <img
                 src={priv.image_url}
@@ -650,7 +624,7 @@ export default function HomePage() {
               <Link
                 key={member.id}
                 href={`/yfti_participants/${member.id}`}
-                className="relative w-[154px] sm:w-[172px] h-[206px] sm:h-[228px] snap-start rounded-[22px] overflow-hidden bg-[#141B2D] ring-1 ring-inset ring-white/15 shrink-0 group block"
+                className="relative w-[154px] sm:w-[172px] h-[206px] sm:h-[228px] snap-start rounded-[22px] overflow-hidden bg-[#141B2D] shrink-0 group block"
               >
                 <img
                   src={member.profile_picture_url || DEFAULT_AVATAR_DATA_URI}
@@ -705,7 +679,7 @@ export default function HomePage() {
             <Link
               key={ev.id}
               href={`/events/${ev.id}`}
-              className="relative w-[258px] sm:w-[278px] h-[220px] sm:h-[234px] snap-start rounded-[22px] overflow-hidden bg-[#0D1321] shadow-[0_6px_16px_rgba(13,19,33,0.10)] ring-1 ring-inset ring-white/15 transition shrink-0 group block"
+              className="relative w-[258px] sm:w-[278px] h-[220px] sm:h-[234px] snap-start rounded-[22px] overflow-hidden bg-[#0D1321] shadow-[0_6px_16px_rgba(13,19,33,0.10)] transition shrink-0 group block"
             >
               <img
                 src={
