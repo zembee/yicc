@@ -243,8 +243,8 @@ export default function ProfilePage() {
 
   return (
     <div className="w-full bg-[#F6F4EF] pb-4">
-      {/* ================= 1. OBSIDIAN LUXURY PROFILE HEADER (SAME DNA, DISTINCT PROFILE LAYOUT) ================= */}
-      <section className="relative luxury-stage text-white pt-5 pb-12 px-4 sm:px-6 overflow-hidden">
+      {/* ================= 1. OBSIDIAN LUXURY PROFILE HEADER (STICKY BEHIND SCROLLING SHEET) ================= */}
+      <section className="sticky top-0 md:top-24 z-10 luxury-stage text-white pt-5 pb-12 px-4 sm:px-6 overflow-hidden">
         <div className="relative z-10 max-w-4xl mx-auto space-y-5">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">

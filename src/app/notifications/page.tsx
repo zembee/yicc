@@ -95,8 +95,8 @@ export default function NotificationsPage() {
 
   return (
     <div className="w-full bg-[#F6F4EF] text-[#161C2C] pb-4">
-      {/* ================= 1. CURVED OBSIDIAN LUXURY STAGE HEADER ================= */}
-      <section className="relative luxury-stage text-white pt-4 pb-12 px-4 sm:px-6 overflow-hidden">
+      {/* ================= 1. CURVED OBSIDIAN LUXURY STAGE HEADER (STICKY BEHIND SCROLLING SHEET) ================= */}
+      <section className="sticky top-0 md:top-24 z-10 luxury-stage text-white pt-4 pb-12 px-4 sm:px-6 overflow-hidden">
         <div
           aria-hidden="true"
           className="absolute inset-0 pointer-events-none"

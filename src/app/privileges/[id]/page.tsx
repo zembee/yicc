@@ -177,8 +177,8 @@ export default function PrivilegeDetailPage() {
 
   return (
     <div className="w-full bg-[#F6F4EF] text-[#161C2C] pb-4">
-      {/* ================= 1. FULL-BLEED LUXURY PHOTO HERO ================= */}
-      <div className="relative w-full h-[270px] sm:h-[340px] bg-[#0D1321] overflow-hidden">
+      {/* ================= 1. FULL-BLEED LUXURY PHOTO HERO (STICKY BEHIND SCROLLING SHEET) ================= */}
+      <div className="sticky top-0 md:top-24 z-10 w-full h-[270px] sm:h-[340px] bg-[#0D1321] overflow-hidden">
         <img
           src={privilege.image_url}
           alt={privilege.title}

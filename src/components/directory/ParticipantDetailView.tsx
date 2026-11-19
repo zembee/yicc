@@ -163,8 +163,8 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
         </div>
       )}
 
-      {/* 1. Refined Obsidian Executive Header (Same Luxury DNA, Distinct Profile Layout) */}
-      <section className="relative overflow-hidden luxury-stage text-white pt-5 pb-14 px-4 sm:px-6 lg:px-8">
+      {/* 1. Refined Obsidian Executive Header (Sticky behind scrolling sheet) */}
+      <section className="sticky top-0 md:top-24 z-10 overflow-hidden luxury-stage text-white pt-5 pb-14 px-4 sm:px-6 lg:px-8">
         <div className="relative z-10 max-w-4xl mx-auto space-y-6">
           {/* Top Bar: Back & Share */}
           <div className="flex items-center justify-between gap-2">

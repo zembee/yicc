@@ -272,8 +272,8 @@ export default function EventDetailPage() {
         </div>
       )}
 
-      {/* Obsidian Luxury Hero Header */}
-      <div className="luxury-stage text-white pt-6 pb-14 px-4 sm:px-6 lg:px-8">
+      {/* Obsidian Luxury Hero Header (Sticky behind scrolling sheet) */}
+      <div className="sticky top-0 md:top-24 z-10 luxury-stage text-white pt-6 pb-14 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto space-y-5">
           {/* Breadcrumb & Navigation */}
           <div className="flex items-center justify-between">
@@ -336,7 +336,7 @@ export default function EventDetailPage() {
       </div>
 
       {/* Overlapping Warm Limestone Sheet */}
-      <div className="relative z-20 -mt-6 bg-[#F4F1EA] rounded-t-[24px] pt-5 px-4 sm:px-6 lg:px-8">
+      <div className="relative z-20 -mt-6 bg-[#F4F1EA] shadow-[0_-10px_32px_rgba(11,16,29,0.16)] rounded-t-[24px] pt-5 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Main Featured Photo (Borderless) */}
           <div className="relative w-full h-[240px] sm:h-[380px] lg:h-[440px] rounded-[24px] overflow-hidden shadow-[0_12px_30px_rgba(13,19,33,0.14)] bg-[#0D1321]">

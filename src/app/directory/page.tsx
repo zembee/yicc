@@ -437,8 +437,8 @@ function DirectoryContent() {
 
   return (
     <div className="w-full bg-[#F6F4EF] pb-4">
-      {/* 1. Obsidian Luxury Header with Floating Search & Industry Pills */}
-      <section className="relative luxury-stage text-white pt-4 pb-12 px-4 sm:px-6 overflow-hidden">
+      {/* 1. Obsidian Luxury Header with Floating Search & Industry Pills (Sticky behind scrolling sheet) */}
+      <section className="sticky top-0 md:top-24 z-10 luxury-stage text-white pt-4 pb-12 px-4 sm:px-6 overflow-hidden">
         <div
           aria-hidden="true"
           className="absolute inset-0 pointer-events-none"
