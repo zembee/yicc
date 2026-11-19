@@ -177,8 +177,8 @@ export default function PrivilegeDetailPage() {
 
   return (
     <div className="w-full bg-[#F6F4EF] text-[#161C2C] pb-4">
-      {/* ================= 1. FULL-BLEED LUXURY PHOTO HERO (STICKY BEHIND SCROLLING SHEET) ================= */}
-      <div className="sticky top-0 md:top-24 z-10 w-full h-[270px] sm:h-[340px] bg-[#0D1321] overflow-hidden">
+      {/* ================= 1. FULL-BLEED LUXURY PHOTO HERO (FIXED IN FRONT) ================= */}
+      <div className="sticky top-0 md:top-24 z-30 w-full h-[230px] sm:h-[290px] bg-[#0D1321] rounded-b-[28px] shadow-[0_14px_34px_rgba(9,13,24,0.28)] overflow-hidden">
         <img
           src={privilege.image_url}
           alt={privilege.title}
@@ -231,8 +231,8 @@ export default function PrivilegeDetailPage() {
         </div>
       </div>
 
-      {/* ================= 2. OVERLAPPING WARM IVORY SHEET ================= */}
-      <div className="relative z-20 -mt-6 luxury-sheet rounded-t-[30px] pt-5 px-4 sm:px-6 min-h-[60vh]">
+      {/* ================= 2. WARM IVORY CONTENT SHEET ================= */}
+      <div className="relative z-10 pt-5 px-4 sm:px-6 min-h-[60vh]">
         <div className="max-w-3xl mx-auto space-y-4">
           {/* 3 Borderless Stat Tiles */}
           <div className="grid grid-cols-3 gap-2.5 sm:gap-3">

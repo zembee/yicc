@@ -95,8 +95,8 @@ export default function NotificationsPage() {
 
   return (
     <div className="w-full bg-[#F6F4EF] text-[#161C2C] pb-4">
-      {/* ================= 1. CURVED OBSIDIAN LUXURY STAGE HEADER (STICKY BEHIND SCROLLING SHEET) ================= */}
-      <section className="sticky top-0 md:top-24 z-10 luxury-stage text-white pt-4 pb-12 px-4 sm:px-6 overflow-hidden">
+      {/* ================= 1. CURVED OBSIDIAN LUXURY STAGE HEADER (FIXED IN FRONT) ================= */}
+      <section className="sticky top-0 md:top-24 z-30 luxury-stage text-white pt-4 pb-5 px-4 sm:px-6 rounded-b-[28px] shadow-[0_14px_34px_rgba(9,13,24,0.28)] overflow-hidden">
         <div
           aria-hidden="true"
           className="absolute inset-0 pointer-events-none"
@@ -176,8 +176,8 @@ export default function NotificationsPage() {
         </div>
       </section>
 
-      {/* ================= 2. OVERLAPPING WARM IVORY SHEET ================= */}
-      <div className="relative z-20 -mt-7 rounded-t-[32px] luxury-sheet pt-6 pb-2 px-4 sm:px-6">
+      {/* ================= 2. WARM IVORY CONTENT SHEET ================= */}
+      <div className="relative z-10 pt-5 pb-2 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto space-y-3">
           {filteredItems.length === 0 ? (
             <div className="bg-white rounded-[24px] p-12 text-center shadow-[0_8px_26px_rgba(13,19,33,0.05)] space-y-2">

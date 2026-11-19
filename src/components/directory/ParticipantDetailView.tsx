@@ -163,8 +163,8 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
         </div>
       )}
 
-      {/* 1. Refined Obsidian Executive Header (Sticky behind scrolling sheet) */}
-      <section className="sticky top-0 md:top-24 z-10 overflow-hidden luxury-stage text-white pt-5 pb-14 px-4 sm:px-6 lg:px-8">
+      {/* 1. Refined Obsidian Executive Header (Fixed in front) */}
+      <section className="sticky top-0 md:top-24 z-30 overflow-hidden luxury-stage text-white pt-4 pb-5 px-4 sm:px-6 lg:px-8 rounded-b-[28px] shadow-[0_14px_34px_rgba(9,13,24,0.28)]">
         <div className="relative z-10 max-w-4xl mx-auto space-y-6">
           {/* Top Bar: Back & Share */}
           <div className="flex items-center justify-between gap-2">
@@ -278,8 +278,8 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
         </div>
       </section>
 
-      {/* Overlapping Warm Ivory Sheet */}
-      <div className="relative z-20 -mt-6 luxury-sheet rounded-t-[30px] pt-5 px-4 sm:px-6 lg:px-8">
+      {/* Warm Ivory Content Sheet */}
+      <div className="relative z-10 pt-5 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto space-y-5">
         {/* 2. ข้อมูลส่วนตัว */}
         <InfoCard eyebrow="Personal Profile" title="ข้อมูลส่วนตัว" iconSrc="/images/icons/profile.webp?v=2">

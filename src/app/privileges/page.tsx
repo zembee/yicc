@@ -129,8 +129,8 @@ function PrivilegesContent() {
 
   return (
     <div className="w-full bg-[#F6F4EF] pb-4">
-      {/* ================= 1. CURVED OBSIDIAN HEADER + ICON CATEGORY BAR (STICKY BEHIND SCROLLING SHEET) ================= */}
-      <section className="sticky top-0 md:top-24 z-10 luxury-stage text-white pt-4 pb-12 px-4 sm:px-6 overflow-hidden">
+      {/* ================= 1. CURVED OBSIDIAN HEADER + ICON CATEGORY BAR (FIXED IN FRONT) ================= */}
+      <section className="sticky top-0 md:top-24 z-30 luxury-stage text-white pt-4 pb-5 px-4 sm:px-6 rounded-b-[28px] shadow-[0_14px_34px_rgba(9,13,24,0.28)] overflow-hidden">
         <div
           aria-hidden="true"
           className="absolute inset-0 pointer-events-none"
@@ -229,8 +229,8 @@ function PrivilegesContent() {
         </div>
       </section>
 
-      {/* ================= 2. OVERLAPPING ROUNDED WARM IVORY SHEET ================= */}
-      <div className="relative z-20 -mt-6 luxury-sheet rounded-t-[30px] pt-5 px-4 sm:px-6 min-h-[65vh]">
+      {/* ================= 2. WARM IVORY CONTENT SHEET ================= */}
+      <div className="relative z-10 pt-5 px-4 sm:px-6 min-h-[65vh]">
         <div className="max-w-4xl mx-auto space-y-4">
           {/* Non-Member Invite Card */}
           {!isMember && (
