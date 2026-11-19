@@ -129,7 +129,7 @@ export const EventCardWithQrModal: React.FC<Props> = ({ event }) => {
   );
 
   return (
-    <div className="bg-white rounded-3xl overflow-hidden shadow-[0_6px_22px_rgba(15,23,42,0.06)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.12)] hover:-translate-y-0.5 hover:border-[#C59B38]/80 transition-all duration-300 flex flex-col justify-between group border border-slate-200/80">
+    <div className="bg-white rounded-3xl overflow-hidden shadow-[0_6px_22px_rgba(13,19,33,0.06)] hover:shadow-[0_14px_32px_rgba(13,19,33,0.12)] hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between group">
       {/* Top Part: Full-Bleed Image + Info (Clickable Link to Detail Page) */}
       <Link href={`/events/${event.id}`} className="block focus:outline-none">
         {/* Full-Bleed Event Photo Banner */}

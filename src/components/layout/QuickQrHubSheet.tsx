@@ -234,11 +234,11 @@ export const QuickQrHubSheet: React.FC<QuickQrHubSheetProps> = ({ isOpen, onClos
             </div>
 
             {/* Overlapping Rounded Warm Ivory Sheet (Hub Actions) */}
-            <div className="-mt-4 luxury-sheet rounded-t-[28px] px-5 pt-5 pb-7 space-y-2.5 overflow-y-auto border-t border-[#E6E0D4]/60">
+            <div className="-mt-4 luxury-sheet rounded-t-[28px] px-5 pt-5 pb-7 space-y-2.5 overflow-y-auto">
               <Link
                 href="/privileges?tab=history"
                 onClick={onClose}
-                className="bg-white rounded-2xl p-3.5 border border-[#E6E0D4] hover:border-[#C5A059] shadow-[0_2px_10px_rgba(13,19,33,0.04)] flex items-center justify-between gap-3 transition group"
+                className="bg-white rounded-2xl p-3.5 shadow-[0_4px_16px_rgba(13,19,33,0.05)] hover:shadow-[0_8px_22px_rgba(13,19,33,0.09)] flex items-center justify-between gap-3 transition group"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-10 h-10 rounded-xl bg-[#FBF6EC] text-[#9A742B] flex items-center justify-center shrink-0">
@@ -259,7 +259,7 @@ export const QuickQrHubSheet: React.FC<QuickQrHubSheetProps> = ({ isOpen, onClos
               <Link
                 href="/events"
                 onClick={onClose}
-                className="bg-white rounded-2xl p-3.5 border border-[#E6E0D4] hover:border-[#C5A059] shadow-[0_2px_10px_rgba(13,19,33,0.04)] flex items-center justify-between gap-3 transition group"
+                className="bg-white rounded-2xl p-3.5 shadow-[0_4px_16px_rgba(13,19,33,0.05)] hover:shadow-[0_8px_22px_rgba(13,19,33,0.09)] flex items-center justify-between gap-3 transition group"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-10 h-10 rounded-xl bg-[#F6F4EF] text-[#161C2C] flex items-center justify-center shrink-0">
@@ -280,7 +280,7 @@ export const QuickQrHubSheet: React.FC<QuickQrHubSheetProps> = ({ isOpen, onClos
               <Link
                 href="/directory"
                 onClick={onClose}
-                className="bg-white rounded-2xl p-3.5 border border-[#E6E0D4] hover:border-[#C5A059] shadow-[0_2px_10px_rgba(13,19,33,0.04)] flex items-center justify-between gap-3 transition group"
+                className="bg-white rounded-2xl p-3.5 shadow-[0_4px_16px_rgba(13,19,33,0.05)] hover:shadow-[0_8px_22px_rgba(13,19,33,0.09)] flex items-center justify-between gap-3 transition group"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#B18A3B] flex items-center justify-center shrink-0">
@@ -302,7 +302,7 @@ export const QuickQrHubSheet: React.FC<QuickQrHubSheetProps> = ({ isOpen, onClos
                 <Link
                   href="/admin"
                   onClick={onClose}
-                  className="bg-white rounded-2xl p-3.5 border border-emerald-200 hover:border-emerald-400 shadow-[0_2px_10px_rgba(13,19,33,0.04)] flex items-center justify-between gap-3 transition group"
+                  className="bg-white rounded-2xl p-3.5 shadow-[0_4px_16px_rgba(13,19,33,0.05)] hover:shadow-[0_8px_22px_rgba(13,19,33,0.09)] flex items-center justify-between gap-3 transition group"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">

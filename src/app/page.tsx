@@ -338,7 +338,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="-mt-5 bg-white rounded-[26px] border border-[#E6E0D4] shadow-[0_12px_32px_rgba(13,19,33,0.06)] p-4 sm:p-5">
+        <div className="-mt-5 bg-white rounded-[26px] shadow-[0_10px_28px_rgba(13,19,33,0.06)] p-4 sm:p-5">
           <div className="grid grid-cols-4 gap-2 sm:gap-4">
             <Link
               href="/privileges"
@@ -516,7 +516,7 @@ export default function HomePage() {
               href={`/directory?industry=${encodeURIComponent(cat.query)}`}
               className="flex flex-col items-center gap-2 shrink-0 w-[68px] group"
             >
-              <div className="w-14 h-14 rounded-full bg-white border border-[#E6E0D4] shadow-[0_6px_18px_rgba(13,19,33,0.06)] group-hover:border-[#C5A059] group-hover:-translate-y-0.5 transition flex items-center justify-center p-2.5 overflow-hidden">
+              <div className="w-14 h-14 rounded-full bg-white shadow-[0_6px_18px_rgba(13,19,33,0.06)] group-hover:-translate-y-0.5 transition flex items-center justify-center p-2.5 overflow-hidden">
                 <img
                   src={cat.iconSrc}
                   alt={cat.name}
@@ -751,7 +751,7 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <div className="luxury-stage rounded-[26px] p-4 sm:p-5 text-white shadow-[0_14px_34px_rgba(11,16,29,0.18)] ring-1 ring-inset ring-white/10 space-y-4">
+        <div className="luxury-stage rounded-[26px] p-4 sm:p-6 text-white shadow-[0_14px_34px_rgba(11,16,29,0.16)] space-y-5">
           {(() => {
             const topScore = Math.max(1, sortedHouses[0]?.total_points ?? 1);
             const podium = [
@@ -763,7 +763,7 @@ export default function HomePage() {
 
             return (
               <>
-                {/* Top 3 Podium (#2 - #1 - #3) */}
+                {/* Top 3 Podium (#2 - #1 - #3) — Seamless Borderless Luxury */}
                 <div className="grid grid-cols-3 gap-2.5 sm:gap-4 items-end">
                   {podium.map(({ house, rank }) => {
                     const isFirst = rank === 1;
@@ -776,35 +776,29 @@ export default function HomePage() {
                         href={`/directory?house=${encodeURIComponent(house.name)}`}
                         className={`rounded-2xl px-2.5 sm:px-4 text-center flex flex-col items-center transition hover:-translate-y-0.5 ${
                           isFirst
-                            ? 'py-5 bg-gradient-to-b from-[#C5A059]/24 via-[#C5A059]/10 to-white/5 ring-1 ring-inset ring-[#ECD28E]/45 shadow-[0_10px_28px_rgba(197,160,89,0.18)]'
-                            : 'py-3.5 bg-white/[0.06] hover:bg-white/[0.1] ring-1 ring-inset ring-white/10'
+                            ? 'py-5 bg-gradient-to-b from-[#C5A059]/22 via-[#C5A059]/8 to-transparent'
+                            : 'py-3.5 bg-white/[0.04] hover:bg-white/[0.08]'
                         }`}
                       >
                         <span
-                          className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold inline-flex items-center gap-1 mb-2.5 ${
-                            isFirst
-                              ? 'badge-gold-metallic'
-                              : 'bg-white/10 text-slate-200 border border-white/10'
+                          className={`text-[11px] font-bold inline-flex items-center gap-1 mb-2.5 tabular-nums ${
+                            isFirst ? 'text-[#ECD28E]' : 'text-slate-400'
                           }`}
                         >
-                          {isFirst && <Crown className="w-2.5 h-2.5" />}
+                          {isFirst && <Crown className="w-3 h-3" />}
                           #{rank}
                         </span>
 
-                        <div
-                          className={`rounded-full overflow-hidden shrink-0 ${
+                        <img
+                          src={`/images/planets/${house.id}.webp?v=2`}
+                          alt={house.name}
+                          loading="lazy"
+                          className={`object-contain shrink-0 transition-transform duration-300 group-hover:scale-105 ${
                             isFirst
-                              ? 'w-14 h-14 sm:w-16 sm:h-16 ring-2 ring-[#ECD28E]/70 shadow-[0_0_24px_rgba(236,210,142,0.3)]'
-                              : 'w-11 h-11 sm:w-12 sm:h-12 ring-1 ring-white/25'
+                              ? 'w-16 h-16 sm:w-20 sm:h-20 drop-shadow-[0_0_20px_rgba(236,210,142,0.35)]'
+                              : 'w-12 h-12 sm:w-14 sm:h-14 drop-shadow-[0_6px_14px_rgba(0,0,0,0.4)]'
                           }`}
-                        >
-                          <img
-                            src={`/images/planets/${house.id}.webp`}
-                            alt={house.name}
-                            loading="lazy"
-                            className="w-full h-full object-cover scale-[1.12]"
-                          />
-                        </div>
+                        />
 
                         <div className="min-w-0 w-full mt-2.5">
                           <p className="text-xs sm:text-sm font-extrabold text-white truncate">
@@ -816,10 +810,10 @@ export default function HomePage() {
                             }`}
                           >
                             {house.total_points.toLocaleString()}{' '}
-                            <span className="text-[10px] font-normal opacity-75">pts</span>
+                            <span className="text-[10px] font-normal opacity-70">pts</span>
                           </p>
                           {isMyHouse && (
-                            <span className="inline-block mt-1.5 px-2 py-0.5 rounded-full bg-[#ECD28E]/20 text-[#ECD28E] text-[9px] font-bold">
+                            <span className="inline-block mt-1.5 px-2 py-0.5 rounded-full bg-[#ECD28E]/18 text-[#ECD28E] text-[9px] font-bold">
                               บ้านของคุณ
                             </span>
                           )}
@@ -829,8 +823,8 @@ export default function HomePage() {
                   })}
                 </div>
 
-                {/* Ranks #4 - #9 Compact Frosted Grid */}
-                <div className="pt-3.5 border-t border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {/* Ranks #4 - #9 Borderless Clean Rows */}
+                <div className="pt-2 divide-y divide-white/[0.06]">
                   {remainingHouses.map((house, idx) => {
                     const rank = idx + 4;
                     const pct = Math.max(18, Math.round((house.total_points / topScore) * 100));
@@ -841,50 +835,50 @@ export default function HomePage() {
                       <Link
                         key={house.id}
                         href={`/directory?house=${encodeURIComponent(house.name)}`}
-                        className={`px-3 py-2.5 rounded-xl flex items-center justify-between gap-3 transition ${
+                        className={`px-3 py-2.5 first:pt-2.5 rounded-xl flex items-center justify-between gap-3 transition ${
                           isMyHouse
-                            ? 'bg-[#C5A059]/20 ring-1 ring-inset ring-[#ECD28E]/50'
-                            : 'bg-white/[0.05] hover:bg-white/[0.09] ring-1 ring-inset ring-white/8'
+                            ? 'bg-[#C5A059]/15 my-1'
+                            : 'hover:bg-white/[0.05]'
                         }`}
                       >
-                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
                           <span
-                            className={`w-5 text-center text-xs font-extrabold tabular-nums shrink-0 ${
+                            className={`w-5 text-center text-xs font-bold tabular-nums shrink-0 ${
                               isMyHouse ? 'text-[#ECD28E]' : 'text-slate-400'
                             }`}
                           >
                             {rank}
                           </span>
                           <img
-                            src={`/images/planets/${house.id}.webp`}
+                            src={`/images/planets/${house.id}.webp?v=2`}
                             alt={house.name}
                             loading="lazy"
-                            className="w-8 h-8 rounded-full object-cover ring-1 ring-white/20 shrink-0"
+                            className="w-9 h-9 object-contain shrink-0"
                           />
                           <div className="min-w-0 flex-1 space-y-1">
                             <div className="flex items-center gap-1.5 min-w-0">
-                              <span className="text-xs font-bold text-white truncate">
+                              <span className="text-xs sm:text-sm font-bold text-white truncate">
                                 {house.name}
                               </span>
                               {isMyHouse && (
-                                <span className="px-1.5 py-0.2 rounded-full bg-[#ECD28E]/25 text-[#ECD28E] text-[9px] font-bold shrink-0">
+                                <span className="px-2 py-0.5 rounded-full bg-[#ECD28E]/20 text-[#ECD28E] text-[9px] font-bold shrink-0">
                                   บ้านคุณ
                                 </span>
                               )}
                             </div>
-                            <div className="h-1 w-full max-w-[130px] rounded-full bg-white/10 overflow-hidden">
+                            <div className="h-1 w-full max-w-[140px] rounded-full bg-white/10 overflow-hidden">
                               <div
                                 className="h-full rounded-full"
                                 style={{
                                   width: `${pct}%`,
-                                  backgroundColor: isMyHouse ? '#ECD28E' : 'rgba(255,255,255,0.35)',
+                                  backgroundColor: isMyHouse ? '#ECD28E' : 'rgba(255,255,255,0.32)',
                                 }}
                               />
                             </div>
                           </div>
                         </div>
 
-                        <span className="text-xs font-bold text-white tabular-nums shrink-0">
+                        <span className="text-xs sm:text-sm font-bold text-white tabular-nums shrink-0">
                           {house.total_points.toLocaleString()}{' '}
                           <span className="text-[10px] font-normal text-slate-400">pts</span>
                         </span>

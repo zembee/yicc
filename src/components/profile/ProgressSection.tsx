@@ -98,7 +98,7 @@ export function ProgressSection({
   };
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-200/80 shadow-[0_6px_24px_rgba(15,23,42,0.06)] overflow-hidden">
+    <div className="bg-white rounded-3xl shadow-[0_6px_24px_rgba(13,19,33,0.06)] overflow-hidden">
       {/* Split-Tone Executive Navy Header */}
       <div className="bg-gradient-to-r from-[#141A2C] via-[#1E2538] to-[#252E46] text-white px-5 py-4 sm:px-6 sm:py-5 border-b-[3px] border-[#FB7170] flex items-center justify-between gap-3">
         <div className="min-w-0">

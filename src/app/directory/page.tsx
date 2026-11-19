@@ -622,7 +622,7 @@ function DirectoryContent() {
                 <Link
                   key={cm.id}
                   href={`/yfti_participants/${cm.id}`}
-                  className="min-w-[186px] max-w-[186px] snap-start bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-[0_6px_20px_rgba(15,23,42,0.06)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.11)] hover:-translate-y-0.5 hover:border-[#C59B38]/80 transition-all duration-300 flex flex-col shrink-0 group"
+                  className="min-w-[186px] max-w-[186px] snap-start bg-white rounded-3xl overflow-hidden shadow-[0_6px_22px_rgba(13,19,33,0.06)] hover:shadow-[0_12px_28px_rgba(13,19,33,0.11)] hover:-translate-y-0.5 transition-all duration-300 flex flex-col shrink-0 group"
                 >
                   {/* Top Subtle Executive Hairline */}
                   <div className="h-1.5 w-full bg-gradient-to-r from-[#1E2538] via-[#C59B38] to-[#FB7170]" />
@@ -749,7 +749,7 @@ function DirectoryContent() {
               return (
                 <div
                   key={member.id}
-                  className="bg-white rounded-2xl p-3.5 sm:p-4 border border-[#E6E0D4] shadow-[0_6px_20px_rgba(13,19,33,0.04)] hover:shadow-[0_12px_28px_rgba(13,19,33,0.09)] hover:border-[#C5A059] transition-all duration-200 flex flex-col justify-between gap-3 group"
+                  className="bg-white rounded-2xl p-3.5 sm:p-4 shadow-[0_6px_22px_rgba(13,19,33,0.05)] hover:shadow-[0_12px_28px_rgba(13,19,33,0.1)] hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between gap-3 group"
                 >
                   {/* Top Row: Portrait + Info + Bookmark */}
                   <div className="flex items-start gap-3.5">
@@ -877,7 +877,7 @@ function DirectoryContent() {
 
           {/* Pagination Controls Bar */}
           {totalPages > 1 && (
-            <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
+            <div className="bg-white rounded-2xl shadow-[0_6px_20px_rgba(13,19,33,0.05)] p-4 flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
               <div className="text-xs text-slate-500 font-medium tabular-nums">
                 หน้า <strong className="text-[#1E2538] font-bold">{currentPage}</strong> จากทั้งหมด{' '}
                 <strong className="text-[#1E2538] font-bold">{totalPages}</strong> หน้า

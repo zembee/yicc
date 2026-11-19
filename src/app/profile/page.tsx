@@ -329,8 +329,8 @@ export default function ProfilePage() {
       <div className="relative z-20 -mt-6 luxury-sheet rounded-t-[30px] pt-5 px-4 sm:px-6 min-h-[65vh]">
         <div className="max-w-4xl mx-auto space-y-5 sm:space-y-6">
           {/* Contact & Business Details */}
-          <div className="bg-white rounded-3xl border border-slate-200/80 shadow-[0_6px_24px_rgba(15,23,42,0.06)] p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200/70 space-y-1">
+          <div className="bg-white rounded-3xl shadow-[0_6px_24px_rgba(13,19,33,0.055)] p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F6F4EF] space-y-1">
               <Phone
                 aria-hidden="true"
                 className="pointer-events-none select-none absolute -right-2 -bottom-2 w-14 h-14 text-[#1E2538] opacity-[0.07] -rotate-12"
@@ -341,7 +341,7 @@ export default function ProfilePage() {
               </span>
             </div>
 
-            <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200/70 space-y-1">
+            <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F6F4EF] space-y-1">
               <Mail
                 aria-hidden="true"
                 className="pointer-events-none select-none absolute -right-2 -bottom-2 w-14 h-14 text-[#FB7170] opacity-[0.10] -rotate-12"
@@ -352,7 +352,7 @@ export default function ProfilePage() {
               </span>
             </div>
 
-            <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200/70 space-y-1">
+            <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F6F4EF] space-y-1">
               <Briefcase
                 aria-hidden="true"
                 className="pointer-events-none select-none absolute -right-2 -bottom-2 w-14 h-14 text-[#1E2538] opacity-[0.07] -rotate-12"
@@ -365,13 +365,13 @@ export default function ProfilePage() {
           </div>
 
       {/* ================= 4. SEPARATE HOUSE CARD (SPLIT-TONE EXECUTIVE PASS) ================= */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-[0_6px_24px_rgba(15,23,42,0.06)] overflow-hidden">
-        <div className="relative bg-gradient-to-r from-[#141A2C] via-[#1E2538] to-[#252E46] text-white p-5 sm:p-6 border-b-[3px] border-[#FB7170] flex items-center justify-between gap-4 overflow-hidden">
+      <div className="bg-white rounded-3xl shadow-[0_6px_24px_rgba(13,19,33,0.06)] overflow-hidden">
+        <div className="relative luxury-stage text-white p-5 sm:p-6 flex items-center justify-between gap-4 overflow-hidden">
           <div className="relative z-10 flex items-center gap-4 min-w-0">
             <img
-              src={`/images/planets/${currentHouse?.id || 'the_mars'}.webp`}
+              src={`/images/planets/${currentHouse?.id || 'the_mars'}.webp?v=2`}
               alt={houseName}
-              className="w-14 h-14 rounded-2xl ring-2 ring-white/20 shadow-[0_6px_18px_rgba(0,0,0,0.3)] shrink-0"
+              className="w-14 h-14 object-contain shrink-0 drop-shadow-[0_6px_14px_rgba(0,0,0,0.4)]"
             />
             <div className="min-w-0 space-y-0.5">
               <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-300 block">
@@ -415,7 +415,7 @@ export default function ProfilePage() {
       />
 
       {/* ================= 6. ACCOUNT GOVERNANCE & ROLE SIMULATOR ================= */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-[0_2px_12px_rgba(15,23,42,0.04)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-[0_6px_22px_rgba(13,19,33,0.05)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <RefreshCw className="w-4 h-4 text-[#B38728]" />

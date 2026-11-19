@@ -317,7 +317,7 @@ function PrivilegesContent() {
               <Link
                 key={priv.id}
                 href={`/privileges/${priv.id}`}
-                className="bg-white rounded-2xl border border-[#E6E0D4] overflow-hidden shadow-[0_6px_20px_rgba(13,19,33,0.05)] hover:shadow-[0_12px_28px_rgba(13,19,33,0.1)] hover:border-[#C5A059] transition-all duration-200 flex flex-col justify-between group"
+                className="bg-white rounded-2xl overflow-hidden shadow-[0_6px_22px_rgba(13,19,33,0.06)] hover:shadow-[0_12px_28px_rgba(13,19,33,0.11)] hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between group"
               >
                 <div className="relative aspect-[4/3] bg-[#0D1321] overflow-hidden">
                   <img
@@ -357,7 +357,7 @@ function PrivilegesContent() {
             ))}
 
             {filteredPrivileges.length === 0 && (
-              <div className="col-span-2 md:col-span-3 py-12 text-center bg-white rounded-2xl border border-slate-200 text-xs text-slate-500 space-y-2">
+              <div className="col-span-2 md:col-span-3 py-12 text-center bg-white rounded-2xl shadow-[0_6px_20px_rgba(13,19,33,0.05)] text-xs text-slate-500 space-y-2">
                 <Gift className="w-8 h-8 text-slate-300 mx-auto" />
                 <p>ไม่พบสิทธิพิเศษที่ตรงกับคำค้นหา</p>
               </div>
@@ -419,7 +419,7 @@ function PrivilegesContent() {
                           redeemedAt: h.redeemedAt,
                         });
                       }}
-                      className="w-full text-left p-3.5 rounded-2xl bg-white hover:border-[#C59B38] border border-slate-200/80 space-y-1.5 transition shadow-sm"
+                      className="w-full text-left p-3.5 rounded-2xl bg-white shadow-[0_4px_16px_rgba(13,19,33,0.05)] hover:shadow-[0_8px_22px_rgba(13,19,33,0.09)] space-y-1.5 transition"
                     >
                       <div className="flex items-center justify-between gap-2">
                         <p className="text-xs font-bold text-[#1E2538] truncate">
