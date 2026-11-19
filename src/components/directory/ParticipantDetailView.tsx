@@ -6,6 +6,7 @@ import { Participant, CompanyInfo } from '@/types';
 import Link from 'next/link';
 import { PhotoLightbox } from '@/components/ui/PhotoLightbox';
 import { InfoCard, InfoGrid, InfoRow } from '@/components/ui/InfoCard';
+import { ParticipantDetailSkeleton } from '@/components/ui/PageSkeletons';
 import { 
   ArrowLeft, 
   Building2, 
@@ -100,29 +101,7 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-[#F4F6FA] pb-24 fade-in-soft">
-        <div className="bg-gradient-to-b from-[#181B34] via-[#212542] to-[#2B3054] pt-8 pb-12 px-4 sm:px-6 lg:px-8 border-b-[3px] border-[#FB7170]">
-          <div className="max-w-6xl mx-auto flex flex-col items-center space-y-4 pt-6">
-            <div className="h-7 w-52 rounded-lg skeleton-shimmer-dark" />
-            <div className="h-5 w-24 rounded-md skeleton-shimmer-dark" />
-            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl skeleton-shimmer-dark" />
-            <div className="flex gap-2">
-              <div className="h-8 w-24 rounded-xl skeleton-shimmer-dark" />
-              <div className="h-8 w-24 rounded-xl skeleton-shimmer-dark" />
-            </div>
-          </div>
-        </div>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 space-y-6">
-          <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-100 space-y-4">
-            <div className="h-6 w-36 rounded-md skeleton-shimmer" />
-            {[0, 1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-5 w-full rounded-md skeleton-shimmer" />
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <ParticipantDetailSkeleton />;
   }
 
   if (!participant) {
