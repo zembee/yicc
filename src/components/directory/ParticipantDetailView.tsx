@@ -175,16 +175,37 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
             </button>
           </div>
 
-          {/* Name & Nickname Heading (.elementor-element-264882a) */}
-          <div className="space-y-2 pt-2">
-            <h1 className="text-3xl sm:text-5xl font-semibold text-white font-kanit tracking-tight leading-tight">
-              {participant.name_thai}
-            </h1>
-            {participant.nickname_eng && (
-              <h2 className="text-2xl sm:text-4xl font-normal text-slate-300 font-kanit">
-                ({participant.nickname_eng})
-              </h2>
-            )}
+          {/* Centered Name, Nickname, Portrait & Actions (.elementor-element-264882a) */}
+          <div className="flex flex-col items-center text-center space-y-3 pt-2">
+            <div className="space-y-1">
+              <h1 className="text-2xl sm:text-4xl font-semibold text-white font-kanit tracking-tight leading-tight">
+                {participant.name_thai}
+              </h1>
+              {participant.nickname_eng && (
+                <h2 className="text-lg sm:text-2xl font-normal text-slate-300 font-kanit">
+                  ({participant.nickname_eng})
+                </h2>
+              )}
+            </div>
+
+            {/* Compact Portrait Photo under Name */}
+            <div className="pt-1 flex flex-col items-center gap-2">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden bg-slate-100 shadow-lg border-2 border-white/25 ring-2 ring-[#C59B38]/30">
+                <img
+                  src={participant.profile_picture_url || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp'}
+                  alt={participant.name_thai}
+                  className="w-full h-full object-cover object-top"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + participant.name_thai;
+                  }}
+                />
+              </div>
+              {participant.star_group_label && (
+                <span className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-white/10 border border-white/15 text-[11px] font-semibold text-[#E5C158]">
+                  ⭐ {participant.star_group_label}
+                </span>
+              )}
+            </div>
 
             {/* Following / Follower & Action Buttons (Follow + Chat) */}
             {(() => {
@@ -192,8 +213,8 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
               const memberFollowingCount = 14 + (numId % 19);
               const memberFollowerCount = 21 + ((numId * 7) % 33) + (isFollowing ? 1 : 0);
               return (
-                <div className="flex flex-wrap items-center gap-3 pt-2">
-                  <div className="flex items-center gap-2 text-xs text-slate-300">
+                <div className="flex flex-col items-center gap-3 pt-1">
+                  <div className="flex items-center justify-center gap-2 text-xs text-slate-300">
                     <span className="bg-white/10 px-3 py-1 rounded-full">
                       <strong className="text-white">{memberFollowingCount}</strong> Following
                     </span>
@@ -202,7 +223,7 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2 sm:ml-auto">
+                  <div className="flex items-center justify-center gap-2.5">
                     <button
                       onClick={handleToggleFollow}
                       className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm ${
@@ -229,7 +250,7 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
           </div>
 
           {/* Quick Tags Sub-bar (.elementor-element-41acba6d) */}
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-2 text-xs sm:text-sm">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 pt-1 text-xs sm:text-sm">
             {companiesList.map((comp, idx) => (
               <React.Fragment key={idx}>
                 {comp.industrial_groups_label && (
@@ -258,85 +279,62 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 space-y-8">
         {/* 2. Section 1: ข้อมูลส่วนตัว (Personal Information) (.elementor-element-1cab9997) */}
         <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-[0px_4px_16px_2px_rgba(0,0,0,0.08)] border border-slate-100">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-            {/* Left Column: Portrait Photo (.elementor-element-4126a283) */}
-            <div className="md:col-span-4 lg:col-span-4 flex flex-col items-center md:items-start space-y-3">
-              <div className="w-full max-w-[280px] sm:max-w-[320px] aspect-[3/4] rounded-xl overflow-hidden bg-slate-100 shadow-md border border-slate-200/80">
-                <img
-                  src={participant.profile_picture_url || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp'}
-                  alt={participant.name_thai}
-                  className="w-full h-full object-cover object-top"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + participant.name_thai;
-                  }}
-                />
+          <div className="space-y-5">
+            <h2 className="text-xl sm:text-2xl font-semibold text-[#212542] font-kanit border-b border-slate-100 pb-3">
+              ข้อมูลส่วนตัว
+            </h2>
+
+            <div className="divide-y divide-slate-100 text-xs sm:text-sm">
+              <div className="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-1 sm:gap-4">
+                <span className="sm:col-span-5 font-semibold text-slate-500">ชื่อเล่น (ภาษาอังกฤษ) :</span>
+                <span className="sm:col-span-7 font-bold text-[#212542] text-sm sm:text-base">
+                  {participant.nickname_eng || '-'}
+                </span>
               </div>
-              {participant.star_group_label && (
-                <div className="w-full max-w-[280px] sm:max-w-[320px] p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-center">
-                  <span className="text-[11px] text-slate-500 font-medium">ดวงดาวประจำตัว</span>
-                  <span className="text-sm font-bold text-[#212542] block">⭐ {participant.star_group_label}</span>
-                </div>
-              )}
-            </div>
 
-            {/* Right Column: Personal Info Table (.elementor-element-3b5c9361) */}
-            <div className="md:col-span-8 lg:col-span-8 space-y-5">
-              <h2 className="text-xl sm:text-2xl font-semibold text-[#212542] font-kanit border-b border-slate-100 pb-3">
-                ข้อมูลส่วนตัว
-              </h2>
+              <div className="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-1 sm:gap-4">
+                <span className="sm:col-span-5 font-semibold text-slate-500">ชื่อ - นามสกุล (ภาษาไทย) :</span>
+                <span className="sm:col-span-7 font-bold text-[#212542] text-sm sm:text-base">
+                  {participant.name_thai || '-'}
+                </span>
+              </div>
 
-              <div className="divide-y divide-slate-100 text-xs sm:text-sm">
-                <div className="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-1 sm:gap-4">
-                  <span className="sm:col-span-5 font-semibold text-slate-500">ชื่อเล่น (ภาษาอังกฤษ) :</span>
-                  <span className="sm:col-span-7 font-bold text-[#212542] text-sm sm:text-base">
-                    {participant.nickname_eng || '-'}
-                  </span>
-                </div>
+              <div className="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-1 sm:gap-4">
+                <span className="sm:col-span-5 font-semibold text-slate-500">ชื่อ - นามสกุล (ภาษาอังกฤษ) :</span>
+                <span className="sm:col-span-7 font-normal text-slate-700">
+                  {participant.fullname_eng || '-'}
+                </span>
+              </div>
 
-                <div className="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-1 sm:gap-4">
-                  <span className="sm:col-span-5 font-semibold text-slate-500">ชื่อ - นามสกุล (ภาษาไทย) :</span>
-                  <span className="sm:col-span-7 font-bold text-[#212542] text-sm sm:text-base">
-                    {participant.name_thai || '-'}
-                  </span>
-                </div>
+              <div className="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-1 sm:gap-4">
+                <span className="sm:col-span-5 font-semibold text-slate-500">เบอร์โทรติดต่อ :</span>
+                <span className="sm:col-span-7">
+                  {participant.tel_number ? (
+                    <a
+                      href={`tel:${participant.tel_number}`}
+                      className="font-bold text-[#FB7170] hover:underline inline-flex items-center gap-1.5 font-mono text-sm"
+                    >
+                      <Phone className="w-3.5 h-3.5" />
+                      {participant.tel_number}
+                    </a>
+                  ) : (
+                    <span className="text-slate-400">-</span>
+                  )}
+                </span>
+              </div>
 
-                <div className="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-1 sm:gap-4">
-                  <span className="sm:col-span-5 font-semibold text-slate-500">ชื่อ - นามสกุล (ภาษาอังกฤษ) :</span>
-                  <span className="sm:col-span-7 font-normal text-slate-700">
-                    {participant.fullname_eng || '-'}
-                  </span>
-                </div>
+              <div className="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-1 sm:gap-4">
+                <span className="sm:col-span-5 font-semibold text-slate-500">ดาว :</span>
+                <span className="sm:col-span-7 font-semibold text-[#212542]">
+                  {participant.star_group_label || participant.star_group || '-'}
+                </span>
+              </div>
 
-                <div className="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-1 sm:gap-4">
-                  <span className="sm:col-span-5 font-semibold text-slate-500">เบอร์โทรติดต่อ :</span>
-                  <span className="sm:col-span-7">
-                    {participant.tel_number ? (
-                      <a
-                        href={`tel:${participant.tel_number}`}
-                        className="font-bold text-[#FB7170] hover:underline inline-flex items-center gap-1.5 font-mono text-sm"
-                      >
-                        <Phone className="w-3.5 h-3.5" />
-                        {participant.tel_number}
-                      </a>
-                    ) : (
-                      <span className="text-slate-400">-</span>
-                    )}
-                  </span>
-                </div>
-
-                <div className="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-1 sm:gap-4">
-                  <span className="sm:col-span-5 font-semibold text-slate-500">ดาว :</span>
-                  <span className="sm:col-span-7 font-semibold text-[#212542]">
-                    {participant.star_group_label || participant.star_group || '-'}
-                  </span>
-                </div>
-
-                <div className="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-1 sm:gap-4">
-                  <span className="sm:col-span-5 font-semibold text-slate-500">รุ่น :</span>
-                  <span className="sm:col-span-7 font-semibold text-[#212542]">
-                    {participant.gen_label || 'YFTI 11'}
-                  </span>
-                </div>
+              <div className="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-1 sm:gap-4">
+                <span className="sm:col-span-5 font-semibold text-slate-500">รุ่น :</span>
+                <span className="sm:col-span-7 font-semibold text-[#212542]">
+                  {participant.gen_label || 'YFTI 11'}
+                </span>
               </div>
             </div>
           </div>

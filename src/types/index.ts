@@ -74,6 +74,9 @@ export interface MissionSubmission {
   id: string;
   mission_id: string;
   mission_title?: string;
+  event_id?: string;
+  event_title?: string;
+  event_type?: 'general' | 'course';
   profile_id: string;
   user_name?: string;
   user_picture?: string;

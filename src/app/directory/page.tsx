@@ -410,32 +410,34 @@ function DirectoryContent() {
 
   return (
     <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6 pb-20">
-      {/* 1. Dark Navy Header with Integrated Search & Circular QR Button */}
+      {/* 1. Dark Navy Header with Integrated Search & QR Button */}
       <div className="bg-[#1E2538] text-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm space-y-4">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <h1 className="text-lg sm:text-2xl font-bold tracking-tight">Member Directory</h1>
-            <p className="text-xs text-slate-300 mt-0.5">
-              ทำเนียบธุรกิจ Young FTI ELITE 11 ({participants.length.toLocaleString()} ท่าน)
+            <h1 className="text-lg sm:text-2xl font-bold tracking-tight">
+              ทำเนียบธุรกิจ Young FTI ELITE 11
+            </h1>
+            <p className="text-xs text-slate-300 mt-0.5 tabular-nums">
+              ทั้งหมด {participants.length.toLocaleString()} ท่าน
             </p>
           </div>
         </div>
 
-        {/* Search Input + Circular QR Button */}
+        {/* Search Input + QR Button */}
         <div className="flex items-center gap-2.5">
           <div className="relative flex-1">
-            <Search className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="ค้นหาชื่อ บริษัท หรือ keyword..."
-              className="w-full pl-10 pr-9 py-2.5 bg-white text-[#1E2538] rounded-full text-xs sm:text-sm font-medium placeholder-slate-400 outline-none focus:ring-2 focus:ring-[#C59B38]"
+              className="w-full pl-10 pr-9 py-2.5 bg-white text-[#1E2538] rounded-xl text-xs sm:text-sm font-medium placeholder-slate-400 outline-none focus:ring-2 focus:ring-[#C59B38] shadow-sm"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 rounded-full"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 rounded-lg"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -450,7 +452,7 @@ function DirectoryContent() {
             }}
             aria-label="สแกนเพิ่มเพื่อน"
             title="สแกนเพิ่มเพื่อน"
-            className="w-11 h-11 rounded-full bg-white hover:bg-slate-100 text-[#1E2538] flex items-center justify-center shrink-0 shadow-sm transition"
+            className="w-11 h-11 rounded-xl bg-white hover:bg-slate-100 text-[#1E2538] flex items-center justify-center shrink-0 shadow-sm transition"
           >
             <QrCode className="w-5 h-5" />
           </button>
@@ -556,7 +558,7 @@ function DirectoryContent() {
                 <Link
                   key={cm.id}
                   href={`/yfti_participants/${cm.id}`}
-                  className="min-w-[155px] max-w-[155px] snap-start bg-white rounded-2xl p-4 border border-slate-200/70 shadow-[0_2px_12px_rgba(15,23,42,0.04)] hover:border-[#C59B38] transition flex flex-col items-center text-center gap-2 shrink-0"
+                  className="min-w-[180px] max-w-[180px] snap-start bg-white rounded-2xl p-4 border border-slate-200/80 shadow-[0_2px_12px_rgba(15,23,42,0.04)] hover:border-[#C59B38] transition flex flex-col items-center text-center gap-2.5 shrink-0 group"
                 >
                   <img
                     src={cm.profile_picture_url || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp'}
@@ -566,23 +568,44 @@ function DirectoryContent() {
                       (e.target as HTMLImageElement).src = 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp';
                     }}
                   />
-                  <div className="min-w-0 w-full space-y-1">
-                    <p className="text-xs font-bold text-[#1E2538] truncate">{cm.name_thai}</p>
+                  <div className="min-w-0 w-full space-y-1.5">
+                    <p className="text-xs font-bold text-[#1E2538] group-hover:text-[#B38728] transition-colors truncate">
+                      {cm.name_thai}
+                    </p>
                     <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2] text-[10px] font-bold">
                       {cm.cohortRole}
                     </span>
-                    <p className="text-[11px] text-slate-400 truncate">{cm.company_name_thai}</p>
+                    {cm.company_name_thai && (
+                      <p className="text-[11px] font-medium text-slate-700 flex items-center justify-center gap-1.5 truncate pt-0.5">
+                        <Building2 className="w-3.5 h-3.5 text-[#B38728] shrink-0" />
+                        <span className="truncate">{cm.company_name_thai}</span>
+                      </p>
+                    )}
                   </div>
-                  <button
-                    onClick={(e) => toggleFollow(e, String(cm.id))}
-                    className={`w-full py-1.5 rounded-full text-[10px] font-bold transition mt-auto ${
-                      isF
-                        ? 'bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2]'
-                        : 'bg-[#1E2538] text-white hover:bg-[#2B3550]'
-                    }`}
-                  >
-                    {isF ? 'Following' : '+ Follow'}
-                  </button>
+
+                  <div className="w-full pt-2 mt-auto border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-[#1E2538]">
+                    <span className="group-hover:text-[#B38728] transition-colors">ดูโปรไฟล์</span>
+                    <button
+                      onClick={(e) => toggleFollow(e, String(cm.id))}
+                      className={`px-2.5 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 transition ${
+                        isF
+                          ? 'bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2]'
+                          : 'bg-slate-100 text-[#1E2538] hover:bg-[#1E2538] hover:text-white'
+                      }`}
+                    >
+                      {isF ? (
+                        <>
+                          <UserCheck className="w-3 h-3" />
+                          Following
+                        </>
+                      ) : (
+                        <>
+                          <UserPlus className="w-3 h-3" />
+                          Follow
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </Link>
               );
             })}

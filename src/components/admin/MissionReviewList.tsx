@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { MissionSubmission } from '@/types';
 import { mockPendingSubmissions } from '@/lib/mockData';
-import { Check, X, Clock, Image as ImageIcon } from 'lucide-react';
+import { Check, X, Clock, Image as ImageIcon, Calendar, GraduationCap, ExternalLink } from 'lucide-react';
 import { format } from 'date-fns';
 import { th } from 'date-fns/locale';
 
@@ -11,10 +12,36 @@ export const MissionReviewList: React.FC = () => {
   const [submissions, setSubmissions] = useState<MissionSubmission[]>(mockPendingSubmissions);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const custom: MissionSubmission[] = JSON.parse(
+        localStorage.getItem('yfti_custom_mission_submissions') || '[]'
+      );
+      if (Array.isArray(custom) && custom.length > 0) {
+        setSubmissions([...custom, ...mockPendingSubmissions]);
+      }
+    } catch {}
+  }, []);
+
   const handleAction = (id: string, newStatus: 'APPROVED' | 'REJECTED') => {
-    setSubmissions((prev) =>
-      prev.map((sub) => (sub.id === id ? { ...sub, status: newStatus } : sub))
-    );
+    setSubmissions((prev) => {
+      const next = prev.map((sub) => (sub.id === id ? { ...sub, status: newStatus } : sub));
+      if (typeof window !== 'undefined') {
+        try {
+          const custom: MissionSubmission[] = JSON.parse(
+            localStorage.getItem('yfti_custom_mission_submissions') || '[]'
+          );
+          if (Array.isArray(custom)) {
+            const updatedCustom = custom.map((sub) =>
+              sub.id === id ? { ...sub, status: newStatus } : sub
+            );
+            localStorage.setItem('yfti_custom_mission_submissions', JSON.stringify(updatedCustom));
+          }
+        } catch {}
+      }
+      return next;
+    });
   };
 
   const pendingList = submissions.filter((s) => s.status === 'PENDING');
@@ -60,10 +87,46 @@ export const MissionReviewList: React.FC = () => {
                 </div>
               </div>
 
-              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2]">
+              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2] shrink-0">
                 {item.mission_title}
               </span>
             </div>
+
+            {/* Event / Course Source Info (if mission originated from an event/course) */}
+            {(item.event_title || item.event_id) && (
+              <div className="flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-[#F8FAFC] border border-slate-200/80 text-xs">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#1E2538] text-white text-[10px] font-bold shrink-0">
+                    {item.event_type === 'course' ? (
+                      <>
+                        <GraduationCap className="w-3 h-3 text-[#E5C158]" />
+                        <span>คอร์สเรียน</span>
+                      </>
+                    ) : (
+                      <>
+                        <Calendar className="w-3 h-3 text-[#E5C158]" />
+                        <span>กิจกรรม</span>
+                      </>
+                    )}
+                  </span>
+                  <span className="font-semibold text-[#1E2538] truncate">
+                    {item.event_title || `รหัสกิจกรรม: ${item.event_id}`}
+                  </span>
+                </div>
+                {item.event_id && (
+                  <Link
+                    href={`/events/${item.event_id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-[#9A7320] hover:underline shrink-0"
+                    title="ดูกิจกรรม (เปิดแท็บใหม่)"
+                  >
+                    <span>ดูหน้า</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </Link>
+                )}
+              </div>
+            )}
 
             {/* Note */}
             {item.notes && (

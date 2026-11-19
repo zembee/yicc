@@ -6,6 +6,7 @@ import {
   AlertCircle,
   CalendarCheck,
   CheckCircle2,
+  ChevronRight,
   Clock,
   Coins,
   Crown,
@@ -33,6 +34,9 @@ interface ProgressSectionProps {
 }
 
 const MIN_ATTENDANCE_FOR_CERTIFICATE = 80;
+const MAX_VISIBLE_EVENTS = 5;
+const DEFAULT_EVENT_COVER =
+  'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp';
 
 export function ProgressSection({
   profile,
@@ -233,8 +237,8 @@ export function ProgressSection({
             </div>
           </div>
 
-          {/* Events List */}
-          <div className="space-y-2 pt-1">
+          {/* Events List (Latest 5 items) */}
+          <div className="space-y-2.5 pt-1">
             {myEventsList.length === 0 ? (
               <div className="p-6 rounded-xl border border-dashed border-slate-200 bg-[#FAFAF8] text-center space-y-2">
                 <p className="text-xs font-semibold text-slate-600">
@@ -248,37 +252,62 @@ export function ProgressSection({
                 </Link>
               </div>
             ) : (
-              myEventsList.map((ev) => (
-                <Link
-                  key={ev.id}
-                  href={`/events/${ev.id}`}
-                  className="flex items-center justify-between gap-3 p-3.5 rounded-xl border border-slate-200/70 hover:border-[#C59B38] bg-[#FAFAF8] transition group"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs sm:text-sm font-bold text-[#1E2538] truncate group-hover:text-[#B38728] transition-colors">
-                      {ev.title}
-                    </p>
-                    <p className="text-[11px] text-slate-400 truncate">
-                      {ev.published_date_text || 'กำลังจะมาถึง'} • {ev.location_name}
-                    </p>
-                  </div>
-                  <span
-                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold shrink-0 ${
-                      ev.isCheckedIn
-                        ? 'bg-[#1E2538] text-white'
-                        : ev.status === 'UPCOMING'
-                        ? 'bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2]'
-                        : 'bg-slate-200 text-slate-700'
-                    }`}
+              <>
+                {myEventsList.slice(0, MAX_VISIBLE_EVENTS).map((ev) => (
+                  <Link
+                    key={ev.id}
+                    href={`/events/${ev.id}`}
+                    className="flex items-center justify-between gap-3 p-3 rounded-xl border border-slate-200/70 hover:border-[#C59B38] bg-[#FAFAF8] transition group"
                   >
-                    {ev.isCheckedIn
-                      ? 'เช็กชื่อแล้ว'
-                      : ev.status === 'UPCOMING'
-                      ? 'ลงทะเบียนแล้ว'
-                      : 'เข้าร่วมแล้ว'}
-                  </span>
-                </Link>
-              ))
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden bg-slate-200 border border-slate-200/80 shrink-0">
+                      <img
+                        src={ev.image_url || DEFAULT_EVENT_COVER}
+                        alt={ev.title}
+                        loading="lazy"
+                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          const img = e.currentTarget;
+                          img.onerror = null;
+                          img.src = DEFAULT_EVENT_COVER;
+                        }}
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs sm:text-sm font-bold text-[#1E2538] truncate group-hover:text-[#B38728] transition-colors">
+                        {ev.title}
+                      </p>
+                      <p className="text-[11px] text-slate-400 truncate mt-0.5">
+                        {ev.published_date_text || 'กำลังจะมาถึง'} • {ev.location_name}
+                      </p>
+                    </div>
+                    <span
+                      className={`px-2.5 py-1 rounded-full text-[10px] font-bold shrink-0 ${
+                        ev.isCheckedIn
+                          ? 'bg-[#1E2538] text-white'
+                          : ev.status === 'UPCOMING'
+                          ? 'bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2]'
+                          : 'bg-slate-200 text-slate-700'
+                      }`}
+                    >
+                      {ev.isCheckedIn
+                        ? 'เช็กชื่อแล้ว'
+                        : ev.status === 'UPCOMING'
+                        ? 'ลงทะเบียนแล้ว'
+                        : 'เข้าร่วมแล้ว'}
+                    </span>
+                  </Link>
+                ))}
+
+                {myEventsList.length > MAX_VISIBLE_EVENTS && (
+                  <Link
+                    href="/profile/events"
+                    className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-[#FBF6EC] border border-slate-200 hover:border-[#C59B38] text-[#1E2538] hover:text-[#9A7320] text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-sm"
+                  >
+                    <span>ดูทั้งหมด ({myEventsList.length} รายการ)</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </Link>
+                )}
+              </>
             )}
           </div>
         </div>

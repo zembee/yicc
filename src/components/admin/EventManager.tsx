@@ -210,8 +210,10 @@ export const EventManager: React.FC<{ onCountChange?: (count: number) => void }>
             <div className="flex items-center gap-1.5 shrink-0">
               <Link
                 href={`/events/${item.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 rounded-lg bg-white border border-slate-200 text-slate-500 hover:text-[#1E2538] transition"
-                title="ดูหน้าจริง"
+                title="ดูหน้าจริง (เปิดแท็บใหม่)"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
               </Link>

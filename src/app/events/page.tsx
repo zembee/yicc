@@ -43,9 +43,9 @@ function EventsContent() {
   return (
     <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-5 sm:space-y-6 pb-24">
       {/* Executive Navy Header with Integrated My Tickets & Calendar Buttons */}
-      <div className="bg-[#1E2538] text-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
+      <div className="bg-gradient-to-b from-[#181B34] via-[#1E2538] to-[#252E46] text-white rounded-2xl p-5 sm:p-6 shadow-[0_4px_16px_rgba(15,23,42,0.12)] border border-slate-800/60 space-y-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Events</h1>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Activities &amp; Courses</h1>
           <p className="text-xs text-slate-300 mt-0.5">
             กิจกรรมและคอร์สเรียนหลักสูตร Young FTI ELITE 11
           </p>
@@ -54,7 +54,7 @@ function EventsContent() {
         <div className="grid grid-cols-2 gap-3 max-w-md">
           <Link
             href="/events/my-tickets"
-            className="py-2.5 px-4 rounded-full bg-[#C59B38] hover:bg-[#b38a2e] text-white text-xs font-bold flex items-center justify-center gap-2 transition shadow-sm"
+            className="py-2.5 px-4 rounded-xl bg-[#C59B38] hover:bg-[#b38a2e] text-white text-xs font-bold flex items-center justify-center gap-2 transition shadow-sm"
           >
             <Ticket className="w-4 h-4" />
             <span>บัตรของฉัน</span>
@@ -62,7 +62,7 @@ function EventsContent() {
 
           <Link
             href="/events/calendar"
-            className="py-2.5 px-4 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-white text-xs font-bold flex items-center justify-center gap-2 transition"
+            className="py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white text-xs font-bold flex items-center justify-center gap-2 transition shadow-sm"
           >
             <CalendarDays className="w-4 h-4" />
             <span>ปฏิทิน</span>
@@ -70,7 +70,7 @@ function EventsContent() {
         </div>
       </div>
 
-      {/* Category Filter Pills */}
+      {/* Category Filter Tabs */}
       <div className="flex items-center justify-start gap-2 overflow-x-auto py-1 no-scrollbar">
         {(
           [
@@ -83,10 +83,10 @@ function EventsContent() {
           <button
             key={tab.key}
             onClick={() => setFilter(tab.key)}
-            className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition ${
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition shadow-sm ${
               filter === tab.key
-                ? 'bg-[#C59B38] text-white shadow-sm'
-                : 'bg-white text-slate-600 border border-slate-200 hover:text-[#1E2538]'
+                ? 'bg-[#1E2538] text-white'
+                : 'bg-white text-slate-600 border border-slate-200/80 hover:text-[#1E2538] hover:bg-slate-50'
             }`}
           >
             {tab.label}

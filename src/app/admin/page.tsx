@@ -46,6 +46,7 @@ type AdminTab = 'overview' | 'members' | 'events' | 'privileges' | 'missions';
 export default function AdminPage() {
   const { profile } = useLiffAuth();
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
+  const [eventsSubTab, setEventsSubTab] = useState<'manage' | 'approvals'>('manage');
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [lastCheckinResult, setLastCheckinResult] = useState<any | null>(null);
   const [registrations, setRegistrations] = useState<EventRegistrationRecord[]>([]);
@@ -307,90 +308,135 @@ export default function AdminPage() {
       {/* ================= TAB: EVENTS ================= */}
       {activeTab === 'events' && (
         <div className="space-y-4">
-          <EventManager onCountChange={setEventsCount} />
-
-          {/* Event Registration & Slip Approval Queue */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-extrabold text-[#1E2538] flex items-center gap-2">
-                <FileCheck className="w-4 h-4 text-[#B38728]" />
-                <span>อนุมัติการสมัครกิจกรรม &amp; สลิปโอนเงิน</span>
-              </h3>
-              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2]">
-                รอตรวจ {pendingEventRegs} รายการ
+          {/* Sub-tabs: Manage Events vs Registration & Slip Approvals */}
+          <div className="inline-flex items-center gap-1.5 bg-white border border-slate-200 p-1 rounded-xl shadow-sm">
+            <button
+              type="button"
+              onClick={() => setEventsSubTab('manage')}
+              className={`px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition ${
+                eventsSubTab === 'manage'
+                  ? 'bg-[#1E2538] text-white shadow-sm'
+                  : 'text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              <Calendar className={`w-3.5 h-3.5 ${eventsSubTab === 'manage' ? 'text-[#E5C158]' : 'text-slate-400'}`} />
+              <span>จัดการกิจกรรม</span>
+              <span
+                className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold tabular-nums ${
+                  eventsSubTab === 'manage'
+                    ? 'bg-white/15 text-white'
+                    : 'bg-slate-100 text-slate-600'
+                }`}
+              >
+                {eventsCount}
               </span>
-            </div>
+            </button>
 
-            {registrations.length === 0 ? (
-              <div className="text-center py-6 text-xs text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                ยังไม่มีรายการสมัครกิจกรรมหรือแนบสลิปโอนเงิน
+            <button
+              type="button"
+              onClick={() => setEventsSubTab('approvals')}
+              className={`px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition ${
+                eventsSubTab === 'approvals'
+                  ? 'bg-[#1E2538] text-white shadow-sm'
+                  : 'text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              <FileCheck className={`w-3.5 h-3.5 ${eventsSubTab === 'approvals' ? 'text-[#E5C158]' : 'text-slate-400'}`} />
+              <span>การอนุมัติสมัคร &amp; สลิป</span>
+              {pendingEventRegs > 0 && (
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold tabular-nums bg-[#C59B38] text-white">
+                  {pendingEventRegs}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {eventsSubTab === 'manage' ? (
+            <EventManager onCountChange={setEventsCount} />
+          ) : (
+            /* Event Registration & Slip Approval Queue */
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-extrabold text-[#1E2538] flex items-center gap-2">
+                  <FileCheck className="w-4 h-4 text-[#B38728]" />
+                  <span>อนุมัติการสมัครกิจกรรม &amp; สลิปโอนเงิน</span>
+                </h3>
+                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2]">
+                  รอตรวจ {pendingEventRegs} รายการ
+                </span>
               </div>
-            ) : (
-              <div className="space-y-2.5">
-                {registrations.map((reg) => (
-                  <div
-                    key={reg.id}
-                    className="p-3 rounded-xl border border-slate-200 bg-slate-50/70 space-y-2"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <p className="text-xs font-bold text-[#1E2538]">{reg.eventTitle}</p>
-                        <p className="text-[11px] text-slate-500">
-                          ผู้สมัคร: <span className="font-semibold text-slate-700">{reg.applicantName}</span> •{' '}
-                          {reg.ticketType === 'MEMBER' ? 'สมาชิก' : 'บุคคลทั่วไป'} • ฿{reg.amount.toLocaleString()}
-                        </p>
-                        <p className="text-[10px] text-slate-400 mt-0.5">
-                          สลิป: {reg.slipName} • {reg.createdAt}
-                        </p>
+
+              {registrations.length === 0 ? (
+                <div className="text-center py-8 text-xs text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                  ยังไม่มีรายการสมัครกิจกรรมหรือแนบสลิปโอนเงิน
+                </div>
+              ) : (
+                <div className="space-y-2.5">
+                  {registrations.map((reg) => (
+                    <div
+                      key={reg.id}
+                      className="p-3 rounded-xl border border-slate-200 bg-slate-50/70 space-y-2"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <p className="text-xs font-bold text-[#1E2538]">{reg.eventTitle}</p>
+                          <p className="text-[11px] text-slate-500">
+                            ผู้สมัคร: <span className="font-semibold text-slate-700">{reg.applicantName}</span> •{' '}
+                            {reg.ticketType === 'MEMBER' ? 'สมาชิก' : 'บุคคลทั่วไป'} • ฿{reg.amount.toLocaleString()}
+                          </p>
+                          <p className="text-[10px] text-slate-400 mt-0.5">
+                            สลิป: {reg.slipName} • {reg.createdAt}
+                          </p>
+                        </div>
+
+                        {reg.slipDataUrl && (
+                          <button
+                            type="button"
+                            onClick={() => setPreviewSlipUrl(reg.slipDataUrl!)}
+                            className="shrink-0 px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-[#1E2538] hover:border-[#C59B38] flex items-center gap-1"
+                          >
+                            <ImageIcon className="w-3.5 h-3.5 text-[#B38728]" />
+                            ดูสลิป
+                          </button>
+                        )}
                       </div>
 
-                      {reg.slipDataUrl && (
-                        <button
-                          type="button"
-                          onClick={() => setPreviewSlipUrl(reg.slipDataUrl!)}
-                          className="shrink-0 px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-[#1E2538] hover:border-[#C59B38] flex items-center gap-1"
-                        >
-                          <ImageIcon className="w-3.5 h-3.5 text-[#B38728]" />
-                          ดูสลิป
-                        </button>
+                      {reg.status === 'PENDING' ? (
+                        <div className="flex gap-2 pt-1">
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateRegStatus(reg.id, 'APPROVED')}
+                            className="flex-1 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-1 transition"
+                          >
+                            <CheckCircle2 className="w-3.5 h-3.5" /> อนุมัติ
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateRegStatus(reg.id, 'REJECTED')}
+                            className="px-3 py-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold flex items-center justify-center gap-1 transition"
+                          >
+                            <XCircle className="w-3.5 h-3.5" /> ปฏิเสธ
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1.5 text-xs font-bold">
+                          <span
+                            className={`px-2.5 py-0.5 rounded-full text-[11px] ${
+                              reg.status === 'APPROVED'
+                                ? 'bg-emerald-100 text-emerald-700'
+                                : 'bg-rose-100 text-rose-700'
+                            }`}
+                          >
+                            {reg.status === 'APPROVED' ? 'อนุมัติแล้ว (ออกบัตรแล้ว)' : 'ปฏิเสธแล้ว'}
+                          </span>
+                        </div>
                       )}
                     </div>
-
-                    {reg.status === 'PENDING' ? (
-                      <div className="flex gap-2 pt-1">
-                        <button
-                          type="button"
-                          onClick={() => handleUpdateRegStatus(reg.id, 'APPROVED')}
-                          className="flex-1 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-1 transition"
-                        >
-                          <CheckCircle2 className="w-3.5 h-3.5" /> อนุมัติ
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleUpdateRegStatus(reg.id, 'REJECTED')}
-                          className="px-3 py-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold flex items-center justify-center gap-1 transition"
-                        >
-                          <XCircle className="w-3.5 h-3.5" /> ปฏิเสธ
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-1.5 text-xs font-bold">
-                        <span
-                          className={`px-2.5 py-0.5 rounded-full text-[11px] ${
-                            reg.status === 'APPROVED'
-                              ? 'bg-emerald-100 text-emerald-700'
-                              : 'bg-rose-100 text-rose-700'
-                          }`}
-                        >
-                          {reg.status === 'APPROVED' ? 'อนุมัติแล้ว (ออกบัตรแล้ว)' : 'ปฏิเสธแล้ว'}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 

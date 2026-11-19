@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { QRCodeSVG } from 'qrcode.react';
-import { Briefcase, Mail, Phone, QrCode, RotateCw, Users } from 'lucide-react';
+import { Briefcase, Mail, Phone, QrCode, RotateCw } from 'lucide-react';
 import { UserProfile } from '@/types';
 import {
   DEFAULT_AVATAR_DATA_URI,
@@ -18,7 +18,6 @@ interface MemberCardProps {
   tier: string;
   isFlipped: boolean;
   onToggleFlip: () => void;
-  onOpenSwitchProfile: () => void;
 }
 
 export function MemberCard({
@@ -28,7 +27,6 @@ export function MemberCard({
   tier,
   isFlipped,
   onToggleFlip,
-  onOpenSwitchProfile,
 }: MemberCardProps) {
   // Rolling timestamp refreshed every 30s while QR side is visible (60s validity window in QrScannerModal)
   const [qrTimestamp, setQrTimestamp] = useState<number>(() => Date.now());
@@ -146,19 +144,19 @@ export function MemberCard({
                   {profile.display_name}
                 </h2>
 
-                {/* Single-line: ROLE + Position + House */}
+                {/* Single-line: ROLE + Position + Company */}
                 <div className="flex items-center gap-1.5 overflow-hidden whitespace-nowrap">
                   <span
                     className={`px-2 py-0.5 text-[9px] font-bold rounded-md uppercase shrink-0 ${roleBadge.className}`}
                   >
                     {roleBadge.label}
                   </span>
-                  <span className="text-[11px] sm:text-xs font-semibold text-[#E5C158] truncate max-w-[115px] sm:max-w-[180px]">
+                  <span className="text-[11px] sm:text-xs font-semibold text-[#E5C158] truncate">
                     {profile.position || 'Executive Member'}
                   </span>
                   <span className="text-white/30 text-[10px] shrink-0">•</span>
                   <span className="text-[11px] sm:text-xs text-slate-200 truncate font-medium">
-                    {houseName}
+                    {profile.company_name || houseName}
                   </span>
                 </div>
               </div>
@@ -247,24 +245,15 @@ export function MemberCard({
         </div>
       </div>
 
-      {/* Controls BELOW the card */}
-      <div className="max-w-xl mx-auto flex items-center justify-center gap-2.5 pt-1">
+      {/* Flip Control BELOW the card */}
+      <div className="max-w-xl mx-auto flex items-center justify-center pt-1">
         <button
           type="button"
           onClick={onToggleFlip}
-          className="flex-1 sm:flex-none px-5 py-2.5 bg-white border border-slate-200/80 hover:border-[#C59B38] rounded-xl text-xs font-bold text-[#1E2538] transition shadow-sm flex items-center justify-center gap-2 group"
+          className="px-5 py-2.5 bg-white border border-slate-200/80 hover:border-[#C59B38] rounded-xl text-xs font-bold text-[#1E2538] transition shadow-sm flex items-center justify-center gap-2 group"
         >
           <RotateCw className="w-4 h-4 text-[#B38728] group-hover:rotate-180 transition-transform duration-500" />
           <span>{isFlipped ? 'ดูหน้าบัตร' : 'พลิกดูหลังบัตร (QR)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={onOpenSwitchProfile}
-          className="px-5 py-2.5 bg-[#1E2538] hover:bg-[#2B3550] text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5"
-        >
-          <Users className="w-4 h-4 text-[#E5C158]" />
-          <span>สลับโปรไฟล์</span>
         </button>
       </div>
     </div>

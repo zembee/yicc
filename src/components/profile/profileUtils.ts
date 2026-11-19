@@ -118,6 +118,7 @@ export async function copyTextToClipboard(text: string): Promise<boolean> {
 export interface MissionSubmissionRecord {
   status: 'APPROVED' | 'PENDING' | 'NOT_STARTED';
   fileName?: string;
+  note?: string;
   submittedAt?: string;
   previewDataUrl?: string;
 }
@@ -141,6 +142,7 @@ export function normalizeMissionRecords(
         result[missionId] = {
           status,
           fileName: typeof rec.fileName === 'string' ? rec.fileName : undefined,
+          note: typeof rec.note === 'string' ? rec.note : undefined,
           submittedAt: typeof rec.submittedAt === 'string' ? rec.submittedAt : undefined,
           previewDataUrl:
             typeof rec.previewDataUrl === 'string' ? rec.previewDataUrl : undefined,

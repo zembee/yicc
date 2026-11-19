@@ -1,12 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import Link from 'next/link';
 import {
   Briefcase,
-  Building2,
   CreditCard,
-  ExternalLink,
   LogOut,
   Mail,
   Phone,
@@ -251,50 +248,38 @@ export default function ProfilePage() {
         tier={tier}
         isFlipped={isFlipped}
         onToggleFlip={() => setIsFlipped((prev) => !prev)}
-        onOpenSwitchProfile={() => setIsLoginModalOpen(true)}
       />
 
-      {/* ================= 2. FOLLOWERS & FOLLOWING COUNTER BAR ================= */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_2px_12px_rgba(15,23,42,0.04)] grid grid-cols-2 divide-x divide-slate-100">
-        <div className="py-4 px-5 text-center">
-          <p className="text-xl sm:text-2xl font-bold text-[#1E2538] tabular-nums">{followerCount}</p>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mt-0.5">
-            Followers
-          </p>
-        </div>
-        <div className="py-4 px-5 text-center">
-          <p className="text-xl sm:text-2xl font-bold text-[#1E2538] tabular-nums">{followingCount}</p>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mt-0.5">
-            Following
-          </p>
-        </div>
-      </div>
-
-      {/* ================= 3. PERSONAL & COMPANY INFO CARD ================= */}
+      {/* ================= 2. PERSONAL & COMPANY INFO CARD ================= */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_2px_12px_rgba(15,23,42,0.04)] overflow-hidden divide-y divide-slate-100">
-        <div className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <h3 className="text-base sm:text-lg font-bold text-[#1E2538]">
-              {profile.display_name}
-            </h3>
-            <p className="text-xs text-slate-500">
-              {profile.position || 'ผู้บริหารระดับสูง'} •{' '}
-              <span className="font-semibold text-[#1E2538]">
-                {profile.company_name || 'Young FTI ELITE 11'}
+        <div className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+          <div className="space-y-2">
+            <div>
+              <h3 className="text-base sm:text-lg font-bold text-[#1E2538]">
+                {profile.display_name}
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                {profile.position || 'ผู้บริหารระดับสูง'} •{' '}
+                <span className="font-semibold text-[#1E2538]">
+                  {profile.company_name || 'Young FTI ELITE 11'}
+                </span>
+              </p>
+            </div>
+
+            {/* Following & Follower Counts under Name */}
+            <div className="flex items-center gap-2 pt-0.5 text-xs">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 tabular-nums">
+                <strong className="font-bold text-[#1E2538]">{followingCount}</strong>
+                <span>Following</span>
               </span>
-            </p>
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 tabular-nums">
+                <strong className="font-bold text-[#1E2538]">{followerCount}</strong>
+                <span>Follower</span>
+              </span>
+            </div>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <Link
-              href={profileInDirectory ? `/yfti_participants/${profile.id}` : '/directory'}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#FBF6EC] hover:bg-[#F5EBD6] border border-[#EFE2C2] text-[#9A7320] rounded-xl text-xs font-bold transition"
-            >
-              <Building2 className="w-3.5 h-3.5" />
-              <span>เปิดดูในทำเนียบรุ่น</span>
-              <ExternalLink className="w-3 h-3" />
-            </Link>
-
             <button
               type="button"
               onClick={handleCopyLink}

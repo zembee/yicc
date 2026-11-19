@@ -1,0 +1,120 @@
+[
+  {
+    "id": "priv-1",
+    "title": "ส่วนลด 15% ห้องอาหาร Copper Beyond Buffet",
+    "merchant": "Copper Beyond Buffet",
+    "discount_label": "ลด 15%",
+    "category": "Food & Drink",
+    "points_required": 100,
+    "expiry_date": "31 ธ.ค. 2026",
+    "image_url": "https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/unsplash_hEC6zxdFF0M.webp",
+    "description": "รับส่วนลดค่าอาหาร 15% เมื่อมาใช้บริการตั้งแต่ 2 ท่านขึ้นไป ที่สาขา Gaysorn Amarin หรือ The Sense Pinklao",
+    "conditions": [
+      "แสดง QR Code สิทธิพิเศษจากแอป YFTI-CONNECT ก่อนชำระเงิน",
+      "จำกัด 1 สิทธิ์ / 1 ใบเสร็จ / วัน",
+      "ไม่สามารถใช้ร่วมกับโปรโมชั่นอื่นของทางร้านได้"
+    ],
+    "how_to_use": [
+      "กดปุ่ม \"แลก Point\" เพื่อรับรหัส QR / Barcode",
+      "แสดงรหัสแก่พนักงานก่อนเรียกเก็บเงินภายในเวลาที่กำหนด"
+    ],
+    "is_featured": true
+  },
+  {
+    "id": "priv-2",
+    "title": "ฟรี! เข้าใช้บริการ Coral Executive Lounge",
+    "merchant": "The Coral Executive Lounge",
+    "discount_label": "ฟรี 1 สิทธิ์",
+    "category": "Travel",
+    "points_required": 250,
+    "expiry_date": "31 ธ.ค. 2026",
+    "image_url": "https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/Maldives-Davilsnap-Day2-3_461-scaled.webp",
+    "description": "สิทธิพิเศษสำหรับสมาชิก Young FTI ELITE 11 เข้าใช้บริการเลานจ์สนามบินสุวรรณภูมิและดอนเมืองฟรี 3 ชั่วโมง",
+    "conditions": [
+      "สำหรับสมาชิก Young FTI ELITE 11 ที่ยืนยันตัวตนแล้วเท่านั้น",
+      "แสดง Boarding Pass และ QR Code ที่เคาน์เตอร์ต้อนรับ"
+    ],
+    "how_to_use": [
+      "กดปุ่ม \"แลก Point\" เพื่อเปิดใช้งานบัตรเข้าเลานจ์",
+      "แสดง QR Code ต่อเจ้าหน้าที่หน้าทางเข้า"
+    ],
+    "is_featured": true
+  },
+  {
+    "id": "priv-3",
+    "title": "ส่วนลด 1,000 บาท สมัครงาน FTI Business Summit",
+    "merchant": "สภาอุตสาหกรรมแห่งประเทศไทย",
+    "discount_label": "ลด ฿1,000",
+    "category": "Events",
+    "points_required": 150,
+    "expiry_date": "15 ม.ค. 2027",
+    "image_url": "https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/hero_leaders.webp",
+    "description": "ใช้คะแนนสะสมแลกรับส่วนลดบัตรเข้าร่วมงานสัมมนาประจำปี FTI Business Summit สำหรับผู้บริหาร",
+    "conditions": [
+      "ใช้ลดค่าลงทะเบียนได้ทั้งสมาชิกและผู้ติดตาม 1 ท่าน",
+      "แลกสิทธิ์แล้วไม่สามารถขอคืนคะแนนได้"
+    ],
+    "how_to_use": [
+      "กด \"แลก Point\" เพื่อรับโค้ดส่วนลด",
+      "กรอกโค้ดในขั้นตอนสมัครเข้าร่วมงาน"
+    ],
+    "is_featured": true
+  },
+  {
+    "id": "priv-4",
+    "title": "ส่วนลด 20% ตรวจสุขภาพ Executive Check-up",
+    "merchant": "โรงพยาบาลบำรุงราษฎร์ / BDMS Partner",
+    "discount_label": "ลด 20%",
+    "category": "Lifestyle",
+    "points_required": 200,
+    "expiry_date": "31 มี.ค. 2027",
+    "image_url": "https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/unsplash_FO7JIlwjOtU.webp",
+    "description": "แพ็กเกจตรวจสุขภาพผู้บริหารครอบคลุม 25 รายการ พร้อมสิทธิ์ Fast Track นัดหมายล่วงหน้า",
+    "conditions": [
+      "กรุณานัดหมายล่วงหน้าอย่างน้อย 3 วันทำการ",
+      "แสดงบัตรสมาชิกและ QR Code ในวันเข้ารับบริการ"
+    ],
+    "how_to_use": [
+      "กด \"แลก Point\" เพื่อรับคูปองดิจิทัล",
+      "แจ้งรหัสคูปองเมื่อนัดหมายกับโรงพยาบาล"
+    ]
+  },
+  {
+    "id": "priv-5",
+    "title": "ส่วนลด 500 บาท Central / Siam Paragon Gift Voucher",
+    "merchant": "Central Department Store",
+    "discount_label": "฿500 Voucher",
+    "category": "Shopping",
+    "points_required": 300,
+    "expiry_date": "28 ก.พ. 2027",
+    "image_url": "https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/unsplash_PLH1lwjWvVg.webp",
+    "description": "แลกคูปองแทนเงินสดมูลค่า 500 บาท สำหรับช้อปปิ้งสินค้าทุกแผนกที่เซ็นทรัลและสยามพารากอน",
+    "conditions": [
+      "ใช้แทนเงินสดได้ทันทีเมื่อมียอดซื้อขั้นต่ำ 1,500 บาท",
+      "คูปองมีอายุ 60 วันนับจากวันที่กดแลก"
+    ],
+    "how_to_use": [
+      "กด \"แลก Point\" เพื่อรับ Barcode",
+      "ให้พนักงานสแกน Barcode ที่จุดแคชเชียร์"
+    ]
+  },
+  {
+    "id": "priv-6",
+    "title": "บัตรชมภาพยนตร์ VIP First Class 1 แถม 1",
+    "merchant": "SF Cinema / Major Cineplex",
+    "discount_label": "1 แถม 1",
+    "category": "Entertainment",
+    "points_required": 180,
+    "expiry_date": "31 ธ.ค. 2026",
+    "image_url": "https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/unsplash_8Eiq70dFgU0.webp",
+    "description": "รับสิทธิ์ซื้อบัตรชมภาพยนตร์ระดับ VIP First Class 1 แถม 1 พร้อมชุดป๊อปคอร์นและเครื่องดื่มในเลานจ์",
+    "conditions": [
+      "ใช้ได้เฉพาะวันจันทร์ - ศุกร์ ยกเว้นวันหยุดนักขัตฤกษ์",
+      "จำกัด 2 สิทธิ์ต่อเดือน"
+    ],
+    "how_to_use": [
+      "กด \"แลก Point\" เพื่อรับรหัสโปรโมชั่น",
+      "สแกน QR Code ที่ตู้จำหน่ายบัตรอัตโนมัติหรือเคาน์เตอร์ VIP"
+    ]
+  }
+]

@@ -5,7 +5,14 @@ import Link from 'next/link';
 import { useParams, notFound } from 'next/navigation';
 import { mockEvents, mockMissions } from '@/lib/mockData';
 import { useLiffAuth } from '@/contexts/LiffContext';
-import { EventItem } from '@/types';
+import { EventItem, Mission, MissionSubmission } from '@/types';
+import {
+  MissionSubmissionRecord,
+  normalizeMissionRecords,
+  readImageProofFile,
+  safeReadLocalStorage,
+  safeWriteLocalStorage,
+} from '@/components/profile/profileUtils';
 import { 
   Calendar, 
   MapPin, 
@@ -23,7 +30,10 @@ import {
   Target,
   Upload,
   Ticket,
-  Hourglass
+  Hourglass,
+  Clock,
+  AlertCircle,
+  ImagePlus
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 
@@ -91,7 +101,129 @@ export default function EventDetailPage() {
 
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
-  const [copiedToast, setCopiedToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Mission submission form state
+  const [missionRecords, setMissionRecords] = useState<Record<string, MissionSubmissionRecord>>({});
+  const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
+  const [missionNote, setMissionNote] = useState('');
+  const [missionPhotoName, setMissionPhotoName] = useState('');
+  const [missionPhotoPreview, setMissionPhotoPreview] = useState('');
+  const [missionError, setMissionError] = useState<string | null>(null);
+  const [isReadingMissionPhoto, setIsReadingMissionPhoto] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const scopedKey = profile?.id ? `yfti_mission_submissions_${profile.id}` : null;
+    const rawScoped = scopedKey ? safeReadLocalStorage<unknown>(scopedKey, null) : null;
+    const rawLegacy =
+      rawScoped === null ? safeReadLocalStorage<unknown>('yfti_mission_submissions', null) : null;
+    setMissionRecords(normalizeMissionRecords(rawScoped ?? rawLegacy));
+  }, [profile?.id]);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage((prev) => (prev === msg ? null : prev));
+    }, 2800);
+  };
+
+  const openMissionModal = (mission: Mission) => {
+    const existing = missionRecords[mission.id];
+    setSelectedMission(mission);
+    setMissionNote(existing?.note || '');
+    setMissionPhotoName(existing?.fileName || '');
+    setMissionPhotoPreview(existing?.previewDataUrl || '');
+    setMissionError(null);
+  };
+
+  const closeMissionModal = () => {
+    setSelectedMission(null);
+    setMissionError(null);
+  };
+
+  const handleMissionPhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+
+    setMissionError(null);
+    setIsReadingMissionPhoto(true);
+    try {
+      const { fileName, previewDataUrl } = await readImageProofFile(file);
+      setMissionPhotoName(fileName);
+      setMissionPhotoPreview(previewDataUrl);
+    } catch (err) {
+      setMissionError(
+        err instanceof Error ? err.message : 'ไม่สามารถอ่านไฟล์รูปภาพได้ กรุณาลองใหม่'
+      );
+    } finally {
+      setIsReadingMissionPhoto(false);
+    }
+  };
+
+  const handleMissionSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedMission) return;
+
+    if (!missionPhotoPreview && !missionPhotoName) {
+      setMissionError('กรุณาอัปโหลดรูปภาพหลักฐานการทำภารกิจ');
+      return;
+    }
+
+    const record: MissionSubmissionRecord = {
+      status: 'PENDING',
+      fileName: missionPhotoName || 'mission-proof.jpg',
+      note: missionNote.trim() || undefined,
+      submittedAt: new Date().toISOString(),
+      previewDataUrl: missionPhotoPreview || undefined,
+    };
+
+    const updatedRecords: Record<string, MissionSubmissionRecord> = {
+      ...missionRecords,
+      [selectedMission.id]: record,
+    };
+
+    setMissionRecords(updatedRecords);
+    safeWriteLocalStorage('yfti_mission_submissions', updatedRecords);
+    if (profile?.id) {
+      safeWriteLocalStorage(`yfti_mission_submissions_${profile.id}`, updatedRecords);
+    }
+
+    // Also store in custom mission submissions queue for Admin review
+    const existingQueue = safeReadLocalStorage<MissionSubmission[]>(
+      'yfti_custom_mission_submissions',
+      [],
+      (v): v is MissionSubmission[] => Array.isArray(v)
+    );
+    const newSubmission: MissionSubmission = {
+      id: `sub-${Date.now()}`,
+      profile_id: profile?.id || '3296',
+      user_name: profile?.display_name || applicantName || 'สมาชิก YFTI 11',
+      user_picture: profile?.picture_url,
+      mission_id: selectedMission.id,
+      mission_title: selectedMission.title,
+      event_id: event?.id,
+      event_title: event?.title,
+      event_type: event?.event_type || 'general',
+      photo_storage_path:
+        missionPhotoPreview ||
+        'https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&w=600&q=80',
+      notes: missionNote.trim() || undefined,
+      status: 'PENDING',
+      created_at: new Date().toISOString(),
+    };
+    const nextQueue = [
+      newSubmission,
+      ...existingQueue.filter(
+        (s) => !(s.mission_id === selectedMission.id && s.profile_id === newSubmission.profile_id)
+      ),
+    ];
+    safeWriteLocalStorage('yfti_custom_mission_submissions', nextQueue);
+
+    closeMissionModal();
+    showToast('ส่งหลักฐานภารกิจเรียบร้อยแล้ว รอแอดมินตรวจสอบ');
+  };
 
   if (!event) {
     return (
@@ -125,18 +257,17 @@ export default function EventDetailPage() {
   const handleShare = () => {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(window.location.href);
-      setCopiedToast(true);
-      setTimeout(() => setCopiedToast(false), 2500);
+      showToast('คัดลอกลิงก์กิจกรรมเรียบร้อยแล้ว');
     }
   };
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-24 font-sans">
       {/* Toast */}
-      {copiedToast && (
+      {toastMessage && (
         <div className="fixed top-5 right-5 z-50 bg-[#212542] text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
           <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-          <span>คัดลอกลิงก์กิจกรรมเรียบร้อยแล้ว</span>
+          <span>{toastMessage}</span>
         </div>
       )}
 
@@ -338,20 +469,43 @@ export default function EventDetailPage() {
               </span>
             </div>
 
-            {mockMissions.map((m) => (
-              <div
-                key={m.id}
-                className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3"
-              >
-                <div>
-                  <p className="text-xs sm:text-sm font-extrabold text-[#1E2538]">{m.title}</p>
-                  <p className="text-[11px] text-slate-500">{m.description}</p>
-                </div>
-                <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-black shrink-0">
-                  +{m.reward_points} Pts
-                </span>
-              </div>
-            ))}
+            {mockMissions.map((m) => {
+              const record = missionRecords[m.id];
+              const resolvedStatus = record?.status || m.status || 'NOT_STARTED';
+              return (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => openMissionModal(m)}
+                  className="w-full text-left p-3.5 rounded-2xl bg-slate-50 hover:bg-[#FBF6EC]/70 border border-slate-100 hover:border-[#C59B38]/60 flex items-center justify-between gap-3 transition group cursor-pointer"
+                >
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="text-xs sm:text-sm font-extrabold text-[#1E2538] group-hover:text-[#9A7320] transition-colors">
+                        {m.title}
+                      </p>
+                      {resolvedStatus === 'APPROVED' && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold">
+                          <CheckCircle2 className="w-3 h-3" /> สำเร็จแล้ว
+                        </span>
+                      )}
+                      {resolvedStatus === 'PENDING' && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2] text-[10px] font-bold">
+                          <Clock className="w-3 h-3" /> รอตรวจสอบ
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-slate-500">{m.description}</p>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-black">
+                      +{m.reward_points} Pts
+                    </span>
+                    <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#9A7320] group-hover:translate-x-0.5 transition" />
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -713,6 +867,176 @@ export default function EventDetailPage() {
                 ส่งใบสมัครและรอแอดมินอนุมัติ
               </button>
             </form>
+          </div>
+        </div>
+      )}
+      {/* Mission Submission Modal */}
+      {selectedMission && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="mission-modal-title"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-0 sm:p-4 animate-in fade-in duration-200"
+          onClick={closeMissionModal}
+        >
+          <div
+            className="w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl p-6 space-y-5 max-h-[90vh] overflow-y-auto relative shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={closeMissionModal}
+              aria-label="ปิดหน้าต่าง"
+              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-slate-100 text-slate-500 transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Mission Summary Header: Title, Description, Reward Points */}
+            <div className="space-y-2.5 pr-8">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-xs font-black">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  +{selectedMission.reward_points} Pts
+                </span>
+                {selectedMission.reward_xp > 0 && (
+                  <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px] font-bold">
+                    +{selectedMission.reward_xp} XP
+                  </span>
+                )}
+              </div>
+              <h3
+                id="mission-modal-title"
+                className="text-lg font-extrabold text-[#1E2538] leading-snug"
+              >
+                {selectedMission.title}
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                {selectedMission.description}
+              </p>
+            </div>
+
+            {(() => {
+              const currentStatus =
+                missionRecords[selectedMission.id]?.status || selectedMission.status || 'NOT_STARTED';
+              const isApproved = currentStatus === 'APPROVED';
+
+              return (
+                <form onSubmit={handleMissionSubmit} className="space-y-4">
+                  {currentStatus === 'PENDING' && (
+                    <div className="p-3 rounded-xl bg-[#FBF6EC] border border-[#EFE2C2] text-[#9A7320] text-xs font-semibold flex items-center gap-2">
+                      <Clock className="w-4 h-4 shrink-0" />
+                      <span>ส่งหลักฐานแล้ว กำลังรอแอดมินตรวจสอบ (สามารถอัปเดตหลักฐานใหม่ได้)</span>
+                    </div>
+                  )}
+
+                  {isApproved && (
+                    <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 shrink-0" />
+                      <span>ภารกิจนี้ได้รับการอนุมัติและรับคะแนนเรียบร้อยแล้ว</span>
+                    </div>
+                  )}
+
+                  {missionError && (
+                    <div
+                      role="alert"
+                      className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2"
+                    >
+                      <AlertCircle className="w-4 h-4 shrink-0" />
+                      <span>{missionError}</span>
+                    </div>
+                  )}
+
+                  {/* Image Upload Box */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-bold text-[#1E2538]">
+                      อัปโหลดรูปภาพหลักฐาน <span className="text-rose-500">*</span>
+                    </label>
+                    <label
+                      className={`flex flex-col items-center justify-center gap-2 p-5 rounded-2xl border-2 border-dashed transition text-xs font-semibold ${
+                        isApproved
+                          ? 'border-slate-200 bg-slate-50 text-slate-400 cursor-not-allowed'
+                          : 'border-slate-300 hover:border-[#C59B38] bg-slate-50 hover:bg-[#FBF6EC]/40 text-slate-600 cursor-pointer'
+                      }`}
+                    >
+                      {missionPhotoPreview ? (
+                        <div className="w-full space-y-2 flex flex-col items-center">
+                          <img
+                            src={missionPhotoPreview}
+                            alt="ตัวอย่างรูปหลักฐานภารกิจ"
+                            className="max-h-48 w-auto rounded-xl object-contain border border-slate-200 bg-white shadow-sm"
+                          />
+                          {!isApproved && (
+                            <span className="text-[11px] font-bold text-[#9A7320] underline">
+                              เปลี่ยนรูปภาพ ({missionPhotoName})
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <>
+                          <div className="w-11 h-11 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-[#B38728] shadow-sm">
+                            <ImagePlus className="w-5 h-5" />
+                          </div>
+                          <div className="text-center space-y-0.5">
+                            <p className="font-bold text-[#1E2538]">
+                              {isReadingMissionPhoto ? 'กำลังประมวลผลรูปภาพ...' : 'คลิกเพื่ออัปโหลดรูปภาพ'}
+                            </p>
+                            <p className="text-[11px] text-slate-400">
+                              รองรับ JPG, PNG, WEBP ขนาดไม่เกิน 5 MB
+                            </p>
+                          </div>
+                        </>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        disabled={isApproved || isReadingMissionPhoto}
+                        className="hidden"
+                        onChange={handleMissionPhotoChange}
+                      />
+                    </label>
+                  </div>
+
+                  {/* Note Textarea */}
+                  <div className="space-y-1.5">
+                    <label
+                      htmlFor="mission-note-textarea"
+                      className="block text-xs font-bold text-[#1E2538]"
+                    >
+                      Note (รายละเอียดเพิ่มเติม)
+                    </label>
+                    <textarea
+                      id="mission-note-textarea"
+                      rows={3}
+                      disabled={isApproved}
+                      value={missionNote}
+                      onChange={(e) => setMissionNote(e.target.value)}
+                      placeholder="ระบุรายละเอียดการทำภารกิจ เช่น ชื่อเพื่อนที่ถ่ายรูปด้วย หรือสรุปประเด็นที่พูดคุย..."
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-[#1E2538] placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-[#C59B38] focus:border-[#C59B38] resize-none disabled:opacity-60"
+                    />
+                  </div>
+
+                  {/* Submit Button */}
+                  {!isApproved ? (
+                    <button
+                      type="submit"
+                      disabled={isReadingMissionPhoto}
+                      className="w-full py-3 rounded-xl bg-[#1E2538] hover:bg-[#2B3550] disabled:opacity-50 text-white text-xs sm:text-sm font-bold transition shadow-sm"
+                    >
+                      ยืนยันการทำภารกิจ
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={closeMissionModal}
+                      className="w-full py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#1E2538] text-xs sm:text-sm font-bold transition"
+                    >
+                      ปิดหน้าต่าง
+                    </button>
+                  )}
+                </form>
+              );
+            })()}
           </div>
         </div>
       )}
