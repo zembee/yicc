@@ -3,6 +3,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { PrivilegeItem } from '@/types';
+import { useLiffAuth } from '@/contexts/LiffContext';
+import { PrivilegeScannerModal } from './PrivilegeScannerModal';
+import type { PrivilegeRedemptionRecord } from '@/app/api/privileges/redemptions/route';
 import {
   Gift,
   Plus,
@@ -13,6 +16,9 @@ import {
   X,
   Coins,
   RefreshCw,
+  QrCode,
+  CheckCircle2,
+  Ticket,
 } from 'lucide-react';
 
 const CATEGORIES: PrivilegeItem['category'][] = [
@@ -41,11 +47,27 @@ const EMPTY_FORM = {
 export const PrivilegeManager: React.FC<{ onCountChange?: (count: number) => void }> = ({
   onCountChange,
 }) => {
+  const { profile } = useLiffAuth();
   const [privileges, setPrivileges] = useState<PrivilegeItem[]>([]);
+  const [redemptions, setRedemptions] = useState<PrivilegeRedemptionRecord[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [scannerInitialCode, setScannerInitialCode] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
+
+  const loadRedemptions = useCallback(async () => {
+    try {
+      const res = await fetch('/api/privileges/redemptions');
+      if (res.ok) {
+        const data = (await res.json()) as { redemptions?: PrivilegeRedemptionRecord[] };
+        if (Array.isArray(data.redemptions)) {
+          setRedemptions(data.redemptions);
+        }
+      }
+    } catch {}
+  }, []);
 
   const loadPrivileges = useCallback(async () => {
     setIsLoading(true);
@@ -65,7 +87,8 @@ export const PrivilegeManager: React.FC<{ onCountChange?: (count: number) => voi
 
   useEffect(() => {
     loadPrivileges();
-  }, [loadPrivileges]);
+    loadRedemptions();
+  }, [loadPrivileges, loadRedemptions]);
 
   const openCreate = () => {
     setForm(EMPTY_FORM);
@@ -158,7 +181,110 @@ export const PrivilegeManager: React.FC<{ onCountChange?: (count: number) => voi
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3">
+    <div className="space-y-4">
+      {/* Privilege QR Scanner Banner */}
+      <div className="bg-[#1E2538] rounded-2xl p-4 shadow-sm border border-[#2A334E] text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 className="text-sm font-bold text-white flex items-center gap-1.5">
+            <QrCode className="w-4 h-4 text-[#E5C158]" />
+            <span>สแกนตรวจ &amp; ตัดสิทธิ์ Privilege</span>
+          </h2>
+          <p className="text-xs text-slate-300 mt-0.5">
+            สแกน QR Code จากหน้า Active Privilege ของสมาชิก หรือกรอกรหัส YEC-... เพื่อยืนยันการใช้สิทธิ์
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            setScannerInitialCode('');
+            setIsScannerOpen(true);
+          }}
+          className="px-4 py-2.5 rounded-xl bg-[#C59B38] hover:bg-[#b58b2e] text-white font-bold text-xs flex items-center justify-center gap-1.5 shrink-0 transition shadow-sm"
+        >
+          <QrCode className="w-4 h-4" />
+          <span>สแกน QR / ตรวจรหัส</span>
+        </button>
+      </div>
+
+      {/* Recent Privilege Redemptions Log */}
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3">
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="text-sm font-extrabold text-[#1E2538] flex items-center gap-2">
+            <Ticket className="w-4 h-4 text-[#B38728]" />
+            <span>รายการแลกสิทธิ์ของสมาชิก</span>
+            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+              {redemptions.length} รายการ
+            </span>
+          </h3>
+          <button
+            type="button"
+            onClick={loadRedemptions}
+            className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:text-[#1E2538] hover:bg-slate-50 transition"
+            title="รีเฟรชรายการแลกสิทธิ์"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        {redemptions.length === 0 ? (
+          <p className="text-xs text-slate-400 text-center py-4">
+            ยังไม่มีรายการแลกสิทธิพิเศษในระบบ — เมื่อสมาชิกกดแลกสิทธิ์ รหัสจะแสดงที่นี่เพื่อให้ตรวจสอบและตัดสิทธิ์ได้ทันที
+          </p>
+        ) : (
+          <div className="space-y-2 max-h-72 overflow-y-auto pr-0.5">
+            {redemptions.slice(0, 20).map((rec) => (
+              <div
+                key={rec.id}
+                className="p-3 rounded-xl border border-slate-200 bg-slate-50/70 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5"
+              >
+                <div className="min-w-0 space-y-0.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="font-mono text-xs font-black text-[#1E2538]">{rec.code}</span>
+                    <span
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        rec.status === 'USED'
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : 'bg-amber-100 text-amber-800'
+                      }`}
+                    >
+                      {rec.status === 'USED' ? 'ใช้สิทธิ์แล้ว' : 'พร้อมใช้ (ACTIVE)'}
+                    </span>
+                  </div>
+                  <p className="text-xs font-bold text-[#1E2538] truncate">
+                    {rec.discountLabel ? `${rec.discountLabel} • ${rec.title}` : rec.title}
+                  </p>
+                  <p className="text-[11px] text-slate-500">
+                    {rec.memberName || 'สมาชิก'} • {rec.merchant} • แลกเมื่อ {rec.redeemedAt}
+                    {rec.usedAt ? ` • ตัดสิทธิ์เมื่อ ${rec.usedAt}` : ''}
+                  </p>
+                </div>
+
+                {rec.status === 'ACTIVE' ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setScannerInitialCode(rec.code);
+                      setIsScannerOpen(true);
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-[#1E2538] hover:bg-[#2A334E] text-white text-xs font-bold flex items-center justify-center gap-1.5 shrink-0 transition"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#E5C158]" />
+                    <span>ตรวจ / ตัดสิทธิ์</span>
+                  </button>
+                ) : (
+                  <span className="text-[11px] font-bold text-emerald-600 flex items-center gap-1 shrink-0">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>ตัดสิทธิ์แล้ว</span>
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Manage Privileges List */}
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h3 className="text-sm font-extrabold text-[#1E2538] flex items-center gap-2">
           <Gift className="w-4 h-4 text-[#B38728]" />
@@ -418,6 +544,25 @@ export const PrivilegeManager: React.FC<{ onCountChange?: (count: number) => voi
           </div>
         </div>
       )}
+      </div>
+
+      <PrivilegeScannerModal
+        isOpen={isScannerOpen}
+        initialCode={scannerInitialCode}
+        adminName={profile?.display_name || 'Admin'}
+        onClose={() => setIsScannerOpen(false)}
+        onVerified={(updated) => {
+          setRedemptions((prev) => {
+            const exists = prev.some((r) => r.code.toUpperCase() === updated.code.toUpperCase());
+            if (exists) {
+              return prev.map((r) =>
+                r.code.toUpperCase() === updated.code.toUpperCase() ? updated : r
+              );
+            }
+            return [updated, ...prev];
+          });
+        }}
+      />
     </div>
   );
 };

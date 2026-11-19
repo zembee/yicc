@@ -130,6 +130,17 @@ export default function PrivilegeDetailPage() {
       } catch {}
     }
 
+    // Sync redemption to server so Admin can scan & verify from any device
+    fetch('/api/privileges/redemptions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...record,
+        memberId: profile.id,
+        memberName: profile.display_name,
+      }),
+    }).catch(() => {});
+
     const modalData: ActivePrivilegeData = {
       title: privilege.title,
       merchant: privilege.merchant,
