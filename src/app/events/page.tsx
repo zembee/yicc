@@ -1,19 +1,27 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, useMemo, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { mockEvents } from '@/lib/mockData';
 import { EventItem } from '@/types';
 import { EventCardWithQrModal } from '@/components/events/EventCardWithQrModal';
 import { EventsPageSkeleton } from '@/components/ui/PageSkeletons';
-import { Ticket, CalendarDays } from 'lucide-react';
+import { Ticket, CalendarDays, Search, X } from 'lucide-react';
 
 type EventFilter = 'ALL' | 'GENERAL' | 'COURSE' | 'COMPLETED';
+
+const FILTER_TABS: { key: EventFilter; label: string }[] = [
+  { key: 'ALL', label: 'ทั้งหมด' },
+  { key: 'GENERAL', label: 'กิจกรรมทั่วไป' },
+  { key: 'COURSE', label: 'คอร์สเรียน' },
+  { key: 'COMPLETED', label: 'เช็กชื่อ / สำเร็จ' },
+];
 
 function EventsContent() {
   const searchParams = useSearchParams();
   const [filter, setFilter] = useState<EventFilter>('ALL');
+  const [searchQuery, setSearchQuery] = useState('');
   const [allEvents, setAllEvents] = useState<EventItem[]>(mockEvents);
 
   useEffect(() => {
@@ -33,98 +41,133 @@ function EventsContent() {
     }
   }, []);
 
-  const filteredEvents = allEvents.filter((ev) => {
-    if (filter === 'GENERAL') return ev.event_type !== 'course';
-    if (filter === 'COURSE') return ev.event_type === 'course';
-    if (filter === 'COMPLETED') return ev.isCheckedIn || ev.status === 'COMPLETED';
-    return true;
-  });
+  const filteredEvents = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return allEvents.filter((ev) => {
+      if (filter === 'GENERAL' && ev.event_type === 'course') return false;
+      if (filter === 'COURSE' && ev.event_type !== 'course') return false;
+      if (filter === 'COMPLETED' && !(ev.isCheckedIn || ev.status === 'COMPLETED')) return false;
+      if (q) {
+        const hay = `${ev.title} ${ev.description || ''} ${ev.location_name || ''}`.toLowerCase();
+        return hay.includes(q);
+      }
+      return true;
+    });
+  }, [allEvents, filter, searchQuery]);
 
   return (
-    <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-5 sm:space-y-6 pb-24">
-      {/* Executive Navy Hero Header with Blended Backdrop, My Tickets & Calendar Buttons */}
-      <div className="relative overflow-hidden bg-[#141A2C] text-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-[0_10px_30px_rgba(20,26,44,0.18)] border-b-[3px] border-[#FB7170] space-y-4">
-        <div className="absolute inset-0 pointer-events-none select-none">
-          <img
-            src="https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp"
-            alt=""
-            aria-hidden="true"
-            className="w-full h-full object-cover object-right opacity-25"
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                'linear-gradient(115deg, rgba(16,22,38,0.96) 28%, rgba(24,31,52,0.88) 58%, rgba(30,37,56,0.65) 100%)',
-            }}
-          />
-        </div>
+    <div className="w-full min-h-screen bg-[#F6F4EF] pb-24">
+      {/* ================= 1. CURVED OBSIDIAN LUXURY HEADER ================= */}
+      <section className="relative luxury-stage text-white pt-4 pb-12 px-4 sm:px-6 overflow-hidden">
+        <div className="relative z-10 max-w-5xl mx-auto space-y-3.5">
+          {/* Header Row */}
+          <div className="flex items-center justify-between gap-2">
+            <div className="min-w-0">
+              <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white truncate">
+                กิจกรรม <span className="font-light text-white/80 text-base sm:text-lg">&amp; คอร์สเรียน</span>
+              </h1>
+              <p className="text-[11px] text-slate-300 mt-0.5 truncate">
+                หลักสูตรและกิจกรรมเครือข่าย Young FTI ELITE 11
+              </p>
+            </div>
 
-        <div className="relative z-10 flex items-center gap-3">
-          <img
-            src="/images/icons/events.webp"
-            alt="Activities & Courses"
-            className="w-11 h-11 rounded-xl ring-1 ring-white/15 shadow-sm shrink-0"
-          />
-          <div className="min-w-0">
-            <h1 className="text-xl sm:text-2xl tracking-tight text-white leading-tight truncate">
-              <span className="font-extrabold">Activities</span>{' '}
-              <span className="font-light text-white/95">&amp; Courses</span>
-            </h1>
-            <p className="text-xs font-medium text-[#FB7170] mt-0.5 truncate">
-              กิจกรรมและคอร์สเรียนหลักสูตร Young FTI ELITE 11
-            </p>
+            <div className="flex items-center gap-2 shrink-0">
+              <Link
+                href="/events/my-tickets"
+                className="px-3 py-1.5 rounded-xl badge-gold-metallic text-xs font-bold inline-flex items-center gap-1.5 transition"
+              >
+                <Ticket className="w-3.5 h-3.5" />
+                <span>บัตรของฉัน</span>
+              </Link>
+              <Link
+                href="/events/calendar"
+                aria-label="ปฏิทินกิจกรรม"
+                className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white text-xs font-bold inline-flex items-center gap-1.5 transition backdrop-blur-sm"
+              >
+                <CalendarDays className="w-3.5 h-3.5 text-[#ECD28E]" />
+                <span className="hidden xs:inline">ปฏิทิน</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Floating Crisp White Search Input */}
+          <div className="relative">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="ค้นหาชื่อกิจกรรม คอร์สเรียน หรือสถานที่..."
+              className="w-full pl-10 pr-9 py-2.5 bg-white text-[#161C2C] rounded-2xl text-xs sm:text-sm font-medium placeholder-slate-400 outline-none focus:ring-2 focus:ring-[#C5A059] shadow-sm"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
+          {/* Horizontal Filter Pills Inside Obsidian Header */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+            {FILTER_TABS.map((tab) => {
+              const isActive = filter === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  type="button"
+                  onClick={() => setFilter(tab.key)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap border transition shrink-0 ${
+                    isActive
+                      ? 'bg-[#C59B38]/25 border-[#E5C158] text-[#E5C158] shadow-sm'
+                      : 'bg-white/8 border-white/12 text-slate-300 hover:bg-white/15 hover:text-white'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
           </div>
         </div>
+      </section>
 
-        <div className="relative z-10 grid grid-cols-2 gap-3 max-w-md">
-          <Link
-            href="/events/my-tickets"
-            className="py-2.5 px-4 rounded-xl badge-gold-metallic text-xs font-bold flex items-center justify-center gap-2 transition"
-          >
-            <Ticket className="w-4 h-4" />
-            <span>บัตรของฉัน</span>
-          </Link>
+      {/* ================= 2. OVERLAPPING WARM IVORY SHEET ================= */}
+      <div className="relative z-20 -mt-6 luxury-sheet rounded-t-[30px] pt-5 px-4 sm:px-6 min-h-[65vh]">
+        <div className="max-w-5xl mx-auto space-y-4">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-sm font-extrabold text-[#161C2C] tabular-nums">
+              {filteredEvents.length} กิจกรรมและคอร์สเรียน
+            </p>
+            {(filter !== 'ALL' || searchQuery.trim() !== '') && (
+              <button
+                type="button"
+                onClick={() => {
+                  setFilter('ALL');
+                  setSearchQuery('');
+                }}
+                className="text-xs font-bold text-[#9A742B] hover:underline"
+              >
+                แสดงทั้งหมด
+              </button>
+            )}
+          </div>
 
-          <Link
-            href="/events/calendar"
-            className="py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white text-xs font-bold flex items-center justify-center gap-2 transition shadow-sm backdrop-blur-sm"
-          >
-            <CalendarDays className="w-4 h-4" />
-            <span>ปฏิทิน</span>
-          </Link>
+          {filteredEvents.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+              {filteredEvents.map((ev) => (
+                <EventCardWithQrModal key={ev.id} event={ev} />
+              ))}
+            </div>
+          ) : (
+            <div className="py-14 text-center bg-white rounded-[24px] shadow-[0_6px_20px_rgba(13,19,33,0.05)] text-xs text-slate-500 space-y-2">
+              <CalendarDays className="w-8 h-8 text-slate-300 mx-auto" />
+              <p>ไม่พบกิจกรรมหรือคอร์สเรียนที่ตรงกับเงื่อนไข</p>
+            </div>
+          )}
         </div>
-      </div>
-
-      {/* Category Filter Tabs */}
-      <div className="flex items-center justify-start gap-2 overflow-x-auto py-1 no-scrollbar">
-        {(
-          [
-            { key: 'ALL', label: 'ทั้งหมด' },
-            { key: 'GENERAL', label: 'กิจกรรมทั่วไป' },
-            { key: 'COURSE', label: 'คอร์สเรียน' },
-            { key: 'COMPLETED', label: 'เช็กชื่อ / สำเร็จ' },
-          ] as const
-        ).map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => setFilter(tab.key)}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition shadow-sm ${
-              filter === tab.key
-                ? 'bg-[#1E2538] text-white'
-                : 'bg-white text-slate-600 border border-slate-200/80 hover:text-[#1E2538] hover:bg-slate-50'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Events List Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {filteredEvents.map((ev) => (
-          <EventCardWithQrModal key={ev.id} event={ev} />
-        ))}
       </div>
     </div>
   );

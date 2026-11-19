@@ -615,64 +615,64 @@ function DirectoryContent() {
             <span className="text-[11px] font-medium text-slate-400 shrink-0">เลื่อนดูรายชื่อ →</span>
           </div>
 
-          <div className="flex gap-3.5 overflow-x-auto pb-2 snap-x no-scrollbar">
+          <div className="flex gap-3 overflow-x-auto pb-2 snap-x no-scrollbar -mr-4 pr-4 sm:mr-0 sm:pr-0">
             {committeeMembers.map((cm) => {
               const isF = followingIds.includes(String(cm.id));
               return (
                 <Link
                   key={cm.id}
                   href={`/yfti_participants/${cm.id}`}
-                  className="min-w-[186px] max-w-[186px] snap-start bg-white rounded-3xl overflow-hidden shadow-[0_6px_22px_rgba(13,19,33,0.06)] hover:shadow-[0_12px_28px_rgba(13,19,33,0.11)] hover:-translate-y-0.5 transition-all duration-300 flex flex-col shrink-0 group"
+                  className="relative w-[166px] sm:w-[180px] h-[224px] snap-start rounded-[22px] overflow-hidden bg-[#0B101D] shadow-[0_8px_22px_rgba(13,19,33,0.12)] hover:-translate-y-0.5 transition-all duration-300 shrink-0 group block"
                 >
-                  {/* Top Subtle Executive Hairline */}
-                  <div className="h-1.5 w-full bg-gradient-to-r from-[#1E2538] via-[#C59B38] to-[#FB7170]" />
+                  <img
+                    src={cm.profile_picture_url || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp'}
+                    alt={cm.name_thai}
+                    loading="lazy"
+                    className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp';
+                    }}
+                  />
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        'linear-gradient(180deg, rgba(9,13,24,0.28) 0%, rgba(9,13,24,0.12) 38%, rgba(9,13,24,0.94) 100%)',
+                    }}
+                  />
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 z-20 rounded-[22px] pointer-events-none"
+                    style={{ boxShadow: 'inset 0 0 0 1px rgba(223,194,125,0.26)' }}
+                  />
 
-                  <div className="p-4 flex-1 flex flex-col items-center text-center gap-2.5">
-                    <img
-                      src={cm.profile_picture_url || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp'}
-                      alt={cm.name_thai}
-                      className="w-16 h-16 rounded-full object-cover object-top bg-slate-100 border-2 border-white ring-2 ring-[#C59B38]/35 shadow-sm"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp';
-                      }}
-                    />
-                    <div className="min-w-0 w-full space-y-1.5">
-                      <p className="text-xs font-bold text-[#1E2538] group-hover:text-[#B38728] transition-colors truncate">
-                        {cm.name_thai}
-                      </p>
-                      <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2] text-[10px] font-bold">
+                  <div className="relative z-10 h-full p-3 flex flex-col justify-between text-white">
+                    <div className="flex items-center justify-between gap-1.5">
+                      <span className="px-2 py-0.5 rounded-full bg-[#090D18]/80 backdrop-blur-md text-[#ECD28E] text-[9px] font-bold truncate">
                         {cm.cohortRole}
                       </span>
+                      <button
+                        type="button"
+                        onClick={(e) => toggleFollow(e, String(cm.id))}
+                        aria-label={isF ? 'เลิกติดตาม' : 'บันทึกสมาชิก'}
+                        className={`p-1 rounded-full backdrop-blur-md transition shrink-0 ${
+                          isF ? 'bg-[#C5A059] text-white' : 'bg-[#090D18]/60 text-white/80 hover:bg-[#090D18]/90'
+                        }`}
+                      >
+                        {isF ? <BookmarkCheck className="w-3 h-3" /> : <Bookmark className="w-3 h-3" />}
+                      </button>
+                    </div>
+
+                    <div className="space-y-0.5">
+                      <p className="text-xs font-extrabold text-white truncate">
+                        {cm.name_thai}
+                      </p>
                       {cm.company_name_thai && (
-                        <p className="text-[11px] font-medium text-slate-700 flex items-center justify-center gap-1.5 truncate pt-0.5">
-                          <Building2 className="w-3.5 h-3.5 text-[#B38728] shrink-0" />
+                        <p className="text-[10px] font-medium text-[#ECD28E] flex items-center gap-1 truncate">
+                          <Building2 className="w-2.5 h-2.5 shrink-0" />
                           <span className="truncate">{cm.company_name_thai}</span>
                         </p>
                       )}
-                    </div>
-
-                    <div className="w-full pt-2.5 mt-auto border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-[#1E2538]">
-                      <span className="group-hover:text-[#B38728] transition-colors">ดูโปรไฟล์</span>
-                      <button
-                        onClick={(e) => toggleFollow(e, String(cm.id))}
-                        className={`px-2.5 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 transition ${
-                          isF
-                            ? 'bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2]'
-                            : 'bg-slate-100 text-[#1E2538] hover:bg-[#1E2538] hover:text-white'
-                        }`}
-                      >
-                        {isF ? (
-                          <>
-                            <UserCheck className="w-3 h-3" />
-                            Following
-                          </>
-                        ) : (
-                          <>
-                            <UserPlus className="w-3 h-3" />
-                            Follow
-                          </>
-                        )}
-                      </button>
                     </div>
                   </div>
                 </Link>
@@ -741,7 +741,7 @@ function DirectoryContent() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
             {paginatedParticipants.map((member) => {
               const isFollowed = followingIds.includes(String(member.id));
               const phoneDigits = member.tel_number?.replace(/[^\d+]/g, '');
@@ -749,126 +749,163 @@ function DirectoryContent() {
               return (
                 <div
                   key={member.id}
-                  className="bg-white rounded-2xl p-3.5 sm:p-4 shadow-[0_6px_22px_rgba(13,19,33,0.05)] hover:shadow-[0_12px_28px_rgba(13,19,33,0.1)] hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between gap-3 group"
+                  className="relative min-h-[188px] sm:min-h-[196px] rounded-[22px] overflow-hidden text-white shadow-[0_10px_28px_rgba(9,13,24,0.16)] hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between group"
+                  style={{
+                    background:
+                      'linear-gradient(135deg, #090D18 0%, #101728 55%, #0B111E 100%)',
+                  }}
                 >
-                  {/* Top Row: Portrait + Info + Bookmark */}
-                  <div className="flex items-start gap-3.5">
-                    <Link
-                      href={`/yfti_participants/${member.id}`}
-                      className="w-16 h-16 sm:w-[70px] sm:h-[70px] rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/80 shrink-0 block"
-                    >
-                      <img
-                        src={member.profile_picture_url || 'https://yfticonnect.com/wp-content/uploads/2025/07/YFTI-11-Logo.webp'}
-                        alt={member.name_thai}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + member.name_thai;
-                        }}
-                      />
-                    </Link>
+                  {/* Full-Height Member Portrait on Right with True Alpha Mask Fade (Matches Home MemberCard) */}
+                  <Link
+                    href={`/yfti_participants/${member.id}`}
+                    aria-label={member.name_thai}
+                    className="absolute inset-y-0 right-0 w-[48%] sm:w-[44%] overflow-hidden block"
+                    style={{
+                      WebkitMaskImage:
+                        'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.22) 22%, rgba(0,0,0,0.86) 56%, black 80%)',
+                      maskImage:
+                        'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.22) 22%, rgba(0,0,0,0.86) 56%, black 80%)',
+                    }}
+                  >
+                    <img
+                      src={member.profile_picture_url || 'https://yfticonnect.com/wp-content/uploads/2025/07/YFTI-11-Logo.webp'}
+                      alt={member.name_thai}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + member.name_thai;
+                      }}
+                    />
+                    <div
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        background:
+                          'linear-gradient(180deg, rgba(9,13,24,0.22) 0%, transparent 32%, rgba(9,13,24,0.84) 100%)',
+                      }}
+                    />
+                  </Link>
 
-                    <div className="min-w-0 flex-1 space-y-1.5">
-                      <div className="flex items-start justify-between gap-2">
-                        <Link
-                          href={`/yfti_participants/${member.id}`}
-                          className="min-w-0 flex-1"
-                        >
-                          <h3 className="font-bold text-sm sm:text-[15px] text-[#1E2538] group-hover:text-[#B38728] transition-colors leading-snug truncate">
-                            {member.name_thai}
-                            {member.nickname_eng && (
-                              <span className="text-xs font-semibold text-slate-400 ml-1">
-                                ({member.nickname_eng})
-                              </span>
-                            )}
-                          </h3>
-                        </Link>
+                  {/* Subtle Champagne Gold Ambient Aura on Left */}
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      background:
+                        'radial-gradient(65% 85% at 0% 100%, rgba(223,194,125,0.10) 0%, transparent 65%)',
+                    }}
+                  />
 
-                        <button
-                          type="button"
-                          onClick={(e) => toggleFollow(e, String(member.id))}
-                          aria-label={isFollowed ? 'เลิกติดตาม' : 'บันทึกสมาชิก'}
-                          className={`p-1.5 rounded-lg transition shrink-0 ${
-                            isFollowed
-                              ? 'text-[#C59B38] bg-[#FBF6EC]'
-                              : 'text-slate-300 hover:text-[#1E2538] hover:bg-slate-100'
-                          }`}
-                        >
-                          {isFollowed ? (
-                            <BookmarkCheck className="w-4 h-4 fill-[#C59B38]/20" />
-                          ) : (
-                            <Bookmark className="w-4 h-4" />
-                          )}
-                        </button>
-                      </div>
+                  {/* Continuous Satin Gold Hairline Frame */}
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 z-20 rounded-[22px] pointer-events-none"
+                    style={{
+                      boxShadow: 'inset 0 0 0 1px rgba(223,194,125,0.26)',
+                    }}
+                  />
 
-                      {/* Signature Dark Navy Company Pill (Matches Style 3 Screen 3) */}
-                      {member.company_name_thai && (
-                        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-[#1E2538] text-white text-[11px] font-semibold max-w-full">
-                          <Building2 className="w-3 h-3 text-[#E5C158] shrink-0" />
-                          <span className="truncate">{member.company_name_thai}</span>
-                        </div>
-                      )}
-
-                      {/* House Dot & Industry */}
-                      <div className="flex items-center gap-2 text-[11px] text-slate-500 flex-wrap">
+                  {/* Card Content */}
+                  <div className="relative z-10 p-4 sm:p-5 flex-1 flex flex-col justify-between gap-3">
+                    {/* Top Row: House Tag + Bookmark */}
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5 min-w-0">
                         {member.star_group_label && (
-                          <span className="inline-flex items-center gap-1 font-semibold text-slate-600">
-                            <span className="w-2 h-2 rounded-full bg-[#C59B38]" />
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 backdrop-blur-md text-[#ECD28E] text-[10px] font-bold">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#ECD28E]" />
                             {member.star_group_label}
                           </span>
                         )}
-                        {member.industrial_groups_label && (
-                          <span className="truncate text-slate-400">
-                            • {member.industrial_groups_label}
-                          </span>
-                        )}
                       </div>
+
+                      <button
+                        type="button"
+                        onClick={(e) => toggleFollow(e, String(member.id))}
+                        aria-label={isFollowed ? 'เลิกติดตาม' : 'บันทึกสมาชิก'}
+                        className={`p-1.5 rounded-full backdrop-blur-md transition shrink-0 ${
+                          isFollowed
+                            ? 'bg-[#C5A059] text-white'
+                            : 'bg-[#090D18]/70 text-white/80 hover:bg-[#090D18]/90 hover:text-[#ECD28E]'
+                        }`}
+                      >
+                        {isFollowed ? (
+                          <BookmarkCheck className="w-3.5 h-3.5" />
+                        ) : (
+                          <Bookmark className="w-3.5 h-3.5" />
+                        )}
+                      </button>
                     </div>
-                  </div>
 
-                  {/* Bottom Row: 3 Quick Action Pills (Call / LINE / Profile) */}
-                  <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100">
-                    {phoneDigits ? (
-                      <a
-                        href={`tel:${phoneDigits}`}
-                        className="py-1.5 px-2 rounded-full bg-[#F1F5F9] hover:bg-[#1E2538] hover:text-white text-[#1E2538] text-[11px] font-bold flex items-center justify-center gap-1.5 transition"
-                      >
-                        <Phone className="w-3.5 h-3.5" />
-                        <span>โทร</span>
-                      </a>
-                    ) : (
-                      <span className="py-1.5 px-2 rounded-full bg-slate-50 text-slate-300 text-[11px] font-semibold flex items-center justify-center gap-1.5 cursor-not-allowed">
-                        <Phone className="w-3.5 h-3.5" />
-                        <span>โทร</span>
-                      </span>
-                    )}
-
-                    {lineHandle ? (
-                      <a
-                        href={`https://line.me/ti/p/~${encodeURIComponent(lineHandle)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="py-1.5 px-2 rounded-full bg-[#F1F5F9] hover:bg-[#06C755] hover:text-white text-[#1E2538] text-[11px] font-bold flex items-center justify-center gap-1.5 transition"
-                      >
-                        <MessageCircle className="w-3.5 h-3.5" />
-                        <span>LINE</span>
-                      </a>
-                    ) : (
-                      <span className="py-1.5 px-2 rounded-full bg-slate-50 text-slate-300 text-[11px] font-semibold flex items-center justify-center gap-1.5 cursor-not-allowed">
-                        <MessageCircle className="w-3.5 h-3.5" />
-                        <span>LINE</span>
-                      </span>
-                    )}
-
+                    {/* Middle: Left-Aligned Name, Company & Industry */}
                     <Link
                       href={`/yfti_participants/${member.id}`}
-                      className="py-1.5 px-2 rounded-full bg-[#F1F5F9] hover:bg-[#C59B38] hover:text-white text-[#1E2538] text-[11px] font-bold flex items-center justify-center gap-1.5 transition"
+                      className="block max-w-[66%] sm:max-w-[64%] space-y-1 my-auto"
                     >
-                      <User className="w-3.5 h-3.5" />
-                      <span>โปรไฟล์</span>
+                      <h3 className="font-extrabold text-sm sm:text-base text-white group-hover:text-[#ECD28E] transition-colors leading-snug truncate drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
+                        {member.name_thai}
+                        {member.nickname_eng && (
+                          <span className="text-xs font-medium text-slate-300 ml-1">
+                            ({member.nickname_eng})
+                          </span>
+                        )}
+                      </h3>
+
+                      {member.company_name_thai && (
+                        <p className="text-[11px] sm:text-xs font-semibold text-[#ECD28E] flex items-center gap-1.5 truncate">
+                          <Building2 className="w-3 h-3 shrink-0" />
+                          <span className="truncate">{member.company_name_thai}</span>
+                        </p>
+                      )}
+
+                      {member.industrial_groups_label && (
+                        <p className="text-[10px] sm:text-[11px] text-slate-300 truncate">
+                          {member.industrial_groups_label}
+                        </p>
+                      )}
                     </Link>
+
+                    {/* Bottom Row: 3 Sleek Quick Action Pills (Call / LINE / Profile) */}
+                    <div className="grid grid-cols-3 gap-2 pt-2.5 border-t border-white/[0.08]">
+                      {phoneDigits ? (
+                        <a
+                          href={`tel:${phoneDigits}`}
+                          className="py-1.5 px-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white text-[11px] font-bold flex items-center justify-center gap-1.5 transition"
+                        >
+                          <Phone className="w-3 h-3 text-[#ECD28E]" />
+                          <span>โทร</span>
+                        </a>
+                      ) : (
+                        <span className="py-1.5 px-2 rounded-full bg-white/[0.04] text-white/30 text-[11px] font-semibold flex items-center justify-center gap-1.5 cursor-not-allowed">
+                          <Phone className="w-3 h-3" />
+                          <span>โทร</span>
+                        </span>
+                      )}
+
+                      {lineHandle ? (
+                        <a
+                          href={`https://line.me/ti/p/~${encodeURIComponent(lineHandle)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="py-1.5 px-2 rounded-full bg-white/10 hover:bg-[#06C755] text-white text-[11px] font-bold flex items-center justify-center gap-1.5 transition"
+                        >
+                          <MessageCircle className="w-3 h-3 text-[#ECD28E]" />
+                          <span>LINE</span>
+                        </a>
+                      ) : (
+                        <span className="py-1.5 px-2 rounded-full bg-white/[0.04] text-white/30 text-[11px] font-semibold flex items-center justify-center gap-1.5 cursor-not-allowed">
+                          <MessageCircle className="w-3 h-3" />
+                          <span>LINE</span>
+                        </span>
+                      )}
+
+                      <Link
+                        href={`/yfti_participants/${member.id}`}
+                        className="py-1.5 px-2 rounded-full luxury-gold-btn text-[11px] font-bold flex items-center justify-center gap-1.5 transition"
+                      >
+                        <User className="w-3 h-3" />
+                        <span>โปรไฟล์</span>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               );
