@@ -164,59 +164,38 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
       ];
 
   return (
-    <div className="min-h-screen bg-[#F4F6FA] pb-24 font-sans space-y-8 animate-in fade-in duration-300">
+    <div className="min-h-screen bg-[#F6F4EF] text-[#161C2C] pb-24 animate-in fade-in duration-300">
       {/* Toast Notification */}
       {copied && (
-        <div className="fixed top-5 right-5 z-50 bg-[#212542] text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+        <div className="fixed top-5 right-5 z-50 bg-[#0D1321] text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
+          <CheckCircle2 className="w-4 h-4 text-[#ECD28E]" />
           <span>คัดลอกลิงก์โปรไฟล์เรียบร้อยแล้ว</span>
         </div>
       )}
 
-      {/* 1. Header Banner (.elementor-element-1b044043) */}
-      <div className="relative overflow-hidden bg-gradient-to-b from-[#161B2E] via-[#1E2538] to-[#252D46] text-white pt-6 pb-12 px-4 sm:px-6 lg:px-8 border-b-[3px] border-[#FB7170] shadow-[0_8px_28px_rgba(22,27,46,0.2)]">
-        {/* Subtle Ambient Glow */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute top-16 left-1/2 -translate-x-1/2 w-72 h-72 rounded-full opacity-20 blur-3xl"
-          style={{
-            background: 'radial-gradient(circle, rgba(229,193,88,0.45) 0%, rgba(251,113,112,0.2) 55%, transparent 75%)',
-          }}
-        />
-
-        <div className="relative z-10 max-w-6xl mx-auto space-y-5">
-          {/* Breadcrumb & Navigation */}
-          <div className="flex items-center justify-between">
+      {/* 1. Refined Obsidian Executive Header (Same Luxury DNA, Distinct Profile Layout) */}
+      <section className="relative overflow-hidden luxury-stage text-white pt-5 pb-14 px-4 sm:px-6 lg:px-8">
+        <div className="relative z-10 max-w-4xl mx-auto space-y-6">
+          {/* Top Bar: Back & Share */}
+          <div className="flex items-center justify-between gap-2">
             <Link
               href="/directory"
-              className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition bg-white/10 hover:bg-white/15 px-3.5 py-1.5 rounded-xl backdrop-blur-sm border border-white/10"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-white/10 hover:bg-white/15 px-3.5 py-2 rounded-full backdrop-blur-md transition"
             >
-              <ArrowLeft className="w-4 h-4" /> กลับสู่หน้าทำเนียบธุรกิจ
+              <ArrowLeft className="w-4 h-4 text-[#ECD28E]" /> ทำเนียบธุรกิจ
             </Link>
             <button
               onClick={handleShare}
-              className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-slate-300 hover:text-white bg-white/10 hover:bg-white/15 px-3.5 py-1.5 rounded-xl transition backdrop-blur-sm border border-white/10"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-white/10 hover:bg-white/15 px-3.5 py-2 rounded-full backdrop-blur-md transition"
             >
-              <Share2 className="w-3.5 h-3.5" /> แชร์โปรไฟล์
+              <Share2 className="w-3.5 h-3.5 text-[#ECD28E]" /> แชร์โปรไฟล์
             </button>
           </div>
 
-          {/* Centered Name, Nickname, Portrait & Actions (.elementor-element-264882a) */}
+          {/* Centered Executive Portrait & Identity */}
           <div className="flex flex-col items-center text-center space-y-3.5 pt-1">
-            <div className="space-y-0.5">
-              <h1 className="text-2xl sm:text-4xl font-semibold text-white font-kanit tracking-tight leading-tight">
-                {participant.name_thai}
-              </h1>
-              {participant.nickname_eng && (
-                <h2 className="text-base sm:text-2xl font-normal text-slate-300 font-kanit">
-                  ({participant.nickname_eng})
-                </h2>
-              )}
-            </div>
-
-            {/* Rounded-Square Portrait Photo with Overlapping Star Badge */}
-            <div className="flex flex-col items-center">
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden bg-slate-100 shadow-[0_10px_28px_rgba(0,0,0,0.35)] border-2 border-white/80 ring-4 ring-[#C59B38]/25">
+            <div className="relative">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden bg-[#0D1321] ring-2 ring-[#ECD28E]/50 shadow-[0_12px_30px_rgba(0,0,0,0.4)]">
                 <img
                   src={participant.profile_picture_url || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp'}
                   alt={participant.name_thai}
@@ -227,20 +206,44 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
                 />
               </div>
               {participant.star_group_label && (
-                <span className="-mt-3 relative z-10 inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-[#181E30] border border-[#E5C158]/50 text-[11px] font-bold text-[#E5C158] shadow-md">
-                  ⭐ {participant.star_group_label}
+                <span className="-mt-3 relative z-10 inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-[#0D1321] text-[10px] font-bold text-[#ECD28E] shadow-md">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#ECD28E]" />
+                  {participant.star_group_label}
                 </span>
               )}
             </div>
 
-            {/* Clean Minimal Following / Follower & Symmetric Action Buttons */}
+            <div className="space-y-1 max-w-lg">
+              <h1 className="text-xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug">
+                {participant.name_thai}
+                {participant.nickname_eng && (
+                  <span className="text-base sm:text-xl font-medium text-slate-300 ml-1.5">
+                    ({participant.nickname_eng})
+                  </span>
+                )}
+              </h1>
+
+              {companiesList[0]?.company_name_thai && (
+                <p className="text-xs sm:text-sm font-semibold text-[#ECD28E] flex items-center justify-center gap-1.5">
+                  <Building2 className="w-3.5 h-3.5 shrink-0" />
+                  <span>{companiesList[0].company_name_thai}</span>
+                </p>
+              )}
+              {companiesList[0]?.industrial_groups_label && (
+                <p className="text-[11px] sm:text-xs text-slate-300">
+                  {companiesList[0].industrial_groups_label}
+                </p>
+              )}
+            </div>
+
+            {/* Following / Follower & Action Buttons */}
             {(() => {
               const numId = Number(String(participant.id).replace(/\D/g, '')) || 100;
               const memberFollowingCount = 14 + (numId % 19);
               const memberFollowerCount = 21 + ((numId * 7) % 33) + (isFollowing ? 1 : 0);
               return (
-                <div className="flex flex-col items-center gap-3 w-full">
-                  <div className="inline-flex items-center justify-center gap-4 text-xs text-slate-300 tabular-nums">
+                <div className="flex flex-col items-center gap-3 w-full pt-1">
+                  <div className="inline-flex items-center gap-4 text-xs text-slate-300 tabular-nums">
                     <span>
                       <strong className="text-white font-bold text-sm mr-1">{memberFollowingCount}</strong>
                       Following
@@ -252,24 +255,24 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2.5 w-full max-w-[264px]">
+                  <div className="flex items-center gap-2.5 w-full max-w-[260px]">
                     <button
                       onClick={handleToggleFollow}
-                      className={`inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-xl text-xs font-bold transition shadow-sm ${
+                      className={`flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-full text-xs font-bold transition ${
                         isFollowing
-                          ? 'bg-emerald-500 text-white hover:bg-emerald-600'
-                          : 'bg-white text-[#1E2538] hover:bg-slate-100'
+                          ? 'bg-emerald-500/90 text-white hover:bg-emerald-600'
+                          : 'bg-white/12 hover:bg-white/20 backdrop-blur-sm text-white'
                       }`}
                     >
-                      {isFollowing ? <UserCheck className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
+                      {isFollowing ? <UserCheck className="w-3.5 h-3.5" /> : <UserPlus className="w-3.5 h-3.5 text-[#ECD28E]" />}
                       <span>{isFollowing ? 'Following' : 'Follow'}</span>
                     </button>
 
                     <Link
                       href={`/chat/${participant.id}`}
-                      className="inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-xl bg-[#FB7170] hover:bg-[#fa5b5a] text-white text-xs font-bold transition shadow-sm"
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-full luxury-gold-btn text-xs font-bold transition"
                     >
-                      <MessageCircle className="w-4 h-4" />
+                      <MessageCircle className="w-3.5 h-3.5" />
                       <span>Chat</span>
                     </Link>
                   </div>
@@ -277,82 +280,59 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
               );
             })()}
           </div>
-
-          {/* Quick Tags Sub-bar (.elementor-element-41acba6d) */}
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-1 text-[11px] sm:text-xs">
-            {companiesList.map((comp, idx) => (
-              <React.Fragment key={idx}>
-                {comp.industrial_groups_label && (
-                  <span className="px-2.5 py-1 rounded-full bg-white/[0.08] text-slate-200 font-medium border border-white/10">
-                    {comp.industrial_groups_label}
-                  </span>
-                )}
-                {comp.business_categories_label && (
-                  <span className="px-2.5 py-1 rounded-full bg-white/[0.08] text-slate-200 font-medium border border-white/10">
-                    {comp.business_categories_label}
-                  </span>
-                )}
-                {comp.company_name_thai && (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FB7170]/15 text-[#FF9B9A] font-semibold border border-[#FB7170]/35">
-                    <Building2 className="w-3.5 h-3.5 text-[#FB7170]" />
-                    {comp.company_name_thai}
-                  </span>
-                )}
-              </React.Fragment>
-            ))}
-          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Main Content Area */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-5 space-y-6">
-        {/* 2. Section 1: ข้อมูลส่วนตัว (Personal Information) */}
-        <div className="bg-white rounded-2xl p-5 sm:p-7 shadow-[0_2px_12px_rgba(15,23,42,0.05)] border border-slate-200/70 space-y-5">
-          <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+      {/* Overlapping Warm Ivory Sheet */}
+      <div className="relative z-20 -mt-6 luxury-sheet rounded-t-[30px] pt-5 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto space-y-5">
+        {/* 2. Section 1: ข้อมูลส่วนตัว (Borderless Luxury Card) */}
+        <div className="bg-white rounded-[24px] p-5 sm:p-7 shadow-[0_6px_22px_rgba(13,19,33,0.055)] space-y-5">
+          <div className="flex items-center gap-3 border-b border-[#F1ECE2] pb-4">
             <img
-              src="/images/icons/profile.webp"
+              src="/images/icons/profile.webp?v=2"
               alt="Personal Info"
-              className="w-10 h-10 rounded-xl shadow-sm shrink-0"
+              className="w-10 h-10 object-contain shrink-0"
             />
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#9A7320] block">
+              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#9A742B] block">
                 Personal Profile
               </span>
-              <h2 className="text-lg sm:text-xl font-bold text-[#1E2538] font-kanit leading-tight">
+              <h2 className="text-lg sm:text-xl font-extrabold text-[#161C2C] leading-tight">
                 ข้อมูลส่วนตัว
               </h2>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
-            <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+            <div className="space-y-1 bg-[#F6F4EF] p-3.5 rounded-2xl">
               <span className="text-slate-400 text-[11px] font-semibold block">ชื่อ - นามสกุล (ภาษาไทย)</span>
-              <div className="font-bold text-[#1E2538] text-sm sm:text-base">
+              <div className="font-bold text-[#161C2C] text-sm sm:text-base">
                 {participant.name_thai || '-'}
               </div>
             </div>
 
-            <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+            <div className="space-y-1 bg-[#F6F4EF] p-3.5 rounded-2xl">
               <span className="text-slate-400 text-[11px] font-semibold block">ชื่อเล่น (ภาษาอังกฤษ)</span>
-              <div className="font-bold text-[#1E2538] text-sm sm:text-base">
+              <div className="font-bold text-[#161C2C] text-sm sm:text-base">
                 {participant.nickname_eng || '-'}
               </div>
             </div>
 
-            <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+            <div className="space-y-1 bg-[#F6F4EF] p-3.5 rounded-2xl">
               <span className="text-slate-400 text-[11px] font-semibold block">ชื่อ - นามสกุล (ภาษาอังกฤษ)</span>
               <div className="font-semibold text-slate-700 text-sm">
                 {participant.fullname_eng || '-'}
               </div>
             </div>
 
-            <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+            <div className="space-y-1 bg-[#F6F4EF] p-3.5 rounded-2xl">
               <span className="text-slate-400 text-[11px] font-semibold block">เบอร์โทรติดต่อ</span>
               <div>
                 {participant.tel_number ? (
                   <a
                     href={`tel:${participant.tel_number}`}
-                    className="font-bold text-[#FB7170] hover:underline inline-flex items-center gap-1.5 font-mono text-sm"
+                    className="font-bold text-[#9A742B] hover:underline inline-flex items-center gap-1.5 font-mono text-sm"
                   >
                     <Phone className="w-3.5 h-3.5" />
                     {participant.tel_number}
@@ -363,16 +343,16 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
               </div>
             </div>
 
-            <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+            <div className="space-y-1 bg-[#F6F4EF] p-3.5 rounded-2xl">
               <span className="text-slate-400 text-[11px] font-semibold block">ดาวประจำบ้าน</span>
-              <div className="font-bold text-[#1E2538] text-sm">
+              <div className="font-bold text-[#161C2C] text-sm">
                 {participant.star_group_label || participant.star_group || '-'}
               </div>
             </div>
 
-            <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+            <div className="space-y-1 bg-[#F6F4EF] p-3.5 rounded-2xl">
               <span className="text-slate-400 text-[11px] font-semibold block">รุ่นหลักสูตร</span>
-              <div className="font-bold text-[#1E2538] text-sm">
+              <div className="font-bold text-[#161C2C] text-sm">
                 {participant.gen_label || 'YFTI 11'}
               </div>
             </div>
@@ -385,22 +365,22 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
           
           return (
             <React.Fragment key={index}>
-              {/* Company Info Box */}
+              {/* Company Info Box (Borderless) */}
               <div
-                className="bg-white rounded-2xl p-5 sm:p-7 shadow-[0_2px_12px_rgba(15,23,42,0.05)] border border-slate-200/70 space-y-5"
+                className="bg-white rounded-[24px] p-5 sm:p-7 shadow-[0_6px_22px_rgba(13,19,33,0.055)] space-y-5"
                 data-id="548d8500"
               >
-                <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+                <div className="flex items-center gap-3 border-b border-[#F1ECE2] pb-4">
                   <img
-                    src="/images/icons/business.webp"
+                    src="/images/icons/business.webp?v=2"
                     alt={sectionTitle}
-                    className="w-10 h-10 rounded-xl shadow-sm shrink-0"
+                    className="w-10 h-10 object-contain shrink-0"
                   />
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#9A7320] block">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#9A742B] block">
                       Company Profile
                     </span>
-                    <h2 className="text-lg sm:text-xl font-bold text-[#1E2538] font-kanit leading-tight">
+                    <h2 className="text-lg sm:text-xl font-extrabold text-[#161C2C] leading-tight">
                       {sectionTitle}
                     </h2>
                   </div>
@@ -409,7 +389,7 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
                   {/* Left Column: Compact Company Logo */}
                   <div className="md:col-span-4 flex flex-col items-center">
-                    <div className="w-full max-w-[180px] sm:max-w-[220px] aspect-square rounded-2xl bg-[#F8FAFC] border border-slate-200/80 p-4 flex items-center justify-center shadow-sm overflow-hidden">
+                    <div className="w-full max-w-[180px] sm:max-w-[220px] aspect-square rounded-2xl bg-[#F6F4EF] p-4 flex items-center justify-center overflow-hidden">
                       {company.company_logo_url ? (
                         <img
                           src={company.company_logo_url}
@@ -428,51 +408,51 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
                   {/* Right Column: Company Attributes Grid */}
                   <div className="md:col-span-8">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
-                      <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+                      <div className="space-y-1 bg-[#F6F4EF] p-3.5 rounded-2xl">
                         <span className="text-slate-400 text-[11px] font-semibold block">คำนำหน้าบริษัท</span>
-                        <div className="font-bold text-[#1E2538] text-sm">
+                        <div className="font-bold text-[#161C2C] text-sm">
                           {company.company_prefix || 'บริษัท จำกัด'}
                         </div>
                       </div>
 
-                      <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+                      <div className="space-y-1 bg-[#F6F4EF] p-3.5 rounded-2xl">
                         <span className="text-slate-400 text-[11px] font-semibold block">ชื่อบริษัท (ภาษาไทย)</span>
-                        <div className="font-bold text-[#1E2538] text-sm">
+                        <div className="font-bold text-[#161C2C] text-sm">
                           {company.company_name_thai || '-'}
                         </div>
                       </div>
 
-                      <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+                      <div className="space-y-1 bg-[#F6F4EF] p-3.5 rounded-2xl">
                         <span className="text-slate-400 text-[11px] font-semibold block">ชื่อบริษัท (ภาษาอังกฤษ)</span>
                         <div className="font-semibold text-slate-700 text-sm">
                           {company.company_name_eng || '-'}
                         </div>
                       </div>
 
-                      <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+                      <div className="space-y-1 bg-[#F6F4EF] p-3.5 rounded-2xl">
                         <span className="text-slate-400 text-[11px] font-semibold block">กลุ่มอุตสาหกรรม</span>
-                        <div className="font-bold text-[#FB7170] text-sm">
+                        <div className="font-bold text-[#9A742B] text-sm">
                           {company.industrial_groups_label || '-'}
                         </div>
                       </div>
 
-                      <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+                      <div className="space-y-1 bg-[#F6F4EF] p-3.5 rounded-2xl">
                         <span className="text-slate-400 text-[11px] font-semibold block">หมวดธุรกิจ</span>
-                        <div className="font-bold text-[#1E2538] text-sm">
+                        <div className="font-bold text-[#161C2C] text-sm">
                           {company.business_categories_label || '-'}
                         </div>
                       </div>
 
-                      <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+                      <div className="space-y-1 bg-[#F6F4EF] p-3.5 rounded-2xl">
                         <span className="text-slate-400 text-[11px] font-semibold block">ตำแหน่งในธุรกิจ</span>
-                        <div className="font-bold text-[#1E2538] text-sm">
+                        <div className="font-bold text-[#161C2C] text-sm">
                           {company.business_position || '-'}
                         </div>
                       </div>
 
-                      <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70 sm:col-span-2">
+                      <div className="space-y-1 bg-[#F6F4EF] p-3.5 rounded-2xl sm:col-span-2">
                         <span className="text-slate-400 text-[11px] font-semibold block">ปีที่ก่อตั้ง (พ.ศ.)</span>
-                        <div className="font-bold text-[#1E2538] font-mono text-sm">
+                        <div className="font-bold text-[#161C2C] font-mono text-sm">
                           {company.founded_year || '-'}
                         </div>
                       </div>
@@ -481,18 +461,18 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
                 </div>
               </div>
 
-              {/* Company Description, Address & Social Channels */}
+              {/* Company Description, Address & Social Channels (Borderless) */}
               {(company.company_description || company.company_address || company.website_url || company.facebook_url || company.line_id || company.product_banner_url) && (
                 <div
-                  className="bg-white rounded-2xl p-5 sm:p-7 shadow-[0_2px_12px_rgba(15,23,42,0.05)] border border-slate-200/70 space-y-6"
+                  className="bg-white rounded-[24px] p-5 sm:p-7 shadow-[0_6px_22px_rgba(13,19,33,0.055)] space-y-6"
                   data-id="77a6feb0"
                 >
                   {/* Company Description */}
                   {company.company_description && (
                     <div className="space-y-3">
-                      <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-                        <span className="w-1 h-5 rounded-full bg-[#FB7170]" />
-                        <h2 className="text-base sm:text-lg font-bold text-[#1E2538] font-kanit">
+                      <div className="flex items-center gap-2 border-b border-[#F1ECE2] pb-3">
+                        <span className="w-1 h-5 rounded-full bg-[#C5A059]" />
+                        <h2 className="text-base sm:text-lg font-extrabold text-[#161C2C]">
                           เกี่ยวกับธุรกิจ (Company Description)
                         </h2>
                       </div>
@@ -505,14 +485,14 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
 
                   {/* Address and Contact Channels */}
                   {(company.company_address || company.website_url || company.facebook_url || company.line_id || company.comp_tel_number) && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-[#F1ECE2]">
                       {company.company_address && (
                         <div className="space-y-2">
-                          <h3 className="text-sm font-bold text-[#1E2538] flex items-center gap-1.5">
-                            <MapPin className="w-4 h-4 text-[#FB7170]" />
+                          <h3 className="text-sm font-bold text-[#161C2C] flex items-center gap-1.5">
+                            <MapPin className="w-4 h-4 text-[#B18A3B]" />
                             <span>ที่อยู่บริษัท</span>
                           </h3>
-                          <div className="whitespace-pre-line text-xs sm:text-sm text-slate-600 leading-relaxed bg-[#F8FAFC] p-4 rounded-xl border border-slate-200/70">
+                          <div className="whitespace-pre-line text-xs sm:text-sm text-slate-600 leading-relaxed bg-[#F6F4EF] p-4 rounded-2xl">
                             {company.company_address}
                           </div>
                         </div>
@@ -644,6 +624,7 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
               </Link>
             ))}
           </div>
+        </div>
         </div>
       </div>
     </div>

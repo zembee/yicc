@@ -240,17 +240,8 @@ export default function ProfilePage() {
 
   return (
     <div className="w-full min-h-screen bg-[#F6F4EF] pb-24">
-      {/* ================= 1. CURVED OBSIDIAN LUXURY PROFILE HEADER ================= */}
+      {/* ================= 1. OBSIDIAN LUXURY PROFILE HEADER (SAME DNA, DISTINCT PROFILE LAYOUT) ================= */}
       <section className="relative luxury-stage text-white pt-5 pb-12 px-4 sm:px-6 overflow-hidden">
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              'radial-gradient(90% 80% at 85% 0%, rgba(197,155,56,0.18) 0%, transparent 65%)',
-          }}
-        />
-
         <div className="relative z-10 max-w-4xl mx-auto space-y-5">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
@@ -258,15 +249,15 @@ export default function ProfilePage() {
                 src={profile.picture_url || DEFAULT_AVATAR_DATA_URI}
                 alt={profile.display_name}
                 onError={handleAvatarError}
-                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-white/30 ring-2 ring-[#C59B38]/40 bg-slate-800 shadow-lg shrink-0"
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover object-top ring-2 ring-[#ECD28E]/50 bg-[#0D1321] shadow-lg shrink-0"
               />
               <div className="min-w-0 space-y-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#C59B38]/25 border border-[#E5C158]/45 text-[#E5C158] text-[10px] font-bold">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full badge-gold-metallic text-[10px] font-bold uppercase tracking-wider">
                     <Crown className="w-3 h-3" />
                     {tier}
                   </span>
-                  <span className="text-[11px] font-mono text-slate-300 tabular-nums">
+                  <span className="text-[11px] font-mono tracking-widest text-slate-300 tabular-nums">
                     {memberCode}
                   </span>
                 </div>
@@ -274,10 +265,11 @@ export default function ProfilePage() {
                   {profile.display_name}
                 </h1>
                 <p className="text-xs text-slate-300 truncate">
-                  {profile.position || 'ผู้บริหารระดับสูง'} •{' '}
-                  <span className="text-white font-semibold">
-                    {profile.company_name || 'Young FTI ELITE 11'}
+                  <span className="text-[#ECD28E] font-semibold">
+                    {profile.position || 'ผู้บริหารระดับสูง'}
                   </span>
+                  <span className="mx-1.5 text-white/25">•</span>
+                  <span>{profile.company_name || 'Young FTI ELITE 11'}</span>
                 </p>
               </div>
             </div>
@@ -285,9 +277,9 @@ export default function ProfilePage() {
             <button
               type="button"
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 px-3 py-2 bg-white/10 hover:bg-white/20 border border-white/15 text-white rounded-xl text-xs font-bold transition shrink-0 backdrop-blur-sm"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white/10 hover:bg-white/15 text-white rounded-full text-xs font-bold transition shrink-0 backdrop-blur-md"
             >
-              <Share2 className="w-3.5 h-3.5 text-[#E5C158]" />
+              <Share2 className="w-3.5 h-3.5 text-[#ECD28E]" />
               <span>
                 {copyStatus === 'copied'
                   ? 'คัดลอกแล้ว'
@@ -298,24 +290,24 @@ export default function ProfilePage() {
             </button>
           </div>
 
-          {/* Compact Stats Row (Points, Following, Follower) */}
+          {/* Compact Frosted Stats Row (Points, Following, Follower) */}
           <div className="grid grid-cols-3 gap-2.5">
-            <div className="rounded-2xl bg-white/8 border border-white/10 px-3.5 py-2.5 backdrop-blur-sm">
+            <div className="rounded-2xl bg-white/[0.06] px-3.5 py-2.5 backdrop-blur-sm">
               <span className="text-[10px] text-slate-300 flex items-center gap-1">
-                <Coins className="w-3 h-3 text-[#E5C158]" />
+                <Coins className="w-3 h-3 text-[#ECD28E]" />
                 Points
               </span>
-              <p className="text-base sm:text-lg font-extrabold text-[#E5C158] tabular-nums mt-0.5">
+              <p className="text-base sm:text-lg font-extrabold text-[#ECD28E] tabular-nums mt-0.5">
                 {(profile.points_balance ?? 0).toLocaleString()}
               </p>
             </div>
-            <div className="rounded-2xl bg-white/8 border border-white/10 px-3.5 py-2.5 backdrop-blur-sm">
+            <div className="rounded-2xl bg-white/[0.06] px-3.5 py-2.5 backdrop-blur-sm">
               <span className="text-[10px] text-slate-300 block">Following</span>
               <p className="text-base sm:text-lg font-extrabold text-white tabular-nums mt-0.5">
                 {followingCount}
               </p>
             </div>
-            <div className="rounded-2xl bg-white/8 border border-white/10 px-3.5 py-2.5 backdrop-blur-sm">
+            <div className="rounded-2xl bg-white/[0.06] px-3.5 py-2.5 backdrop-blur-sm">
               <span className="text-[10px] text-slate-300 block">Follower</span>
               <p className="text-base sm:text-lg font-extrabold text-white tabular-nums mt-0.5">
                 {followerCount}
