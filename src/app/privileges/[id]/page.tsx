@@ -154,8 +154,36 @@ export default function PrivilegeDetailPage() {
 
   if (!privilege && isFetchingPrivilege) {
     return (
-      <div className="max-w-2xl mx-auto w-full px-4 sm:px-6 py-12 text-center text-xs font-bold text-slate-400">
-        กำลังโหลดข้อมูลสิทธิพิเศษ...
+      <div className="w-full bg-[#F6F4EF] pb-4 fade-in-soft">
+        <div className="w-full h-[230px] sm:h-[290px] bg-[#0D1321] rounded-b-[28px] p-5 flex flex-col justify-between">
+          <div className="flex items-center justify-between max-w-3xl mx-auto w-full">
+            <div className="h-9 w-28 rounded-full skeleton-shimmer-dark" />
+            <div className="h-9 w-9 rounded-full skeleton-shimmer-dark" />
+          </div>
+          <div className="max-w-3xl mx-auto w-full space-y-2 pb-3">
+            <div className="flex gap-2">
+              <div className="h-5 w-20 rounded-full skeleton-shimmer-dark" />
+              <div className="h-5 w-24 rounded-full skeleton-shimmer-dark" />
+            </div>
+            <div className="h-6 w-2/3 rounded-lg skeleton-shimmer-dark" />
+          </div>
+        </div>
+        <div className="max-w-3xl mx-auto pt-5 px-4 sm:px-6 space-y-4">
+          <div className="grid grid-cols-3 gap-3">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="h-16 rounded-2xl bg-white p-3.5 space-y-2 shadow-[0_6px_20px_rgba(13,19,33,0.05)]">
+                <div className="h-2.5 w-14 rounded skeleton-shimmer" />
+                <div className="h-4 w-20 rounded skeleton-shimmer" />
+              </div>
+            ))}
+          </div>
+          <div className="bg-white rounded-[24px] p-6 space-y-3 shadow-[0_6px_20px_rgba(13,19,33,0.05)]">
+            <div className="h-4 w-40 rounded skeleton-shimmer" />
+            <div className="h-3.5 w-full rounded skeleton-shimmer" />
+            <div className="h-3.5 w-5/6 rounded skeleton-shimmer" />
+            <div className="h-11 w-full rounded-full skeleton-shimmer mt-2" />
+          </div>
+        </div>
       </div>
     );
   }

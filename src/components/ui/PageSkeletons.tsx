@@ -123,7 +123,7 @@ export const GenericPageSkeleton = HomePageSkeleton;
 export const DirectoryPageSkeleton: React.FC = () => (
   <div className="w-full bg-[#F6F4EF] pb-4 fade-in-soft">
     {/* 1. Obsidian Stage Header */}
-    <section className="relative luxury-stage text-white pt-4 pb-12 px-4 sm:px-6 overflow-hidden">
+    <section className="sticky top-0 md:top-24 z-30 luxury-stage text-white pt-4 pb-5 px-4 sm:px-6 rounded-b-[28px] shadow-[0_14px_34px_rgba(9,13,24,0.28)] overflow-hidden">
       <div className="relative z-10 max-w-5xl mx-auto space-y-3.5">
         <div className="flex items-center justify-between gap-3">
           <div className="space-y-1.5">
@@ -148,8 +148,8 @@ export const DirectoryPageSkeleton: React.FC = () => (
       </div>
     </section>
 
-    {/* 2. Overlapping Warm Ivory Sheet */}
-    <div className="relative z-20 -mt-7 rounded-t-[32px] luxury-sheet pt-6 pb-4 px-4 sm:px-6">
+    {/* 2. Warm Ivory Content Sheet */}
+    <div className="relative z-10 pt-5 pb-4 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto space-y-5">
         {/* Status Bar */}
         <div className="flex items-center justify-between">
@@ -197,7 +197,7 @@ export const DirectoryPageSkeleton: React.FC = () => (
  */
 export const PrivilegesPageSkeleton: React.FC = () => (
   <div className="w-full bg-[#F6F4EF] pb-4 fade-in-soft">
-    <section className="relative luxury-stage text-white pt-4 pb-12 px-4 sm:px-6 overflow-hidden">
+    <section className="sticky top-0 md:top-24 z-30 luxury-stage text-white pt-4 pb-5 px-4 sm:px-6 rounded-b-[28px] shadow-[0_14px_34px_rgba(9,13,24,0.28)] overflow-hidden">
       <div className="relative z-10 max-w-5xl mx-auto space-y-4">
         <div className="flex items-center justify-between gap-2">
           <div className="space-y-1.5">
@@ -228,7 +228,7 @@ export const PrivilegesPageSkeleton: React.FC = () => (
       </div>
     </section>
 
-    <div className="relative z-20 -mt-7 rounded-t-[32px] luxury-sheet pt-6 pb-4 px-4 sm:px-6">
+    <div className="relative z-10 pt-5 pb-4 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto space-y-6">
         {/* Featured Spotlight Banner */}
         <div className="h-44 sm:h-52 w-full rounded-[24px] skeleton-shimmer" />
@@ -262,7 +262,7 @@ export const PrivilegesPageSkeleton: React.FC = () => (
  */
 export const EventsPageSkeleton: React.FC = () => (
   <div className="w-full bg-[#F6F4EF] pb-4 fade-in-soft">
-    <section className="relative luxury-stage text-white pt-4 pb-12 px-4 sm:px-6 overflow-hidden">
+    <section className="sticky top-0 md:top-24 z-30 luxury-stage text-white pt-4 pb-5 px-4 sm:px-6 rounded-b-[28px] shadow-[0_14px_34px_rgba(9,13,24,0.28)] overflow-hidden">
       <div className="relative z-10 max-w-5xl mx-auto space-y-3.5">
         <div className="flex items-center justify-between gap-2">
           <div className="space-y-1.5">
@@ -287,7 +287,7 @@ export const EventsPageSkeleton: React.FC = () => (
       </div>
     </section>
 
-    <div className="relative z-20 -mt-7 rounded-t-[32px] luxury-sheet pt-6 pb-4 px-4 sm:px-6">
+    <div className="relative z-10 pt-5 pb-4 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {[0, 1, 2, 3, 4, 5].map((i) => (
@@ -324,7 +324,7 @@ export const EventsPageSkeleton: React.FC = () => (
  */
 export const ProfilePageSkeleton: React.FC = () => (
   <div className="w-full bg-[#F6F4EF] pb-4 fade-in-soft">
-    <section className="relative luxury-stage text-white pt-5 pb-12 px-4 sm:px-6 overflow-hidden">
+    <section className="sticky top-0 md:top-24 z-30 luxury-stage text-white pt-4 pb-5 px-4 sm:px-6 rounded-b-[28px] shadow-[0_14px_34px_rgba(9,13,24,0.28)] overflow-hidden">
       <div className="relative z-10 max-w-4xl mx-auto space-y-5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-4 min-w-0">
@@ -356,7 +356,7 @@ export const ProfilePageSkeleton: React.FC = () => (
       </div>
     </section>
 
-    <div className="relative z-20 -mt-7 rounded-t-[32px] luxury-sheet pt-6 pb-4 px-4 sm:px-6">
+    <div className="relative z-10 pt-5 pb-4 px-4 sm:px-6">
       <div className="max-w-4xl mx-auto space-y-4">
         {[0, 1, 2].map((cardIdx) => (
           <div
@@ -393,7 +393,7 @@ export const ProfilePageSkeleton: React.FC = () => (
  */
 export const ParticipantDetailSkeleton: React.FC = () => (
   <div className="w-full bg-[#F6F4EF] pb-4 fade-in-soft">
-    <section className="relative luxury-stage text-white pt-4 pb-14 px-4 sm:px-6 overflow-hidden">
+    <section className="sticky top-0 md:top-24 z-30 luxury-stage text-white pt-4 pb-5 px-4 sm:px-6 rounded-b-[28px] shadow-[0_14px_34px_rgba(9,13,24,0.28)] overflow-hidden">
       <div className="relative z-10 max-w-4xl mx-auto space-y-5">
         <div className="flex items-center justify-between">
           <div className="h-8 w-36 rounded-full skeleton-shimmer-dark" />
@@ -421,7 +421,7 @@ export const ParticipantDetailSkeleton: React.FC = () => (
       </div>
     </section>
 
-    <div className="relative z-20 -mt-7 rounded-t-[32px] luxury-sheet pt-6 pb-4 px-4 sm:px-6">
+    <div className="relative z-10 pt-5 pb-4 px-4 sm:px-6">
       <div className="max-w-4xl mx-auto space-y-4">
         {[0, 1].map((cardIdx) => (
           <div

@@ -80,7 +80,7 @@ export default function AcademyPage() {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
-        <div className="w-9 h-9 border-4 border-[#1E2538] border-t-transparent rounded-full animate-spin" />
+        <div className="w-9 h-9 border-[3px] border-[#0D1321] border-t-[#C5A059] rounded-full animate-spin" />
         <p className="text-xs text-slate-500 font-medium">กำลังโหลดข้อมูล...</p>
       </div>
     );

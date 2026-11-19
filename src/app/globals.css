@@ -123,9 +123,9 @@ body {
 .skeleton-shimmer {
   background: linear-gradient(
     90deg,
-    rgba(226, 232, 240, 0.65) 25%,
-    rgba(241, 245, 249, 0.95) 50%,
-    rgba(226, 232, 240, 0.65) 75%
+    rgba(235, 229, 217, 0.72) 25%,
+    rgba(250, 247, 240, 0.98) 50%,
+    rgba(235, 229, 217, 0.72) 75%
   );
   background-size: 200% 100%;
   animation: skeletonShimmer 1.4s ease-in-out infinite;
@@ -134,9 +134,9 @@ body {
 .skeleton-shimmer-dark {
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0.08) 25%,
-    rgba(255, 255, 255, 0.18) 50%,
-    rgba(255, 255, 255, 0.08) 75%
+    rgba(223, 194, 125, 0.08) 25%,
+    rgba(236, 210, 142, 0.20) 50%,
+    rgba(223, 194, 125, 0.08) 75%
   );
   background-size: 200% 100%;
   animation: skeletonShimmer 1.4s ease-in-out infinite;

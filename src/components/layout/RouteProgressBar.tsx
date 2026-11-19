@@ -123,7 +123,7 @@ function RouteProgressBarInner() {
       }`}
     >
       <div
-        className="h-full bg-gradient-to-r from-[#C59B38] via-[#E5C158] to-[#FB7170] shadow-[0_0_10px_rgba(229,193,88,0.65)] transition-[width] duration-200 ease-out"
+        className="h-full bg-gradient-to-r from-[#B18A3B] via-[#ECD28E] to-[#DFC27D] shadow-[0_0_12px_rgba(223,194,125,0.75)] transition-[width] duration-200 ease-out"
         style={{ width: `${progress}%` }}
       />
     </div>

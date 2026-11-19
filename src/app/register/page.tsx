@@ -366,14 +366,23 @@ export default function RegisterPage() {
 
   if (isAuthLoading) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center p-4 select-none">
-        <div className="w-full max-w-xs bg-white rounded-3xl shadow-xl border border-slate-200 p-8 text-center space-y-4">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-[#1E2538] flex items-center justify-center shadow-md">
-            <Loader2 className="w-7 h-7 text-[#E5C158] animate-spin" />
+      <div className="min-h-[75vh] bg-[#F6F4EF] flex flex-col items-center justify-center p-5 select-none fade-in-soft">
+        <div
+          className="relative w-full max-w-xs luxury-stage text-white rounded-[28px] overflow-hidden shadow-[0_22px_50px_rgba(9,13,24,0.32)] p-7 text-center space-y-4"
+          style={{ boxShadow: 'inset 0 0 0 1px rgba(223,194,125,0.28)' }}
+        >
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-white/10 ring-1 ring-[#DFC27D]/40 flex items-center justify-center">
+            <Loader2 className="w-6 h-6 text-[#ECD28E] animate-spin" />
           </div>
           <div className="space-y-1">
-            <h2 className="text-sm font-extrabold text-[#1E2538]">Young FTI ELITE 11</h2>
-            <p className="text-xs text-slate-500">กำลังตรวจสอบสถานะสมาชิก...</p>
+            <h2 className="text-base tracking-tight text-white">
+              <span className="font-extrabold">YOUNG FTI</span>{' '}
+              <span className="font-light text-[#ECD28E]">ELITE 11</span>
+            </h2>
+            <p className="text-[11px] text-slate-300">กำลังตรวจสอบสถานะสมาชิก...</p>
+          </div>
+          <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+            <div className="h-full w-1/3 rounded-full bg-gradient-to-r from-[#C5A059] via-[#F5E6BE] to-[#B18A3B] loading-bar-slide" />
           </div>
         </div>
       </div>
