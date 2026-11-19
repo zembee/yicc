@@ -22,7 +22,12 @@ import {
   UserCheck,
   Keyboard,
   Camera,
-  AlertTriangle
+  AlertTriangle,
+  Phone,
+  MessageCircle,
+  Bookmark,
+  BookmarkCheck,
+  SlidersHorizontal
 } from 'lucide-react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
@@ -124,6 +129,7 @@ function DirectoryContent() {
   const [scanMode, setScanMode] = useState<'camera' | 'manual'>('camera');
   const [scanError, setScanError] = useState<string | null>(null);
   const [scanInput, setScanInput] = useState('');
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
   // Pagination states
@@ -409,58 +415,73 @@ function DirectoryContent() {
     Boolean(searchQuery);
 
   return (
-    <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6 pb-20">
-      {/* 1. Executive Navy Hero Header with Blended Backdrop, Search & QR Button */}
-      <div className="relative overflow-hidden bg-[#141A2C] text-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-[0_10px_30px_rgba(20,26,44,0.18)] border-b-[3px] border-[#FB7170] space-y-4">
-        {/* Blended Stage Backdrop */}
-        <div className="absolute inset-0 pointer-events-none select-none">
-          <img
-            src="https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp"
-            alt=""
-            aria-hidden="true"
-            className="w-full h-full object-cover object-right opacity-25"
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                'linear-gradient(115deg, rgba(16,22,38,0.96) 28%, rgba(24,31,52,0.88) 58%, rgba(30,37,56,0.65) 100%)',
-            }}
-          />
-        </div>
+    <div className="w-full min-h-screen bg-[#F6F4EF] pb-24">
+      {/* 1. Obsidian Luxury Header with Floating Search & Industry Pills */}
+      <section className="relative luxury-stage text-white pt-4 pb-12 px-4 sm:px-6 overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              'radial-gradient(90% 80% at 85% 0%, rgba(197,155,56,0.16) 0%, transparent 65%)',
+          }}
+        />
 
-        <div className="relative z-10 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <img
-              src="/images/icons/business.webp"
-              alt="ทำเนียบธุรกิจ"
-              className="w-11 h-11 rounded-xl ring-1 ring-white/15 shadow-sm shrink-0"
-            />
+        <div className="relative z-10 max-w-5xl mx-auto space-y-3.5">
+          <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
-              <h1 className="text-lg sm:text-2xl tracking-tight text-white leading-tight truncate">
-                <span className="font-extrabold">ทำเนียบธุรกิจ</span>{' '}
-                <span className="font-light text-white/95">Young FTI ELITE 11</span>
+              <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white truncate">
+                ทำเนียบธุรกิจ <span className="font-light text-white/80 text-base sm:text-lg">Directory</span>
               </h1>
-              <p className="text-xs font-medium text-[#FB7170] mt-0.5 tabular-nums">
-                ทั้งหมด {participants.length.toLocaleString()} ท่าน
+              <p className="text-[11px] text-slate-300 mt-0.5 tabular-nums">
+                สมาชิกและเครือข่ายธุรกิจทั้งหมด {participants.length.toLocaleString()} ท่าน
               </p>
             </div>
-          </div>
-        </div>
 
-        {/* Search Input + QR Button (rounded-xl) */}
-        <div className="relative z-10 flex items-center gap-2.5">
-          <div className="relative flex-1">
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => setShowAdvancedFilters((prev) => !prev)}
+                aria-label="ตัวกรองเพิ่มเติม"
+                className={`px-3 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition ${
+                  showAdvancedFilters || selectedHouse !== 'ALL' || selectedCategory !== 'ALL' || selectedCohort !== 'ALL'
+                    ? 'bg-[#C59B38]/25 border-[#E5C158] text-[#E5C158]'
+                    : 'bg-white/10 border-white/15 text-slate-200 hover:bg-white/15'
+                }`}
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5" />
+                <span className="hidden xs:inline">ตัวกรอง</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setScanMode('camera');
+                  setScanError(null);
+                  setIsScanModalOpen(true);
+                }}
+                aria-label="สแกนเพิ่มเพื่อน"
+                title="สแกนเพิ่มเพื่อน"
+                className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center shrink-0 transition"
+              >
+                <QrCode className="w-4 h-4 text-[#E5C158]" />
+              </button>
+            </div>
+          </div>
+
+          {/* Floating Crisp White Search Input */}
+          <div className="relative">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="ค้นหาชื่อ บริษัท หรือ keyword..."
-              className="w-full pl-10 pr-9 py-2.5 bg-white text-[#1E2538] rounded-xl text-xs sm:text-sm font-medium placeholder-slate-400 outline-none focus:ring-2 focus:ring-[#C59B38] shadow-sm"
+              placeholder="ค้นหาชื่อสมาชิก, ชื่อเล่น, บริษัท หรือประเภทธุรกิจ..."
+              className="w-full pl-10 pr-9 py-2.5 bg-white text-[#1E2538] rounded-2xl text-xs sm:text-sm font-medium placeholder-slate-400 outline-none focus:ring-2 focus:ring-[#C59B38] shadow-sm"
             />
             {searchQuery && (
               <button
+                type="button"
                 onClick={() => setSearchQuery('')}
                 className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 rounded-lg"
               >
@@ -469,102 +490,110 @@ function DirectoryContent() {
             )}
           </div>
 
-          <button
-            onClick={() => {
-              setScanMode('camera');
-              setScanError(null);
-              setIsScanModalOpen(true);
-            }}
-            aria-label="สแกนเพิ่มเพื่อน"
-            title="สแกนเพิ่มเพื่อน"
-            className="w-11 h-11 rounded-xl bg-white hover:bg-slate-100 text-[#1E2538] flex items-center justify-center shrink-0 shadow-sm transition"
-          >
-            <QrCode className="w-5 h-5" />
-          </button>
+          {/* Horizontal Industry Filter Pills inside Navy Header */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+            {INDUSTRY_GROUPS.map((ig) => {
+              const isActive = selectedIndustry === ig.value;
+              const shortLabel =
+                ig.value === 'ALL'
+                  ? 'ทั้งหมด'
+                  : ig.label
+                      .replace('กลุ่มอุตสาหกรรม (ทั้งหมด)', 'ทั้งหมด')
+                      .replace('เกษตรและอุตสาหกรรมอาหาร', 'เกษตร / อาหาร')
+                      .replace('ธุรกิจการเงิน และการลงทุน', 'การเงิน / ลงทุน')
+                      .replace('อสังหาริมทรัพย์และก่อสร้าง', 'ก่อสร้าง / อสังหาฯ')
+                      .replace('สินค้าอุตสาหกรรม', 'อุตสาหกรรม')
+                      .replace('สินค้าอุปโภคบริโภค', 'อุปโภคบริโภค');
+              return (
+                <button
+                  key={ig.value}
+                  type="button"
+                  onClick={() => setSelectedIndustry(ig.value)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap border transition shrink-0 ${
+                    isActive
+                      ? 'bg-[#C59B38]/25 border-[#E5C158] text-[#E5C158] shadow-sm'
+                      : 'bg-white/8 border-white/12 text-slate-300 hover:bg-white/15 hover:text-white'
+                  }`}
+                >
+                  {shortLabel}
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* 2. Clean Filter Bar */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-        <select
-          value={selectedIndustry}
-          onChange={(e) => setSelectedIndustry(e.target.value)}
-          className={`px-3.5 py-2 rounded-xl text-xs font-semibold border outline-none transition shrink-0 shadow-sm ${
-            selectedIndustry !== 'ALL'
-              ? 'bg-[#1E2538] border-[#1E2538] text-white'
-              : 'bg-white border-slate-200/80 text-slate-700 hover:border-[#C59B38]'
-          }`}
-        >
-          {INDUSTRY_GROUPS.map((ig) => (
-            <option key={ig.value} value={ig.value} className="text-slate-800 bg-white">
-              {ig.label}
-            </option>
-          ))}
-        </select>
+      {/* 2. Overlapping Rounded Warm Ivory Sheet */}
+      <div className="relative z-20 -mt-6 luxury-sheet rounded-t-[30px] pt-5 px-4 sm:px-6 min-h-[65vh]">
+        <div className="max-w-5xl mx-auto space-y-5">
+          {/* Expandable Advanced Filter Bar (House / Business Category / Cohort) */}
+          {(showAdvancedFilters || selectedHouse !== 'ALL' || selectedCategory !== 'ALL' || selectedCohort !== 'ALL') && (
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+              <select
+                value={selectedHouse}
+                onChange={(e) => setSelectedHouse(e.target.value)}
+                className={`px-3.5 py-2 rounded-xl text-xs font-semibold border outline-none transition shrink-0 shadow-sm ${
+                  selectedHouse !== 'ALL'
+                    ? 'bg-[#1E2538] border-[#1E2538] text-white'
+                    : 'bg-white border-slate-200/80 text-slate-700 hover:border-[#C59B38]'
+                }`}
+              >
+                {HOUSES_LIST.map((h) => (
+                  <option key={h.value} value={h.value} className="text-slate-800 bg-white">
+                    {h.label}
+                  </option>
+                ))}
+              </select>
 
-        <select
-          value={selectedHouse}
-          onChange={(e) => setSelectedHouse(e.target.value)}
-          className={`px-3.5 py-2 rounded-xl text-xs font-semibold border outline-none transition shrink-0 shadow-sm ${
-            selectedHouse !== 'ALL'
-              ? 'bg-[#1E2538] border-[#1E2538] text-white'
-              : 'bg-white border-slate-200/80 text-slate-700 hover:border-[#C59B38]'
-          }`}
-        >
-          {HOUSES_LIST.map((h) => (
-            <option key={h.value} value={h.value} className="text-slate-800 bg-white">
-              {h.label}
-            </option>
-          ))}
-        </select>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className={`px-3.5 py-2 rounded-xl text-xs font-semibold border outline-none transition max-w-[180px] shrink-0 shadow-sm ${
+                  selectedCategory !== 'ALL'
+                    ? 'bg-[#1E2538] border-[#1E2538] text-white'
+                    : 'bg-white border-slate-200/80 text-slate-700 hover:border-[#C59B38]'
+                }`}
+              >
+                {BUSINESS_CATEGORIES.map((cat) => (
+                  <option key={cat.value} value={cat.value} className="text-slate-800 bg-white">
+                    {cat.label}
+                  </option>
+                ))}
+              </select>
 
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className={`px-3.5 py-2 rounded-xl text-xs font-semibold border outline-none transition max-w-[180px] shrink-0 shadow-sm ${
-            selectedCategory !== 'ALL'
-              ? 'bg-[#1E2538] border-[#1E2538] text-white'
-              : 'bg-white border-slate-200/80 text-slate-700 hover:border-[#C59B38]'
-          }`}
-        >
-          {BUSINESS_CATEGORIES.map((cat) => (
-            <option key={cat.value} value={cat.value} className="text-slate-800 bg-white">
-              {cat.label}
-            </option>
-          ))}
-        </select>
+              <select
+                value={selectedCohort}
+                onChange={(e) => setSelectedCohort(e.target.value)}
+                className={`px-3.5 py-2 rounded-xl text-xs font-semibold border outline-none transition shrink-0 shadow-sm ${
+                  selectedCohort !== 'ALL'
+                    ? 'bg-[#1E2538] border-[#1E2538] text-white'
+                    : 'bg-white border-slate-200/80 text-slate-700 hover:border-[#C59B38]'
+                }`}
+              >
+                {COHORT_LIST.map((c) => (
+                  <option key={c.value} value={c.value} className="text-slate-800 bg-white">
+                    {c.label}
+                  </option>
+                ))}
+              </select>
 
-        <select
-          value={selectedCohort}
-          onChange={(e) => setSelectedCohort(e.target.value)}
-          className={`px-3.5 py-2 rounded-xl text-xs font-semibold border outline-none transition shrink-0 shadow-sm ${
-            selectedCohort !== 'ALL'
-              ? 'bg-[#1E2538] border-[#1E2538] text-white'
-              : 'bg-white border-slate-200/80 text-slate-700 hover:border-[#C59B38]'
-          }`}
-        >
-          {COHORT_LIST.map((c) => (
-            <option key={c.value} value={c.value} className="text-slate-800 bg-white">
-              {c.label}
-            </option>
-          ))}
-        </select>
-
-        {hasActiveFilters && (
-          <button
-            onClick={() => {
-              setSearchQuery('');
-              setSelectedHouse('ALL');
-              setSelectedIndustry('ALL');
-              setSelectedCategory('ALL');
-              setSelectedCohort('ALL');
-            }}
-            className="px-3 py-2 rounded-xl text-xs font-bold text-[#FB7170] hover:underline shrink-0"
-          >
-            ล้างตัวกรอง
-          </button>
-        )}
-      </div>
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSelectedHouse('ALL');
+                    setSelectedIndustry('ALL');
+                    setSelectedCategory('ALL');
+                    setSelectedCohort('ALL');
+                  }}
+                  className="px-3 py-2 rounded-xl text-xs font-bold text-[#FB7170] hover:underline shrink-0"
+                >
+                  ล้างตัวกรอง
+                </button>
+              )}
+            </div>
+          )}
 
       {/* 3. Committee Section (กรรมการ) */}
       {committeeMembers.length > 0 && (
@@ -712,103 +741,138 @@ function DirectoryContent() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
-            {paginatedParticipants.map((member) => (
-              <Link
-                key={member.id}
-                href={`/yfti_participants/${member.id}`}
-                className="bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-[0_6px_20px_rgba(15,23,42,0.05)] hover:shadow-[0_14px_30px_rgba(15,23,42,0.11)] hover:-translate-y-0.5 hover:border-[#C59B38]/80 transition-all duration-300 flex flex-col justify-between cursor-pointer group"
-              >
-                {/* Member Portrait */}
-                <div className="relative aspect-[4/4.5] overflow-hidden bg-slate-100 border-b border-slate-100">
-                  <img
-                    src={member.profile_picture_url || 'https://yfticonnect.com/wp-content/uploads/2025/07/YFTI-11-Logo.webp'}
-                    alt={member.name_thai}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + member.name_thai;
-                    }}
-                  />
-                  <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-[#141A2C]/35 via-transparent to-transparent pointer-events-none" />
-                  {member.star_group_label && (
-                    <span className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 px-2.5 py-0.5 bg-[#141A2C]/85 backdrop-blur-md border border-white/15 text-[#E5C158] text-[10px] font-bold rounded-lg shadow-sm">
-                      {member.star_group_label}
-                    </span>
-                  )}
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+            {paginatedParticipants.map((member) => {
+              const isFollowed = followingIds.includes(String(member.id));
+              const phoneDigits = member.tel_number?.replace(/[^\d+]/g, '');
+              const lineHandle = member.line_id?.trim().replace(/^@/, '');
+              return (
+                <div
+                  key={member.id}
+                  className="bg-white rounded-2xl p-3.5 sm:p-4 border border-[#E6E0D4] shadow-[0_6px_20px_rgba(13,19,33,0.04)] hover:shadow-[0_12px_28px_rgba(13,19,33,0.09)] hover:border-[#C5A059] transition-all duration-200 flex flex-col justify-between gap-3 group"
+                >
+                  {/* Top Row: Portrait + Info + Bookmark */}
+                  <div className="flex items-start gap-3.5">
+                    <Link
+                      href={`/yfti_participants/${member.id}`}
+                      className="w-16 h-16 sm:w-[70px] sm:h-[70px] rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/80 shrink-0 block"
+                    >
+                      <img
+                        src={member.profile_picture_url || 'https://yfticonnect.com/wp-content/uploads/2025/07/YFTI-11-Logo.webp'}
+                        alt={member.name_thai}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + member.name_thai;
+                        }}
+                      />
+                    </Link>
 
-                {/* Member Information */}
-                <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between space-y-2.5">
-                  <div className="space-y-1">
-                    <div className="flex items-baseline gap-1 flex-wrap">
-                      <h3 className="font-bold text-xs sm:text-sm text-[#1E2538] group-hover:text-[#B38728] transition-colors leading-snug line-clamp-1 sm:line-clamp-none">
-                        {member.name_thai}
-                      </h3>
-                      {member.nickname_eng && (
-                        <span className="text-[10px] sm:text-xs font-semibold text-[#9A7320]">
-                          ({member.nickname_eng})
-                        </span>
+                    <div className="min-w-0 flex-1 space-y-1.5">
+                      <div className="flex items-start justify-between gap-2">
+                        <Link
+                          href={`/yfti_participants/${member.id}`}
+                          className="min-w-0 flex-1"
+                        >
+                          <h3 className="font-bold text-sm sm:text-[15px] text-[#1E2538] group-hover:text-[#B38728] transition-colors leading-snug truncate">
+                            {member.name_thai}
+                            {member.nickname_eng && (
+                              <span className="text-xs font-semibold text-slate-400 ml-1">
+                                ({member.nickname_eng})
+                              </span>
+                            )}
+                          </h3>
+                        </Link>
+
+                        <button
+                          type="button"
+                          onClick={(e) => toggleFollow(e, String(member.id))}
+                          aria-label={isFollowed ? 'เลิกติดตาม' : 'บันทึกสมาชิก'}
+                          className={`p-1.5 rounded-lg transition shrink-0 ${
+                            isFollowed
+                              ? 'text-[#C59B38] bg-[#FBF6EC]'
+                              : 'text-slate-300 hover:text-[#1E2538] hover:bg-slate-100'
+                          }`}
+                        >
+                          {isFollowed ? (
+                            <BookmarkCheck className="w-4 h-4 fill-[#C59B38]/20" />
+                          ) : (
+                            <Bookmark className="w-4 h-4" />
+                          )}
+                        </button>
+                      </div>
+
+                      {/* Signature Dark Navy Company Pill (Matches Style 3 Screen 3) */}
+                      {member.company_name_thai && (
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-[#1E2538] text-white text-[11px] font-semibold max-w-full">
+                          <Building2 className="w-3 h-3 text-[#E5C158] shrink-0" />
+                          <span className="truncate">{member.company_name_thai}</span>
+                        </div>
                       )}
-                    </div>
 
-                    {member.company_name_thai && (
-                      <p className="text-[11px] sm:text-xs font-medium text-slate-700 flex items-center gap-1.5 truncate">
-                        <Building2 className="w-3.5 h-3.5 text-[#B38728] shrink-0" />
-                        <span className="truncate">{member.company_name_thai}</span>
-                      </p>
-                    )}
-
-                    {member.company_description && (
-                      <p className="text-[10px] sm:text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
-                        {stripHtml(member.company_description)}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Badges / Follow Row */}
-                  <div className="space-y-2 pt-2 border-t border-slate-100">
-                    <div className="flex flex-wrap gap-1">
-                      {member.industrial_groups_label && (
-                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 truncate max-w-full">
-                          {member.industrial_groups_label}
-                        </span>
-                      )}
-                      {member.business_categories_label && (
-                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[#FBF6EC] text-[#9A7320] truncate max-w-full">
-                          {member.business_categories_label}
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex items-center justify-between text-[11px] font-semibold text-[#1E2538]">
-                      <span className="group-hover:text-[#B38728] transition-colors">ดูโปรไฟล์</span>
-                      <button
-                        onClick={(e) => toggleFollow(e, String(member.id))}
-                        className={`px-2.5 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 transition ${
-                          followingIds.includes(String(member.id))
-                            ? 'bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2]'
-                            : 'bg-slate-100 text-[#1E2538] hover:bg-[#1E2538] hover:text-white'
-                        }`}
-                      >
-                        {followingIds.includes(String(member.id)) ? (
-                          <>
-                            <UserCheck className="w-3 h-3" />
-                            Following
-                          </>
-                        ) : (
-                          <>
-                            <UserPlus className="w-3 h-3" />
-                            Follow
-                          </>
+                      {/* House Dot & Industry */}
+                      <div className="flex items-center gap-2 text-[11px] text-slate-500 flex-wrap">
+                        {member.star_group_label && (
+                          <span className="inline-flex items-center gap-1 font-semibold text-slate-600">
+                            <span className="w-2 h-2 rounded-full bg-[#C59B38]" />
+                            {member.star_group_label}
+                          </span>
                         )}
-                      </button>
+                        {member.industrial_groups_label && (
+                          <span className="truncate text-slate-400">
+                            • {member.industrial_groups_label}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
+
+                  {/* Bottom Row: 3 Quick Action Pills (Call / LINE / Profile) */}
+                  <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100">
+                    {phoneDigits ? (
+                      <a
+                        href={`tel:${phoneDigits}`}
+                        className="py-1.5 px-2 rounded-full bg-[#F1F5F9] hover:bg-[#1E2538] hover:text-white text-[#1E2538] text-[11px] font-bold flex items-center justify-center gap-1.5 transition"
+                      >
+                        <Phone className="w-3.5 h-3.5" />
+                        <span>โทร</span>
+                      </a>
+                    ) : (
+                      <span className="py-1.5 px-2 rounded-full bg-slate-50 text-slate-300 text-[11px] font-semibold flex items-center justify-center gap-1.5 cursor-not-allowed">
+                        <Phone className="w-3.5 h-3.5" />
+                        <span>โทร</span>
+                      </span>
+                    )}
+
+                    {lineHandle ? (
+                      <a
+                        href={`https://line.me/ti/p/~${encodeURIComponent(lineHandle)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="py-1.5 px-2 rounded-full bg-[#F1F5F9] hover:bg-[#06C755] hover:text-white text-[#1E2538] text-[11px] font-bold flex items-center justify-center gap-1.5 transition"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        <span>LINE</span>
+                      </a>
+                    ) : (
+                      <span className="py-1.5 px-2 rounded-full bg-slate-50 text-slate-300 text-[11px] font-semibold flex items-center justify-center gap-1.5 cursor-not-allowed">
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        <span>LINE</span>
+                      </span>
+                    )}
+
+                    <Link
+                      href={`/yfti_participants/${member.id}`}
+                      className="py-1.5 px-2 rounded-full bg-[#F1F5F9] hover:bg-[#C59B38] hover:text-white text-[#1E2538] text-[11px] font-bold flex items-center justify-center gap-1.5 transition"
+                    >
+                      <User className="w-3.5 h-3.5" />
+                      <span>โปรไฟล์</span>
+                    </Link>
+                  </div>
                 </div>
-              </Link>
-            ))}
+              );
+            })}
           </div>
 
           {/* Pagination Controls Bar */}
@@ -884,6 +948,8 @@ function DirectoryContent() {
           )}
         </>
       )}
+        </div>
+      </div>
 
       {/* QR Scan Add Friend Modal */}
       {isScanModalOpen && (

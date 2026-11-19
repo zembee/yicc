@@ -9,27 +9,35 @@ import { PrivilegeCategory } from '@/types';
 import { ActivePrivilegeModal, ActivePrivilegeData } from '@/components/privileges/ActivePrivilegeModal';
 import { PrivilegesPageSkeleton } from '@/components/ui/PageSkeletons';
 import {
-  ArrowLeft,
   Search,
   Coins,
-  History,
+  Ticket,
   Gift,
-  ChevronRight,
-  ChevronLeft,
+  Utensils,
+  Plane,
+  ShoppingBag,
+  Sparkles,
+  CalendarDays,
+  Film,
   CheckCircle2,
   X,
   UserPlus,
   QrCode,
+  ArrowUpDown,
 } from 'lucide-react';
 
-const CATEGORIES: { id: PrivilegeCategory; label: string }[] = [
-  { id: 'All', label: 'All' },
-  { id: 'Events', label: 'Events' },
-  { id: 'Food & Drink', label: 'Food & Drink' },
-  { id: 'Shopping', label: 'Shopping' },
-  { id: 'Entertainment', label: 'Entertainment' },
-  { id: 'Travel', label: 'Travel' },
-  { id: 'Lifestyle', label: 'Lifestyle' },
+const CATEGORIES: {
+  id: PrivilegeCategory;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+}[] = [
+  { id: 'All', label: 'ทั้งหมด', icon: Gift },
+  { id: 'Food & Drink', label: 'อาหาร', icon: Utensils },
+  { id: 'Travel', label: 'ท่องเที่ยว', icon: Plane },
+  { id: 'Shopping', label: 'ช้อปปิ้ง', icon: ShoppingBag },
+  { id: 'Lifestyle', label: 'ไลฟ์สไตล์', icon: Sparkles },
+  { id: 'Events', label: 'อีเวนต์', icon: CalendarDays },
+  { id: 'Entertainment', label: 'บันเทิง', icon: Film },
 ];
 
 interface RedemptionRecord {
@@ -49,7 +57,7 @@ function PrivilegesContent() {
   const [mounted, setMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<PrivilegeCategory>('All');
-  const [carouselIdx, setCarouselIdx] = useState(0);
+  const [sortBy, setSortBy] = useState<'default' | 'points_asc' | 'points_desc'>('default');
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isBenefitsModalOpen, setIsBenefitsModalOpen] = useState(false);
   const [history, setHistory] = useState<RedemptionRecord[]>([]);
@@ -78,12 +86,10 @@ function PrivilegesContent() {
         setSelectedCategory(matched.id);
       }
     }
+    if (searchParams?.get('tab') === 'history') {
+      setIsHistoryOpen(true);
+    }
   }, [searchParams]);
-
-  const featuredPrivileges = useMemo(
-    () => privileges.filter((p) => p.is_featured),
-    [privileges]
-  );
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -94,16 +100,8 @@ function PrivilegesContent() {
     }
   }, []);
 
-  useEffect(() => {
-    if (featuredPrivileges.length <= 1) return;
-    const timer = setInterval(() => {
-      setCarouselIdx((prev) => (prev + 1) % featuredPrivileges.length);
-    }, 4500);
-    return () => clearInterval(timer);
-  }, [featuredPrivileges.length]);
-
   const filteredPrivileges = useMemo(() => {
-    return privileges.filter((p) => {
+    const list = privileges.filter((p) => {
       const matchCat = selectedCategory === 'All' || p.category === selectedCategory;
       const q = searchQuery.trim().toLowerCase();
       const matchQuery =
@@ -113,7 +111,15 @@ function PrivilegesContent() {
         p.category.toLowerCase().includes(q);
       return matchCat && matchQuery;
     });
-  }, [privileges, selectedCategory, searchQuery]);
+
+    if (sortBy === 'points_asc') {
+      return [...list].sort((a, b) => a.points_required - b.points_required);
+    }
+    if (sortBy === 'points_desc') {
+      return [...list].sort((a, b) => b.points_required - a.points_required);
+    }
+    return list;
+  }, [privileges, selectedCategory, searchQuery, sortBy]);
 
   const activeProfile = mounted ? profile : null;
   const isMember = mounted
@@ -122,257 +128,262 @@ function PrivilegesContent() {
   const userPoints = activeProfile?.points_balance ?? 0;
 
   return (
-    <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 py-4 pb-24 space-y-5">
-      {/* ================= TOP EXECUTIVE NAVY HERO HEADER & SEARCH ================= */}
-      <div className="relative overflow-hidden bg-[#141A2C] text-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-[0_10px_30px_rgba(20,26,44,0.18)] border-b-[3px] border-[#FB7170] space-y-4">
-        <div className="absolute inset-0 pointer-events-none select-none">
-          <img
-            src="https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp"
-            alt=""
-            aria-hidden="true"
-            className="w-full h-full object-cover object-right opacity-25"
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                'linear-gradient(115deg, rgba(16,22,38,0.96) 28%, rgba(24,31,52,0.88) 58%, rgba(30,37,56,0.65) 100%)',
-            }}
-          />
-        </div>
+    <div className="w-full min-h-screen bg-[#F6F4EF] pb-24">
+      {/* ================= 1. CURVED OBSIDIAN HEADER + ICON CATEGORY BAR ================= */}
+      <section className="relative luxury-stage text-white pt-4 pb-12 px-4 sm:px-6 overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              'radial-gradient(90% 80% at 85% 0%, rgba(197,155,56,0.16) 0%, transparent 65%)',
+          }}
+        />
 
-        <div className="relative z-10 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-3 min-w-0">
-            <Link
-              href="/"
-              aria-label="กลับหน้าหลัก"
-              className="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center transition shrink-0"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </Link>
-            <img
-              src="/images/icons/privileges.webp"
-              alt="Privileges"
-              className="w-10 h-10 rounded-xl ring-1 ring-white/15 shadow-sm shrink-0 hidden sm:block"
-            />
-            <div className="min-w-0">
-              <h1 className="text-lg sm:text-2xl tracking-tight truncate leading-tight">
-                <span className="font-extrabold">Privileges</span>{' '}
-                <span className="font-light text-white/90 text-sm sm:text-lg">สิทธิพิเศษ</span>
+        <div className="relative z-10 max-w-4xl mx-auto space-y-4">
+          {/* Header Row */}
+          <div className="flex items-center justify-between gap-2">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white">
+                สิทธิพิเศษ <span className="font-light text-white/80 text-base sm:text-lg">Privileges</span>
               </h1>
-              <p className="text-[11px] font-medium text-[#FB7170] truncate">
-                แลกรับสิทธิประโยชน์เฉพาะสมาชิก Young FTI ELITE 11
+              <p className="text-[11px] text-slate-300 mt-0.5">
+                ใช้คะแนนสะสมแลกรับส่วนลดจากพาร์ทเนอร์
               </p>
             </div>
-          </div>
 
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              onClick={() => setIsHistoryOpen(true)}
-              className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-[#E5C158] text-xs font-bold flex items-center gap-1.5 transition backdrop-blur-sm"
-            >
-              <History className="w-3.5 h-3.5" />
-              <span>History</span>
-            </button>
-            <div className="px-3 py-1.5 rounded-xl badge-gold-metallic flex items-center gap-1.5 text-xs font-bold tabular-nums">
-              <Coins className="w-3.5 h-3.5" />
-              <span>{userPoints.toLocaleString()}</span>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsHistoryOpen(true)}
+                className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white text-xs font-bold flex items-center gap-1.5 transition backdrop-blur-sm"
+              >
+                <Ticket className="w-3.5 h-3.5 text-[#E5C158]" />
+                <span>คูปอง</span>
+                {history.length > 0 && (
+                  <span className="px-1.5 py-0.2 rounded-full bg-[#FB7170] text-[10px] font-extrabold">
+                    {history.length}
+                  </span>
+                )}
+              </button>
+              <div className="px-3 py-1.5 rounded-xl badge-gold-metallic flex items-center gap-1.5 text-xs font-bold tabular-nums">
+                <Coins className="w-3.5 h-3.5" />
+                <span>{userPoints.toLocaleString()}</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Search Input (rounded-xl) */}
-        <div className="relative z-10">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="ค้นหาสิทธิพิเศษ ร้านค้า หรือหมวดหมู่..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white text-[#1E2538] text-xs sm:text-sm font-medium placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#C59B38] shadow-sm"
-          />
-        </div>
-      </div>
-
-      {/* ================= NON-MEMBER INVITE CARD ================= */}
-      {!isMember && (
-        <div className="bg-[#FDFBF5] border border-[#EFE2C2] rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#B89138] text-white flex items-center justify-center shrink-0">
-              <UserPlus className="w-5 h-5" />
-            </div>
-            <div className="space-y-1">
-              <h2 className="text-sm font-bold text-[#1E2538]">
-                สมัครเป็นสมาชิก Young FTI เพื่อรับสิทธิพิเศษ
-              </h2>
-              <p className="text-xs text-slate-600">
-                สิทธิพิเศษสำหรับสมาชิกเท่านั้น กดดูสิทธิประโยชน์ทั้งหมดและสมัครเข้าร่วมได้ทันที
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              onClick={() => setIsBenefitsModalOpen(true)}
-              className="px-3.5 py-2 rounded-xl bg-white border border-[#EFE2C2] text-xs font-bold text-[#9A7320] hover:bg-[#FBF6EC] transition"
-            >
-              ดูสิทธิพิเศษสมาชิก
-            </button>
-            <Link
-              href="/register"
-              className="px-4 py-2 rounded-xl bg-[#B89138] hover:bg-[#a37f2d] text-white text-xs font-bold transition"
-            >
-              สมัครสมาชิกเลย
-            </Link>
-          </div>
-        </div>
-      )}
-
-      {/* ================= BANNER ADS CAROUSEL ================= */}
-      {featuredPrivileges.length > 0 && (
-        <div className="relative rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 bg-[#1E2538]">
-          <Link
-            href={`/privileges/${featuredPrivileges[carouselIdx].id}`}
-            className="block relative aspect-[16/8] sm:aspect-[16/6]"
-          >
-            <img
-              src={featuredPrivileges[carouselIdx].image_url}
-              alt={featuredPrivileges[carouselIdx].title}
-              className="w-full h-full object-cover opacity-85"
+          {/* Floating Crisp White Search Input */}
+          <div className="relative">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="ค้นหาสิทธิพิเศษ ร้านค้า หรือหมวดหมู่..."
+              className="w-full pl-10 pr-9 py-2.5 rounded-2xl bg-white text-[#1E2538] text-xs sm:text-sm font-medium placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#C59B38] shadow-sm"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
-            <div className="absolute bottom-4 left-4 right-14 text-white space-y-1">
-              <span className="inline-block px-2.5 py-0.5 rounded-full badge-gold-metallic text-[10px] font-extrabold">
-                {featuredPrivileges[carouselIdx].discount_label}
-              </span>
-              <h3 className="text-sm sm:text-lg font-bold line-clamp-1">
-                {featuredPrivileges[carouselIdx].title}
-              </h3>
-              <p className="text-[11px] text-slate-200 tabular-nums">
-                ใช้ {featuredPrivileges[carouselIdx].points_required} Points • {featuredPrivileges[carouselIdx].merchant}
-              </p>
-            </div>
-          </Link>
-
-          <button
-            onClick={() =>
-              setCarouselIdx((prev) => (prev - 1 + featuredPrivileges.length) % featuredPrivileges.length)
-            }
-            aria-label="Previous"
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/45 text-white flex items-center justify-center hover:bg-black/65 transition"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setCarouselIdx((prev) => (prev + 1) % featuredPrivileges.length)}
-            aria-label="Next"
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/45 text-white flex items-center justify-center hover:bg-black/65 transition"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-      )}
-
-      {/* ================= CATEGORY FILTER TABS ================= */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-        {CATEGORIES.map((cat) => (
-          <button
-            key={cat.id}
-            type="button"
-            onClick={() => setSelectedCategory(cat.id)}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap shadow-sm ${
-              selectedCategory === cat.id
-                ? 'bg-[#1E2538] text-white'
-                : 'bg-white text-slate-600 border border-slate-200/80 hover:border-[#C59B38] hover:text-[#1E2538]'
-            }`}
-          >
-            {cat.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Category Result Header */}
-      <div className="flex items-center justify-between text-xs text-slate-500">
-        <span className="font-semibold text-[#1E2538]">
-          หมวดหมู่: {selectedCategory} ({filteredPrivileges.length} รายการ)
-        </span>
-        {(selectedCategory !== 'All' || searchQuery.trim() !== '') && (
-          <button
-            type="button"
-            onClick={() => {
-              setSelectedCategory('All');
-              setSearchQuery('');
-            }}
-            className="text-xs font-bold text-[#FB7170] hover:underline"
-          >
-            แสดงทั้งหมด
-          </button>
-        )}
-      </div>
-
-      {/* ================= PRIVILEGES GRID (2 COLUMNS, VIP VOUCHER STYLE) ================= */}
-      <div className="grid grid-cols-2 gap-3 sm:gap-4">
-        {filteredPrivileges.map((priv) => (
-          <Link
-            key={priv.id}
-            href={`/privileges/${priv.id}`}
-            className="bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-[0_6px_20px_rgba(15,23,42,0.06)] hover:shadow-[0_14px_30px_rgba(15,23,42,0.12)] hover:-translate-y-0.5 hover:border-[#C59B38]/80 transition-all duration-300 flex flex-col justify-between group"
-          >
-            <div className="relative aspect-[4/3] bg-[#141A2C] overflow-hidden border-b-2 border-[#C59B38]/70">
-              <img
-                src={priv.image_url}
-                alt={priv.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#141A2C]/75 via-transparent to-transparent pointer-events-none" />
-              <span className="absolute bottom-2 left-2 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-white/95 ring-1 ring-[#C59B38]/30 text-[#1E2538] text-[10px] font-extrabold tabular-nums shadow-sm">
-                <Coins className="w-3 h-3 text-[#C59B38]" />
-                {priv.points_required}
-              </span>
-              <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded-lg bg-[#141A2C]/80 backdrop-blur-md border border-white/15 text-white text-[10px] font-semibold max-w-[55%] truncate">
-                {priv.category}
-              </span>
-            </div>
-
-            <div className="p-3.5 sm:p-4 space-y-1 flex-1 flex flex-col justify-between">
-              <div className="space-y-1">
-                <span className="text-[10px] font-bold text-[#9A7320] uppercase tracking-wider block truncate">
-                  {priv.merchant}
-                </span>
-                <p className="text-xs sm:text-sm font-extrabold text-[#1E2538] group-hover:text-[#B38728] transition-colors">
-                  {priv.discount_label}
-                </p>
-                <h3 className="text-[11px] sm:text-xs text-slate-500 line-clamp-1">{priv.title}</h3>
-              </div>
-              <div className="pt-2.5 mt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-[#1E2538] group-hover:text-[#B38728]">
-                <span>รับสิทธิ์</span>
-                <ChevronRight className="w-3.5 h-3.5 text-[#FB7170] group-hover:translate-x-0.5 transition-transform" />
-              </div>
-            </div>
-          </Link>
-        ))}
-
-        {filteredPrivileges.length === 0 && (
-          <div className="col-span-2 py-12 text-center bg-white rounded-2xl border border-slate-200 text-xs text-slate-500 space-y-2">
-            <Gift className="w-8 h-8 text-slate-300 mx-auto" />
-            <p>ไม่พบสิทธิพิเศษที่ตรงกับคำค้นหา</p>
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
-        )}
+
+          {/* Horizontal Scrollable Rounded-Square Icon Category Bar (Matches Style 3 Screen 2) */}
+          <div className="flex items-center gap-2.5 overflow-x-auto pb-1 no-scrollbar">
+            {CATEGORIES.map((cat) => {
+              const Icon = cat.icon;
+              const isActive = selectedCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className="flex flex-col items-center gap-1.5 shrink-0 group"
+                >
+                  <span
+                    className={`w-12 h-12 sm:w-13 sm:h-13 rounded-2xl flex items-center justify-center border transition-all duration-200 ${
+                      isActive
+                        ? 'bg-[#C59B38]/22 border-[#E5C158] text-[#E5C158] shadow-[0_0_16px_rgba(229,193,88,0.25)]'
+                        : 'bg-white/8 border-white/10 text-slate-300 group-hover:bg-white/14 group-hover:text-white'
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" />
+                  </span>
+                  <span
+                    className={`text-[10px] font-semibold whitespace-nowrap ${
+                      isActive ? 'text-[#E5C158]' : 'text-slate-300'
+                    }`}
+                  >
+                    {cat.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ================= 2. OVERLAPPING ROUNDED WARM IVORY SHEET ================= */}
+      <div className="relative z-20 -mt-6 luxury-sheet rounded-t-[30px] pt-5 px-4 sm:px-6 min-h-[65vh]">
+        <div className="max-w-4xl mx-auto space-y-4">
+          {/* Non-Member Invite Card */}
+          {!isMember && (
+            <div className="bg-[#FDFBF5] border border-[#EFE2C2] rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#B89138] text-white flex items-center justify-center shrink-0">
+                  <UserPlus className="w-5 h-5" />
+                </div>
+                <div className="space-y-0.5">
+                  <h2 className="text-sm font-bold text-[#1E2538]">
+                    สมัครเป็นสมาชิก Young FTI เพื่อรับสิทธิพิเศษ
+                  </h2>
+                  <p className="text-xs text-slate-600">
+                    สิทธิพิเศษสำหรับสมาชิกเท่านั้น กดดูสิทธิประโยชน์และสมัครได้ทันที
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIsBenefitsModalOpen(true)}
+                  className="px-3.5 py-2 rounded-xl bg-white border border-[#EFE2C2] text-xs font-bold text-[#9A7320] hover:bg-[#FBF6EC] transition"
+                >
+                  ดูรายละเอียด
+                </button>
+                <Link
+                  href="/register"
+                  className="px-4 py-2 rounded-xl bg-[#B89138] hover:bg-[#a37f2d] text-white text-xs font-bold transition"
+                >
+                  สมัครสมาชิก
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {/* Metadata & Sort Row */}
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-sm font-extrabold text-[#1E2538] tabular-nums">
+              {filteredPrivileges.length} สิทธิพิเศษ
+            </p>
+
+            <div className="flex items-center gap-2">
+              {(selectedCategory !== 'All' || searchQuery.trim() !== '') && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedCategory('All');
+                    setSearchQuery('');
+                  }}
+                  className="text-xs font-bold text-[#FB7170] hover:underline"
+                >
+                  ล้างตัวกรอง
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={() =>
+                  setSortBy((prev) =>
+                    prev === 'default'
+                      ? 'points_asc'
+                      : prev === 'points_asc'
+                      ? 'points_desc'
+                      : 'default'
+                  )
+                }
+                className="px-3 py-1.5 rounded-xl bg-white border border-slate-200/90 hover:border-[#C59B38] text-xs font-bold text-[#1E2538] flex items-center gap-1.5 shadow-sm transition"
+              >
+                <ArrowUpDown className="w-3.5 h-3.5 text-[#C59B38]" />
+                <span>
+                  {sortBy === 'points_asc'
+                    ? 'คะแนนน้อย → มาก'
+                    : sortBy === 'points_desc'
+                    ? 'คะแนนมาก → น้อย'
+                    : 'เรียงตามแนะนำ'}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* ================= 2-COLUMN PRIVILEGE CARDS (MATCHES STYLE 3 SCREEN 2) ================= */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+            {filteredPrivileges.map((priv) => (
+              <Link
+                key={priv.id}
+                href={`/privileges/${priv.id}`}
+                className="bg-white rounded-2xl border border-[#E6E0D4] overflow-hidden shadow-[0_6px_20px_rgba(13,19,33,0.05)] hover:shadow-[0_12px_28px_rgba(13,19,33,0.1)] hover:border-[#C5A059] transition-all duration-200 flex flex-col justify-between group"
+              >
+                <div className="relative aspect-[4/3] bg-[#0D1321] overflow-hidden">
+                  <img
+                    src={priv.image_url}
+                    alt={priv.title}
+                    loading="lazy"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent pointer-events-none" />
+
+                  {/* Top-Left Obsidian-Gold Discount Badge */}
+                  <span className="absolute top-2 left-2 px-2.5 py-0.5 rounded-lg bg-[#0D1321]/90 backdrop-blur-md border border-[#DFC27D]/40 text-[#ECD28E] text-[10px] font-bold shadow-sm max-w-[75%] truncate">
+                    {priv.discount_label}
+                  </span>
+
+                  {/* Bottom-Right Satin Gold Points Badge */}
+                  <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/95 text-[#161C2C] text-[10px] font-extrabold tabular-nums shadow-sm">
+                    <Coins className="w-2.5 h-2.5 text-[#B18A3B]" />
+                    {priv.points_required} Pts
+                  </span>
+                </div>
+
+                <div className="p-3 sm:p-3.5 flex-1 flex flex-col justify-between gap-2.5">
+                  <div className="space-y-0.5">
+                    <h3 className="text-xs sm:text-sm font-bold text-[#161C2C] line-clamp-1 group-hover:text-[#9A742B] transition-colors">
+                      {priv.title}
+                    </h3>
+                    <p className="text-[11px] text-slate-500 truncate">{priv.merchant}</p>
+                  </div>
+
+                  {/* Satin Champagne Gold Pill Redeem CTA */}
+                  <div className="w-full py-1.5 rounded-full luxury-gold-btn text-center text-[11px] font-bold transition">
+                    แลกรับสิทธิ์
+                  </div>
+                </div>
+              </Link>
+            ))}
+
+            {filteredPrivileges.length === 0 && (
+              <div className="col-span-2 md:col-span-3 py-12 text-center bg-white rounded-2xl border border-slate-200 text-xs text-slate-500 space-y-2">
+                <Gift className="w-8 h-8 text-slate-300 mx-auto" />
+                <p>ไม่พบสิทธิพิเศษที่ตรงกับคำค้นหา</p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* ================= REDEMPTION HISTORY MODAL ================= */}
+      {/* ================= REDEMPTION HISTORY MODAL (MY COUPONS) ================= */}
       {isHistoryOpen && (
         <div
           className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-4"
           onClick={() => setIsHistoryOpen(false)}
         >
           <div
-            className="w-full max-w-md bg-[#F7F7F5] rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[80vh] flex flex-col overflow-hidden"
+            className="w-full max-w-md bg-[#F4F6FA] rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[82vh] flex flex-col overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="bg-[#1E2538] text-white p-5 space-y-2">
+            <div className="bg-[#141A2C] text-white p-5 space-y-1.5 border-b-[3px] border-[#C59B38]">
               <div className="flex items-center justify-between">
-                <h3 className="text-base font-bold">Redemption History</h3>
+                <h3 className="text-base font-bold flex items-center gap-2">
+                  <Ticket className="w-4 h-4 text-[#E5C158]" />
+                  <span>คูปองของฉัน (My Coupons)</span>
+                </h3>
                 <button
+                  type="button"
                   onClick={() => setIsHistoryOpen(false)}
                   className="p-1.5 rounded-full hover:bg-white/10 text-slate-300"
                 >
@@ -386,7 +397,10 @@ function PrivilegesContent() {
 
             <div className="overflow-y-auto p-4 space-y-2.5">
               {history.length === 0 ? (
-                <p className="text-xs text-slate-400 text-center py-8">ยังไม่มีประวัติการแลกสิทธิพิเศษ</p>
+                <div className="text-center py-10 space-y-2">
+                  <Ticket className="w-9 h-9 text-slate-300 mx-auto" />
+                  <p className="text-xs text-slate-500">ยังไม่มีคูปองที่แลกไว้</p>
+                </div>
               ) : (
                 history.map((h) => {
                   const matchedPriv = privileges.find((p) => p.id === h.privilegeId);
@@ -405,7 +419,7 @@ function PrivilegesContent() {
                           redeemedAt: h.redeemedAt,
                         });
                       }}
-                      className="w-full text-left p-3.5 rounded-2xl bg-white hover:border-[#C59B38] border border-slate-200/80 space-y-1.5 transition"
+                      className="w-full text-left p-3.5 rounded-2xl bg-white hover:border-[#C59B38] border border-slate-200/80 space-y-1.5 transition shadow-sm"
                     >
                       <div className="flex items-center justify-between gap-2">
                         <p className="text-xs font-bold text-[#1E2538] truncate">
@@ -445,6 +459,7 @@ function PrivilegesContent() {
             <div className="flex items-center justify-between">
               <h3 className="text-base font-bold text-[#1E2538]">สิทธิประโยชน์สำหรับสมาชิก YFTI</h3>
               <button
+                type="button"
                 onClick={() => setIsBenefitsModalOpen(false)}
                 className="p-1.5 rounded-full hover:bg-slate-100 text-slate-500"
               >

@@ -18,6 +18,7 @@ interface MemberCardProps {
   tier: string;
   isFlipped: boolean;
   onToggleFlip: () => void;
+  showFlipButton?: boolean;
 }
 
 export function MemberCard({
@@ -27,6 +28,7 @@ export function MemberCard({
   tier,
   isFlipped,
   onToggleFlip,
+  showFlipButton = true,
 }: MemberCardProps) {
   // Rolling timestamp refreshed every 30s while QR side is visible (60s validity window in QrScannerModal)
   const [qrTimestamp, setQrTimestamp] = useState<number>(() => Date.now());
@@ -254,16 +256,18 @@ export function MemberCard({
       </div>
 
       {/* Flip Control BELOW the card */}
-      <div className="max-w-xl mx-auto flex items-center justify-center pt-1">
-        <button
-          type="button"
-          onClick={onToggleFlip}
-          className="px-5 py-2.5 bg-white border border-slate-200/80 hover:border-[#C59B38] rounded-xl text-xs font-bold text-[#1E2538] transition shadow-sm flex items-center justify-center gap-2 group"
-        >
-          <RotateCw className="w-4 h-4 text-[#B38728] group-hover:rotate-180 transition-transform duration-500" />
-          <span>{isFlipped ? 'ดูหน้าบัตร' : 'พลิกดูหลังบัตร (QR)'}</span>
-        </button>
-      </div>
+      {showFlipButton && (
+        <div className="max-w-xl mx-auto flex items-center justify-center pt-1">
+          <button
+            type="button"
+            onClick={onToggleFlip}
+            className="px-5 py-2.5 bg-white border border-slate-200/80 hover:border-[#C59B38] rounded-xl text-xs font-bold text-[#1E2538] transition shadow-sm flex items-center justify-center gap-2 group"
+          >
+            <RotateCw className="w-4 h-4 text-[#B38728] group-hover:rotate-180 transition-transform duration-500" />
+            <span>{isFlipped ? 'ดูหน้าบัตร' : 'พลิกดูหลังบัตร (QR)'}</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

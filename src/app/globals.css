@@ -3,17 +3,17 @@
 @tailwind utilities;
 
 :root {
-  --e-global-color-primary: #1E2538;
-  --e-global-color-secondary: #FB7170;
-  --e-global-color-text: #1F2937;
-  --e-global-color-accent: #212542;
+  --e-global-color-primary: #0D1321;
+  --e-global-color-secondary: #C5A059;
+  --e-global-color-text: #161C2C;
+  --e-global-color-accent: #182034;
   --e-global-color-58ba27b: #DBDFFF;
   --e-global-color-daf0130: #FFD7D7;
   --e-global-color-3108c96: #FFFFFF;
-  --e-global-color-cf63a04: #E5E7EB;
+  --e-global-color-cf63a04: #E6E0D4;
 
-  --background: #F4F6FA;
-  --foreground: #1F2937;
+  --background: #F6F4EF;
+  --foreground: #161C2C;
 }
 
 body {
@@ -155,27 +155,58 @@ body {
   animation: loadingBarSlide 1.35s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
-/* Soft Translucent Champagne Gold Gradient (Harmonized on Navy Surfaces) */
+/* Soft Translucent Champagne Gold Gradient (Harmonized on Obsidian Surfaces) */
 .badge-gold-metallic {
   background: linear-gradient(
     135deg,
-    rgba(229, 193, 88, 0.28) 0%,
-    rgba(197, 155, 56, 0.16) 52%,
-    rgba(243, 217, 139, 0.30) 100%
+    rgba(223, 194, 125, 0.26) 0%,
+    rgba(197, 160, 89, 0.14) 52%,
+    rgba(242, 219, 158, 0.28) 100%
   );
-  color: #F3D98B;
-  border: 1px solid rgba(229, 193, 88, 0.42);
+  color: #ECD28E;
+  border: 1px solid rgba(223, 194, 125, 0.42);
   backdrop-filter: blur(8px);
-  box-shadow: inset 0 1px 0 rgba(255, 248, 220, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 248, 224, 0.22);
 }
 
 .badge-gold-metallic:hover {
   background: linear-gradient(
     135deg,
-    rgba(229, 193, 88, 0.36) 0%,
-    rgba(197, 155, 56, 0.22) 52%,
-    rgba(243, 217, 139, 0.38) 100%
+    rgba(223, 194, 125, 0.36) 0%,
+    rgba(197, 160, 89, 0.22) 52%,
+    rgba(242, 219, 158, 0.38) 100%
   );
+}
+
+/* Luxury Obsidian Stage & Satin Gold Surfaces */
+.luxury-stage {
+  background:
+    radial-gradient(85% 75% at 88% 0%, rgba(212, 175, 95, 0.20) 0%, rgba(197, 160, 89, 0.04) 45%, transparent 72%),
+    radial-gradient(60% 60% at 10% 100%, rgba(212, 175, 95, 0.08) 0%, transparent 65%),
+    linear-gradient(160deg, #0B101D 0%, #121A2D 55%, #18223A 100%);
+}
+
+.luxury-gold-btn {
+  background: linear-gradient(135deg, #D5B36A 0%, #BA9243 52%, #9F7A30 100%);
+  color: #FFFFFF;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 224, 0.38),
+    0 6px 16px rgba(159, 122, 48, 0.26);
+}
+
+.luxury-gold-btn:hover {
+  background: linear-gradient(135deg, #DFBE76 0%, #C49B4A 52%, #A98235 100%);
+}
+
+.luxury-sheet {
+  background-color: #F6F4EF;
+  box-shadow: 0 -10px 32px rgba(11, 16, 29, 0.16);
+}
+
+.luxury-card {
+  background-color: #FFFFFF;
+  border: 1px solid rgba(226, 219, 205, 0.9);
+  box-shadow: 0 6px 24px rgba(13, 19, 33, 0.05);
 }
 
 /* Prevent scroll chaining from modals to background page */

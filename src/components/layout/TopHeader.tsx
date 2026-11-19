@@ -3,11 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLiffAuth } from '@/contexts/LiffContext';
 import Image from 'next/image';
-import { Search, Menu, X, Coins, Award, Shield, LogIn, User, ChevronDown, LogOut, ExternalLink, Settings } from 'lucide-react';
+import { Search, Menu, X, Coins, Award, Shield, LogIn, User, ChevronDown, LogOut, ExternalLink, Settings, QrCode } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { GlobalSearchModal } from './GlobalSearchModal';
 import { WebLoginModal } from './WebLoginModal';
+import { QuickQrHubSheet } from './QuickQrHubSheet';
 
 export const TopHeader: React.FC = () => {
   const pathname = usePathname();
@@ -15,6 +16,7 @@ export const TopHeader: React.FC = () => {
   const [mounted, setMounted] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isQrSheetOpen, setIsQrSheetOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
@@ -25,14 +27,14 @@ export const TopHeader: React.FC = () => {
   const navLinks = [
     { label: 'หน้าแรก', href: '/' },
     { label: 'สิทธิพิเศษ', href: '/privileges' },
-    { label: 'ธุรกิจภายในโครงการ', href: '/directory' },
+    { label: 'ทำเนียบธุรกิจ', href: '/directory' },
     { label: 'กิจกรรม', href: '/events' },
-    { label: 'เกี่ยวกับเรา', href: '/about' },
+    { label: 'โปรไฟล์', href: '/profile' },
   ];
 
   return (
     <>
-      <header className="hidden md:block sticky top-0 z-40 bg-[#1E2538] border-b border-[#2A334E]/60 shadow-[0_4px_25px_rgba(0,0,0,0.2)] text-white select-none">
+      <header className="hidden md:block sticky top-0 z-40 bg-[#0D1321]/95 backdrop-blur-md border-b border-[#C5A059]/25 shadow-[0_6px_28px_rgba(8,12,24,0.3)] text-white select-none">
         <div className="max-w-7xl mx-auto flex items-center justify-between h-20 sm:h-24 px-4 sm:px-6 lg:px-8">
           {/* Left: Signature White Trapezoid Logo Block matching yfticonnect.com */}
           <div className="flex items-center h-full">
@@ -63,13 +65,13 @@ export const TopHeader: React.FC = () => {
                   href={link.href}
                   className={`transition-colors duration-200 relative py-2 ${
                     isActive
-                      ? 'text-[#FB7170] font-semibold'
-                      : 'text-white/90 hover:text-[#FB7170]'
+                      ? 'text-[#DFC27D] font-semibold'
+                      : 'text-white/85 hover:text-[#DFC27D]'
                   }`}
                 >
                   {link.label}
                   {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FB7170] rounded-full animate-in fade-in" />
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#C5A059] via-[#ECD28E] to-[#C5A059] rounded-full animate-in fade-in" />
                   )}
                 </Link>
               );
@@ -78,6 +80,16 @@ export const TopHeader: React.FC = () => {
 
           {/* Right: Search, Stats, Profile & Login */}
           <div className="flex items-center gap-3 sm:gap-4 relative">
+            {/* Quick QR & Hub Trigger */}
+            <button
+              onClick={() => setIsQrSheetOpen(true)}
+              aria-label="Quick QR & Hub"
+              title="Quick QR & Hub"
+              className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-br from-[#D8B45A] via-[#C59B38] to-[#A67F2A] text-white hover:brightness-105 flex items-center justify-center transition shadow-md hover:scale-105"
+            >
+              <QrCode className="w-5 h-5" />
+            </button>
+
             {/* Search Icon Trigger */}
             <button
               onClick={() => setIsSearchOpen(true)}
@@ -229,6 +241,7 @@ export const TopHeader: React.FC = () => {
       {/* Global Modals */}
       <GlobalSearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
       <WebLoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
+      <QuickQrHubSheet isOpen={isQrSheetOpen} onClose={() => setIsQrSheetOpen(false)} />
     </>
   );
 };
