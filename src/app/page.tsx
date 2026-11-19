@@ -569,21 +569,29 @@ export default function HomePage() {
                 loading="lazy"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#090E1A]/92 via-[#090E1A]/45 to-[#090E1A]/25" />
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    'linear-gradient(180deg, rgba(11,16,29,0.72) 0%, rgba(11,16,29,0.28) 42%, rgba(11,16,29,0.92) 100%)',
+                }}
+              />
               <div className="relative z-10 h-full p-5 flex flex-col justify-between text-white">
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-full badge-gold-metallic text-[10px] font-bold uppercase tracking-wider shrink-0">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#0D1321]/85 backdrop-blur-md border border-[#ECD28E]/40 text-[#ECD28E] text-[10px] font-bold uppercase tracking-wider shrink-0">
                     ELITE EXCLUSIVE
                   </span>
-                  <span className="text-[11px] font-semibold text-slate-200 truncate">
+                  <span className="text-[11px] font-bold text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)] truncate">
                     {priv.merchant}
                   </span>
                 </div>
-                <div className="space-y-1 max-w-[82%]">
-                  <p className="text-xl sm:text-2xl font-extrabold text-[#ECD28E] leading-tight line-clamp-1">
+                <div className="space-y-1 max-w-[85%]">
+                  <p className="text-xl sm:text-2xl font-extrabold text-[#ECD28E] leading-tight line-clamp-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
                     {priv.discount_label}
                   </p>
-                  <p className="text-xs text-slate-200 line-clamp-1">{priv.title}</p>
+                  <p className="text-xs font-medium text-white/95 line-clamp-1 drop-shadow-[0_1px_4px_rgba(0,0,0,0.85)]">
+                    {priv.title}
+                  </p>
                 </div>
               </div>
             </Link>
