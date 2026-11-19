@@ -85,9 +85,10 @@ export function MemberCard({
         >
           {/* ================= FRONT OF CARD ================= */}
           <div
-            className="absolute inset-0 w-full h-full rounded-3xl p-5 sm:p-7 flex flex-col justify-between overflow-hidden border border-white/15 text-white"
+            className="absolute inset-0 w-full h-full rounded-3xl p-5 sm:p-7 flex flex-col justify-between overflow-hidden border border-[#C59B38]/35 text-white"
             style={{
-              background: 'linear-gradient(135deg, #141B2D 0%, #1E2538 55%, #232D47 100%)',
+              background:
+                'radial-gradient(120% 90% at 92% 8%, rgba(229,193,88,0.16) 0%, rgba(251,113,112,0.06) 32%, transparent 62%), linear-gradient(135deg, #101626 0%, #1B2338 52%, #232D47 100%)',
               backfaceVisibility: 'hidden',
               WebkitBackfaceVisibility: 'hidden',
               transform: 'rotateY(0deg)',
@@ -95,7 +96,7 @@ export function MemberCard({
           >
             {/* Subtle Architectural Grid Pattern */}
             <div
-              className="absolute inset-0 opacity-[0.04] pointer-events-none"
+              className="absolute inset-0 opacity-[0.045] pointer-events-none"
               style={{
                 backgroundImage:
                   'linear-gradient(to right, rgba(255,255,255,0.7) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.7) 1px, transparent 1px)',
@@ -103,10 +104,16 @@ export function MemberCard({
               }}
             />
 
+            {/* Bottom Signature Gold-Coral Hairline */}
+            <div
+              aria-hidden="true"
+              className="absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#C59B38] via-[#FB7170] to-[#C59B38] opacity-90"
+            />
+
             {/* Top Row: Brand & Tier Pill */}
             <div className="relative z-10 flex items-start justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white p-1 shadow-sm flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white p-1 shadow-md ring-2 ring-white/15 flex items-center justify-center shrink-0">
                   <Image
                     src="/YFTI-11-Logo.jpg"
                     alt="YFTI 11"
@@ -116,8 +123,9 @@ export function MemberCard({
                   />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm sm:text-base font-bold tracking-tight text-white truncate">
-                    YOUNG FTI ELITE 11
+                  <p className="text-sm sm:text-base tracking-tight text-white truncate">
+                    <span className="font-extrabold">YOUNG FTI</span>{' '}
+                    <span className="font-light text-white/90">ELITE 11</span>
                   </p>
                   <p className="text-[10px] sm:text-xs text-slate-300 truncate">
                     สภาอุตสาหกรรมแห่งประเทศไทย
@@ -125,17 +133,17 @@ export function MemberCard({
                 </div>
               </div>
 
-              <span className="px-2.5 py-1 rounded-full bg-[#C59B38]/20 text-[#E5C158] border border-[#C59B38]/40 text-[10px] font-bold uppercase tracking-wider shrink-0">
+              <span className="px-2.5 py-1 rounded-full bg-[#C59B38]/20 text-[#E5C158] border border-[#E5C158]/45 text-[10px] font-bold uppercase tracking-wider shrink-0 shadow-[0_0_12px_rgba(229,193,88,0.18)]">
                 {tier}
               </span>
             </div>
 
-            {/* Center Row: Member Avatar, Name & Single-Line Role + Position + House */}
+            {/* Center Row: Member Avatar, Name & Single-Line Role + Position + Company */}
             <div className="relative z-10 flex items-center gap-3.5 sm:gap-5 my-auto">
               <img
                 src={profile.picture_url || DEFAULT_AVATAR_DATA_URI}
                 alt={profile.display_name}
-                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border border-white/30 bg-[#141B2D] shrink-0"
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-white/40 ring-2 ring-[#C59B38]/35 bg-[#141B2D] shadow-lg shrink-0"
                 onError={handleAvatarError}
               />
 

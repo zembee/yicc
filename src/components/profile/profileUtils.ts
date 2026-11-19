@@ -64,12 +64,12 @@ export function getRoleBadge(role: string | undefined): {
     case 'SUPER_ADMIN':
       return {
         label: 'ADMIN',
-        className: 'bg-[#C59B38] text-white',
+        className: 'badge-gold-metallic',
       };
     case 'HOUSE_ADMIN':
       return {
         label: 'HOUSE ADMIN',
-        className: 'bg-[#B38728] text-white',
+        className: 'badge-gold-metallic',
       };
     case 'PENDING':
       return {
@@ -79,7 +79,7 @@ export function getRoleBadge(role: string | undefined): {
     default:
       return {
         label: 'MEMBER',
-        className: 'bg-[#C59B38] text-white',
+        className: 'badge-gold-metallic',
       };
   }
 }

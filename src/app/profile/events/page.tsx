@@ -73,21 +73,42 @@ export default function ProfileEventsHistoryPage() {
 
   return (
     <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 py-4 sm:py-6 pb-24 space-y-5">
-      {/* Executive Navy Header */}
-      <div className="bg-gradient-to-b from-[#181B34] via-[#1E2538] to-[#252E46] text-white rounded-2xl p-4 sm:p-6 shadow-[0_4px_16px_rgba(15,23,42,0.12)] border border-slate-800/60 space-y-4">
-        <div className="flex items-center gap-3">
+      {/* Executive Navy Hero Header */}
+      <div className="relative overflow-hidden bg-[#141A2C] text-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-[0_10px_30px_rgba(20,26,44,0.18)] border-b-[3px] border-[#FB7170] space-y-4">
+        <div className="absolute inset-0 pointer-events-none select-none">
+          <img
+            src="https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp"
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-cover object-right opacity-25"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(115deg, rgba(16,22,38,0.96) 28%, rgba(24,31,52,0.88) 58%, rgba(30,37,56,0.65) 100%)',
+            }}
+          />
+        </div>
+
+        <div className="relative z-10 flex items-center gap-3">
           <Link
             href="/profile"
             aria-label="กลับหน้าโปรไฟล์"
-            className="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition shrink-0"
+            className="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center transition shrink-0"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
+          <img
+            src="/images/icons/events.webp"
+            alt="ประวัติกิจกรรม"
+            className="w-10 h-10 rounded-xl ring-1 ring-white/15 shadow-sm shrink-0 hidden sm:block"
+          />
           <div className="min-w-0">
-            <h1 className="text-base sm:text-xl font-bold tracking-tight truncate">
+            <h1 className="text-base sm:text-xl font-extrabold tracking-tight truncate">
               ข้อมูลการเข้าร่วมกิจกรรม / คอร์สเรียน
             </h1>
-            <p className="text-xs text-slate-300 mt-0.5 tabular-nums">
+            <p className="text-xs font-medium text-[#FB7170] mt-0.5 tabular-nums">
               ทั้งหมด {myEventsList.length} รายการ • เช็กชื่อแล้ว {checkedInCount} รายการ
             </p>
           </div>
@@ -163,15 +184,23 @@ export default function ProfileEventsHistoryPage() {
               </div>
 
               <span
-                className={`px-2.5 py-1 rounded-full text-[10px] font-bold shrink-0 inline-flex items-center gap-1 ${
+                className={`text-[11px] font-bold shrink-0 inline-flex items-center gap-1.5 ${
                   ev.isCheckedIn
-                    ? 'bg-[#1E2538] text-white'
+                    ? 'text-emerald-700'
                     : ev.status === 'UPCOMING'
-                    ? 'bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2]'
-                    : 'bg-slate-200 text-slate-700'
+                    ? 'text-[#B38728]'
+                    : 'text-slate-500'
                 }`}
               >
-                {ev.isCheckedIn && <CheckCircle2 className="w-3 h-3 text-[#E5C158]" />}
+                {ev.isCheckedIn ? (
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                ) : (
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                      ev.status === 'UPCOMING' ? 'bg-[#C59B38]' : 'bg-slate-400'
+                    }`}
+                  />
+                )}
                 <span>
                   {ev.isCheckedIn
                     ? 'เช็กชื่อแล้ว'

@@ -133,18 +133,39 @@ export default function AdminPage() {
 
   return (
     <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 pt-4 pb-24 space-y-4">
-      {/* Header */}
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <div className="inline-flex items-center gap-1 text-[10px] uppercase font-bold text-[#9A7320] bg-[#FBF6EC] px-2.5 py-0.5 rounded-full border border-[#EFE2C2] mb-1">
-            <ShieldCheck className="w-3 h-3 text-[#B38728]" />
-            YFTI Admin Panel
-          </div>
-          <h1 className="text-lg sm:text-xl font-extrabold text-[#1E2538]">
-            ศูนย์จัดการระบบ Young FTI ELITE 11
-          </h1>
+      {/* Executive Navy Hero Header */}
+      <div className="relative overflow-hidden bg-[#141A2C] text-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-[0_10px_30px_rgba(20,26,44,0.18)] border-b-[3px] border-[#FB7170] flex items-center justify-between gap-3">
+        <div className="absolute inset-0 pointer-events-none select-none">
+          <img
+            src="https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp"
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-cover object-right opacity-25"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(115deg, rgba(16,22,38,0.96) 28%, rgba(24,31,52,0.88) 58%, rgba(30,37,56,0.65) 100%)',
+            }}
+          />
         </div>
-        <span className="text-xs bg-slate-100 border border-slate-200 text-[#1E2538] font-bold px-2.5 py-1 rounded-lg shrink-0">
+
+        <div className="relative z-10 min-w-0 space-y-0.5">
+          <div className="inline-flex items-center gap-1 text-[10px] uppercase font-bold tracking-[0.2em] text-[#E5C158]">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#E5C158]" />
+            <span>YFTI Admin Panel</span>
+          </div>
+          <h1 className="text-lg sm:text-2xl tracking-tight leading-tight truncate">
+            <span className="font-extrabold">ศูนย์จัดการระบบ</span>{' '}
+            <span className="font-light text-white/95">Young FTI ELITE 11</span>
+          </h1>
+          <p className="text-xs font-medium text-[#FB7170]">
+            จัดการสมาชิก กิจกรรม สิทธิพิเศษ และตรวจสอบภารกิจ
+          </p>
+        </div>
+
+        <span className="relative z-10 text-xs bg-white/10 border border-white/15 text-[#E5C158] font-bold px-3 py-1.5 rounded-xl shrink-0 backdrop-blur-sm">
           {profile.role}
         </span>
       </div>

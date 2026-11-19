@@ -251,14 +251,14 @@ export default function ProfilePage() {
       />
 
       {/* ================= 2. PERSONAL & COMPANY INFO CARD ================= */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_2px_12px_rgba(15,23,42,0.04)] overflow-hidden divide-y divide-slate-100">
-        <div className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-          <div className="space-y-2">
-            <div>
-              <h3 className="text-base sm:text-lg font-bold text-[#1E2538]">
+      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-[0_6px_24px_rgba(15,23,42,0.06)] overflow-hidden divide-y divide-slate-100">
+        <div className="p-5 sm:p-6 space-y-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 space-y-0.5">
+              <h3 className="text-lg sm:text-xl font-extrabold text-[#1E2538] leading-snug">
                 {profile.display_name}
               </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs sm:text-sm text-slate-500">
                 {profile.position || 'ผู้บริหารระดับสูง'} •{' '}
                 <span className="font-semibold text-[#1E2538]">
                   {profile.company_name || 'Young FTI ELITE 11'}
@@ -266,24 +266,10 @@ export default function ProfilePage() {
               </p>
             </div>
 
-            {/* Following & Follower Counts under Name */}
-            <div className="flex items-center gap-2 pt-0.5 text-xs">
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 tabular-nums">
-                <strong className="font-bold text-[#1E2538]">{followingCount}</strong>
-                <span>Following</span>
-              </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 tabular-nums">
-                <strong className="font-bold text-[#1E2538]">{followerCount}</strong>
-                <span>Follower</span>
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0">
             <button
               type="button"
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition"
+              className="inline-flex items-center gap-1.5 px-3 py-2 bg-[#F8FAFC] hover:bg-slate-100 border border-slate-200 text-[#1E2538] rounded-xl text-xs font-bold transition shrink-0 shadow-sm"
             >
               <Share2 className="w-3.5 h-3.5 text-[#B38728]" />
               <span>
@@ -295,81 +281,95 @@ export default function ProfilePage() {
               </span>
             </button>
           </div>
+
+          {/* Following & Follower Counts under Name */}
+          <div className="flex items-center gap-2 text-xs">
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#F8FAFC] border border-slate-200/70 text-slate-600 tabular-nums">
+              <strong className="font-bold text-[#1E2538]">{followingCount}</strong>
+              <span>Following</span>
+            </span>
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#F8FAFC] border border-slate-200/70 text-slate-600 tabular-nums">
+              <strong className="font-bold text-[#1E2538]">{followerCount}</strong>
+              <span>Follower</span>
+            </span>
+          </div>
         </div>
 
-        <div className="p-5 sm:p-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-[#FBF6EC] text-[#B38728] flex items-center justify-center shrink-0">
-              <Phone className="w-4 h-4" />
-            </div>
-            <div className="min-w-0">
-              <span className="text-[11px] text-slate-400 block">เบอร์โทรศัพท์</span>
-              <span className="text-xs sm:text-sm font-semibold text-[#1E2538] tabular-nums">
-                {profile.phone_number || 'ยังไม่ระบุ'}
-              </span>
-            </div>
+        <div className="p-5 sm:p-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200/70 space-y-1">
+            <Phone
+              aria-hidden="true"
+              className="pointer-events-none select-none absolute -right-2 -bottom-2 w-14 h-14 text-[#1E2538] opacity-[0.07] -rotate-12"
+            />
+            <span className="relative z-10 text-xs font-bold text-[#9A7320] block">เบอร์โทรศัพท์</span>
+            <span className="relative z-10 text-sm sm:text-base font-extrabold text-[#1E2538] tabular-nums block">
+              {profile.phone_number || 'ยังไม่ระบุ'}
+            </span>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-[#FBF6EC] text-[#B38728] flex items-center justify-center shrink-0">
-              <Mail className="w-4 h-4" />
-            </div>
-            <div className="min-w-0">
-              <span className="text-[11px] text-slate-400 block">อีเมล</span>
-              <span className="text-xs sm:text-sm font-semibold text-[#1E2538] truncate block">
-                {profile.email || 'ยังไม่ระบุ'}
-              </span>
-            </div>
+          <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200/70 space-y-1">
+            <Mail
+              aria-hidden="true"
+              className="pointer-events-none select-none absolute -right-2 -bottom-2 w-14 h-14 text-[#FB7170] opacity-[0.10] -rotate-12"
+            />
+            <span className="relative z-10 text-xs font-bold text-slate-500 block">อีเมล</span>
+            <span className="relative z-10 text-sm sm:text-base font-extrabold text-[#1E2538] truncate block">
+              {profile.email || 'ยังไม่ระบุ'}
+            </span>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-[#FBF6EC] text-[#B38728] flex items-center justify-center shrink-0">
-              <Briefcase className="w-4 h-4" />
-            </div>
-            <div className="min-w-0">
-              <span className="text-[11px] text-slate-400 block">กลุ่มอุตสาหกรรม</span>
-              <span className="text-xs sm:text-sm font-semibold text-[#1E2538] truncate block">
-                {profile.industry || 'ยังไม่ระบุ'}
-              </span>
-            </div>
+          <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200/70 space-y-1">
+            <Briefcase
+              aria-hidden="true"
+              className="pointer-events-none select-none absolute -right-2 -bottom-2 w-14 h-14 text-[#1E2538] opacity-[0.07] -rotate-12"
+            />
+            <span className="relative z-10 text-xs font-bold text-slate-500 block">กลุ่มอุตสาหกรรม</span>
+            <span className="relative z-10 text-sm sm:text-base font-extrabold text-[#1E2538] truncate block">
+              {profile.industry || 'ยังไม่ระบุ'}
+            </span>
           </div>
         </div>
       </div>
 
-      {/* ================= 4. SEPARATE HOUSE CARD ================= */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-[0_2px_12px_rgba(15,23,42,0.04)] space-y-4">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3.5 min-w-0">
+      {/* ================= 4. SEPARATE HOUSE CARD (SPLIT-TONE EXECUTIVE PASS) ================= */}
+      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-[0_6px_24px_rgba(15,23,42,0.06)] overflow-hidden">
+        <div className="relative bg-gradient-to-r from-[#141A2C] via-[#1E2538] to-[#252E46] text-white p-5 sm:p-6 border-b-[3px] border-[#FB7170] flex items-center justify-between gap-4 overflow-hidden">
+          <div className="relative z-10 flex items-center gap-4 min-w-0">
             <img
               src={`/images/planets/${currentHouse?.id || 'the_mars'}.webp`}
               alt={houseName}
-              className="w-14 h-14 rounded-2xl shadow-sm shrink-0"
+              className="w-14 h-14 rounded-2xl ring-2 ring-white/20 shadow-[0_6px_18px_rgba(0,0,0,0.3)] shrink-0"
             />
             <div className="min-w-0 space-y-0.5">
-              <span className="text-[11px] font-medium text-slate-400 block">บ้านของฉัน</span>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-300 block">
+                My House
+              </span>
               <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="text-lg font-bold text-[#1E2538]">{houseName}</h3>
+                <h3 className="text-lg sm:text-xl font-extrabold text-white">{houseName}</h3>
                 {houseRank !== null && (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FBF6EC] border border-[#EFE2C2] text-[#9A7320] tabular-nums">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#C59B38]/25 border border-[#E5C158]/50 text-[#E5C158] tabular-nums">
                     Rank #{houseRank}
                   </span>
                 )}
               </div>
-              <p className="text-xs text-slate-500 tabular-nums">
-                {houseMembers.length} สมาชิก • {housePoints.toLocaleString()} คะแนน
+              <p className="text-xs text-slate-300 tabular-nums">
+                {houseMembers.length} สมาชิก •{' '}
+                <strong className="text-[#E5C158]">{housePoints.toLocaleString()}</strong> คะแนน
               </p>
             </div>
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setIsHouseModalOpen(true)}
-          className="w-full py-2.5 rounded-xl bg-[#B89138] hover:bg-[#a37f2d] text-white text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm"
-        >
-          <Users className="w-4 h-4" />
-          <span>ดูสมาชิกในบ้าน</span>
-        </button>
+        <div className="p-4 sm:p-5 bg-white">
+          <button
+            type="button"
+            onClick={() => setIsHouseModalOpen(true)}
+            className="w-full py-2.5 rounded-xl bg-[#1E2538] hover:bg-[#2B3550] text-white text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm"
+          >
+            <Users className="w-4 h-4 text-[#E5C158]" />
+            <span>ดูสมาชิกในบ้าน</span>
+          </button>
+        </div>
       </div>
 
       {/* ================= 5. SUMMARY & SPLIT ATTENDANCE / MISSIONS ================= */}

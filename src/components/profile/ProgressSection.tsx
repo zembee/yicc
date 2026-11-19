@@ -98,118 +98,159 @@ export function ProgressSection({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-[0_2px_12px_rgba(15,23,42,0.04)] space-y-5">
-      {/* Header */}
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h3 className="text-base sm:text-lg font-bold text-[#1E2538]">ความก้าวหน้าของฉัน</h3>
-          <p className="text-xs text-slate-500">สรุปคะแนน สถานะสมาชิก และโควตาการเข้าร่วม</p>
+    <div className="bg-white rounded-3xl border border-slate-200/80 shadow-[0_6px_24px_rgba(15,23,42,0.06)] overflow-hidden">
+      {/* Split-Tone Executive Navy Header */}
+      <div className="bg-gradient-to-r from-[#141A2C] via-[#1E2538] to-[#252E46] text-white px-5 py-4 sm:px-6 sm:py-5 border-b-[3px] border-[#FB7170] flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-300 block">
+            My Progress
+          </span>
+          <h3 className="text-lg sm:text-xl font-extrabold text-white leading-tight truncate">
+            ความก้าวหน้าของฉัน
+          </h3>
+          <p className="text-[11px] text-slate-300 truncate mt-0.5">
+            สรุปคะแนน สถานะสมาชิก และโควตาการเข้าร่วม
+          </p>
         </div>
-        <span className="px-3 py-1 rounded-full bg-[#FBF6EC] border border-[#EFE2C2] text-[#9A7320] text-xs font-bold tabular-nums shrink-0">
+        <span className="px-3.5 py-1.5 rounded-xl badge-gold-metallic text-xs font-extrabold tabular-nums shrink-0">
           {(profile.points_balance ?? 0).toLocaleString()} คะแนน
         </span>
       </div>
 
-      {/* 4 Clean Summary Metric Boxes */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200/70">
-          <div className="flex items-center gap-2 text-[#9A7320] text-[11px] font-semibold mb-1.5">
-            <img src="/images/icons/points.webp" alt="" className="w-5 h-5 rounded-md shrink-0" />
-            <span>Point คะแนนสะสม</span>
+      <div className="p-5 sm:p-6 space-y-5">
+        {/* 4 Clean Summary Metric Boxes with Subtle Watermark Icon Backgrounds */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200/70 space-y-1">
+            <img
+              src="/images/icons/points.webp"
+              alt=""
+              aria-hidden="true"
+              className="pointer-events-none select-none absolute -right-2 -bottom-2 w-16 h-16 rounded-2xl opacity-[0.14] -rotate-6"
+            />
+            <span className="relative z-10 text-[#9A7320] text-xs sm:text-sm font-bold block truncate">
+              คะแนนสะสม
+            </span>
+            <p className="relative z-10 text-2xl font-extrabold text-[#1E2538] tabular-nums leading-tight">
+              {(profile.points_balance ?? 0).toLocaleString()}
+            </p>
+            <span className="relative z-10 text-[11px] text-slate-400 tabular-nums block">
+              {(profile.xp_balance ?? 0).toLocaleString()} XP
+            </span>
           </div>
-          <p className="text-xl font-bold text-[#1E2538] tabular-nums">
-            {(profile.points_balance ?? 0).toLocaleString()}
-          </p>
-          <span className="text-[11px] text-slate-400 tabular-nums">
-            {(profile.xp_balance ?? 0).toLocaleString()} XP
-          </span>
+
+          <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200/70 space-y-1">
+            <img
+              src="/images/icons/profile.webp"
+              alt=""
+              aria-hidden="true"
+              className="pointer-events-none select-none absolute -right-2 -bottom-2 w-16 h-16 rounded-2xl opacity-[0.14] -rotate-6"
+            />
+            <span className="relative z-10 text-slate-600 text-xs sm:text-sm font-bold block truncate">
+              ระดับสมาชิก
+            </span>
+            <p className="relative z-10 text-2xl font-extrabold text-[#1E2538] leading-tight">
+              {tier}
+            </p>
+            <span className="relative z-10 text-[11px] text-slate-400 block">YFTI Elite 11</span>
+          </div>
+
+          <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200/70 space-y-1">
+            <img
+              src="/images/icons/events.webp"
+              alt=""
+              aria-hidden="true"
+              className="pointer-events-none select-none absolute -right-2 -bottom-2 w-16 h-16 rounded-2xl opacity-[0.14] -rotate-6"
+            />
+            <span className="relative z-10 text-slate-600 text-xs sm:text-sm font-bold block truncate">
+              กิจกรรมที่สมัคร
+            </span>
+            <p className="relative z-10 text-2xl font-extrabold text-[#1E2538] tabular-nums leading-tight">
+              {registeredEventsCount}
+            </p>
+            <span className="relative z-10 text-[11px] text-slate-400 tabular-nums block">
+              เข้าเรียน {attendanceRate}%
+            </span>
+          </div>
+
+          <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200/70 space-y-1">
+            <img
+              src="/images/icons/missions.webp"
+              alt=""
+              aria-hidden="true"
+              className="pointer-events-none select-none absolute -right-2 -bottom-2 w-16 h-16 rounded-2xl opacity-[0.14] -rotate-6"
+            />
+            <span className="relative z-10 text-slate-600 text-xs sm:text-sm font-bold block truncate">
+              ขาด / โควตา
+            </span>
+            <p className="relative z-10 text-2xl font-extrabold text-[#1E2538] tabular-nums leading-tight">
+              {estimatedAbsentCount}{' '}
+              <span className="text-sm font-medium text-slate-400">/ {absentQuota}</span>
+            </p>
+            <span className="relative z-10 text-[11px] text-[#9A7320] font-semibold tabular-nums block">
+              เหลือโควตา {remainingQuota} ครั้ง
+            </span>
+          </div>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200/70">
-          <div className="flex items-center gap-2 text-[#1E2538] text-[11px] font-semibold mb-1.5">
-            <img src="/images/icons/profile.webp" alt="" className="w-5 h-5 rounded-md shrink-0" />
-            <span>ระดับสมาชิก</span>
+        {/* Clean Segmented Tab Switcher & Certificate Badge */}
+        <div className="space-y-3 pt-1 border-t border-slate-100">
+          <div
+            className="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 rounded-xl mt-3"
+            role="tablist"
+            aria-label="รายละเอียดความก้าวหน้า"
+          >
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeDetailTab === 'events'}
+              onClick={() => setActiveDetailTab('events')}
+              className={`py-2.5 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 whitespace-nowrap ${
+                activeDetailTab === 'events'
+                  ? 'bg-[#1E2538] text-white shadow-sm'
+                  : 'text-slate-600 hover:text-[#1E2538]'
+              }`}
+            >
+              <GraduationCap className={`w-4 h-4 shrink-0 ${activeDetailTab === 'events' ? 'text-[#E5C158]' : ''}`} />
+              <span>กิจกรรม / คอร์ส</span>
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeDetailTab === 'missions'}
+              onClick={() => setActiveDetailTab('missions')}
+              className={`py-2.5 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 whitespace-nowrap ${
+                activeDetailTab === 'missions'
+                  ? 'bg-[#1E2538] text-white shadow-sm'
+                  : 'text-slate-600 hover:text-[#1E2538]'
+              }`}
+            >
+              <Target className={`w-4 h-4 shrink-0 ${activeDetailTab === 'missions' ? 'text-[#FB7170]' : ''}`} />
+              <span>ภารกิจของฉัน</span>
+            </button>
           </div>
-          <p className="text-xl font-bold text-[#1E2538]">{tier}</p>
-          <span className="text-[11px] text-slate-400">YFTI Elite 11</span>
-        </div>
 
-        <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200/70">
-          <div className="flex items-center gap-2 text-[#1E2538] text-[11px] font-semibold mb-1.5">
-            <img src="/images/icons/events.webp" alt="" className="w-5 h-5 rounded-md shrink-0" />
-            <span>กิจกรรมที่สมัคร</span>
-          </div>
-          <p className="text-xl font-bold text-[#1E2538] tabular-nums">{registeredEventsCount}</p>
-          <span className="text-[11px] text-slate-400 tabular-nums">
-            เข้าเรียน {attendanceRate}%
-          </span>
-        </div>
-
-        <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200/70">
-          <div className="flex items-center gap-2 text-[#1E2538] text-[11px] font-semibold mb-1.5">
-            <img src="/images/icons/missions.webp" alt="" className="w-5 h-5 rounded-md shrink-0" />
-            <span>ขาด / โควตา</span>
-          </div>
-          <p className="text-xl font-bold text-[#1E2538] tabular-nums">
-            {estimatedAbsentCount}{' '}
-            <span className="text-sm font-medium text-slate-400">/ {absentQuota}</span>
-          </p>
-          <span className="text-[11px] text-[#9A7320] tabular-nums">
-            เหลือโควตา {remainingQuota} ครั้ง
-          </span>
-        </div>
-      </div>
-
-      {/* Segmented Tab Switcher */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-1 border-t border-slate-100">
-        <div className="flex items-center gap-2 pt-3" role="tablist" aria-label="รายละเอียดความก้าวหน้า">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeDetailTab === 'events'}
-            onClick={() => setActiveDetailTab('events')}
-            className={`px-4 py-2 rounded-full text-xs font-semibold transition flex items-center gap-1.5 ${
-              activeDetailTab === 'events'
-                ? 'bg-[#1E2538] text-white'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+          <div
+            className={`flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-[#F8FAFC] border border-slate-200/70 border-l-[3px] ${
+              isCertificateEligible ? 'border-l-emerald-500' : 'border-l-[#FB7170]'
             }`}
           >
-            <GraduationCap className="w-4 h-4" />
-            <span>ข้อมูลการเข้าร่วมกิจกรรม/คอร์ส</span>
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeDetailTab === 'missions'}
-            onClick={() => setActiveDetailTab('missions')}
-            className={`px-4 py-2 rounded-full text-xs font-semibold transition flex items-center gap-1.5 ${
-              activeDetailTab === 'missions'
-                ? 'bg-[#1E2538] text-white'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-            }`}
-          >
-            <Target className="w-4 h-4" />
-            <span>ข้อมูลการเก็บภารกิจ</span>
-          </button>
+            <span className="text-xs font-semibold text-slate-600">สิทธิ์รับวุฒิบัตร</span>
+            <span
+              className={`text-xs font-bold inline-flex items-center gap-1.5 ${
+                isCertificateEligible ? 'text-emerald-700' : 'text-[#E05252]'
+              }`}
+            >
+              {isCertificateEligible ? (
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+              ) : (
+                <AlertCircle className="w-3.5 h-3.5 text-[#FB7170]" />
+              )}
+              {isCertificateEligible
+                ? 'ผ่านเกณฑ์'
+                : `ยังไม่ผ่านเกณฑ์ (ขั้นต่ำ ${MIN_ATTENDANCE_FOR_CERTIFICATE}%)`}
+            </span>
+          </div>
         </div>
-
-        <span
-          className={`mt-3 px-3 py-1 rounded-full text-[11px] font-bold flex items-center gap-1 border ${
-            isCertificateEligible
-              ? 'bg-[#FBF6EC] text-[#9A7320] border-[#EFE2C2]'
-              : 'bg-rose-50 text-rose-700 border-rose-200'
-          }`}
-        >
-          {isCertificateEligible ? (
-            <CheckCircle2 className="w-3.5 h-3.5" />
-          ) : (
-            <AlertCircle className="w-3.5 h-3.5" />
-          )}
-          {isCertificateEligible
-            ? 'สิทธิ์รับวุฒิบัตร: ผ่านเกณฑ์'
-            : `สิทธิ์รับวุฒิบัตร: ยังไม่ผ่านเกณฑ์ (ขั้นต่ำ ${MIN_ATTENDANCE_FOR_CERTIFICATE}%)`}
-        </span>
-      </div>
 
       {activeDetailTab === 'events' ? (
         <div className="space-y-4">
@@ -281,14 +322,23 @@ export function ProgressSection({
                       </p>
                     </div>
                     <span
-                      className={`px-2.5 py-1 rounded-full text-[10px] font-bold shrink-0 ${
+                      className={`inline-flex items-center gap-1.5 text-[11px] font-bold shrink-0 ${
                         ev.isCheckedIn
-                          ? 'bg-[#1E2538] text-white'
+                          ? 'text-emerald-700'
                           : ev.status === 'UPCOMING'
-                          ? 'bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2]'
-                          : 'bg-slate-200 text-slate-700'
+                          ? 'text-[#B38728]'
+                          : 'text-slate-500'
                       }`}
                     >
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                          ev.isCheckedIn
+                            ? 'bg-emerald-500'
+                            : ev.status === 'UPCOMING'
+                            ? 'bg-[#C59B38]'
+                            : 'bg-slate-400'
+                        }`}
+                      />
                       {ev.isCheckedIn
                         ? 'เช็กชื่อแล้ว'
                         : ev.status === 'UPCOMING'
@@ -332,7 +382,7 @@ export function ProgressSection({
               <div className="space-y-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h4 className="text-xs sm:text-sm font-bold text-[#1E2538]">{mission.title}</h4>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FBF6EC] border border-[#EFE2C2] text-[#9A7320] tabular-nums">
+                  <span className="text-[11px] font-bold text-[#B38728] tabular-nums">
                     +{mission.reward_points} pts
                   </span>
                 </div>
@@ -369,12 +419,19 @@ export function ProgressSection({
                   </label>
                 ) : (
                   <span
-                    className={`px-3 py-1 rounded-full text-[11px] font-bold shrink-0 ${
+                    className={`inline-flex items-center gap-1.5 text-[11px] font-bold shrink-0 ${
                       mission.resolvedStatus === 'APPROVED'
-                        ? 'bg-[#1E2538] text-white'
-                        : 'bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2]'
+                        ? 'text-emerald-700'
+                        : 'text-[#B38728]'
                     }`}
                   >
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                        mission.resolvedStatus === 'APPROVED'
+                          ? 'bg-emerald-500'
+                          : 'bg-[#C59B38]'
+                      }`}
+                    />
                     {mission.resolvedStatus === 'APPROVED' ? 'สำเร็จแล้ว' : 'รอตรวจสอบ'}
                   </span>
                 )}
@@ -383,6 +440,7 @@ export function ProgressSection({
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }

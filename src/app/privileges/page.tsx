@@ -123,44 +123,73 @@ function PrivilegesContent() {
 
   return (
     <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 py-4 pb-24 space-y-5">
-      {/* ================= TOP EXECUTIVE NAVY HEADER & SEARCH ================= */}
-      <div className="bg-[#1E2538] text-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-[0_4px_16px_rgba(15,23,42,0.12)] border-b-[3px] border-[#FB7170] space-y-4">
-        <div className="flex items-center justify-between gap-2">
+      {/* ================= TOP EXECUTIVE NAVY HERO HEADER & SEARCH ================= */}
+      <div className="relative overflow-hidden bg-[#141A2C] text-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-[0_10px_30px_rgba(20,26,44,0.18)] border-b-[3px] border-[#FB7170] space-y-4">
+        <div className="absolute inset-0 pointer-events-none select-none">
+          <img
+            src="https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp"
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-cover object-right opacity-25"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(115deg, rgba(16,22,38,0.96) 28%, rgba(24,31,52,0.88) 58%, rgba(30,37,56,0.65) 100%)',
+            }}
+          />
+        </div>
+
+        <div className="relative z-10 flex items-center justify-between gap-2">
           <div className="flex items-center gap-3 min-w-0">
             <Link
               href="/"
               aria-label="กลับหน้าหลัก"
-              className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition shrink-0"
+              className="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center transition shrink-0"
             >
               <ArrowLeft className="w-4 h-4" />
             </Link>
-            <h1 className="text-lg sm:text-xl font-bold tracking-tight truncate">Privileges</h1>
+            <img
+              src="/images/icons/privileges.webp"
+              alt="Privileges"
+              className="w-10 h-10 rounded-xl ring-1 ring-white/15 shadow-sm shrink-0 hidden sm:block"
+            />
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-2xl tracking-tight truncate leading-tight">
+                <span className="font-extrabold">Privileges</span>{' '}
+                <span className="font-light text-white/90 text-sm sm:text-lg">สิทธิพิเศษ</span>
+              </h1>
+              <p className="text-[11px] font-medium text-[#FB7170] truncate">
+                แลกรับสิทธิประโยชน์เฉพาะสมาชิก Young FTI ELITE 11
+              </p>
+            </div>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => setIsHistoryOpen(true)}
-              className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-[#E5C158] text-xs font-bold flex items-center gap-1.5 transition"
+              className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-[#E5C158] text-xs font-bold flex items-center gap-1.5 transition backdrop-blur-sm"
             >
               <History className="w-3.5 h-3.5" />
               <span>History</span>
             </button>
-            <div className="px-3 py-1.5 rounded-full bg-white/10 border border-white/15 flex items-center gap-1.5 text-white text-xs font-bold tabular-nums">
-              <Coins className="w-3.5 h-3.5 text-[#E5C158]" />
+            <div className="px-3 py-1.5 rounded-xl badge-gold-metallic flex items-center gap-1.5 text-xs font-bold tabular-nums">
+              <Coins className="w-3.5 h-3.5" />
               <span>{userPoints.toLocaleString()}</span>
             </div>
           </div>
         </div>
 
-        {/* Search Input */}
-        <div className="relative">
-          <Search className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+        {/* Search Input (rounded-xl) */}
+        <div className="relative z-10">
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="ค้นหาสิทธิพิเศษ ร้านค้า หรือหมวดหมู่..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-full bg-white text-[#1E2538] text-xs sm:text-sm font-medium placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#C59B38]"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white text-[#1E2538] text-xs sm:text-sm font-medium placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#C59B38] shadow-sm"
           />
         </div>
       </div>
@@ -212,7 +241,7 @@ function PrivilegesContent() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
             <div className="absolute bottom-4 left-4 right-14 text-white space-y-1">
-              <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#C59B38] text-[10px] font-bold text-white">
+              <span className="inline-block px-2.5 py-0.5 rounded-full badge-gold-metallic text-[10px] font-extrabold">
                 {featuredPrivileges[carouselIdx].discount_label}
               </span>
               <h3 className="text-sm sm:text-lg font-bold line-clamp-1">
@@ -243,17 +272,17 @@ function PrivilegesContent() {
         </div>
       )}
 
-      {/* ================= CATEGORY FILTER PILLS ================= */}
+      {/* ================= CATEGORY FILTER TABS ================= */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
         {CATEGORIES.map((cat) => (
           <button
             key={cat.id}
             type="button"
             onClick={() => setSelectedCategory(cat.id)}
-            className={`px-4 py-2 rounded-full text-xs font-semibold transition whitespace-nowrap ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap shadow-sm ${
               selectedCategory === cat.id
-                ? 'bg-[#B89138] text-white shadow-sm'
-                : 'bg-white text-slate-700 border border-slate-200 hover:border-slate-300'
+                ? 'bg-[#1E2538] text-white'
+                : 'bg-white text-slate-600 border border-slate-200/80 hover:border-[#C59B38] hover:text-[#1E2538]'
             }`}
           >
             {cat.label}
@@ -273,42 +302,51 @@ function PrivilegesContent() {
               setSelectedCategory('All');
               setSearchQuery('');
             }}
-            className="text-xs font-bold text-[#9A7320] hover:underline"
+            className="text-xs font-bold text-[#FB7170] hover:underline"
           >
             แสดงทั้งหมด
           </button>
         )}
       </div>
 
-      {/* ================= PRIVILEGES GRID (2 COLUMNS) ================= */}
+      {/* ================= PRIVILEGES GRID (2 COLUMNS, VIP VOUCHER STYLE) ================= */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4">
         {filteredPrivileges.map((priv) => (
           <Link
             key={priv.id}
             href={`/privileges/${priv.id}`}
-            className="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-[0_2px_12px_rgba(15,23,42,0.04)] hover:border-[#C59B38] transition flex flex-col justify-between group"
+            className="bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-[0_6px_20px_rgba(15,23,42,0.06)] hover:shadow-[0_14px_30px_rgba(15,23,42,0.12)] hover:-translate-y-0.5 hover:border-[#C59B38]/80 transition-all duration-300 flex flex-col justify-between group"
           >
-            <div className="relative aspect-[4/3] bg-slate-100 overflow-hidden">
+            <div className="relative aspect-[4/3] bg-[#141A2C] overflow-hidden border-b-2 border-[#C59B38]/70">
               <img
                 src={priv.image_url}
                 alt={priv.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <span className="absolute bottom-2 left-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/95 text-[#1E2538] text-[10px] font-bold tabular-nums shadow-sm">
-                <Coins className="w-3 h-3 text-[#B38728]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#141A2C]/75 via-transparent to-transparent pointer-events-none" />
+              <span className="absolute bottom-2 left-2 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-white/95 ring-1 ring-[#C59B38]/30 text-[#1E2538] text-[10px] font-extrabold tabular-nums shadow-sm">
+                <Coins className="w-3 h-3 text-[#C59B38]" />
                 {priv.points_required}
               </span>
-              <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded-full bg-black/65 text-white text-[10px] font-medium max-w-[55%] truncate">
+              <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded-lg bg-[#141A2C]/80 backdrop-blur-md border border-white/15 text-white text-[10px] font-semibold max-w-[55%] truncate">
                 {priv.category}
               </span>
             </div>
 
-            <div className="p-3 sm:p-3.5 space-y-1">
-              <span className="text-[10px] sm:text-[11px] font-medium text-slate-400 uppercase block truncate">
-                {priv.merchant}
-              </span>
-              <p className="text-xs sm:text-sm font-bold text-[#1E2538]">{priv.discount_label}</p>
-              <h3 className="text-[11px] sm:text-xs text-slate-500 line-clamp-1">{priv.title}</h3>
+            <div className="p-3.5 sm:p-4 space-y-1 flex-1 flex flex-col justify-between">
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold text-[#9A7320] uppercase tracking-wider block truncate">
+                  {priv.merchant}
+                </span>
+                <p className="text-xs sm:text-sm font-extrabold text-[#1E2538] group-hover:text-[#B38728] transition-colors">
+                  {priv.discount_label}
+                </p>
+                <h3 className="text-[11px] sm:text-xs text-slate-500 line-clamp-1">{priv.title}</h3>
+              </div>
+              <div className="pt-2.5 mt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-[#1E2538] group-hover:text-[#B38728]">
+                <span>รับสิทธิ์</span>
+                <ChevronRight className="w-3.5 h-3.5 text-[#FB7170] group-hover:translate-x-0.5 transition-transform" />
+              </div>
             </div>
           </Link>
         ))}

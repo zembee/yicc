@@ -25,20 +25,41 @@ const COURSE_ACTIVITIES = [
 
 export default function AboutPage() {
   return (
-    <div className="w-full bg-[#FAFAFA] text-[#292929] font-['Kanit',sans-serif] select-none">
-      {/* -------------------------------------------------------------------------------- */}
-      {/* SECTION 1: PAGE TITLE (Padding: 80px 0)                                          */}
-      {/* -------------------------------------------------------------------------------- */}
-      <section className="max-w-[1200px] mx-auto px-5 sm:px-8 pt-[48px] md:pt-[80px] pb-[32px] md:pb-[48px] text-center">
-        <h1 className="text-[32px] sm:text-[40px] lg:text-[48px] font-semibold text-[#212542] leading-[1.2]">
-          เกี่ยวกับเรา
-        </h1>
+    <div className="w-full bg-[#F4F6FA] text-[#1E2538] font-['Kanit',sans-serif] select-none">
+      {/* Executive Navy Hero Header */}
+      <section className="relative overflow-hidden bg-[#141A2C] text-white pt-8 pb-10 px-5 sm:px-8 border-b-[3px] border-[#FB7170] shadow-[0_10px_30px_rgba(20,26,44,0.18)]">
+        <div className="absolute inset-0 pointer-events-none select-none">
+          <img
+            src="https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp"
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-cover object-right opacity-25"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(115deg, rgba(16,22,38,0.96) 28%, rgba(24,31,52,0.88) 58%, rgba(30,37,56,0.65) 100%)',
+            }}
+          />
+        </div>
+
+        <div className="relative z-10 max-w-[1200px] mx-auto space-y-1.5">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-300 block">
+            About Program
+          </span>
+          <h1 className="text-2xl sm:text-4xl tracking-tight leading-tight">
+            <span className="font-extrabold">เกี่ยวกับเรา</span>{' '}
+            <span className="font-light text-white/95">Young FTI ELITE 11</span>
+          </h1>
+          <p className="text-xs sm:text-sm font-medium text-[#FB7170]">
+            หลักสูตรนักอุตสาหกรรมรุ่นใหม่ สภาอุตสาหกรรมแห่งประเทศไทย
+          </p>
+        </div>
       </section>
 
-      {/* -------------------------------------------------------------------------------- */}
-      {/* MAIN CONTAINER (.elementor-element-ebeb2e9)                                       */}
-      {/* -------------------------------------------------------------------------------- */}
-      <div className="max-w-[1200px] mx-auto px-5 sm:px-8 space-y-[64px] md:space-y-[88px] pb-[72px] md:pb-[104px]">
+      {/* MAIN CONTAINER */}
+      <div className="max-w-[1200px] mx-auto px-5 sm:px-8 pt-8 sm:pt-12 space-y-[56px] md:space-y-[76px] pb-[72px] md:pb-[104px]">
         {/* ------------------------------------------------------------------------------ */}
         {/* SECTION 2: WHAT'S YOUNG FTI ELITE BANNER (.elementor-element-9946fc6)           */}
         {/* ------------------------------------------------------------------------------ */}

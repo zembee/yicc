@@ -272,7 +272,7 @@ export default function EventDetailPage() {
       )}
 
       {/* Hero Header */}
-      <div className="bg-gradient-to-b from-[#111827] via-[#1E2538] to-[#252E46] text-white pt-8 pb-14 px-4 sm:px-6 lg:px-8 border-b border-slate-800 shadow-md">
+      <div className="bg-gradient-to-b from-[#141A2C] via-[#1E2538] to-[#252E46] text-white pt-8 pb-14 px-4 sm:px-6 lg:px-8 border-b-[3px] border-[#FB7170] shadow-[0_10px_30px_rgba(20,26,44,0.18)]">
         <div className="max-w-5xl mx-auto space-y-6">
           {/* Breadcrumb & Navigation */}
           <div className="flex items-center justify-between">
@@ -294,7 +294,7 @@ export default function EventDetailPage() {
           <div className="space-y-3 pt-2">
             <div className="flex flex-wrap items-center gap-2">
               {event.is_mandatory ? (
-                <span className="px-3 py-0.5 rounded-full bg-[#C59B38] text-white text-[11px] font-bold tracking-wider uppercase shadow-sm">
+                <span className="px-3 py-0.5 rounded-full badge-gold-metallic text-[11px] font-extrabold tracking-wider uppercase">
                   วิชาบังคับ (80%)
                 </span>
               ) : (

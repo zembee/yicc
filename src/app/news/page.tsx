@@ -24,14 +24,36 @@ export default function NewsPage() {
 
   return (
     <div className="max-w-7xl mx-auto w-full px-5 sm:px-6 lg:px-8 py-6 space-y-8 sm:space-y-10 pb-20">
-      {/* Header */}
-      <div className="text-center space-y-2 pt-2">
-        <h1 className="text-2xl sm:text-4xl font-extrabold text-[#1E2538] tracking-tight">
-          ข่าวสารโครงการ
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-500 max-w-xl mx-auto">
-          อัปเดตข่าวสาร ประกาศสำคัญ และความเคลื่อนไหวของหลักสูตร Young FTI ELITE 11
-        </p>
+      {/* Executive Navy Hero Header */}
+      <div className="relative overflow-hidden bg-[#141A2C] text-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-[0_10px_30px_rgba(20,26,44,0.18)] border-b-[3px] border-[#FB7170]">
+        <div className="absolute inset-0 pointer-events-none select-none">
+          <img
+            src="https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp"
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-cover object-right opacity-25"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(115deg, rgba(16,22,38,0.96) 28%, rgba(24,31,52,0.88) 58%, rgba(30,37,56,0.65) 100%)',
+            }}
+          />
+        </div>
+
+        <div className="relative z-10 space-y-1">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-300 block">
+            News &amp; Announcements
+          </span>
+          <h1 className="text-xl sm:text-3xl tracking-tight leading-tight">
+            <span className="font-extrabold">ข่าวสารโครงการ</span>{' '}
+            <span className="font-light text-white/95">Young FTI ELITE 11</span>
+          </h1>
+          <p className="text-xs sm:text-sm font-medium text-[#FB7170]">
+            อัปเดตข่าวสาร ประกาศสำคัญ และความเคลื่อนไหวของหลักสูตร
+          </p>
+        </div>
       </div>
 
       {/* Featured News Grid */}

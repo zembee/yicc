@@ -410,21 +410,46 @@ function DirectoryContent() {
 
   return (
     <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6 pb-20">
-      {/* 1. Dark Navy Header with Integrated Search & QR Button */}
-      <div className="bg-[#1E2538] text-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-[0_4px_16px_rgba(15,23,42,0.12)] border-b-[3px] border-[#FB7170] space-y-4">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <h1 className="text-lg sm:text-2xl font-bold tracking-tight">
-              ทำเนียบธุรกิจ Young FTI ELITE 11
-            </h1>
-            <p className="text-xs text-slate-300 mt-0.5 tabular-nums">
-              ทั้งหมด {participants.length.toLocaleString()} ท่าน
-            </p>
+      {/* 1. Executive Navy Hero Header with Blended Backdrop, Search & QR Button */}
+      <div className="relative overflow-hidden bg-[#141A2C] text-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-[0_10px_30px_rgba(20,26,44,0.18)] border-b-[3px] border-[#FB7170] space-y-4">
+        {/* Blended Stage Backdrop */}
+        <div className="absolute inset-0 pointer-events-none select-none">
+          <img
+            src="https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp"
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-cover object-right opacity-25"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(115deg, rgba(16,22,38,0.96) 28%, rgba(24,31,52,0.88) 58%, rgba(30,37,56,0.65) 100%)',
+            }}
+          />
+        </div>
+
+        <div className="relative z-10 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <img
+              src="/images/icons/business.webp"
+              alt="ทำเนียบธุรกิจ"
+              className="w-11 h-11 rounded-xl ring-1 ring-white/15 shadow-sm shrink-0"
+            />
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-2xl tracking-tight text-white leading-tight truncate">
+                <span className="font-extrabold">ทำเนียบธุรกิจ</span>{' '}
+                <span className="font-light text-white/95">Young FTI ELITE 11</span>
+              </h1>
+              <p className="text-xs font-medium text-[#FB7170] mt-0.5 tabular-nums">
+                ทั้งหมด {participants.length.toLocaleString()} ท่าน
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Search Input + QR Button */}
-        <div className="flex items-center gap-2.5">
+        {/* Search Input + QR Button (rounded-xl) */}
+        <div className="relative z-10 flex items-center gap-2.5">
           <div className="relative flex-1">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
@@ -459,15 +484,15 @@ function DirectoryContent() {
         </div>
       </div>
 
-      {/* 2. Clean Filter Pills Bar */}
+      {/* 2. Clean Filter Bar */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
         <select
           value={selectedIndustry}
           onChange={(e) => setSelectedIndustry(e.target.value)}
-          className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border outline-none transition shrink-0 ${
+          className={`px-3.5 py-2 rounded-xl text-xs font-semibold border outline-none transition shrink-0 shadow-sm ${
             selectedIndustry !== 'ALL'
-              ? 'bg-[#FBF6EC] border-[#C59B38] text-[#8A6418]'
-              : 'bg-white border-slate-200 text-slate-700'
+              ? 'bg-[#1E2538] border-[#1E2538] text-white'
+              : 'bg-white border-slate-200/80 text-slate-700 hover:border-[#C59B38]'
           }`}
         >
           {INDUSTRY_GROUPS.map((ig) => (
@@ -480,10 +505,10 @@ function DirectoryContent() {
         <select
           value={selectedHouse}
           onChange={(e) => setSelectedHouse(e.target.value)}
-          className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border outline-none transition shrink-0 ${
+          className={`px-3.5 py-2 rounded-xl text-xs font-semibold border outline-none transition shrink-0 shadow-sm ${
             selectedHouse !== 'ALL'
-              ? 'bg-[#FBF6EC] border-[#C59B38] text-[#8A6418]'
-              : 'bg-white border-slate-200 text-slate-700'
+              ? 'bg-[#1E2538] border-[#1E2538] text-white'
+              : 'bg-white border-slate-200/80 text-slate-700 hover:border-[#C59B38]'
           }`}
         >
           {HOUSES_LIST.map((h) => (
@@ -496,10 +521,10 @@ function DirectoryContent() {
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border outline-none transition max-w-[180px] shrink-0 ${
+          className={`px-3.5 py-2 rounded-xl text-xs font-semibold border outline-none transition max-w-[180px] shrink-0 shadow-sm ${
             selectedCategory !== 'ALL'
-              ? 'bg-[#FBF6EC] border-[#C59B38] text-[#8A6418]'
-              : 'bg-white border-slate-200 text-slate-700'
+              ? 'bg-[#1E2538] border-[#1E2538] text-white'
+              : 'bg-white border-slate-200/80 text-slate-700 hover:border-[#C59B38]'
           }`}
         >
           {BUSINESS_CATEGORIES.map((cat) => (
@@ -512,10 +537,10 @@ function DirectoryContent() {
         <select
           value={selectedCohort}
           onChange={(e) => setSelectedCohort(e.target.value)}
-          className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border outline-none transition shrink-0 ${
+          className={`px-3.5 py-2 rounded-xl text-xs font-semibold border outline-none transition shrink-0 shadow-sm ${
             selectedCohort !== 'ALL'
-              ? 'bg-[#FBF6EC] border-[#C59B38] text-[#8A6418]'
-              : 'bg-white border-slate-200 text-slate-700'
+              ? 'bg-[#1E2538] border-[#1E2538] text-white'
+              : 'bg-white border-slate-200/80 text-slate-700 hover:border-[#C59B38]'
           }`}
         >
           {COHORT_LIST.map((c) => (
@@ -534,7 +559,7 @@ function DirectoryContent() {
               setSelectedCategory('ALL');
               setSelectedCohort('ALL');
             }}
-            className="px-3 py-1.5 rounded-full text-xs font-bold text-[#9A7320] hover:underline shrink-0"
+            className="px-3 py-2 rounded-xl text-xs font-bold text-[#FB7170] hover:underline shrink-0"
           >
             ล้างตัวกรอง
           </button>
@@ -544,67 +569,82 @@ function DirectoryContent() {
       {/* 3. Committee Section (กรรมการ) */}
       {committeeMembers.length > 0 && (
         <section className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-[#1E2538]">
-              กรรมการ Young FTI ELITE 11
-            </h2>
-            <span className="text-xs text-slate-400">เลื่อนดูรายชื่อ</span>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2.5">
+              <img
+                src="/images/icons/profile.webp"
+                alt="กรรมการรุ่น"
+                className="w-8 h-8 rounded-lg shadow-sm shrink-0"
+              />
+              <div>
+                <h2 className="text-sm sm:text-base font-bold text-[#1E2538] leading-tight">
+                  กรรมการ Young FTI ELITE 11
+                </h2>
+                <p className="text-[11px] text-slate-400">คณะกรรมการบริหารรุ่นที่ 11</p>
+              </div>
+            </div>
+            <span className="text-[11px] font-medium text-slate-400 shrink-0">เลื่อนดูรายชื่อ →</span>
           </div>
 
-          <div className="flex gap-3 overflow-x-auto pb-2 snap-x no-scrollbar">
+          <div className="flex gap-3.5 overflow-x-auto pb-2 snap-x no-scrollbar">
             {committeeMembers.map((cm) => {
               const isF = followingIds.includes(String(cm.id));
               return (
                 <Link
                   key={cm.id}
                   href={`/yfti_participants/${cm.id}`}
-                  className="min-w-[180px] max-w-[180px] snap-start bg-white rounded-2xl p-4 border border-slate-200/80 shadow-[0_2px_12px_rgba(15,23,42,0.04)] hover:border-[#C59B38] transition flex flex-col items-center text-center gap-2.5 shrink-0 group"
+                  className="min-w-[186px] max-w-[186px] snap-start bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-[0_6px_20px_rgba(15,23,42,0.06)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.11)] hover:-translate-y-0.5 hover:border-[#C59B38]/80 transition-all duration-300 flex flex-col shrink-0 group"
                 >
-                  <img
-                    src={cm.profile_picture_url || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp'}
-                    alt={cm.name_thai}
-                    className="w-16 h-16 rounded-full object-cover object-top bg-slate-100 border border-slate-200"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp';
-                    }}
-                  />
-                  <div className="min-w-0 w-full space-y-1.5">
-                    <p className="text-xs font-bold text-[#1E2538] group-hover:text-[#B38728] transition-colors truncate">
-                      {cm.name_thai}
-                    </p>
-                    <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2] text-[10px] font-bold">
-                      {cm.cohortRole}
-                    </span>
-                    {cm.company_name_thai && (
-                      <p className="text-[11px] font-medium text-slate-700 flex items-center justify-center gap-1.5 truncate pt-0.5">
-                        <Building2 className="w-3.5 h-3.5 text-[#B38728] shrink-0" />
-                        <span className="truncate">{cm.company_name_thai}</span>
-                      </p>
-                    )}
-                  </div>
+                  {/* Top Subtle Executive Hairline */}
+                  <div className="h-1.5 w-full bg-gradient-to-r from-[#1E2538] via-[#C59B38] to-[#FB7170]" />
 
-                  <div className="w-full pt-2 mt-auto border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-[#1E2538]">
-                    <span className="group-hover:text-[#B38728] transition-colors">ดูโปรไฟล์</span>
-                    <button
-                      onClick={(e) => toggleFollow(e, String(cm.id))}
-                      className={`px-2.5 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 transition ${
-                        isF
-                          ? 'bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2]'
-                          : 'bg-slate-100 text-[#1E2538] hover:bg-[#1E2538] hover:text-white'
-                      }`}
-                    >
-                      {isF ? (
-                        <>
-                          <UserCheck className="w-3 h-3" />
-                          Following
-                        </>
-                      ) : (
-                        <>
-                          <UserPlus className="w-3 h-3" />
-                          Follow
-                        </>
+                  <div className="p-4 flex-1 flex flex-col items-center text-center gap-2.5">
+                    <img
+                      src={cm.profile_picture_url || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp'}
+                      alt={cm.name_thai}
+                      className="w-16 h-16 rounded-full object-cover object-top bg-slate-100 border-2 border-white ring-2 ring-[#C59B38]/35 shadow-sm"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp';
+                      }}
+                    />
+                    <div className="min-w-0 w-full space-y-1.5">
+                      <p className="text-xs font-bold text-[#1E2538] group-hover:text-[#B38728] transition-colors truncate">
+                        {cm.name_thai}
+                      </p>
+                      <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2] text-[10px] font-bold">
+                        {cm.cohortRole}
+                      </span>
+                      {cm.company_name_thai && (
+                        <p className="text-[11px] font-medium text-slate-700 flex items-center justify-center gap-1.5 truncate pt-0.5">
+                          <Building2 className="w-3.5 h-3.5 text-[#B38728] shrink-0" />
+                          <span className="truncate">{cm.company_name_thai}</span>
+                        </p>
                       )}
-                    </button>
+                    </div>
+
+                    <div className="w-full pt-2.5 mt-auto border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-[#1E2538]">
+                      <span className="group-hover:text-[#B38728] transition-colors">ดูโปรไฟล์</span>
+                      <button
+                        onClick={(e) => toggleFollow(e, String(cm.id))}
+                        className={`px-2.5 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 transition ${
+                          isF
+                            ? 'bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2]'
+                            : 'bg-slate-100 text-[#1E2538] hover:bg-[#1E2538] hover:text-white'
+                        }`}
+                      >
+                        {isF ? (
+                          <>
+                            <UserCheck className="w-3 h-3" />
+                            Following
+                          </>
+                        ) : (
+                          <>
+                            <UserPlus className="w-3 h-3" />
+                            Follow
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </Link>
               );
@@ -677,10 +717,10 @@ function DirectoryContent() {
               <Link
                 key={member.id}
                 href={`/yfti_participants/${member.id}`}
-                className="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-[0_2px_12px_rgba(15,23,42,0.04)] hover:border-[#C59B38] transition flex flex-col justify-between cursor-pointer group"
+                className="bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-[0_6px_20px_rgba(15,23,42,0.05)] hover:shadow-[0_14px_30px_rgba(15,23,42,0.11)] hover:-translate-y-0.5 hover:border-[#C59B38]/80 transition-all duration-300 flex flex-col justify-between cursor-pointer group"
               >
                 {/* Member Portrait */}
-                <div className="relative aspect-[4/4.5] overflow-hidden bg-slate-100">
+                <div className="relative aspect-[4/4.5] overflow-hidden bg-slate-100 border-b border-slate-100">
                   <img
                     src={member.profile_picture_url || 'https://yfticonnect.com/wp-content/uploads/2025/07/YFTI-11-Logo.webp'}
                     alt={member.name_thai}
@@ -691,8 +731,9 @@ function DirectoryContent() {
                       (e.target as HTMLImageElement).src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + member.name_thai;
                     }}
                   />
+                  <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-[#141A2C]/35 via-transparent to-transparent pointer-events-none" />
                   {member.star_group_label && (
-                    <span className="absolute top-2 right-2 sm:top-3 sm:right-3 px-2.5 py-0.5 bg-[#1E2538]/90 text-white text-[10px] font-semibold rounded-full">
+                    <span className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 px-2.5 py-0.5 bg-[#141A2C]/85 backdrop-blur-md border border-white/15 text-[#E5C158] text-[10px] font-bold rounded-lg shadow-sm">
                       {member.star_group_label}
                     </span>
                   )}
@@ -779,12 +820,12 @@ function DirectoryContent() {
                 <span className="text-slate-400 ml-1.5">({totalItems.toLocaleString()} รายการ)</span>
               </div>
 
-              <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap justify-center">
+              <div className="flex items-center gap-1 sm:gap-1.5 flex-nowrap justify-center">
                 <button
                   onClick={() => goToPage(1)}
                   disabled={currentPage === 1}
                   title="หน้าแรก"
-                  className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition"
+                  className="hidden sm:inline-flex items-center justify-center w-9 h-9 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition"
                 >
                   <ChevronsLeft className="w-4 h-4" />
                 </button>
@@ -792,7 +833,7 @@ function DirectoryContent() {
                   onClick={() => goToPage(currentPage - 1)}
                   disabled={currentPage === 1}
                   title="หน้าก่อนหน้า"
-                  className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition"
+                  className="inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition shrink-0"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
@@ -800,7 +841,7 @@ function DirectoryContent() {
                 {paginationRange.map((page, idx) => {
                   if (page === '...') {
                     return (
-                      <span key={`ellipsis-${idx}`} className="px-2 py-1.5 text-xs text-slate-400 font-bold">
+                      <span key={`ellipsis-${idx}`} className="px-1.5 sm:px-2 py-1 text-xs text-slate-400 font-bold">
                         ...
                       </span>
                     );
@@ -811,9 +852,9 @@ function DirectoryContent() {
                     <button
                       key={`page-${pageNum}`}
                       onClick={() => goToPage(pageNum)}
-                      className={`min-w-[36px] h-9 px-2 rounded-xl text-xs font-bold transition tabular-nums ${
+                      className={`min-w-[32px] h-8 sm:min-w-[36px] sm:h-9 px-2 rounded-xl text-xs font-bold transition tabular-nums shrink-0 ${
                         isActive
-                          ? 'bg-[#1E2538] text-white'
+                          ? 'bg-[#1E2538] text-white shadow-sm'
                           : 'border border-slate-200 text-slate-700 hover:bg-slate-50'
                       }`}
                     >
@@ -826,7 +867,7 @@ function DirectoryContent() {
                   onClick={() => goToPage(currentPage + 1)}
                   disabled={currentPage === totalPages}
                   title="หน้าถัดไป"
-                  className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition"
+                  className="inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition shrink-0"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -834,7 +875,7 @@ function DirectoryContent() {
                   onClick={() => goToPage(totalPages)}
                   disabled={currentPage === totalPages}
                   title="หน้าสุดท้าย"
-                  className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition"
+                  className="hidden sm:inline-flex items-center justify-center w-9 h-9 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition"
                 >
                   <ChevronsRight className="w-4 h-4" />
                 </button>

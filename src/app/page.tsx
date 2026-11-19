@@ -199,7 +199,7 @@ export default function HomePage() {
 
               <Link
                 href="/privileges"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#C59B38] hover:bg-[#b58b2e] text-white text-xs font-bold tabular-nums shadow-sm transition"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full badge-gold-metallic text-xs font-bold tabular-nums transition"
               >
                 <Coins className="w-3.5 h-3.5" />
                 <span>{points.toLocaleString()}</span>
@@ -392,7 +392,7 @@ export default function HomePage() {
                   <span
                     className={`absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold shadow-sm ${
                       ev.status === 'UPCOMING'
-                        ? 'bg-[#C59B38] text-white'
+                        ? 'badge-gold-metallic'
                         : 'bg-[#1E2538]/90 text-white'
                     }`}
                   >
@@ -425,9 +425,9 @@ export default function HomePage() {
             </div>
             <Link
               href="/directory"
-              className="text-xs font-bold text-[#B38728] hover:underline flex items-center gap-0.5 shrink-0"
+              className="px-3 py-1 rounded-full bg-[#1E2538] hover:bg-[#2B3550] text-white text-[11px] font-bold inline-flex items-center gap-0.5 shrink-0 transition shadow-sm"
             >
-              ทำเนียบทั้งหมด <ChevronRight className="w-3.5 h-3.5" />
+              ทำเนียบทั้งหมด <ChevronRight className="w-3.5 h-3.5 text-[#FB7170]" />
             </Link>
           </div>
 
@@ -452,47 +452,8 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ================= 7. HOUSE LEADERBOARD (COSMIC 3D PODIUM) ================= */}
-        <section className="relative rounded-3xl bg-gradient-to-b from-[#0D1220] via-[#12192C] to-[#0B101D] border border-white/10 shadow-[0_18px_42px_rgba(13,18,32,0.38)] text-white p-4 sm:p-6 overflow-hidden space-y-5">
-          {/* Subtle Orbital Rings & Starlight Backdrop */}
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 600 260"
-            className="pointer-events-none absolute top-14 left-0 right-0 w-full h-56 opacity-45"
-            fill="none"
-          >
-            <ellipse cx="300" cy="240" rx="340" ry="120" stroke="rgba(255,255,255,0.10)" strokeWidth="1" />
-            <ellipse cx="300" cy="240" rx="280" ry="95" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-            <ellipse cx="300" cy="240" rx="220" ry="70" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
-            <circle cx="72" cy="48" r="1.2" fill="rgba(255,255,255,0.45)" />
-            <circle cx="158" cy="24" r="1" fill="rgba(229,193,88,0.6)" />
-            <circle cx="468" cy="36" r="1.3" fill="rgba(255,255,255,0.4)" />
-            <circle cx="534" cy="74" r="1" fill="rgba(251,113,112,0.55)" />
-            <circle cx="388" cy="18" r="1" fill="rgba(255,255,255,0.35)" />
-          </svg>
-
-          {/* Header Bar */}
-          <div className="relative z-10 rounded-2xl bg-white/[0.04] border border-white/10 px-4 py-3 flex items-center justify-between gap-3 backdrop-blur-sm">
-            <div className="flex items-center gap-3 min-w-0">
-              <img
-                src="/images/icons/house.webp"
-                alt="ตารางอันดับคะแนน"
-                className="w-10 h-10 rounded-xl shadow-[0_0_16px_rgba(229,193,88,0.28)] shrink-0"
-              />
-              <div className="min-w-0">
-                <h2 className="text-sm sm:text-base font-bold text-white truncate">
-                  ตารางอันดับคะแนน
-                </h2>
-                <p className="text-[11px] text-slate-400 truncate">
-                  คะแนนรวมทั้ง 9 ดวงดาว รุ่นที่ 11
-                </p>
-              </div>
-            </div>
-            <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.14em] uppercase text-slate-400 shrink-0">
-              9 Houses
-            </span>
-          </div>
-
+        {/* ================= 7. HOUSE LEADERBOARD (HERO-MATCHED LUXURY STAGE + FLOATING LIST) ================= */}
+        <section className="rounded-3xl bg-[#F4F6FA] border border-slate-200/80 shadow-[0_10px_32px_rgba(15,23,42,0.08)] overflow-hidden">
           {(() => {
             const topScore = Math.max(1, sortedHouses[0]?.total_points ?? 1);
             const podiumOrder = [
@@ -503,110 +464,154 @@ export default function HomePage() {
             const remainingHouses = sortedHouses.slice(3);
 
             return (
-              <div className="relative z-10 space-y-5">
-                {/* Top 3 3D Glass Cylinder Podium (2nd - 1st - 3rd) */}
-                <div className="grid grid-cols-3 gap-2 sm:gap-4 items-end pt-3 pb-1 px-0.5 sm:px-2">
-                  {podiumOrder.map(({ house, rank }) => {
-                    const isFirst = rank === 1;
-                    const isSecond = rank === 2;
-                    const accentHex = isFirst
-                      ? '#E5C158'
-                      : isSecond
-                      ? '#60A5FA'
-                      : '#FB7170';
+              <>
+                {/* Top Luxury Stage Backdrop (Matches Hero Banner DNA) */}
+                <div className="relative bg-[#141A2C] text-white px-4 sm:px-6 pt-5 pb-12 border-b-[3px] border-[#FB7170] overflow-hidden space-y-5">
+                  {/* Blended Event Stage Photo Backdrop */}
+                  <div className="absolute inset-0 pointer-events-none select-none">
+                    <img
+                      src="https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp"
+                      alt=""
+                      aria-hidden="true"
+                      className="w-full h-full object-cover object-center opacity-25 scale-105"
+                    />
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        background:
+                          'linear-gradient(135deg, rgba(16,22,38,0.96) 20%, rgba(24,31,52,0.88) 58%, rgba(30,37,56,0.68) 100%)',
+                      }}
+                    />
+                  </div>
 
-                    return (
-                      <Link
-                        key={house.id}
-                        href={`/directory?house=${encodeURIComponent(house.name)}`}
-                        className="flex flex-col items-center group"
-                      >
-                        {/* Rank Pill */}
-                        <span
-                          className={`mb-2 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-wide backdrop-blur-sm ${
-                            isFirst
-                              ? 'bg-[#C59B38]/20 border border-[#E5C158]/60 text-[#E5C158] shadow-[0_0_14px_rgba(229,193,88,0.3)]'
-                              : isSecond
-                              ? 'bg-slate-400/15 border border-slate-300/25 text-slate-200'
-                              : 'bg-[#FB7170]/15 border border-[#FB7170]/35 text-[#FDA4A3]'
-                          }`}
-                        >
-                          {isFirst && <Crown className="w-3 h-3" />}
-                          <span>#{rank}</span>
+                  {/* Header Row (Matching Hero Typography & Pill Style) */}
+                  <div className="relative z-10 flex items-start justify-between gap-3">
+                    <div className="min-w-0 space-y-0.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-300">
+                          House Leaderboard
                         </span>
+                        <BadgeCheck className="w-3.5 h-3.5 text-[#E5C158] shrink-0" />
+                      </div>
+                      <h2 className="text-lg sm:text-xl tracking-tight text-white leading-tight">
+                        <span className="font-extrabold">ตารางอันดับ</span>{' '}
+                        <span className="font-light text-white/95">9 ดวงดาว</span>
+                      </h2>
+                      <p className="text-xs font-medium text-[#FB7170]">
+                        คะแนนรวมหลักสูตร Young FTI ELITE 11
+                      </p>
+                    </div>
 
-                        {/* Floating Glowing Planet */}
-                        <div
-                          className={`relative z-20 rounded-full overflow-hidden transition-transform duration-300 group-hover:-translate-y-1 ${
-                            isFirst
-                              ? 'w-14 h-14 sm:w-16 sm:h-16 -mb-4 ring-2 ring-[#E5C158]/70'
-                              : 'w-11 h-11 sm:w-13 sm:h-13 -mb-3.5 ring-2 ring-white/25'
-                          }`}
-                          style={{
-                            boxShadow: `0 0 24px ${accentHex}55`,
-                          }}
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/15 bg-[#181E30]/75 backdrop-blur-sm text-[#E5C158] text-xs font-semibold shrink-0">
+                      <Crown className="w-3.5 h-3.5" />
+                      <span>9 Houses</span>
+                    </span>
+                  </div>
+
+                  {/* Top 3 3D Glass Cylinder Podium (2nd - 1st - 3rd) */}
+                  <div className="relative z-10 grid grid-cols-3 gap-2 sm:gap-4 items-end pt-2 px-0.5 sm:px-2">
+                    {podiumOrder.map(({ house, rank }) => {
+                      const isFirst = rank === 1;
+                      const isSecond = rank === 2;
+                      const accentHex = isFirst
+                        ? '#E5C158'
+                        : isSecond
+                        ? '#93C5FD'
+                        : '#FB7170';
+
+                      return (
+                        <Link
+                          key={house.id}
+                          href={`/directory?house=${encodeURIComponent(house.name)}`}
+                          className="flex flex-col items-center group"
                         >
-                          <img
-                            src={`/images/planets/${house.id}.webp`}
-                            alt={house.name}
-                            className="w-full h-full object-cover scale-[1.18]"
-                          />
-                        </div>
-
-                        {/* 3D Translucent Glass Cylinder Pedestal */}
-                        <div className="relative w-full">
-                          {/* Top Elliptical Rim */}
-                          <div
-                            className="w-full h-4 sm:h-5 rounded-[50%] relative z-10 border"
-                            style={{
-                              background: isFirst
-                                ? 'linear-gradient(180deg, rgba(229,193,88,0.28) 0%, rgba(30,37,56,0.75) 100%)'
-                                : isSecond
-                                ? 'linear-gradient(180deg, rgba(148,163,184,0.28) 0%, rgba(30,37,56,0.75) 100%)'
-                                : 'linear-gradient(180deg, rgba(251,113,112,0.24) 0%, rgba(30,37,56,0.75) 100%)',
-                              borderColor: `${accentHex}55`,
-                            }}
-                          />
-
-                          {/* Cylinder Body */}
-                          <div
-                            className={`-mt-2.5 rounded-b-[20px] border-x border-b flex flex-col items-center justify-center text-center px-1.5 backdrop-blur-md ${
+                          {/* Rank Pill */}
+                          <span
+                            className={`mb-2 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-wide backdrop-blur-sm ${
                               isFirst
-                                ? 'pt-6 pb-4 sm:pt-7 sm:pb-5 min-h-[104px] sm:min-h-[118px]'
-                                : 'pt-5 pb-3.5 sm:pt-6 sm:pb-4 min-h-[84px] sm:min-h-[96px]'
+                                ? 'bg-[#C59B38]/25 border border-[#E5C158]/60 text-[#E5C158] shadow-[0_0_12px_rgba(229,193,88,0.28)]'
+                                : isSecond
+                                ? 'bg-white/10 border border-white/20 text-slate-200'
+                                : 'bg-[#FB7170]/15 border border-[#FB7170]/40 text-[#FDA4A3]'
+                            }`}
+                          >
+                            {isFirst && <Crown className="w-3 h-3" />}
+                            <span>#{rank}</span>
+                          </span>
+
+                          {/* Floating Glowing Planet */}
+                          <div
+                            className={`relative z-20 rounded-full overflow-hidden transition-transform duration-300 group-hover:-translate-y-1 ${
+                              isFirst
+                                ? 'w-14 h-14 sm:w-16 sm:h-16 -mb-4 ring-2 ring-[#E5C158]/75'
+                                : 'w-11 h-11 sm:w-12 sm:h-12 -mb-3.5 ring-2 ring-white/25'
                             }`}
                             style={{
-                              background: isFirst
-                                ? 'linear-gradient(180deg, rgba(30,37,56,0.88) 0%, rgba(197,155,56,0.20) 100%)'
-                                : isSecond
-                                ? 'linear-gradient(180deg, rgba(30,37,56,0.86) 0%, rgba(96,165,250,0.16) 100%)'
-                                : 'linear-gradient(180deg, rgba(30,37,56,0.86) 0%, rgba(251,113,112,0.15) 100%)',
-                              borderColor: `${accentHex}45`,
-                              boxShadow: `0 10px 26px -8px ${accentHex}40`,
+                              boxShadow: `0 0 24px ${accentHex}55`,
                             }}
                           >
-                            <p className="text-xs sm:text-sm font-bold text-white truncate max-w-full">
-                              {house.name}
-                            </p>
-                            <p
-                              className={`text-xs sm:text-sm font-extrabold tabular-nums mt-0.5 ${
-                                isFirst ? 'text-[#E5C158]' : 'text-white'
-                              }`}
-                            >
-                              {house.total_points.toLocaleString()}
-                              <span className="text-[10px] font-medium text-slate-300 ml-0.5">
-                                pts
-                              </span>
-                            </p>
+                            <img
+                              src={`/images/planets/${house.id}.webp`}
+                              alt={house.name}
+                              className="w-full h-full object-cover scale-[1.18]"
+                            />
                           </div>
-                        </div>
-                      </Link>
-                    );
-                  })}
+
+                          {/* 3D Translucent Glass Cylinder Pedestal */}
+                          <div className="relative w-full">
+                            {/* Top Elliptical Rim */}
+                            <div
+                              className="w-full h-4 sm:h-5 rounded-[50%] relative z-10 border"
+                              style={{
+                                background: isFirst
+                                  ? 'linear-gradient(180deg, rgba(229,193,88,0.34) 0%, rgba(24,30,48,0.82) 100%)'
+                                  : isSecond
+                                  ? 'linear-gradient(180deg, rgba(148,163,184,0.30) 0%, rgba(24,30,48,0.82) 100%)'
+                                  : 'linear-gradient(180deg, rgba(251,113,112,0.28) 0%, rgba(24,30,48,0.82) 100%)',
+                                borderColor: `${accentHex}55`,
+                              }}
+                            />
+
+                            {/* Cylinder Body */}
+                            <div
+                              className={`-mt-2.5 rounded-b-[18px] border-x border-b flex flex-col items-center justify-center text-center px-1.5 backdrop-blur-md ${
+                                isFirst
+                                  ? 'pt-6 pb-4 sm:pt-7 sm:pb-5 min-h-[100px] sm:min-h-[112px]'
+                                  : 'pt-5 pb-3.5 sm:pt-6 sm:pb-4 min-h-[82px] sm:min-h-[92px]'
+                              }`}
+                              style={{
+                                background: isFirst
+                                  ? 'linear-gradient(180deg, rgba(24,30,48,0.88) 0%, rgba(197,155,56,0.25) 100%)'
+                                  : isSecond
+                                  ? 'linear-gradient(180deg, rgba(24,30,48,0.86) 0%, rgba(147,197,253,0.16) 100%)'
+                                  : 'linear-gradient(180deg, rgba(24,30,48,0.86) 0%, rgba(251,113,112,0.16) 100%)',
+                                borderColor: `${accentHex}45`,
+                                boxShadow: `0 10px 24px -8px ${accentHex}40`,
+                              }}
+                            >
+                              <p className="text-xs sm:text-sm font-bold text-white truncate max-w-full">
+                                {house.name}
+                              </p>
+                              <p
+                                className={`text-xs sm:text-sm font-extrabold tabular-nums mt-0.5 ${
+                                  isFirst ? 'text-[#E5C158]' : 'text-white'
+                                }`}
+                              >
+                                {house.total_points.toLocaleString()}
+                                <span className="text-[10px] font-medium text-slate-300 ml-0.5">
+                                  pts
+                                </span>
+                              </p>
+                            </div>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
                 </div>
 
-                {/* Ranks 4-9 Dark Glass Rows */}
-                <div className="space-y-2.5">
+                {/* Floating White Card for Ranks 4-9 (Mirrors Hero + Floating Shortcut Card) */}
+                <div className="relative z-20 -mt-6 mx-3 sm:mx-4 mb-4 bg-white rounded-2xl border border-slate-200/80 shadow-[0_8px_28px_rgba(15,23,42,0.08)] p-3 sm:p-4 space-y-2">
                   {remainingHouses.map((house, idx) => {
                     const rank = idx + 4;
                     const pct = Math.max(15, Math.round((house.total_points / topScore) * 100));
@@ -617,26 +622,25 @@ export default function HomePage() {
                       <Link
                         key={house.id}
                         href={`/directory?house=${encodeURIComponent(house.name)}`}
-                        className={`flex items-center justify-between gap-3 px-3.5 sm:px-4 py-3 rounded-2xl border transition group ${
+                        className={`flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl border transition group ${
                           isMyHouse
-                            ? 'bg-gradient-to-r from-[#FB7170]/15 via-[#FB7170]/8 to-white/[0.03] border-[#FB7170]/75 shadow-[0_0_22px_rgba(251,113,112,0.18)]'
-                            : 'bg-white/[0.04] hover:bg-white/[0.08] border-white/10'
+                            ? 'bg-[#FFF7F7] border-[#FB7170]/60 shadow-[0_2px_12px_rgba(251,113,112,0.12)]'
+                            : 'bg-[#F8FAFC] hover:bg-slate-50 border-slate-200/70 hover:border-[#C59B38]/60'
                         }`}
                       >
                         <div className="flex items-center gap-3 min-w-0 flex-1">
                           <span
                             className={`w-5 text-center text-xs font-bold tabular-nums shrink-0 ${
-                              isMyHouse ? 'text-white' : 'text-slate-400'
+                              isMyHouse ? 'text-[#FB7170]' : 'text-slate-400'
                             }`}
                           >
                             {rank}
                           </span>
 
                           <div
-                            className="w-10 h-10 rounded-full overflow-hidden shrink-0 ring-2"
+                            className="w-9 h-9 rounded-full overflow-hidden shrink-0 ring-2 shadow-sm"
                             style={{
-                              borderColor: `${house.color_hex}66`,
-                              boxShadow: `0 0 14px ${house.color_hex}44`,
+                              borderColor: `${house.color_hex}55`,
                             }}
                           >
                             <img
@@ -649,23 +653,23 @@ export default function HomePage() {
 
                           <div className="min-w-0 flex-1 space-y-1.5">
                             <div className="flex items-center gap-2 min-w-0">
-                              <span className="text-xs sm:text-sm font-bold text-white truncate">
+                              <span className="text-xs sm:text-sm font-bold text-[#1E2538] group-hover:text-[#B38728] transition-colors truncate">
                                 {house.name}
                               </span>
                               {isMyHouse && (
-                                <span className="px-2.5 py-0.5 rounded-full bg-[#FB7170]/20 border border-[#FB7170]/70 text-white text-[10px] font-bold shrink-0 shadow-[0_0_10px_rgba(251,113,112,0.3)]">
+                                <span className="px-2 py-0.5 rounded-full bg-[#FB7170]/15 border border-[#FB7170]/40 text-[#E05252] text-[10px] font-bold shrink-0">
                                   บ้านของคุณ
                                 </span>
                               )}
                             </div>
 
-                            {/* Subtle Dark Progress Track */}
-                            <div className="h-1.5 w-full max-w-[180px] sm:max-w-[240px] rounded-full bg-white/10 overflow-hidden">
+                            {/* Subtle Clean Progress Track */}
+                            <div className="h-1.5 w-full max-w-[160px] sm:max-w-[220px] rounded-full bg-slate-200/75 overflow-hidden">
                               <div
                                 className="h-full rounded-full transition-all duration-500"
                                 style={{
                                   width: `${pct}%`,
-                                  backgroundColor: isMyHouse ? '#FB7170' : 'rgba(148,163,184,0.55)',
+                                  backgroundColor: isMyHouse ? '#FB7170' : '#94A3B8',
                                 }}
                               />
                             </div>
@@ -673,7 +677,7 @@ export default function HomePage() {
                         </div>
 
                         <div className="flex items-baseline gap-1 shrink-0 tabular-nums">
-                          <span className="text-xs sm:text-sm font-extrabold text-white">
+                          <span className="text-xs sm:text-sm font-bold text-[#1E2538]">
                             {house.total_points.toLocaleString()}
                           </span>
                           <span className="text-[10px] text-slate-400">pts</span>
@@ -682,126 +686,170 @@ export default function HomePage() {
                     );
                   })}
                 </div>
-              </div>
+              </>
             );
           })()}
         </section>
 
-        {/* ================= 8. MISSIONS & UPCOMING EVENTS ================= */}
+        {/* ================= 8. MISSIONS & UPCOMING EVENTS (SPLIT-TONE EXECUTIVE CARDS) ================= */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           {/* Missions */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-[0_2px_12px_rgba(15,23,42,0.04)] space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
+          <div className="bg-white rounded-3xl border border-slate-200/80 shadow-[0_6px_24px_rgba(15,23,42,0.06)] overflow-hidden flex flex-col">
+            <div className="bg-gradient-to-r from-[#181E30] to-[#1E2538] text-white px-5 py-4 border-b-[3px] border-[#FB7170] flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
                 <img
                   src="/images/icons/missions.webp"
                   alt="Missions"
-                  className="w-10 h-10 rounded-xl shadow-sm shrink-0"
+                  className="w-10 h-10 rounded-xl ring-1 ring-white/15 shadow-sm shrink-0"
                 />
-                <div>
-                  <h2 className="text-base font-bold text-[#1E2538]">ภารกิจที่ต้องเก็บ</h2>
-                  <p className="text-xs text-slate-500">
+                <div className="min-w-0">
+                  <h2 className="text-sm sm:text-base font-bold text-white truncate">ภารกิจที่ต้องเก็บ</h2>
+                  <p className="text-[11px] text-slate-300 truncate">
                     สำเร็จแล้ว {completedMissionsCount}/{mergedMissions.length} ภารกิจ
                   </p>
                 </div>
               </div>
               <Link
                 href="/profile"
-                className="px-3 py-1 rounded-full bg-[#1E2538] hover:bg-[#2B3550] text-white text-[11px] font-bold inline-flex items-center gap-0.5 shrink-0 transition shadow-sm"
+                className="px-3 py-1 rounded-full bg-white hover:bg-slate-100 text-[#1E2538] text-[11px] font-bold inline-flex items-center gap-0.5 shrink-0 transition shadow-sm"
               >
                 ดูทั้งหมด <ChevronRight className="w-3.5 h-3.5 text-[#FB7170]" />
               </Link>
             </div>
 
-            <div className="space-y-2.5">
+            <div className="p-3.5 sm:p-4 space-y-2.5 flex-1">
               {mergedMissions.map((m) => (
-                <div
+                <Link
                   key={m.id}
-                  className="p-3.5 rounded-xl bg-[#FAFAF8] border border-slate-200/60 flex items-center justify-between gap-3"
+                  href="/profile"
+                  className="p-3.5 rounded-2xl bg-[#F8FAFC] hover:bg-slate-50 border border-slate-200/70 hover:border-[#C59B38]/60 flex items-center justify-between gap-3 transition group"
                 >
                   <div className="min-w-0">
-                    <p className="text-xs sm:text-sm font-bold text-[#1E2538] truncate">{m.title}</p>
-                    <p className="text-[11px] text-slate-500 line-clamp-1">{m.description}</p>
+                    <p className="text-xs sm:text-sm font-bold text-[#1E2538] group-hover:text-[#B38728] transition-colors truncate">
+                      {m.title}
+                    </p>
+                    <p className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">{m.description}</p>
                   </div>
                   <span
-                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold shrink-0 flex items-center gap-1 tabular-nums ${
+                    className={`text-[11px] font-bold shrink-0 inline-flex items-center gap-1.5 tabular-nums ${
                       m.status === 'APPROVED'
-                        ? 'bg-[#1E2538] text-white'
+                        ? 'text-emerald-700'
                         : m.status === 'PENDING'
-                        ? 'bg-[#FBF6EC] text-[#9A7320] border border-[#EFE2C2]'
-                        : 'bg-slate-200 text-slate-700'
+                        ? 'text-[#B38728]'
+                        : 'text-[#1E2538]'
                     }`}
                   >
-                    {m.status === 'APPROVED' && <CheckCircle2 className="w-3 h-3 text-[#E5C158]" />}
+                    {m.status === 'APPROVED' ? (
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                    ) : m.status === 'PENDING' ? (
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#C59B38]" />
+                    ) : null}
                     {m.status === 'APPROVED' ? 'สำเร็จ' : m.status === 'PENDING' ? 'รอตรวจ' : `+${m.reward_points} Pts`}
                   </span>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
 
           {/* Upcoming Events/Classes */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-[0_2px_12px_rgba(15,23,42,0.04)] space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
+          <div className="bg-white rounded-3xl border border-slate-200/80 shadow-[0_6px_24px_rgba(15,23,42,0.06)] overflow-hidden flex flex-col">
+            <div className="bg-gradient-to-r from-[#181E30] to-[#1E2538] text-white px-5 py-4 border-b-[3px] border-[#FB7170] flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
                 <img
                   src="/images/icons/events.webp"
                   alt="Upcoming Events"
-                  className="w-10 h-10 rounded-xl shadow-sm shrink-0"
+                  className="w-10 h-10 rounded-xl ring-1 ring-white/15 shadow-sm shrink-0"
                 />
-                <div>
-                  <h2 className="text-base font-bold text-[#1E2538]">กิจกรรม/คลาสที่ใกล้มาถึง</h2>
-                  <p className="text-xs text-slate-500">เตรียมตัวเข้าร่วมและเช็กชื่อสะสมแต้ม</p>
+                <div className="min-w-0">
+                  <h2 className="text-sm sm:text-base font-bold text-white truncate">กิจกรรม/คลาสที่ใกล้มาถึง</h2>
+                  <p className="text-[11px] text-slate-300 truncate">เตรียมตัวเข้าร่วมและเช็กชื่อสะสมแต้ม</p>
                 </div>
               </div>
               <Link
                 href="/events/calendar"
-                className="px-3 py-1 rounded-full bg-[#1E2538] hover:bg-[#2B3550] text-white text-[11px] font-bold inline-flex items-center gap-0.5 shrink-0 transition shadow-sm"
+                className="px-3 py-1 rounded-full bg-white hover:bg-slate-100 text-[#1E2538] text-[11px] font-bold inline-flex items-center gap-0.5 shrink-0 transition shadow-sm"
               >
                 ปฏิทิน <ChevronRight className="w-3.5 h-3.5 text-[#FB7170]" />
               </Link>
             </div>
 
-            <div className="space-y-2.5">
+            <div className="p-3.5 sm:p-4 space-y-2.5 flex-1">
               {upcomingItems.map((ev) => (
                 <Link
                   key={ev.id}
                   href={`/events/${ev.id}`}
-                  className="p-3.5 rounded-xl bg-[#FAFAF8] hover:bg-slate-100 border border-slate-200/60 flex items-center justify-between gap-3 transition"
+                  className="p-3 rounded-2xl bg-[#F8FAFC] hover:bg-slate-50 border border-slate-200/70 hover:border-[#C59B38]/60 flex items-center justify-between gap-3 transition group"
                 >
-                  <div className="min-w-0">
-                    <p className="text-xs sm:text-sm font-bold text-[#1E2538] truncate">{ev.title}</p>
-                    <p className="text-[11px] text-slate-500 truncate">
-                      {ev.published_date_text} • {ev.location_name}
-                    </p>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <img
+                      src={
+                        ev.image_url ||
+                        'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp'
+                      }
+                      alt={ev.title}
+                      loading="lazy"
+                      className="w-11 h-11 rounded-xl object-cover bg-slate-200 border border-slate-200/80 shrink-0"
+                    />
+                    <div className="min-w-0">
+                      <p className="text-xs sm:text-sm font-bold text-[#1E2538] group-hover:text-[#B38728] transition-colors truncate">
+                        {ev.title}
+                      </p>
+                      <p className="text-[11px] text-slate-500 truncate mt-0.5">
+                        {ev.published_date_text} • {ev.location_name}
+                      </p>
+                    </div>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
+                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#1E2538] group-hover:translate-x-0.5 transition shrink-0" />
                 </Link>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ================= 9. BANNER ABOUT (COMPACT CARD) ================= */}
+        {/* ================= 9. BANNER ABOUT (LINE PORTAL EXECUTIVE BANNER) ================= */}
         <Link
           href="/about"
-          className="block bg-[#1E2538] hover:bg-[#252E46] text-white rounded-2xl p-5 shadow-sm transition group"
+          className="relative block overflow-hidden bg-[#141A2C] text-white rounded-3xl p-5 sm:p-6 shadow-[0_10px_28px_rgba(20,26,44,0.18)] border-b-[3px] border-[#FB7170] hover:-translate-y-0.5 transition-all duration-300 group"
         >
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center shrink-0">
-                <Info className="w-5 h-5 text-[#E5C158]" />
+          {/* Blended Cohort Backdrop */}
+          <div className="absolute inset-0 pointer-events-none select-none">
+            <img
+              src="https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp"
+              alt=""
+              aria-hidden="true"
+              className="w-full h-full object-cover object-right opacity-25 group-hover:scale-105 transition-transform duration-500"
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  'linear-gradient(115deg, rgba(16,22,38,0.96) 30%, rgba(24,31,52,0.88) 62%, rgba(30,37,56,0.62) 100%)',
+              }}
+            />
+          </div>
+
+          <div className="relative z-10 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5 min-w-0">
+              <div className="w-12 h-12 rounded-xl bg-white p-1.5 shadow-md ring-2 ring-white/15 flex items-center justify-center shrink-0">
+                <img
+                  src="/YFTI-11-Logo.jpg"
+                  alt="Young FTI ELITE 11"
+                  className="w-full h-full object-contain"
+                />
               </div>
-              <div>
-                <p className="text-[11px] font-semibold text-[#E5C158]">
+              <div className="min-w-0 space-y-0.5">
+                <p className="text-[11px] font-bold text-[#FB7170] tracking-wide">
                   เกี่ยวกับโครงการ Young FTI ELITE 11
                 </p>
-                <h3 className="text-sm sm:text-base font-bold text-white">
+                <h3 className="text-sm sm:text-base font-extrabold text-white leading-snug">
                   ทำความรู้จักหลักสูตรนักอุตสาหกรรมรุ่นใหม่
                 </h3>
               </div>
             </div>
-            <ChevronRight className="w-5 h-5 text-white/70 group-hover:translate-x-0.5 transition-transform shrink-0" />
+
+            <span className="w-9 h-9 rounded-full bg-white text-[#1E2538] group-hover:bg-[#FB7170] group-hover:text-white flex items-center justify-center shadow-md shrink-0 transition-colors">
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            </span>
           </div>
         </Link>
       </div>

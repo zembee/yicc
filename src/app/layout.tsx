@@ -54,7 +54,7 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Prompt:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
         />
       </head>
-      <body className="bg-[#F7F7F5] text-[#1F2937] min-h-screen flex flex-col antialiased selection:bg-[#C59B38] selection:text-white">
+      <body className="bg-[#F4F6FA] text-[#1F2937] min-h-screen flex flex-col antialiased selection:bg-[#C59B38] selection:text-white">
         <RouteProgressBar />
         <ModalScrollLock />
         <LiffProvider>

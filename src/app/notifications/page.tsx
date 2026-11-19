@@ -88,37 +88,56 @@ export default function NotificationsPage() {
 
   return (
     <div className="max-w-2xl mx-auto w-full px-4 sm:px-6 py-4 pb-24 space-y-5">
-      {/* Executive Navy Header */}
-      <div className="bg-[#1E2538] text-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-sm flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
+      {/* Executive Navy Hero Header */}
+      <div className="relative overflow-hidden bg-[#141A2C] text-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-[0_10px_30px_rgba(20,26,44,0.18)] border-b-[3px] border-[#FB7170] flex items-center justify-between gap-3">
+        <div className="absolute inset-0 pointer-events-none select-none">
+          <img
+            src="https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp"
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-cover object-right opacity-25"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(115deg, rgba(16,22,38,0.96) 30%, rgba(24,31,52,0.88) 65%, rgba(30,37,56,0.68) 100%)',
+            }}
+          />
+        </div>
+
+        <div className="relative z-10 flex items-center gap-3">
           <Link
             href="/"
             aria-label="กลับหน้าหลัก"
-            className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+            className="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center transition"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
-          <div className="flex items-center gap-2">
-            <h1 className="text-base sm:text-lg font-bold">Notifications</h1>
-            {unreadCount > 0 && (
-              <span className="px-2 py-0.5 rounded-full bg-[#FB7170] text-white text-[11px] font-bold tabular-nums">
-                {unreadCount}
-              </span>
-            )}
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-base sm:text-lg font-extrabold tracking-tight">Notifications</h1>
+              {unreadCount > 0 && (
+                <span className="px-2 py-0.5 rounded-full bg-[#FB7170] text-white text-[10px] font-bold tabular-nums">
+                  {unreadCount}
+                </span>
+              )}
+            </div>
+            <p className="text-[11px] font-medium text-[#FB7170]">การแจ้งเตือนและข่าวสารสมาชิก</p>
           </div>
         </div>
 
         <button
           onClick={handleMarkAllRead}
           disabled={unreadCount === 0}
-          className="text-xs font-bold text-[#E5C158] hover:text-white disabled:opacity-40 flex items-center gap-1.5 transition"
+          className="relative z-10 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-xs font-bold text-[#E5C158] hover:text-white disabled:opacity-40 flex items-center gap-1.5 transition"
         >
           <CheckCheck className="w-4 h-4" />
           <span>Mark all read</span>
         </button>
       </div>
 
-      {/* 3 Filter Pills */}
+      {/* 3 Filter Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
         {(
           [
@@ -130,10 +149,10 @@ export default function NotificationsPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 rounded-full text-xs font-semibold transition whitespace-nowrap ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap shadow-sm ${
               activeTab === tab.id
-                ? 'bg-[#C59B38] text-white shadow-sm'
-                : 'bg-white text-slate-600 border border-slate-200 hover:text-[#1E2538]'
+                ? 'bg-[#1E2538] text-white'
+                : 'bg-white text-slate-600 border border-slate-200/80 hover:text-[#1E2538]'
             }`}
           >
             {tab.label}

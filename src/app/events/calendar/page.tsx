@@ -54,17 +54,38 @@ export default function EventsCalendarPage() {
 
   return (
     <div className="max-w-2xl mx-auto w-full px-4 sm:px-6 py-4 pb-24 space-y-5 animate-in fade-in duration-300">
-      {/* Header */}
-      <div className="bg-[#1E2538] text-white rounded-3xl p-4 sm:p-5 shadow-md flex items-center gap-3">
+      {/* Executive Navy Hero Header */}
+      <div className="relative overflow-hidden bg-[#141A2C] text-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-[0_10px_30px_rgba(20,26,44,0.18)] border-b-[3px] border-[#FB7170] flex items-center gap-3">
+        <div className="absolute inset-0 pointer-events-none select-none">
+          <img
+            src="https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp"
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-cover object-right opacity-25"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(115deg, rgba(16,22,38,0.96) 28%, rgba(24,31,52,0.88) 58%, rgba(30,37,56,0.65) 100%)',
+            }}
+          />
+        </div>
+
         <Link
           href="/events"
-          className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+          className="relative z-10 w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center transition shrink-0"
         >
           <ArrowLeft className="w-4 h-4" />
         </Link>
-        <div>
-          <h1 className="text-base sm:text-lg font-black">ปฏิทินกิจกรรม</h1>
-          <p className="text-[11px] text-slate-300">กำหนดการคอร์สเรียนและกิจกรรมทั้งหมด</p>
+        <div className="relative z-10 min-w-0">
+          <h1 className="text-base sm:text-lg tracking-tight truncate">
+            <span className="font-extrabold">ปฏิทินกิจกรรม</span>{' '}
+            <span className="font-light text-white/90 text-sm">Calendar</span>
+          </h1>
+          <p className="text-[11px] font-medium text-[#FB7170] truncate">
+            กำหนดการคอร์สเรียนและกิจกรรมทั้งหมด
+          </p>
         </div>
       </div>
 
