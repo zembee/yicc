@@ -113,8 +113,8 @@ export function ProgressSection({
       {/* 4 Clean Summary Metric Boxes */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200/70">
-          <div className="flex items-center gap-1.5 text-[#9A7320] text-[11px] font-semibold mb-1">
-            <Coins className="w-3.5 h-3.5" />
+          <div className="flex items-center gap-2 text-[#9A7320] text-[11px] font-semibold mb-1.5">
+            <img src="/images/icons/points.webp" alt="" className="w-5 h-5 rounded-md shrink-0" />
             <span>Point คะแนนสะสม</span>
           </div>
           <p className="text-xl font-bold text-[#1E2538] tabular-nums">
@@ -126,8 +126,8 @@ export function ProgressSection({
         </div>
 
         <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200/70">
-          <div className="flex items-center gap-1.5 text-[#1E2538] text-[11px] font-semibold mb-1">
-            <Crown className="w-3.5 h-3.5 text-[#B38728]" />
+          <div className="flex items-center gap-2 text-[#1E2538] text-[11px] font-semibold mb-1.5">
+            <img src="/images/icons/profile.webp" alt="" className="w-5 h-5 rounded-md shrink-0" />
             <span>ระดับสมาชิก</span>
           </div>
           <p className="text-xl font-bold text-[#1E2538]">{tier}</p>
@@ -135,8 +135,8 @@ export function ProgressSection({
         </div>
 
         <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200/70">
-          <div className="flex items-center gap-1.5 text-[#1E2538] text-[11px] font-semibold mb-1">
-            <CalendarCheck className="w-3.5 h-3.5 text-[#B38728]" />
+          <div className="flex items-center gap-2 text-[#1E2538] text-[11px] font-semibold mb-1.5">
+            <img src="/images/icons/events.webp" alt="" className="w-5 h-5 rounded-md shrink-0" />
             <span>กิจกรรมที่สมัคร</span>
           </div>
           <p className="text-xl font-bold text-[#1E2538] tabular-nums">{registeredEventsCount}</p>
@@ -146,8 +146,8 @@ export function ProgressSection({
         </div>
 
         <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200/70">
-          <div className="flex items-center gap-1.5 text-[#1E2538] text-[11px] font-semibold mb-1">
-            <Clock className="w-3.5 h-3.5 text-[#B38728]" />
+          <div className="flex items-center gap-2 text-[#1E2538] text-[11px] font-semibold mb-1.5">
+            <img src="/images/icons/missions.webp" alt="" className="w-5 h-5 rounded-md shrink-0" />
             <span>ขาด / โควตา</span>
           </div>
           <p className="text-xl font-bold text-[#1E2538] tabular-nums">

@@ -340,12 +340,11 @@ export default function ProfilePage() {
       <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-[0_2px_12px_rgba(15,23,42,0.04)] space-y-4">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3.5 min-w-0">
-            <div
-              className="w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-sm shrink-0"
-              style={{ backgroundColor: houseColor }}
-            >
-              <Star className="w-6 h-6 fill-white/30" />
-            </div>
+            <img
+              src={`/images/planets/${currentHouse?.id || 'the_mars'}.webp`}
+              alt={houseName}
+              className="w-14 h-14 rounded-2xl shadow-sm shrink-0"
+            />
             <div className="min-w-0 space-y-0.5">
               <span className="text-[11px] font-medium text-slate-400 block">บ้านของฉัน</span>
               <div className="flex items-center gap-2 flex-wrap">

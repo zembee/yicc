@@ -36,14 +36,43 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
 
   if (!mounted || (isLoading && !hasApprovedSession)) {
     return (
-      <div className="min-h-screen bg-[#F7F7F5] flex flex-col items-center justify-center p-4 select-none">
-        <div className="w-full max-w-xs bg-white/95 backdrop-blur-sm rounded-3xl shadow-lg border border-slate-200/80 p-8 text-center space-y-4">
-          <div className="relative w-14 h-14 mx-auto rounded-2xl bg-[#1E2538] flex items-center justify-center shadow-md">
-            <Loader2 className="w-7 h-7 text-[#E5C158] animate-spin" />
-          </div>
-          <div className="space-y-1">
-            <h2 className="text-sm font-extrabold text-[#1E2538]">Young FTI ELITE 11</h2>
-            <p className="text-xs text-slate-500">กำลังตรวจสอบสถานะสมาชิก...</p>
+      <div className="min-h-screen bg-[#F4F6FA] flex flex-col items-center justify-center p-5 select-none fade-in-soft">
+        <div className="w-full max-w-xs bg-[#1E2538] text-white rounded-3xl overflow-hidden shadow-[0_18px_48px_rgba(24,30,48,0.22)] border border-white/10 border-b-[3px] border-b-[#FB7170]">
+          {/* Top Branded Area */}
+          <div className="relative p-7 text-center space-y-4">
+            <div className="relative w-16 h-16 mx-auto rounded-2xl bg-white p-2 shadow-lg ring-4 ring-white/10 flex items-center justify-center">
+              <Image
+                src="/YFTI-11-Logo.jpg"
+                alt="Young FTI ELITE 11"
+                fill
+                sizes="64px"
+                className="object-contain p-1.5"
+                priority
+              />
+            </div>
+
+            <div className="space-y-1">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-300">
+                Member Portal
+              </p>
+              <h2 className="text-lg tracking-tight text-white">
+                <span className="font-extrabold">Young FTI</span>{' '}
+                <span className="font-light text-white/95">ELITE 11</span>
+              </h2>
+              <p className="text-[11px] font-medium text-[#FB7170]">
+                หลักสูตรนักอุตสาหกรรมรุ่นใหม่
+              </p>
+            </div>
+
+            {/* Smooth Indeterminate Progress Track */}
+            <div className="pt-2 space-y-2">
+              <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                <div className="h-full w-1/3 rounded-full bg-gradient-to-r from-[#C59B38] via-[#FB7170] to-[#E5C158] loading-bar-slide" />
+              </div>
+              <p className="text-[11px] text-slate-300 font-medium">
+                กำลังตรวจสอบสถานะสมาชิก...
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -137,43 +166,61 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
   };
 
   return (
-    <div className="min-h-screen bg-[#F1F5F9] flex flex-col items-center justify-center p-4 sm:p-6 py-12 select-none animate-in fade-in duration-300">
+    <div className="min-h-screen bg-[#F4F6FA] flex flex-col items-center justify-center p-4 sm:p-6 py-12 select-none animate-in fade-in duration-300">
       {/* Login Card Container */}
-      <div className="w-full max-w-lg bg-white rounded-3xl overflow-hidden shadow-2xl border border-slate-200">
-        {/* Card Header: Slanted Ribbon with YFTI Logo */}
-        <div className="relative bg-[#F8FAFC] border-b border-slate-200">
-          <div className="flex items-center justify-between h-20 sm:h-24">
-            {/* White Left Logo Box */}
-            <div className="flex items-center h-full z-10 pl-6 sm:pl-8">
-              <div className="relative w-12 h-12 sm:w-14 sm:h-14">
+      <div className="w-full max-w-lg bg-white rounded-3xl overflow-hidden shadow-2xl border border-slate-200/80">
+        {/* Card Header: LINE Member Portal Split Hero */}
+        <div className="relative bg-[#1E2538] text-white overflow-hidden border-b-[3px] border-[#FB7170]">
+          {/* Right Slanted Group Photo */}
+          <div
+            className="absolute right-0 top-0 bottom-0 w-[52%] pointer-events-none select-none"
+            style={{
+              clipPath: 'polygon(18% 0, 100% 0, 100% 100%, 0% 100%)',
+            }}
+          >
+            <img
+              src="https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp"
+              alt="Young FTI ELITE 11"
+              className="w-full h-full object-cover object-center opacity-75"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#1E2538]/85 via-[#1E2538]/30 to-transparent" />
+          </div>
+
+          <div className="relative z-10 p-6 sm:p-7 space-y-4 max-w-[70%]">
+            {/* Logo + Member Portal Eyebrow */}
+            <div className="flex items-center gap-3">
+              <div className="relative w-11 h-11 rounded-xl bg-white p-1.5 shadow-md shrink-0">
                 <Image
                   src="/YFTI-11-Logo.jpg"
                   alt="Young FTI Elite 11"
                   fill
-                  sizes="56px"
-                  className="object-contain"
+                  sizes="44px"
+                  className="object-contain p-1"
                   priority
                 />
               </div>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white">
+                  Member Portal
+                </p>
+                <p className="text-[11px] text-slate-300">ระบบสมาชิกโครงการ</p>
+              </div>
             </div>
 
-            {/* Brand Title in Center */}
-            <div className="flex items-center gap-2 pr-24 sm:pr-36 z-10">
-              <span className="text-base sm:text-xl font-black text-[#1E2538] tracking-tight">
-                Young FTI <span className="font-extrabold">ELITE</span>
-              </span>
-              <span className="text-xs sm:text-sm font-semibold text-[#C59B38] shrink-0">
-                รุ่นที่ 11
-              </span>
+            {/* Bold + Light Brand Typography */}
+            <div className="space-y-1">
+              <h1 className="text-2xl sm:text-3xl leading-tight tracking-tight text-white">
+                <span className="font-extrabold block">Young FTI</span>
+                <span className="font-light text-white/95">ELITE 11</span>
+              </h1>
+              <p className="text-xs sm:text-sm font-medium text-[#FB7170]">
+                หลักสูตรนักอุตสาหกรรมรุ่นใหม่
+              </p>
             </div>
 
-            {/* Slanted Navy Decorative Polygon */}
-            <div
-              className="absolute right-0 top-0 bottom-0 w-20 sm:w-32 bg-[#1E2538]"
-              style={{
-                clipPath: 'polygon(35% 0, 100% 0, 100% 100%, 0% 100%)'
-              }}
-            />
+            <p className="text-[11px] text-slate-300/90">
+              สำหรับผู้เข้าร่วมโครงการเท่านั้น
+            </p>
           </div>
         </div>
 

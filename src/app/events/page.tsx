@@ -43,7 +43,7 @@ function EventsContent() {
   return (
     <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-5 sm:space-y-6 pb-24">
       {/* Executive Navy Header with Integrated My Tickets & Calendar Buttons */}
-      <div className="bg-gradient-to-b from-[#181B34] via-[#1E2538] to-[#252E46] text-white rounded-2xl p-5 sm:p-6 shadow-[0_4px_16px_rgba(15,23,42,0.12)] border border-slate-800/60 space-y-4">
+      <div className="bg-gradient-to-b from-[#181B34] via-[#1E2538] to-[#252E46] text-white rounded-2xl p-5 sm:p-6 shadow-[0_4px_16px_rgba(15,23,42,0.12)] border border-slate-800/60 border-b-[3px] border-b-[#FB7170] space-y-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Activities &amp; Courses</h1>
           <p className="text-xs text-slate-300 mt-0.5">

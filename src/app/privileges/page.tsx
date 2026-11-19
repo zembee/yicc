@@ -124,7 +124,7 @@ function PrivilegesContent() {
   return (
     <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 py-4 pb-24 space-y-5">
       {/* ================= TOP EXECUTIVE NAVY HEADER & SEARCH ================= */}
-      <div className="bg-[#1E2538] text-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm space-y-4">
+      <div className="bg-[#1E2538] text-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-[0_4px_16px_rgba(15,23,42,0.12)] border-b-[3px] border-[#FB7170] space-y-4">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-3 min-w-0">
             <Link

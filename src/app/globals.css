@@ -12,7 +12,7 @@
   --e-global-color-3108c96: #FFFFFF;
   --e-global-color-cf63a04: #E5E7EB;
 
-  --background: #F7F7F5;
+  --background: #F4F6FA;
   --foreground: #1F2937;
 }
 
@@ -142,6 +142,19 @@ body {
   animation: skeletonShimmer 1.4s ease-in-out infinite;
 }
 
+@keyframes loadingBarSlide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
+
+.loading-bar-slide {
+  animation: loadingBarSlide 1.35s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
 /* Prevent scroll chaining from modals to background page */
 [aria-modal="true"],
 .fixed.inset-0.z-50 {
@@ -152,7 +165,8 @@ body {
   .page-transition-enter,
   .fade-in-soft,
   .skeleton-shimmer,
-  .skeleton-shimmer-dark {
+  .skeleton-shimmer-dark,
+  .loading-bar-slide {
     animation: none !important;
     transform: none !important;
   }

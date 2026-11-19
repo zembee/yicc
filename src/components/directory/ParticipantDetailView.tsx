@@ -98,9 +98,26 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
-        <div className="w-10 h-10 border-4 border-[#212542] border-t-transparent rounded-full animate-spin" />
-        <p className="text-xs text-slate-500 font-medium">กำลังโหลดข้อมูลสมาชิก...</p>
+      <div className="min-h-screen bg-[#F4F6FA] pb-24 fade-in-soft">
+        <div className="bg-gradient-to-b from-[#181B34] via-[#212542] to-[#2B3054] pt-8 pb-12 px-4 sm:px-6 lg:px-8 border-b-[3px] border-[#FB7170]">
+          <div className="max-w-6xl mx-auto flex flex-col items-center space-y-4 pt-6">
+            <div className="h-7 w-52 rounded-lg skeleton-shimmer-dark" />
+            <div className="h-5 w-24 rounded-md skeleton-shimmer-dark" />
+            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl skeleton-shimmer-dark" />
+            <div className="flex gap-2">
+              <div className="h-8 w-24 rounded-xl skeleton-shimmer-dark" />
+              <div className="h-8 w-24 rounded-xl skeleton-shimmer-dark" />
+            </div>
+          </div>
+        </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 space-y-6">
+          <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-100 space-y-4">
+            <div className="h-6 w-36 rounded-md skeleton-shimmer" />
+            {[0, 1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-5 w-full rounded-md skeleton-shimmer" />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -147,7 +164,7 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
       ];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pb-24 font-sans space-y-8 animate-in fade-in duration-300">
+    <div className="min-h-screen bg-[#F4F6FA] pb-24 font-sans space-y-8 animate-in fade-in duration-300">
       {/* Toast Notification */}
       {copied && (
         <div className="fixed top-5 right-5 z-50 bg-[#212542] text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
@@ -157,40 +174,49 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
       )}
 
       {/* 1. Header Banner (.elementor-element-1b044043) */}
-      <div className="bg-gradient-to-b from-[#181B34] via-[#212542] to-[#2B3054] text-white pt-8 pb-12 px-4 sm:px-6 lg:px-8 border-b border-slate-800 shadow-md">
-        <div className="max-w-6xl mx-auto space-y-6">
+      <div className="relative overflow-hidden bg-gradient-to-b from-[#161B2E] via-[#1E2538] to-[#252D46] text-white pt-6 pb-12 px-4 sm:px-6 lg:px-8 border-b-[3px] border-[#FB7170] shadow-[0_8px_28px_rgba(22,27,46,0.2)]">
+        {/* Subtle Ambient Glow */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute top-16 left-1/2 -translate-x-1/2 w-72 h-72 rounded-full opacity-20 blur-3xl"
+          style={{
+            background: 'radial-gradient(circle, rgba(229,193,88,0.45) 0%, rgba(251,113,112,0.2) 55%, transparent 75%)',
+          }}
+        />
+
+        <div className="relative z-10 max-w-6xl mx-auto space-y-5">
           {/* Breadcrumb & Navigation */}
           <div className="flex items-center justify-between">
             <Link
               href="/directory"
-              className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition bg-white/10 hover:bg-white/15 px-3.5 py-1.5 rounded-full backdrop-blur-sm"
+              className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition bg-white/10 hover:bg-white/15 px-3.5 py-1.5 rounded-xl backdrop-blur-sm border border-white/10"
             >
               <ArrowLeft className="w-4 h-4" /> กลับสู่หน้าทำเนียบธุรกิจ
             </Link>
             <button
               onClick={handleShare}
-              className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-slate-300 hover:text-white bg-white/10 hover:bg-white/15 px-3.5 py-1.5 rounded-full transition backdrop-blur-sm"
+              className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-slate-300 hover:text-white bg-white/10 hover:bg-white/15 px-3.5 py-1.5 rounded-xl transition backdrop-blur-sm border border-white/10"
             >
               <Share2 className="w-3.5 h-3.5" /> แชร์โปรไฟล์
             </button>
           </div>
 
           {/* Centered Name, Nickname, Portrait & Actions (.elementor-element-264882a) */}
-          <div className="flex flex-col items-center text-center space-y-3 pt-2">
-            <div className="space-y-1">
+          <div className="flex flex-col items-center text-center space-y-3.5 pt-1">
+            <div className="space-y-0.5">
               <h1 className="text-2xl sm:text-4xl font-semibold text-white font-kanit tracking-tight leading-tight">
                 {participant.name_thai}
               </h1>
               {participant.nickname_eng && (
-                <h2 className="text-lg sm:text-2xl font-normal text-slate-300 font-kanit">
+                <h2 className="text-base sm:text-2xl font-normal text-slate-300 font-kanit">
                   ({participant.nickname_eng})
                 </h2>
               )}
             </div>
 
-            {/* Compact Portrait Photo under Name */}
-            <div className="pt-1 flex flex-col items-center gap-2">
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden bg-slate-100 shadow-lg border-2 border-white/25 ring-2 ring-[#C59B38]/30">
+            {/* Rounded-Square Portrait Photo with Overlapping Star Badge */}
+            <div className="flex flex-col items-center">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden bg-slate-100 shadow-[0_10px_28px_rgba(0,0,0,0.35)] border-2 border-white/80 ring-4 ring-[#C59B38]/25">
                 <img
                   src={participant.profile_picture_url || 'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/participants/p_3296.webp'}
                   alt={participant.name_thai}
@@ -201,32 +227,35 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
                 />
               </div>
               {participant.star_group_label && (
-                <span className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-white/10 border border-white/15 text-[11px] font-semibold text-[#E5C158]">
+                <span className="-mt-3 relative z-10 inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-[#181E30] border border-[#E5C158]/50 text-[11px] font-bold text-[#E5C158] shadow-md">
                   ⭐ {participant.star_group_label}
                 </span>
               )}
             </div>
 
-            {/* Following / Follower & Action Buttons (Follow + Chat) */}
+            {/* Clean Minimal Following / Follower & Symmetric Action Buttons */}
             {(() => {
               const numId = Number(String(participant.id).replace(/\D/g, '')) || 100;
               const memberFollowingCount = 14 + (numId % 19);
               const memberFollowerCount = 21 + ((numId * 7) % 33) + (isFollowing ? 1 : 0);
               return (
-                <div className="flex flex-col items-center gap-3 pt-1">
-                  <div className="flex items-center justify-center gap-2 text-xs text-slate-300">
-                    <span className="bg-white/10 px-3 py-1 rounded-full">
-                      <strong className="text-white">{memberFollowingCount}</strong> Following
+                <div className="flex flex-col items-center gap-3 w-full">
+                  <div className="inline-flex items-center justify-center gap-4 text-xs text-slate-300 tabular-nums">
+                    <span>
+                      <strong className="text-white font-bold text-sm mr-1">{memberFollowingCount}</strong>
+                      Following
                     </span>
-                    <span className="bg-white/10 px-3 py-1 rounded-full">
-                      <strong className="text-white">{memberFollowerCount}</strong> Follower
+                    <span className="h-3.5 w-px bg-white/20" aria-hidden="true" />
+                    <span>
+                      <strong className="text-white font-bold text-sm mr-1">{memberFollowerCount}</strong>
+                      Follower
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-center gap-2.5">
+                  <div className="grid grid-cols-2 gap-2.5 w-full max-w-[264px]">
                     <button
                       onClick={handleToggleFollow}
-                      className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm ${
+                      className={`inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-xl text-xs font-bold transition shadow-sm ${
                         isFollowing
                           ? 'bg-emerald-500 text-white hover:bg-emerald-600'
                           : 'bg-white text-[#1E2538] hover:bg-slate-100'
@@ -238,7 +267,7 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
 
                     <Link
                       href={`/chat/${participant.id}`}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#FB7170] hover:bg-[#fa5b5a] text-white text-xs font-bold transition shadow-sm"
+                      className="inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-xl bg-[#FB7170] hover:bg-[#fa5b5a] text-white text-xs font-bold transition shadow-sm"
                     >
                       <MessageCircle className="w-4 h-4" />
                       <span>Chat</span>
@@ -250,22 +279,22 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
           </div>
 
           {/* Quick Tags Sub-bar (.elementor-element-41acba6d) */}
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 pt-1 text-xs sm:text-sm">
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-1 text-[11px] sm:text-xs">
             {companiesList.map((comp, idx) => (
               <React.Fragment key={idx}>
                 {comp.industrial_groups_label && (
-                  <span className="px-3 py-1 rounded-full bg-white/15 text-white font-medium backdrop-blur-sm border border-white/10">
+                  <span className="px-2.5 py-1 rounded-full bg-white/[0.08] text-slate-200 font-medium border border-white/10">
                     {comp.industrial_groups_label}
                   </span>
                 )}
                 {comp.business_categories_label && (
-                  <span className="px-3 py-1 rounded-full bg-white/15 text-white font-medium backdrop-blur-sm border border-white/10">
+                  <span className="px-2.5 py-1 rounded-full bg-white/[0.08] text-slate-200 font-medium border border-white/10">
                     {comp.business_categories_label}
                   </span>
                 )}
                 {comp.company_name_thai && (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FB7170]/20 text-[#FB7170] font-semibold border border-[#FB7170]/30 backdrop-blur-sm">
-                    <Building2 className="w-3.5 h-3.5" />
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FB7170]/15 text-[#FF9B9A] font-semibold border border-[#FB7170]/35">
+                    <Building2 className="w-3.5 h-3.5 text-[#FB7170]" />
                     {comp.company_name_thai}
                   </span>
                 )}
@@ -276,65 +305,75 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
       </div>
 
       {/* Main Content Area */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 space-y-8">
-        {/* 2. Section 1: ข้อมูลส่วนตัว (Personal Information) (.elementor-element-1cab9997) */}
-        <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-[0px_4px_16px_2px_rgba(0,0,0,0.08)] border border-slate-100">
-          <div className="space-y-5">
-            <h2 className="text-xl sm:text-2xl font-semibold text-[#212542] font-kanit border-b border-slate-100 pb-3">
-              ข้อมูลส่วนตัว
-            </h2>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-5 space-y-6">
+        {/* 2. Section 1: ข้อมูลส่วนตัว (Personal Information) */}
+        <div className="bg-white rounded-2xl p-5 sm:p-7 shadow-[0_2px_12px_rgba(15,23,42,0.05)] border border-slate-200/70 space-y-5">
+          <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+            <img
+              src="/images/icons/profile.webp"
+              alt="Personal Info"
+              className="w-10 h-10 rounded-xl shadow-sm shrink-0"
+            />
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#9A7320] block">
+                Personal Profile
+              </span>
+              <h2 className="text-lg sm:text-xl font-bold text-[#1E2538] font-kanit leading-tight">
+                ข้อมูลส่วนตัว
+              </h2>
+            </div>
+          </div>
 
-            <div className="divide-y divide-slate-100 text-xs sm:text-sm">
-              <div className="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-1 sm:gap-4">
-                <span className="sm:col-span-5 font-semibold text-slate-500">ชื่อเล่น (ภาษาอังกฤษ) :</span>
-                <span className="sm:col-span-7 font-bold text-[#212542] text-sm sm:text-base">
-                  {participant.nickname_eng || '-'}
-                </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+            <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+              <span className="text-slate-400 text-[11px] font-semibold block">ชื่อ - นามสกุล (ภาษาไทย)</span>
+              <div className="font-bold text-[#1E2538] text-sm sm:text-base">
+                {participant.name_thai || '-'}
               </div>
+            </div>
 
-              <div className="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-1 sm:gap-4">
-                <span className="sm:col-span-5 font-semibold text-slate-500">ชื่อ - นามสกุล (ภาษาไทย) :</span>
-                <span className="sm:col-span-7 font-bold text-[#212542] text-sm sm:text-base">
-                  {participant.name_thai || '-'}
-                </span>
+            <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+              <span className="text-slate-400 text-[11px] font-semibold block">ชื่อเล่น (ภาษาอังกฤษ)</span>
+              <div className="font-bold text-[#1E2538] text-sm sm:text-base">
+                {participant.nickname_eng || '-'}
               </div>
+            </div>
 
-              <div className="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-1 sm:gap-4">
-                <span className="sm:col-span-5 font-semibold text-slate-500">ชื่อ - นามสกุล (ภาษาอังกฤษ) :</span>
-                <span className="sm:col-span-7 font-normal text-slate-700">
-                  {participant.fullname_eng || '-'}
-                </span>
+            <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+              <span className="text-slate-400 text-[11px] font-semibold block">ชื่อ - นามสกุล (ภาษาอังกฤษ)</span>
+              <div className="font-semibold text-slate-700 text-sm">
+                {participant.fullname_eng || '-'}
               </div>
+            </div>
 
-              <div className="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-1 sm:gap-4">
-                <span className="sm:col-span-5 font-semibold text-slate-500">เบอร์โทรติดต่อ :</span>
-                <span className="sm:col-span-7">
-                  {participant.tel_number ? (
-                    <a
-                      href={`tel:${participant.tel_number}`}
-                      className="font-bold text-[#FB7170] hover:underline inline-flex items-center gap-1.5 font-mono text-sm"
-                    >
-                      <Phone className="w-3.5 h-3.5" />
-                      {participant.tel_number}
-                    </a>
-                  ) : (
-                    <span className="text-slate-400">-</span>
-                  )}
-                </span>
+            <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+              <span className="text-slate-400 text-[11px] font-semibold block">เบอร์โทรติดต่อ</span>
+              <div>
+                {participant.tel_number ? (
+                  <a
+                    href={`tel:${participant.tel_number}`}
+                    className="font-bold text-[#FB7170] hover:underline inline-flex items-center gap-1.5 font-mono text-sm"
+                  >
+                    <Phone className="w-3.5 h-3.5" />
+                    {participant.tel_number}
+                  </a>
+                ) : (
+                  <span className="text-slate-400">-</span>
+                )}
               </div>
+            </div>
 
-              <div className="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-1 sm:gap-4">
-                <span className="sm:col-span-5 font-semibold text-slate-500">ดาว :</span>
-                <span className="sm:col-span-7 font-semibold text-[#212542]">
-                  {participant.star_group_label || participant.star_group || '-'}
-                </span>
+            <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+              <span className="text-slate-400 text-[11px] font-semibold block">ดาวประจำบ้าน</span>
+              <div className="font-bold text-[#1E2538] text-sm">
+                {participant.star_group_label || participant.star_group || '-'}
               </div>
+            </div>
 
-              <div className="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-1 sm:gap-4">
-                <span className="sm:col-span-5 font-semibold text-slate-500">รุ่น :</span>
-                <span className="sm:col-span-7 font-semibold text-[#212542]">
-                  {participant.gen_label || 'YFTI 11'}
-                </span>
+            <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+              <span className="text-slate-400 text-[11px] font-semibold block">รุ่นหลักสูตร</span>
+              <div className="font-bold text-[#1E2538] text-sm">
+                {participant.gen_label || 'YFTI 11'}
               </div>
             </div>
           </div>
@@ -346,22 +385,31 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
           
           return (
             <React.Fragment key={index}>
-              {/* Company Info Box (.elementor-element-548d8500) */}
-              <div 
-                className="elementor-element elementor-element-548d8500 bg-white rounded-2xl p-6 sm:p-8 shadow-[0px_4px_16px_2px_rgba(0,0,0,0.08)] border border-slate-100 space-y-6"
+              {/* Company Info Box */}
+              <div
+                className="bg-white rounded-2xl p-5 sm:p-7 shadow-[0_2px_12px_rgba(15,23,42,0.05)] border border-slate-200/70 space-y-5"
                 data-id="548d8500"
               >
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-                  {/* Left Column: Heading & Logo (.elementor-element-31b4a25e) */}
-                  <div className="md:col-span-4 lg:col-span-4 flex flex-col items-center md:items-start space-y-4">
-                    <div className="elementor-element elementor-element-1fd2b44f w-full">
-                      <h2 className="elementor-heading-title text-xl sm:text-2xl font-semibold text-[#212542] font-kanit">
-                        {sectionTitle}
-                      </h2>
-                    </div>
+                <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+                  <img
+                    src="/images/icons/business.webp"
+                    alt={sectionTitle}
+                    className="w-10 h-10 rounded-xl shadow-sm shrink-0"
+                  />
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#9A7320] block">
+                      Company Profile
+                    </span>
+                    <h2 className="text-lg sm:text-xl font-bold text-[#1E2538] font-kanit leading-tight">
+                      {sectionTitle}
+                    </h2>
+                  </div>
+                </div>
 
-                    {/* Company Logo Image (.elementor-element-6517c78b) */}
-                    <div className="elementor-element elementor-element-6517c78b w-full max-w-[280px] sm:max-w-[320px] aspect-square rounded-xl bg-white border border-slate-200/80 p-4 flex items-center justify-center shadow-sm overflow-hidden">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                  {/* Left Column: Compact Company Logo */}
+                  <div className="md:col-span-4 flex flex-col items-center">
+                    <div className="w-full max-w-[180px] sm:max-w-[220px] aspect-square rounded-2xl bg-[#F8FAFC] border border-slate-200/80 p-4 flex items-center justify-center shadow-sm overflow-hidden">
                       {company.company_logo_url ? (
                         <img
                           src={company.company_logo_url}
@@ -370,68 +418,61 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
                         />
                       ) : (
                         <div className="text-center space-y-2 text-slate-300">
-                          <Building2 className="w-16 h-16 mx-auto text-slate-300" />
+                          <Building2 className="w-14 h-14 mx-auto text-slate-300" />
                           <p className="text-xs font-semibold text-slate-400">{company.company_name_thai || 'โลโก้บริษัท'}</p>
                         </div>
                       )}
                     </div>
                   </div>
 
-                  {/* Right Column: Company Attributes Grid (.elementor-element-2ce6d1e8) */}
-                  <div className="md:col-span-8 lg:col-span-8">
-                    <div className="elementor-element elementor-element-2ce6d1e8 grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6 text-xs sm:text-sm">
-                      {/* คำนำหน้าบริษัท */}
-                      <div className="elementor-element elementor-element-546dfe2e space-y-1 bg-slate-50/80 p-3.5 rounded-xl border border-slate-100">
-                        <span className="elementor-heading-title text-slate-500 text-[11px] font-semibold block">คำนำหน้าบริษัท</span>
-                        <div className="jet-listing-dynamic-field__content font-bold text-[#212542] text-sm sm:text-base">
+                  {/* Right Column: Company Attributes Grid */}
+                  <div className="md:col-span-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+                      <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+                        <span className="text-slate-400 text-[11px] font-semibold block">คำนำหน้าบริษัท</span>
+                        <div className="font-bold text-[#1E2538] text-sm">
                           {company.company_prefix || 'บริษัท จำกัด'}
                         </div>
                       </div>
 
-                      {/* ชื่อบริษัท (ภาษาไทย) */}
-                      <div className="elementor-element elementor-element-f2e704f space-y-1 bg-slate-50/80 p-3.5 rounded-xl border border-slate-100">
-                        <span className="elementor-heading-title text-slate-500 text-[11px] font-semibold block">ชื่อบริษัท (ภาษาไทย)</span>
-                        <div className="jet-listing-dynamic-field__content font-bold text-[#212542] text-sm sm:text-base">
+                      <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+                        <span className="text-slate-400 text-[11px] font-semibold block">ชื่อบริษัท (ภาษาไทย)</span>
+                        <div className="font-bold text-[#1E2538] text-sm">
                           {company.company_name_thai || '-'}
                         </div>
                       </div>
 
-                      {/* ชื่อบริษัท (ภาษาอังกฤษ) */}
-                      <div className="elementor-element elementor-element-3aef0d6a space-y-1 bg-slate-50/80 p-3.5 rounded-xl border border-slate-100">
-                        <span className="elementor-heading-title text-slate-500 text-[11px] font-semibold block">ชื่อบริษัท  (ภาษาอังกฤษ)</span>
-                        <div className="jet-listing-dynamic-field__content font-bold text-slate-700 text-sm sm:text-base">
+                      <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+                        <span className="text-slate-400 text-[11px] font-semibold block">ชื่อบริษัท (ภาษาอังกฤษ)</span>
+                        <div className="font-semibold text-slate-700 text-sm">
                           {company.company_name_eng || '-'}
                         </div>
                       </div>
 
-                      {/* กลุ่มอุตสหกรรม */}
-                      <div className="elementor-element elementor-element-47426508 space-y-1 bg-slate-50/80 p-3.5 rounded-xl border border-slate-100">
-                        <span className="elementor-heading-title text-slate-500 text-[11px] font-semibold block">กลุ่มอุตสหกรรม</span>
-                        <div className="jet-listing-dynamic-field__content font-bold text-[#FB7170] text-sm sm:text-base">
+                      <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+                        <span className="text-slate-400 text-[11px] font-semibold block">กลุ่มอุตสาหกรรม</span>
+                        <div className="font-bold text-[#FB7170] text-sm">
                           {company.industrial_groups_label || '-'}
                         </div>
                       </div>
 
-                      {/* หมวดธุรกิจ */}
-                      <div className="elementor-element elementor-element-c69cf60 space-y-1 bg-slate-50/80 p-3.5 rounded-xl border border-slate-100">
-                        <span className="elementor-heading-title text-slate-500 text-[11px] font-semibold block">หมวดธุรกิจ</span>
-                        <div className="jet-listing-dynamic-field__content font-bold text-[#212542] text-sm sm:text-base">
+                      <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+                        <span className="text-slate-400 text-[11px] font-semibold block">หมวดธุรกิจ</span>
+                        <div className="font-bold text-[#1E2538] text-sm">
                           {company.business_categories_label || '-'}
                         </div>
                       </div>
 
-                      {/* ตำแหน่งในธุรกิจ */}
-                      <div className="elementor-element elementor-element-1a3fc8d6 space-y-1 bg-slate-50/80 p-3.5 rounded-xl border border-slate-100">
-                        <span className="elementor-heading-title text-slate-500 text-[11px] font-semibold block">ตำแหน่งในธุรกิจ</span>
-                        <div className="jet-listing-dynamic-field__content font-bold text-[#212542] text-sm sm:text-base">
+                      <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70">
+                        <span className="text-slate-400 text-[11px] font-semibold block">ตำแหน่งในธุรกิจ</span>
+                        <div className="font-bold text-[#1E2538] text-sm">
                           {company.business_position || '-'}
                         </div>
                       </div>
 
-                      {/* ปีที่ก่อตั้ง (พ.ศ.) */}
-                      <div className="elementor-element elementor-element-4f5195bb space-y-1 bg-slate-50/80 p-3.5 rounded-xl border border-slate-100 sm:col-span-2">
-                        <span className="elementor-heading-title text-slate-500 text-[11px] font-semibold block">ปีที่ก่อตั้ง (พ.ศ.)</span>
-                        <div className="jet-listing-dynamic-field__content font-bold text-[#212542] font-mono text-sm sm:text-base">
+                      <div className="space-y-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-slate-200/70 sm:col-span-2">
+                        <span className="text-slate-400 text-[11px] font-semibold block">ปีที่ก่อตั้ง (พ.ศ.)</span>
+                        <div className="font-bold text-[#1E2538] font-mono text-sm">
                           {company.founded_year || '-'}
                         </div>
                       </div>
@@ -440,79 +481,76 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
                 </div>
               </div>
 
-              {/* Company Description, Address & Social Channels (.elementor-element-77a6feb0) */}
+              {/* Company Description, Address & Social Channels */}
               {(company.company_description || company.company_address || company.website_url || company.facebook_url || company.line_id || company.product_banner_url) && (
-                <div 
-                  className="elementor-element elementor-element-77a6feb0 bg-white rounded-2xl p-6 sm:p-8 shadow-[0px_4px_16px_2px_rgba(0,0,0,0.08)] border border-slate-100 space-y-8"
+                <div
+                  className="bg-white rounded-2xl p-5 sm:p-7 shadow-[0_2px_12px_rgba(15,23,42,0.05)] border border-slate-200/70 space-y-6"
                   data-id="77a6feb0"
                 >
-                  {/* Company Description (.elementor-element-65e0bdf1) */}
+                  {/* Company Description */}
                   {company.company_description && (
-                    <div className="elementor-element elementor-element-65e0bdf1 space-y-3">
-                      <div className="elementor-element elementor-element-169eafbb">
-                        <h2 className="elementor-heading-title text-xl sm:text-2xl font-semibold text-[#212542] font-kanit border-b border-slate-100 pb-3">
-                          Company Description
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+                        <span className="w-1 h-5 rounded-full bg-[#FB7170]" />
+                        <h2 className="text-base sm:text-lg font-bold text-[#1E2538] font-kanit">
+                          เกี่ยวกับธุรกิจ (Company Description)
                         </h2>
                       </div>
-                      <div 
-                        className="elementor-element elementor-element-18559d76 text-xs sm:text-sm text-slate-700 leading-relaxed space-y-3 prose prose-slate max-w-none"
+                      <div
+                        className="text-xs sm:text-sm text-slate-600 leading-relaxed space-y-3 prose prose-slate max-w-none"
                         dangerouslySetInnerHTML={{ __html: company.company_description }}
                       />
                     </div>
                   )}
 
-                  {/* Address and Contact Channels (.elementor-element-13abf543) */}
+                  {/* Address and Contact Channels */}
                   {(company.company_address || company.website_url || company.facebook_url || company.line_id || company.comp_tel_number) && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
-                      {/* ที่อยู่บริษัท (.elementor-element-5eb3a4fb) */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
                       {company.company_address && (
-                        <div className="elementor-element elementor-element-5eb3a4fb space-y-2">
-                          <div className="elementor-element elementor-element-7b99cb31">
-                            <h2 className="elementor-heading-title text-lg font-semibold text-[#212542] font-kanit">
-                              ที่อยู่บริษัท
-                            </h2>
-                          </div>
-                          <div className="elementor-element elementor-element-167c1eca whitespace-pre-line text-xs sm:text-sm text-slate-600 leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <div className="space-y-2">
+                          <h3 className="text-sm font-bold text-[#1E2538] flex items-center gap-1.5">
+                            <MapPin className="w-4 h-4 text-[#FB7170]" />
+                            <span>ที่อยู่บริษัท</span>
+                          </h3>
+                          <div className="whitespace-pre-line text-xs sm:text-sm text-slate-600 leading-relaxed bg-[#F8FAFC] p-4 rounded-xl border border-slate-200/70">
                             {company.company_address}
                           </div>
                         </div>
                       )}
 
-                      {/* ช่องทางติดต่อและติดตามบริษัท (.elementor-element-6f5dec76) */}
-                      <div className="elementor-element elementor-element-6f5dec76 space-y-2">
-                        <div className="elementor-element elementor-element-b2bcdf4">
-                          <h2 className="elementor-heading-title text-lg font-semibold text-[#212542] font-kanit">
-                            ช่องทางติดต่อและติดตามบริษัท
-                          </h2>
-                        </div>
-                        <div className="space-y-2.5 bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs sm:text-sm">
+                      <div className="space-y-2">
+                        <h3 className="text-sm font-bold text-[#1E2538] flex items-center gap-1.5">
+                          <Globe className="w-4 h-4 text-[#B38728]" />
+                          <span>ช่องทางติดต่อและติดตามบริษัท</span>
+                        </h3>
+                        <div className="space-y-2.5 bg-[#F8FAFC] p-4 rounded-xl border border-slate-200/70 text-xs sm:text-sm">
                           {company.website_url && (
-                            <div className="flex items-center gap-2 text-slate-700">
+                            <div className="flex items-center gap-2.5 text-slate-700">
                               <Globe className="w-4 h-4 text-[#FB7170] shrink-0" />
-                              <a 
+                              <a
                                 href={company.website_url.startsWith('http') ? company.website_url : `https://${company.website_url}`}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="hover:underline hover:text-[#FB7170] transition"
+                                className="hover:underline hover:text-[#FB7170] transition truncate"
                               >
                                 {company.website_url}
                               </a>
                             </div>
                           )}
                           {company.facebook_url && (
-                            <div className="flex items-center gap-2 text-slate-700">
+                            <div className="flex items-center gap-2.5 text-slate-700">
                               <Facebook className="w-4 h-4 text-[#FB7170] shrink-0" />
-                              <span>{company.facebook_url}</span>
+                              <span className="truncate">{company.facebook_url}</span>
                             </div>
                           )}
                           {company.line_id && (
-                            <div className="flex items-center gap-2 text-slate-700">
+                            <div className="flex items-center gap-2.5 text-slate-700">
                               <MessageCircle className="w-4 h-4 text-[#FB7170] shrink-0" />
-                              <span>{company.line_id}</span>
+                              <span className="truncate">{company.line_id}</span>
                             </div>
                           )}
                           {company.comp_tel_number && (
-                            <div className="flex items-center gap-2 text-slate-700">
+                            <div className="flex items-center gap-2.5 text-slate-700">
                               <Phone className="w-4 h-4 text-[#FB7170] shrink-0" />
                               <a href={`tel:${company.comp_tel_number}`} className="font-mono hover:underline hover:text-[#FB7170]">
                                 {company.comp_tel_number}
@@ -520,7 +558,7 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
                             </div>
                           )}
                           {!company.website_url && !company.facebook_url && !company.line_id && !company.comp_tel_number && (
-                            <div className="flex items-center gap-2 text-slate-700">
+                            <div className="flex items-center gap-2.5 text-slate-700">
                               <Building2 className="w-4 h-4 text-[#FB7170] shrink-0" />
                               <span>{company.company_name_thai}</span>
                             </div>
@@ -530,18 +568,19 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
                     </div>
                   )}
 
-                  {/* สินค้าและบริการของบริษัท (.elementor-element-62f5df53) */}
+                  {/* สินค้าและบริการของบริษัท */}
                   {company.product_banner_url && (
-                    <div className="elementor-element elementor-element-62f5df53 space-y-3 pt-4 border-t border-slate-100">
-                      <div className="elementor-element elementor-element-2072ba21">
-                        <h2 className="elementor-heading-title text-lg font-semibold text-[#212542] font-kanit">
+                    <div className="space-y-3 pt-4 border-t border-slate-100">
+                      <div className="flex items-center gap-2">
+                        <span className="w-1 h-5 rounded-full bg-[#C59B38]" />
+                        <h3 className="text-base font-bold text-[#1E2538] font-kanit">
                           สินค้าและบริการของบริษัท
-                        </h2>
+                        </h3>
                       </div>
-                      <div className="elementor-element elementor-element-5ddb0e83 rounded-xl overflow-hidden shadow-sm border border-slate-100">
-                        <img 
-                          src={company.product_banner_url} 
-                          alt="สินค้าและบริการของบริษัท" 
+                      <div className="rounded-xl overflow-hidden shadow-sm border border-slate-200/70">
+                        <img
+                          src={company.product_banner_url}
+                          alt="สินค้าและบริการของบริษัท"
                           className="w-full h-auto object-cover"
                         />
                       </div>
@@ -553,45 +592,54 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
           );
         })}
 
-        {/* 4. Section 4: ค้นหาธุรกิจอื่นที่สนใจ (.elementor-element-4df330d4) */}
-        <div className="elementor-element elementor-element-4df330d4 pt-6 space-y-6">
+        {/* 4. Section 4: ค้นหาธุรกิจอื่นที่สนใจ */}
+        <div className="pt-2 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl sm:text-2xl font-bold text-[#212542] font-kanit">
-              ค้นหาธุรกิจอื่นที่สนใจ
-            </h2>
+            <div>
+              <h2 className="text-base sm:text-lg font-bold text-[#1E2538] font-kanit">
+                ค้นหาธุรกิจอื่นที่สนใจ
+              </h2>
+              <p className="text-xs text-slate-500">สำรวจเครือข่ายสมาชิกตามกลุ่มอุตสาหกรรม</p>
+            </div>
             <Link
               href="/directory"
-              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#FB7170] hover:text-[#e05655] transition"
+              className="px-3 py-1.5 rounded-full bg-[#1E2538] hover:bg-[#2B3550] text-white text-[11px] font-bold inline-flex items-center gap-0.5 shrink-0 transition shadow-sm"
             >
               <span>ดูทั้งหมด</span>
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-3.5 h-3.5 text-[#FB7170]" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {[
-              { title_th: 'เทคโนโลยี', title_en: 'Technology', key: 'technology', color: 'from-blue-500/10 to-indigo-500/10' },
-              { title_th: 'บริการ', title_en: 'Service', key: 'services', color: 'from-emerald-500/10 to-teal-500/10' },
-              { title_th: 'สินค้าอุปโภคบริโภค', title_en: 'Consumer Products', key: 'consumer_goods', color: 'from-rose-500/10 to-orange-500/10' },
-              { title_th: 'สินค้าอุตสาหกรรม', title_en: 'Industrial Goods', key: 'industrial_goods', color: 'from-amber-500/10 to-yellow-500/10' },
+              { title_th: 'เทคโนโลยี', title_en: 'Technology', key: 'technology', iconSrc: '/images/icons/tech.webp' },
+              { title_th: 'บริการ', title_en: 'Service', key: 'services', iconSrc: '/images/icons/services.webp' },
+              { title_th: 'สินค้าอุปโภคบริโภค', title_en: 'Consumer Products', key: 'consumer_goods', iconSrc: '/images/icons/consumer.webp' },
+              { title_th: 'สินค้าอุตสาหกรรม', title_en: 'Industrial Goods', key: 'industrial_goods', iconSrc: '/images/icons/industrial.webp' },
             ].map((cat) => (
               <Link
                 key={cat.key}
                 href={`/directory?industry=${cat.key}`}
-                className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-200/80 group hover:-translate-y-1 flex flex-col justify-between"
+                className="bg-white rounded-2xl p-4 shadow-[0_2px_12px_rgba(15,23,42,0.04)] hover:border-[#C59B38] transition-all duration-200 border border-slate-200/80 group hover:-translate-y-0.5 flex flex-col justify-between gap-3"
               >
-                <div className="space-y-1">
-                  <h3 className="text-base font-semibold text-[#212542] group-hover:text-[#FB7170] transition-colors font-kanit">
-                    {cat.title_th}
-                  </h3>
-                  <h4 className="text-xs text-slate-400">
-                    {cat.title_en}
-                  </h4>
-                </div>
-                <div className="pt-4 flex items-center justify-end">
-                  <span className="p-1.5 rounded-full bg-slate-100 group-hover:bg-[#FB7170] group-hover:text-white transition-colors">
+                <div className="flex items-start justify-between gap-2">
+                  <img
+                    src={cat.iconSrc}
+                    alt={cat.title_th}
+                    loading="lazy"
+                    className="w-11 h-11 rounded-xl shadow-sm group-hover:scale-105 transition-transform"
+                  />
+                  <span className="p-1.5 rounded-full bg-slate-100 text-slate-500 group-hover:bg-[#1E2538] group-hover:text-white transition-colors">
                     <ChevronRight className="w-3.5 h-3.5" />
                   </span>
+                </div>
+                <div className="space-y-0.5">
+                  <h3 className="text-xs sm:text-sm font-bold text-[#1E2538] group-hover:text-[#B38728] transition-colors font-kanit">
+                    {cat.title_th}
+                  </h3>
+                  <p className="text-[11px] text-slate-400">
+                    {cat.title_en}
+                  </p>
                 </div>
               </Link>
             ))}

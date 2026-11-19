@@ -411,7 +411,7 @@ function DirectoryContent() {
   return (
     <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6 pb-20">
       {/* 1. Dark Navy Header with Integrated Search & QR Button */}
-      <div className="bg-[#1E2538] text-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm space-y-4">
+      <div className="bg-[#1E2538] text-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-[0_4px_16px_rgba(15,23,42,0.12)] border-b-[3px] border-[#FB7170] space-y-4">
         <div className="flex items-center justify-between gap-3">
           <div>
             <h1 className="text-lg sm:text-2xl font-bold tracking-tight">
