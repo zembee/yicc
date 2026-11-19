@@ -17,6 +17,8 @@ import { useLiffAuth } from '@/contexts/LiffContext';
 import { mockHouses, mockEvents, mockMissions, yftiParticipants } from '@/lib/mockData';
 import { EventItem } from '@/types';
 import { WebLoginModal } from '@/components/layout/WebLoginModal';
+import { PhotoLightbox } from '@/components/ui/PhotoLightbox';
+import { InfoCard, InfoGrid, InfoRow } from '@/components/ui/InfoCard';
 import { ProfilePageSkeleton } from '@/components/ui/PageSkeletons';
 import { HouseMembersModal } from '@/components/profile/HouseMembersModal';
 import {
@@ -44,6 +46,7 @@ export default function ProfilePage() {
   const { profile, updateRole, logout } = useLiffAuth();
   const [mounted, setMounted] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isPhotoOpen, setIsPhotoOpen] = useState(false);
   const [isHouseModalOpen, setIsHouseModalOpen] = useState(false);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
   const [followingIds, setFollowingIds] = useState<string[] | null>(null);
@@ -239,18 +242,25 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#F6F4EF] pb-24">
+    <div className="w-full bg-[#F6F4EF] pb-4">
       {/* ================= 1. OBSIDIAN LUXURY PROFILE HEADER (SAME DNA, DISTINCT PROFILE LAYOUT) ================= */}
       <section className="relative luxury-stage text-white pt-5 pb-12 px-4 sm:px-6 overflow-hidden">
         <div className="relative z-10 max-w-4xl mx-auto space-y-5">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
-              <img
-                src={profile.picture_url || DEFAULT_AVATAR_DATA_URI}
-                alt={profile.display_name}
-                onError={handleAvatarError}
-                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover object-top ring-2 ring-[#ECD28E]/50 bg-[#0D1321] shadow-lg shrink-0"
-              />
+              <button
+                type="button"
+                onClick={() => setIsPhotoOpen(true)}
+                aria-label="ดูรูปเต็มจอ"
+                className="shrink-0 rounded-full cursor-zoom-in"
+              >
+                <img
+                  src={profile.picture_url || DEFAULT_AVATAR_DATA_URI}
+                  alt={profile.display_name}
+                  onError={handleAvatarError}
+                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover object-top ring-2 ring-[#ECD28E]/50 hover:ring-[#ECD28E] bg-[#0D1321] shadow-lg transition"
+                />
+              </button>
               <div className="min-w-0 space-y-1">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full badge-gold-metallic text-[10px] font-bold uppercase tracking-wider">
@@ -321,40 +331,15 @@ export default function ProfilePage() {
       <div className="relative z-20 -mt-6 luxury-sheet rounded-t-[30px] pt-5 px-4 sm:px-6 min-h-[65vh]">
         <div className="max-w-4xl mx-auto space-y-5 sm:space-y-6">
           {/* Contact & Business Details */}
-          <div className="bg-white rounded-3xl shadow-[0_6px_24px_rgba(13,19,33,0.055)] p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F6F4EF] space-y-1">
-              <Phone
-                aria-hidden="true"
-                className="pointer-events-none select-none absolute -right-2 -bottom-2 w-14 h-14 text-[#1E2538] opacity-[0.07] -rotate-12"
-              />
-              <span className="relative z-10 text-xs font-bold text-[#9A7320] block">เบอร์โทรศัพท์</span>
-              <span className="relative z-10 text-sm sm:text-base font-extrabold text-[#1E2538] tabular-nums block">
-                {profile.phone_number || 'ยังไม่ระบุ'}
-              </span>
-            </div>
-
-            <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F6F4EF] space-y-1">
-              <Mail
-                aria-hidden="true"
-                className="pointer-events-none select-none absolute -right-2 -bottom-2 w-14 h-14 text-[#FB7170] opacity-[0.10] -rotate-12"
-              />
-              <span className="relative z-10 text-xs font-bold text-slate-500 block">อีเมล</span>
-              <span className="relative z-10 text-sm sm:text-base font-extrabold text-[#1E2538] truncate block">
-                {profile.email || 'ยังไม่ระบุ'}
-              </span>
-            </div>
-
-            <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F6F4EF] space-y-1">
-              <Briefcase
-                aria-hidden="true"
-                className="pointer-events-none select-none absolute -right-2 -bottom-2 w-14 h-14 text-[#1E2538] opacity-[0.07] -rotate-12"
-              />
-              <span className="relative z-10 text-xs font-bold text-slate-500 block">กลุ่มอุตสาหกรรม</span>
-              <span className="relative z-10 text-sm sm:text-base font-extrabold text-[#1E2538] truncate block">
-                {profile.industry || 'ยังไม่ระบุ'}
-              </span>
-            </div>
-          </div>
+          <InfoCard eyebrow="Member Details" title="ข้อมูลสมาชิก" iconSrc="/images/icons/profile.webp?v=2">
+            <InfoGrid>
+              <InfoRow label="เบอร์โทรศัพท์" mono accent>{profile.phone_number || 'ยังไม่ระบุ'}</InfoRow>
+              <InfoRow label="อีเมล">{profile.email || 'ยังไม่ระบุ'}</InfoRow>
+              <InfoRow label="ตำแหน่ง">{profile.position || 'ยังไม่ระบุ'}</InfoRow>
+              <InfoRow label="บริษัท">{profile.company_name || 'ยังไม่ระบุ'}</InfoRow>
+              <InfoRow label="กลุ่มอุตสาหกรรม" wide>{profile.industry || 'ยังไม่ระบุ'}</InfoRow>
+            </InfoGrid>
+          </InfoCard>
 
       {/* ================= 4. SEPARATE HOUSE CARD (SPLIT-TONE EXECUTIVE PASS) ================= */}
       <div className="bg-white rounded-3xl shadow-[0_6px_24px_rgba(13,19,33,0.06)] overflow-hidden">
@@ -389,9 +374,9 @@ export default function ProfilePage() {
           <button
             type="button"
             onClick={() => setIsHouseModalOpen(true)}
-            className="w-full py-2.5 rounded-xl bg-[#1E2538] hover:bg-[#2B3550] text-white text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm"
+            className="w-full py-2.5 rounded-full luxury-gold-btn text-xs font-bold transition flex items-center justify-center gap-2"
           >
-            <Users className="w-4 h-4 text-[#E5C158]" />
+            <Users className="w-4 h-4" />
             <span>ดูสมาชิกในบ้าน</span>
           </button>
         </div>
@@ -406,28 +391,21 @@ export default function ProfilePage() {
         onSubmitMission={handleSubmitMission}
       />
 
-      {/* ================= 6. ACCOUNT GOVERNANCE & ROLE SIMULATOR ================= */}
-      <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-[0_6px_22px_rgba(13,19,33,0.05)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <RefreshCw className="w-4 h-4 text-[#B38728]" />
-            <h4 className="text-sm font-bold text-[#1E2538]">สิทธิ์การเข้าถึงระบบ</h4>
-          </div>
-          <p className="text-xs text-slate-500">
-            สลับบทบาทเพื่อทดสอบการใช้งานในมุมมองสมาชิกและผู้ดูแลระบบ
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
+      {/* ================= 6. ACCOUNT / ROLE ================= */}
+      <InfoCard eyebrow="Account" title="สิทธิ์การเข้าถึงระบบ">
+        <p className="text-xs text-slate-500 pt-1 pb-3 border-b border-[#F1ECE2]">
+          สลับบทบาทเพื่อทดสอบการใช้งานในมุมมองสมาชิกและผู้ดูแลระบบ
+        </p>
+        <div className="flex flex-wrap items-center gap-2 py-4">
           {(['MEMBER', 'HOUSE_ADMIN', 'SUPER_ADMIN'] as const).map((roleOption) => (
             <button
               key={roleOption}
               type="button"
               onClick={() => updateRole(roleOption)}
-              className={`py-2 px-3.5 rounded-xl text-xs font-semibold transition border ${
+              className={`py-2 px-4 rounded-full text-xs font-bold transition ${
                 profile.role === roleOption
-                  ? 'bg-[#1E2538] text-white border-[#1E2538]'
-                  : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                  ? 'bg-[#0D1321] text-[#ECD28E]'
+                  : 'bg-[#F6F4EF] text-slate-600 hover:bg-[#EAE5DA]'
               }`}
             >
               {roleOption === 'SUPER_ADMIN'
@@ -441,13 +419,13 @@ export default function ProfilePage() {
           <button
             type="button"
             onClick={logout}
-            className="py-2 px-3.5 rounded-xl text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition flex items-center gap-1.5 ml-auto sm:ml-2"
+            className="py-2 px-4 rounded-full text-xs font-bold text-rose-600 hover:bg-rose-50 transition flex items-center gap-1.5 ml-auto"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span>ออกจากระบบ</span>
           </button>
         </div>
-      </div>
+      </InfoCard>
 
       {/* House Members Modal */}
       <HouseMembersModal
@@ -457,6 +435,14 @@ export default function ProfilePage() {
         houseRank={houseRank}
         housePoints={housePoints}
         houseMembers={houseMembers}
+      />
+
+      <PhotoLightbox
+        isOpen={isPhotoOpen}
+        onClose={() => setIsPhotoOpen(false)}
+        src={profile.picture_url || DEFAULT_AVATAR_DATA_URI}
+        alt={profile.display_name}
+        caption={profile.display_name}
       />
 
       {/* Switch User Modal */}

@@ -20,6 +20,29 @@ interface MemberCardProps {
   showFlipButton?: boolean;
 }
 
+const PLANET_META_MAP: Record<string, { img: string; color: string; label: string }> = {
+  'the sun': { img: '/images/planets/the_sun.webp?v=2', color: '#F59E0B', label: 'The Sun' },
+  the_sun: { img: '/images/planets/the_sun.webp?v=2', color: '#F59E0B', label: 'The Sun' },
+  sun: { img: '/images/planets/the_sun.webp?v=2', color: '#F59E0B', label: 'The Sun' },
+  mercury: { img: '/images/planets/mercury.webp?v=2', color: '#94A3B8', label: 'Mercury' },
+  venus: { img: '/images/planets/venus.webp?v=2', color: '#EC4899', label: 'Venus' },
+  earth: { img: '/images/planets/earth.webp?v=2', color: '#10B981', label: 'Earth' },
+  mars: { img: '/images/planets/the_mars.webp?v=2', color: '#EF4444', label: 'Mars' },
+  the_mars: { img: '/images/planets/the_mars.webp?v=2', color: '#EF4444', label: 'Mars' },
+  'the mars': { img: '/images/planets/the_mars.webp?v=2', color: '#EF4444', label: 'Mars' },
+  jupiter: { img: '/images/planets/jupiter.webp?v=2', color: '#F97316', label: 'Jupiter' },
+  saturn: { img: '/images/planets/saturn.webp?v=2', color: '#EAB308', label: 'Saturn' },
+  uranus: { img: '/images/planets/uranus.webp?v=2', color: '#06B6D4', label: 'Uranus' },
+  neptune: { img: '/images/planets/neptune.webp?v=2', color: '#3B82F6', label: 'Neptune' },
+};
+
+function resolvePlanetMeta(houseId?: string, houseName?: string) {
+  const byId = (houseId || '').trim().toLowerCase();
+  if (PLANET_META_MAP[byId]) return PLANET_META_MAP[byId];
+  const byName = (houseName || '').trim().toLowerCase();
+  return PLANET_META_MAP[byName] || null;
+}
+
 export function MemberCard({
   profile,
   houseName,
@@ -63,6 +86,10 @@ export function MemberCard({
     }
   };
 
+  const planetMeta = resolvePlanetMeta(profile.house_id, houseName);
+  const houseDisplayLabel = planetMeta?.label || houseName;
+  const houseAccent = planetMeta?.color || '#DFC27D';
+
   return (
     <div className="space-y-3">
       <div
@@ -76,7 +103,7 @@ export function MemberCard({
           aria-label={isFlipped ? 'พลิกกลับดูหน้าบัตรสมาชิก' : 'พลิกดูหลังบัตรสมาชิกและ QR Code'}
           onClick={onToggleFlip}
           onKeyDown={handleCardKeyDown}
-          className="relative w-full h-[196px] sm:h-[214px] rounded-[22px] transition-transform duration-700 cursor-pointer shadow-[0_18px_40px_rgba(4,8,18,0.45)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#DFC27D] focus-visible:ring-offset-2"
+          className="relative w-full h-[180px] sm:h-[196px] rounded-[22px] transition-transform duration-700 cursor-pointer shadow-[0_18px_40px_rgba(4,8,18,0.45)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#DFC27D] focus-visible:ring-offset-2"
           style={{
             transformStyle: 'preserve-3d',
             transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
@@ -84,7 +111,7 @@ export function MemberCard({
         >
           {/* ================= FRONT OF CARD (SLIM OBSIDIAN METAL PASS + SEAMLESS MASKED PORTRAIT) ================= */}
           <div
-            className="absolute inset-0 w-full h-full rounded-[22px] px-5 py-4 sm:px-6 sm:py-5 flex flex-col justify-between overflow-hidden text-white"
+            className="absolute inset-0 w-full h-full rounded-[22px] px-4 py-3.5 sm:px-5 sm:py-4 flex flex-col justify-between overflow-hidden text-white"
             style={{
               background:
                 'linear-gradient(135deg, #090D18 0%, #101728 55%, #0B111E 100%)',
@@ -93,6 +120,23 @@ export function MemberCard({
               transform: 'rotateY(0deg)',
             }}
           >
+            {/* Planet House Ambient Aura + Faint 3D Planet Backdrop Watermark */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: `radial-gradient(60% 95% at 12% 58%, ${houseAccent}24 0%, transparent 70%)`,
+              }}
+            />
+            {planetMeta && (
+              <img
+                src={planetMeta.img}
+                alt=""
+                aria-hidden="true"
+                className="absolute -left-5 -bottom-6 w-36 h-36 sm:w-44 sm:h-44 object-contain opacity-[0.17] pointer-events-none select-none"
+              />
+            )}
+
             {/* Full-Height Member Portrait on Right with True Alpha Mask Fade (Zero Seam!) */}
             <div
               aria-hidden="true"
@@ -120,16 +164,6 @@ export function MemberCard({
               />
             </div>
 
-            {/* Subtle Champagne Gold Ambient Aura on Left */}
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background:
-                  'radial-gradient(65% 85% at 0% 100%, rgba(223,194,125,0.12) 0%, transparent 65%)',
-              }}
-            />
-
             {/* Continuous Top-Layer Satin Gold Hairline Frame (Wraps All 4 Edges Smoothly) */}
             <div
               aria-hidden="true"
@@ -139,44 +173,61 @@ export function MemberCard({
               }}
             />
 
-            {/* Top Row: Compact Brand Lockup & Embossed Gold Tier */}
-            <div className="relative z-10 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white p-0.5 flex items-center justify-center shrink-0">
+            {/* Top Row: Compact Brand Lockup & Planet House + Gold Tier */}
+            <div className="relative z-10 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-white p-0.5 flex items-center justify-center shrink-0">
                   <Image
                     src="/YFTI-11-Logo.jpg"
                     alt="YFTI 11"
-                    width={28}
-                    height={28}
+                    width={24}
+                    height={24}
                     className="object-contain"
                   />
                 </div>
                 <div className="min-w-0 leading-tight">
-                  <p className="text-xs sm:text-sm tracking-[0.08em] text-white truncate">
+                  <p className="text-[11px] sm:text-xs tracking-[0.08em] text-white truncate">
                     <span className="font-extrabold">YOUNG FTI</span>{' '}
                     <span className="font-light text-[#ECD28E]">ELITE 11</span>
                   </p>
-                  <p className="text-[9px] sm:text-[10px] text-slate-400 tracking-wide truncate">
+                  <p className="text-[8px] sm:text-[9px] text-slate-400 tracking-wide truncate">
                     Executive Member Pass
                   </p>
                 </div>
               </div>
 
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#090D18]/75 backdrop-blur-md text-[10px] font-bold uppercase tracking-[0.16em] text-[#ECD28E] shrink-0">
-                <Crown className="w-3 h-3 text-[#DFC27D]" />
-                {tier}
-              </span>
+              <div className="flex items-center gap-1.5 shrink-0">
+                {houseDisplayLabel && (
+                  <span
+                    className="inline-flex items-center gap-1 pl-1.5 pr-2 py-0.5 rounded-full bg-[#090D18]/80 backdrop-blur-md text-[10px] font-extrabold tracking-wide text-[#F5E6BE]"
+                    style={{ boxShadow: `inset 0 0 0 1px ${houseAccent}55` }}
+                  >
+                    {planetMeta && (
+                      <img
+                        src={planetMeta.img}
+                        alt={houseDisplayLabel}
+                        className="w-3.5 h-3.5 object-contain shrink-0"
+                      />
+                    )}
+                    <span>{houseDisplayLabel}</span>
+                  </span>
+                )}
+                <span className="hidden xs:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#090D18]/75 backdrop-blur-md text-[9px] font-bold uppercase tracking-[0.14em] text-[#ECD28E]">
+                  <Crown className="w-2.5 h-2.5 text-[#DFC27D]" />
+                  {tier}
+                </span>
+              </div>
             </div>
 
             {/* Middle Row: Clean Left-Aligned Member Name, Role & Company */}
-            <div className="relative z-10 max-w-[66%] sm:max-w-[64%] my-auto space-y-1">
-              <h2 className="text-base sm:text-xl font-bold text-white truncate tracking-tight leading-snug drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
+            <div className="relative z-10 max-w-[66%] sm:max-w-[64%] my-auto space-y-0.5">
+              <h2 className="text-base sm:text-lg font-bold text-white truncate tracking-tight leading-snug drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
                 {profile.display_name}
               </h2>
               <p className="text-[11px] sm:text-xs font-semibold text-[#ECD28E] truncate">
                 {profile.position || 'Executive Member'}
               </p>
-              <p className="text-[11px] text-slate-300 truncate">
+              <p className="text-[10px] sm:text-[11px] text-slate-300 truncate">
                 {profile.company_name || houseName}
               </p>
             </div>

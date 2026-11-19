@@ -61,7 +61,7 @@ export default function RootLayout({
           <LoginGate>
             <div className="w-full min-h-screen flex flex-col bg-[#F6F4EF]">
               <TopHeader />
-              <main className="flex-1 w-full pb-24 md:pb-8">
+              <main className="flex-1 w-full">
                 <PageTransition>{children}</PageTransition>
               </main>
               <Footer />

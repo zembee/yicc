@@ -128,7 +128,7 @@ function PrivilegesContent() {
   const userPoints = activeProfile?.points_balance ?? 0;
 
   return (
-    <div className="w-full min-h-screen bg-[#F6F4EF] pb-24">
+    <div className="w-full bg-[#F6F4EF] pb-4">
       {/* ================= 1. CURVED OBSIDIAN HEADER + ICON CATEGORY BAR ================= */}
       <section className="relative luxury-stage text-white pt-4 pb-12 px-4 sm:px-6 overflow-hidden">
         <div

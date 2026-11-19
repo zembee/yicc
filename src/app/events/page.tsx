@@ -56,7 +56,7 @@ function EventsContent() {
   }, [allEvents, filter, searchQuery]);
 
   return (
-    <div className="w-full min-h-screen bg-[#F6F4EF] pb-24">
+    <div className="w-full bg-[#F6F4EF] pb-4">
       {/* ================= 1. CURVED OBSIDIAN LUXURY HEADER ================= */}
       <section className="relative luxury-stage text-white pt-4 pb-12 px-4 sm:px-6 overflow-hidden">
         <div className="relative z-10 max-w-5xl mx-auto space-y-3.5">

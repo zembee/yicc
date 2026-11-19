@@ -143,7 +143,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="w-full bg-[#F6F4EF] text-[#161C2C] pb-24">
+    <div className="w-full bg-[#F6F4EF] text-[#161C2C] pb-4">
       {/* ================= 1. OBSIDIAN LUXURY STAGE + SINGLE 3D MEMBER CARD ================= */}
       <section className="relative overflow-hidden luxury-stage text-white pt-4 pb-16 px-4 sm:px-6 border-b border-[#C5A059]/30">
         <div className="absolute inset-0 pointer-events-none select-none">

@@ -100,7 +100,7 @@ export function ProgressSection({
   return (
     <div className="bg-white rounded-3xl shadow-[0_6px_24px_rgba(13,19,33,0.06)] overflow-hidden">
       {/* Split-Tone Executive Navy Header */}
-      <div className="bg-gradient-to-r from-[#141A2C] via-[#1E2538] to-[#252E46] text-white px-5 py-4 sm:px-6 sm:py-5 border-b-[3px] border-[#FB7170] flex items-center justify-between gap-3">
+      <div className="luxury-stage text-white px-5 py-4 sm:px-6 sm:py-5 flex items-center justify-between gap-3">
         <div className="min-w-0">
           <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-300 block">
             My Progress
@@ -112,7 +112,7 @@ export function ProgressSection({
             สรุปคะแนน สถานะสมาชิก และโควตาการเข้าร่วม
           </p>
         </div>
-        <span className="px-3.5 py-1.5 rounded-xl badge-gold-metallic text-xs font-extrabold tabular-nums shrink-0">
+        <span className="px-3.5 py-1.5 rounded-full badge-gold-metallic text-xs font-extrabold tabular-nums shrink-0">
           {(profile.points_balance ?? 0).toLocaleString()} คะแนน
         </span>
       </div>
@@ -120,12 +120,12 @@ export function ProgressSection({
       <div className="p-5 sm:p-6 space-y-5">
         {/* 4 Clean Summary Metric Boxes with Subtle Watermark Icon Backgrounds */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200/70 space-y-1">
+          <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F6F4EF] space-y-1">
             <img
-              src="/images/icons/points.webp"
+              src="/images/icons/points.webp?v=2"
               alt=""
               aria-hidden="true"
-              className="pointer-events-none select-none absolute -right-2 -bottom-2 w-16 h-16 rounded-2xl opacity-[0.14] -rotate-6"
+              className="pointer-events-none select-none absolute -right-2 -bottom-2 w-16 h-16 object-contain opacity-[0.22] -rotate-6"
             />
             <span className="relative z-10 text-[#9A7320] text-xs sm:text-sm font-bold block truncate">
               คะแนนสะสม
@@ -138,12 +138,12 @@ export function ProgressSection({
             </span>
           </div>
 
-          <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200/70 space-y-1">
+          <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F6F4EF] space-y-1">
             <img
-              src="/images/icons/profile.webp"
+              src="/images/icons/profile.webp?v=2"
               alt=""
               aria-hidden="true"
-              className="pointer-events-none select-none absolute -right-2 -bottom-2 w-16 h-16 rounded-2xl opacity-[0.14] -rotate-6"
+              className="pointer-events-none select-none absolute -right-2 -bottom-2 w-16 h-16 object-contain opacity-[0.22] -rotate-6"
             />
             <span className="relative z-10 text-slate-600 text-xs sm:text-sm font-bold block truncate">
               ระดับสมาชิก
@@ -154,12 +154,12 @@ export function ProgressSection({
             <span className="relative z-10 text-[11px] text-slate-400 block">YFTI Elite 11</span>
           </div>
 
-          <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200/70 space-y-1">
+          <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F6F4EF] space-y-1">
             <img
-              src="/images/icons/events.webp"
+              src="/images/icons/events.webp?v=2"
               alt=""
               aria-hidden="true"
-              className="pointer-events-none select-none absolute -right-2 -bottom-2 w-16 h-16 rounded-2xl opacity-[0.14] -rotate-6"
+              className="pointer-events-none select-none absolute -right-2 -bottom-2 w-16 h-16 object-contain opacity-[0.22] -rotate-6"
             />
             <span className="relative z-10 text-slate-600 text-xs sm:text-sm font-bold block truncate">
               กิจกรรมที่สมัคร
@@ -172,12 +172,12 @@ export function ProgressSection({
             </span>
           </div>
 
-          <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200/70 space-y-1">
+          <div className="relative overflow-hidden p-4 rounded-2xl bg-[#F6F4EF] space-y-1">
             <img
-              src="/images/icons/missions.webp"
+              src="/images/icons/missions.webp?v=2"
               alt=""
               aria-hidden="true"
-              className="pointer-events-none select-none absolute -right-2 -bottom-2 w-16 h-16 rounded-2xl opacity-[0.14] -rotate-6"
+              className="pointer-events-none select-none absolute -right-2 -bottom-2 w-16 h-16 object-contain opacity-[0.22] -rotate-6"
             />
             <span className="relative z-10 text-slate-600 text-xs sm:text-sm font-bold block truncate">
               ขาด / โควตา
@@ -195,7 +195,7 @@ export function ProgressSection({
         {/* Clean Segmented Tab Switcher & Certificate Badge */}
         <div className="space-y-3 pt-1 border-t border-slate-100">
           <div
-            className="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 rounded-xl mt-3"
+            className="grid grid-cols-2 gap-1.5 p-1 bg-[#F6F4EF] rounded-full mt-3"
             role="tablist"
             aria-label="รายละเอียดความก้าวหน้า"
           >
@@ -204,9 +204,9 @@ export function ProgressSection({
               role="tab"
               aria-selected={activeDetailTab === 'events'}
               onClick={() => setActiveDetailTab('events')}
-              className={`py-2.5 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 whitespace-nowrap ${
+              className={`py-2.5 px-3 rounded-full text-xs font-bold transition flex items-center justify-center gap-1.5 whitespace-nowrap ${
                 activeDetailTab === 'events'
-                  ? 'bg-[#1E2538] text-white shadow-sm'
+                  ? 'bg-[#0D1321] text-white'
                   : 'text-slate-600 hover:text-[#1E2538]'
               }`}
             >
@@ -218,32 +218,32 @@ export function ProgressSection({
               role="tab"
               aria-selected={activeDetailTab === 'missions'}
               onClick={() => setActiveDetailTab('missions')}
-              className={`py-2.5 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 whitespace-nowrap ${
+              className={`py-2.5 px-3 rounded-full text-xs font-bold transition flex items-center justify-center gap-1.5 whitespace-nowrap ${
                 activeDetailTab === 'missions'
-                  ? 'bg-[#1E2538] text-white shadow-sm'
+                  ? 'bg-[#0D1321] text-white'
                   : 'text-slate-600 hover:text-[#1E2538]'
               }`}
             >
-              <Target className={`w-4 h-4 shrink-0 ${activeDetailTab === 'missions' ? 'text-[#FB7170]' : ''}`} />
+              <Target className={`w-4 h-4 shrink-0 ${activeDetailTab === 'missions' ? 'text-[#C5A059]' : ''}`} />
               <span>ภารกิจของฉัน</span>
             </button>
           </div>
 
           <div
-            className={`flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-[#F8FAFC] border border-slate-200/70 border-l-[3px] ${
-              isCertificateEligible ? 'border-l-emerald-500' : 'border-l-[#FB7170]'
+            className={`flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-[#F6F4EF] border-l-[3px] ${
+              isCertificateEligible ? 'border-l-emerald-500' : 'border-l-[#C5A059]'
             }`}
           >
             <span className="text-xs font-semibold text-slate-600">สิทธิ์รับวุฒิบัตร</span>
             <span
               className={`text-xs font-bold inline-flex items-center gap-1.5 ${
-                isCertificateEligible ? 'text-emerald-700' : 'text-[#E05252]'
+                isCertificateEligible ? 'text-emerald-700' : 'text-[#9A742B]'
               }`}
             >
               {isCertificateEligible ? (
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
               ) : (
-                <AlertCircle className="w-3.5 h-3.5 text-[#FB7170]" />
+                <AlertCircle className="w-3.5 h-3.5 text-[#C5A059]" />
               )}
               {isCertificateEligible
                 ? 'ผ่านเกณฑ์'
@@ -298,7 +298,7 @@ export function ProgressSection({
                   <Link
                     key={ev.id}
                     href={`/events/${ev.id}`}
-                    className="flex items-center justify-between gap-3 p-3 rounded-xl border border-slate-200/70 hover:border-[#C59B38] bg-[#FAFAF8] transition group"
+                    className="flex items-center justify-between gap-3 p-3 rounded-xl hover:border-[#C59B38] bg-[#FAFAF8] transition group"
                   >
                     <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden bg-slate-200 border border-slate-200/80 shrink-0">
                       <img
@@ -377,7 +377,7 @@ export function ProgressSection({
           {mergedMissions.map((mission) => (
             <div
               key={mission.id}
-              className="p-4 rounded-xl border border-slate-200/70 bg-[#FAFAF8] flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4"
+              className="p-4 rounded-xl bg-[#FAFAF8] flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4"
             >
               <div className="space-y-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
