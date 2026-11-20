@@ -393,7 +393,7 @@ export const ProfilePageSkeleton: React.FC = () => (
  */
 export const ParticipantDetailSkeleton: React.FC = () => (
   <div className="w-full bg-[#F6F4EF] pb-4 fade-in-soft">
-    <section className="sticky top-0 md:top-24 z-30 luxury-stage text-white pt-4 pb-5 px-4 sm:px-6 rounded-b-[28px] shadow-[0_14px_34px_rgba(9,13,24,0.28)] overflow-hidden">
+    <section className="relative luxury-stage text-white pt-4 pb-5 px-4 sm:px-6 rounded-b-[28px] shadow-[0_14px_34px_rgba(9,13,24,0.28)] overflow-hidden">
       <div className="relative z-10 max-w-4xl mx-auto space-y-5">
         <div className="flex items-center justify-between">
           <div className="h-8 w-36 rounded-full skeleton-shimmer-dark" />
