@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { ChevronRight, X } from 'lucide-react';
 import { Participant } from '@/types';
@@ -23,6 +24,12 @@ export function HouseMembersModal({
   housePoints,
   houseMembers,
 }: HouseMembersModalProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -36,9 +43,9 @@ export function HouseMembersModal({
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -116,6 +123,7 @@ export function HouseMembersModal({
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

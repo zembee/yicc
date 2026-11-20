@@ -17,6 +17,21 @@ import {
   KeyRound,
 } from 'lucide-react';
 
+const StarDiamond: React.FC<{ className?: string; style?: React.CSSProperties }> = ({
+  className = 'w-3 h-3',
+  style,
+}) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+    style={style}
+    aria-hidden="true"
+  >
+    <path d="M12 0L14.4 9.6L24 12L14.4 14.4L12 24L9.6 14.4L0 12L9.6 9.6Z" />
+  </svg>
+);
+
 export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const pathname = usePathname();
   const router = useRouter();
@@ -49,55 +64,109 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
   const hasApprovedSession =
     Boolean(profile) && profile?.role !== 'PENDING' && profile?.approval_status !== 'PENDING';
 
-  // 1. Luxury Obsidian Auth Verification Splash
+  // 1. Luxury Obsidian Celestial Auth Verification Splash
   if (!mounted || (isLoading && !hasApprovedSession)) {
     return (
-      <div className="min-h-screen bg-[#F6F4EF] flex flex-col items-center justify-center p-5 select-none fade-in-soft">
+      <div className="min-h-screen bg-[#070A12] flex flex-col items-center justify-center p-5 select-none fade-in-soft relative overflow-hidden">
+        {/* Ambient Celestial Glow Orbs */}
         <div
-          className="relative w-full max-w-xs luxury-stage text-white rounded-[28px] overflow-hidden shadow-[0_22px_50px_rgba(9,13,24,0.32)]"
-          style={{ boxShadow: 'inset 0 0 0 1px rgba(223,194,125,0.28)' }}
+          aria-hidden="true"
+          className="absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full pointer-events-none"
+          style={{
+            background: 'radial-gradient(circle, rgba(223,194,125,0.14) 0%, rgba(197,160,89,0.03) 50%, transparent 75%)',
+          }}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-80 h-80 rounded-full pointer-events-none"
+          style={{
+            background: 'radial-gradient(circle, rgba(16,23,40,0.85) 0%, transparent 70%)',
+          }}
+        />
+
+        {/* Ambient Twinkling Cosmic Stars in Background */}
+        <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
+          <StarDiamond className="absolute top-[18%] left-[15%] w-3.5 h-3.5 text-[#ECD28E] opacity-60 animate-star-twinkle" />
+          <StarDiamond className="absolute top-[28%] right-[18%] w-2.5 h-2.5 text-[#DFC27D] opacity-50 animate-star-twinkle-delayed" />
+          <StarDiamond className="absolute bottom-[22%] left-[22%] w-3 h-3 text-[#F5E6BE] opacity-40 animate-star-twinkle-slow" />
+          <StarDiamond className="absolute bottom-[28%] right-[15%] w-2 h-2 text-[#ECD28E] opacity-60 animate-star-twinkle" />
+          <span className="absolute top-[12%] right-[32%] w-1.5 h-1.5 rounded-full bg-[#ECD28E]/60 animate-pulse" />
+          <span className="absolute bottom-[16%] left-[36%] w-1 h-1 rounded-full bg-[#DFC27D]/50 animate-ping" />
+        </div>
+
+        {/* Executive Obsidian Pass Card */}
+        <div
+          className="relative w-full max-w-xs luxury-stage text-white rounded-[32px] overflow-hidden shadow-[0_24px_65px_rgba(0,0,0,0.55)] border border-[#DFC27D]/30"
+          style={{ boxShadow: '0 24px 65px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(223,194,125,0.22)' }}
         >
-          {/* Faint 3D Planet Backdrop Watermark */}
+          {/* Faint Floating 3D Planet Sun Watermark */}
           <img
             src="/images/planets/the_sun.webp?v=2"
             alt=""
             aria-hidden="true"
-            className="absolute -right-8 -top-8 w-36 h-36 object-contain opacity-[0.16] pointer-events-none select-none"
+            className="absolute -right-8 -top-8 w-40 h-40 object-contain opacity-[0.20] pointer-events-none select-none animate-float-gentle"
           />
 
-          <div className="relative z-10 p-7 text-center space-y-4">
-            <div className="relative w-16 h-16 mx-auto rounded-2xl bg-white p-2 shadow-lg ring-1 ring-[#DFC27D]/40 flex items-center justify-center">
-              <Image
-                src="/YFTI-11-Logo.jpg"
-                alt="Young FTI ELITE 11"
-                fill
-                sizes="64px"
-                className="object-contain p-1.5"
-                priority
+          {/* Twinkling Star Corner Accents inside card */}
+          <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
+            <StarDiamond className="absolute top-4 left-5 w-3 h-3 text-[#ECD28E] opacity-75 animate-star-twinkle" />
+            <StarDiamond className="absolute bottom-5 right-5 w-2.5 h-2.5 text-[#DFC27D] opacity-65 animate-star-twinkle-delayed" />
+          </div>
+
+          <div className="relative z-10 p-7 text-center space-y-5">
+            {/* Center Celestial Emblem with Orbit Ring */}
+            <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
+              {/* Outer Orbit Ring with Satellite Star */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 rounded-full border border-dashed border-[#ECD28E]/35 animate-celestial-orbit pointer-events-none"
+              >
+                <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-[#ECD28E] shadow-[0_0_8px_#ECD28E]" />
+                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[#DFC27D]/70" />
+              </div>
+
+              {/* Inner Dotted Counter-Orbit Ring */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-1.5 rounded-full border border-dotted border-white/20 animate-celestial-orbit-reverse pointer-events-none"
               />
+
+              {/* Central Logo Box with Golden Aura */}
+              <div className="relative w-16 h-16 rounded-2xl bg-white p-2 shadow-[0_10px_28px_rgba(0,0,0,0.5)] ring-1 ring-[#DFC27D]/60 flex items-center justify-center animate-gold-aura">
+                <Image
+                  src="/YFTI-11-Logo.jpg"
+                  alt="Young FTI ELITE 11"
+                  fill
+                  sizes="64px"
+                  className="object-contain p-1.5"
+                  priority
+                />
+              </div>
             </div>
 
-            <div className="space-y-1">
-              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#ECD28E]">
-                Executive Member Pass
-              </p>
-              <h2 className="text-lg tracking-tight text-white">
+            <div className="space-y-1.5">
+              <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full badge-gold-metallic text-[10px] font-bold uppercase tracking-[0.22em]">
+                <Sparkles className="w-3 h-3 text-[#ECD28E]" />
+                <span>Executive Member Pass</span>
+              </div>
+              <h2 className="text-xl tracking-tight text-white drop-shadow-md">
                 <span className="font-extrabold">YOUNG FTI</span>{' '}
                 <span className="font-light text-[#ECD28E]">ELITE 11</span>
               </h2>
               <p className="text-[11px] font-medium text-slate-300">
-                หลักสูตรนักอุตสาหกรรมรุ่นใหม่
+                หลักสูตรนักอุตสาหกรรมรุ่นใหม่ • ส.อ.ท.
               </p>
             </div>
 
-            {/* Smooth Indeterminate Satin Gold Progress Track */}
-            <div className="pt-2 space-y-2">
-              <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+            {/* Smooth Cosmic Satin Gold Progress Track */}
+            <div className="pt-2 space-y-2.5">
+              <div className="relative w-full h-1.5 bg-white/10 rounded-full overflow-hidden shadow-inner">
                 <div className="h-full w-1/3 rounded-full bg-gradient-to-r from-[#C5A059] via-[#F5E6BE] to-[#B18A3B] loading-bar-slide" />
               </div>
-              <p className="text-[11px] text-slate-300 font-medium">
-                กำลังตรวจสอบสถานะสมาชิก...
-              </p>
+              <div className="flex items-center justify-center gap-1.5 text-[11px] text-[#ECD28E] font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#ECD28E] animate-ping" />
+                <span>กำลังเข้าสู่ระบบ 9 ดวงดาว...</span>
+              </div>
             </div>
           </div>
         </div>
@@ -195,9 +264,27 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
 
   // 3. Main Luxury Obsidian & Satin Gold Login Screen
   return (
-    <div className="min-h-screen bg-[#F6F4EF] flex flex-col items-center justify-center p-4 sm:p-6 py-10 select-none animate-in fade-in duration-300">
+    <div className="min-h-screen bg-[#F6F4EF] flex flex-col items-center justify-center p-4 sm:p-6 py-10 select-none animate-in fade-in duration-300 relative overflow-hidden">
+      {/* Ambient Celestial Glow Behind the Card */}
+      <div
+        aria-hidden="true"
+        className="absolute top-12 left-1/2 -translate-x-1/2 w-[540px] h-[540px] rounded-full pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle, rgba(223,194,125,0.14) 0%, rgba(197,160,89,0.03) 55%, transparent 75%)',
+        }}
+      />
+
+      {/* Floating Star Accents outside the card */}
+      <div aria-hidden="true" className="absolute inset-0 pointer-events-none hidden sm:block">
+        <StarDiamond className="absolute top-[16%] left-[10%] w-3.5 h-3.5 text-[#B18A3B] opacity-45 animate-star-twinkle" />
+        <StarDiamond className="absolute top-[22%] right-[12%] w-3 h-3 text-[#B18A3B] opacity-40 animate-star-twinkle-delayed" />
+        <StarDiamond className="absolute bottom-[18%] left-[14%] w-2.5 h-2.5 text-[#B18A3B] opacity-35 animate-star-twinkle-slow" />
+        <span className="absolute top-[28%] left-[18%] w-1.5 h-1.5 rounded-full bg-[#C5A059]/40 animate-pulse" />
+        <span className="absolute bottom-[24%] right-[16%] w-1.5 h-1.5 rounded-full bg-[#C5A059]/40 animate-pulse" />
+      </div>
+
       {/* Borderless Luxury Login Card */}
-      <div className="w-full max-w-md bg-white rounded-[30px] overflow-hidden shadow-[0_22px_56px_rgba(9,13,24,0.12)]">
+      <div className="relative z-10 w-full max-w-md bg-white rounded-[32px] overflow-hidden shadow-[0_24px_60px_rgba(9,13,24,0.14)] ring-1 ring-[#0D1321]/5">
         {/* Card Header: Obsidian Metal Pass Style with Alpha-Masked Hero Photo + Planet Watermark */}
         <div
           className="relative luxury-stage text-white overflow-hidden"
@@ -230,40 +317,51 @@ export const LoginGate: React.FC<{ children: React.ReactNode }> = ({ children })
             />
           </div>
 
-          {/* Faint 3D Planet Backdrop + Satin Gold Aura */}
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                'radial-gradient(65% 85% at 0% 100%, rgba(223,194,125,0.16) 0%, transparent 65%)',
-            }}
-          />
+          {/* Faint 3D Planet Jupiter Backdrop + Gentle Float Animation */}
           <img
             src="/images/planets/jupiter.webp?v=2"
             alt=""
             aria-hidden="true"
-            className="absolute -left-6 -bottom-8 w-36 h-36 object-contain opacity-[0.16] pointer-events-none select-none"
+            className="absolute -left-6 -bottom-8 w-36 h-36 object-contain opacity-[0.22] pointer-events-none select-none animate-float-gentle"
           />
 
-          <div className="relative z-10 p-6 sm:p-7 space-y-4 max-w-[74%]">
-            {/* Logo + Executive Pass Eyebrow */}
+          {/* Twinkling Star Accents in Card Header */}
+          <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
+            <StarDiamond className="absolute top-4 right-1/3 w-3 h-3 text-[#ECD28E] opacity-75 animate-star-twinkle" />
+            <StarDiamond className="absolute bottom-6 right-8 w-2.5 h-2.5 text-[#DFC27D] opacity-65 animate-star-twinkle-delayed" />
+            <StarDiamond className="absolute top-12 left-1/2 w-2 h-2 text-[#F5E6BE] opacity-55 animate-star-twinkle-slow" />
+          </div>
+
+          <div className="relative z-10 p-6 sm:p-7 space-y-4 max-w-[76%]">
+            {/* Logo + Celestial Orbit Ring + Executive Pass Eyebrow */}
             <div className="flex items-center gap-3">
-              <div className="relative w-11 h-11 rounded-xl bg-white p-1.5 shadow-md ring-1 ring-[#DFC27D]/40 shrink-0">
-                <Image
-                  src="/YFTI-11-Logo.jpg"
-                  alt="Young FTI Elite 11"
-                  fill
-                  sizes="44px"
-                  className="object-contain p-1"
-                  priority
-                />
+              <div className="relative">
+                {/* Orbit halo ring */}
+                <div
+                  aria-hidden="true"
+                  className="absolute -inset-1 rounded-2xl border border-dashed border-[#ECD28E]/40 animate-celestial-orbit pointer-events-none"
+                >
+                  <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[#ECD28E] shadow-[0_0_6px_#ECD28E]" />
+                </div>
+                <div className="relative w-12 h-12 rounded-xl bg-white p-1.5 shadow-md ring-1 ring-[#DFC27D]/40 shrink-0 flex items-center justify-center">
+                  <Image
+                    src="/YFTI-11-Logo.jpg"
+                    alt="Young FTI Elite 11"
+                    fill
+                    sizes="48px"
+                    className="object-contain p-1"
+                    priority
+                  />
+                </div>
               </div>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#ECD28E]">
-                  Executive Member Pass
-                </p>
-                <p className="text-[11px] text-slate-300">ระบบสมาชิกโครงการ</p>
+                <div className="flex items-center gap-1">
+                  <Sparkles className="w-2.5 h-2.5 text-[#ECD28E]" />
+                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#ECD28E]">
+                    Executive Pass
+                  </p>
+                </div>
+                <p className="text-[11px] text-slate-300">ระบบสมาชิก 9 ดวงดาว</p>
               </div>
             </div>
 

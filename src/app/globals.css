@@ -155,6 +155,74 @@ body {
   animation: loadingBarSlide 1.35s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
+/* Celestial / Star Animations for Young FTI 11 */
+@keyframes starTwinkle {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 6px rgba(236, 210, 142, 0.85));
+  }
+}
+
+@keyframes celestialOrbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(1.5deg);
+  }
+}
+
+@keyframes goldAuraPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(223, 194, 125, 0);
+  }
+  50% {
+    box-shadow: 0 0 22px 3px rgba(223, 194, 125, 0.32);
+  }
+}
+
+.animate-star-twinkle {
+  animation: starTwinkle 3s ease-in-out infinite;
+}
+
+.animate-star-twinkle-delayed {
+  animation: starTwinkle 3.6s ease-in-out 1.2s infinite;
+}
+
+.animate-star-twinkle-slow {
+  animation: starTwinkle 4.4s ease-in-out 2.2s infinite;
+}
+
+.animate-celestial-orbit {
+  animation: celestialOrbit 22s linear infinite;
+}
+
+.animate-celestial-orbit-reverse {
+  animation: celestialOrbit 28s linear infinite reverse;
+}
+
+.animate-float-gentle {
+  animation: floatGentle 5s ease-in-out infinite;
+}
+
+.animate-gold-aura {
+  animation: goldAuraPulse 3s ease-in-out infinite;
+}
+
 /* Soft Translucent Champagne Gold Gradient (Harmonized on Obsidian Surfaces) */
 .badge-gold-metallic {
   background: linear-gradient(
@@ -219,7 +287,14 @@ body {
   .fade-in-soft,
   .skeleton-shimmer,
   .skeleton-shimmer-dark,
-  .loading-bar-slide {
+  .loading-bar-slide,
+  .animate-star-twinkle,
+  .animate-star-twinkle-delayed,
+  .animate-star-twinkle-slow,
+  .animate-celestial-orbit,
+  .animate-celestial-orbit-reverse,
+  .animate-float-gentle,
+  .animate-gold-aura {
     animation: none !important;
     transform: none !important;
   }

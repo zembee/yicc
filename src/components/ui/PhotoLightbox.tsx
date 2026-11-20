@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 
 interface PhotoLightboxProps {
@@ -18,6 +19,12 @@ export const PhotoLightbox: React.FC<PhotoLightboxProps> = ({
   isOpen,
   onClose,
 }) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     if (!isOpen) return;
     const onKey = (e: KeyboardEvent) => {
@@ -27,21 +34,21 @@ export const PhotoLightbox: React.FC<PhotoLightboxProps> = ({
     return () => window.removeEventListener('keydown', onKey);
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
       aria-label={alt}
-      className="fixed inset-0 z-[60] bg-[#06090F]/95 backdrop-blur-md flex flex-col items-center justify-center p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-[120] bg-[#06090F]/95 backdrop-blur-md flex flex-col items-center justify-center p-4 animate-in fade-in duration-200"
       onClick={onClose}
     >
       <button
         type="button"
         onClick={onClose}
         aria-label="ปิดรูปภาพ"
-        className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition"
+        className="absolute top-4 right-4 sm:top-6 sm:right-6 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-white flex items-center justify-center transition z-20 shadow-lg cursor-pointer"
       >
         <X className="w-5 h-5" />
       </button>
@@ -54,8 +61,9 @@ export const PhotoLightbox: React.FC<PhotoLightboxProps> = ({
       />
 
       {caption && (
-        <p className="mt-4 text-sm font-semibold text-[#ECD28E] text-center">{caption}</p>
+        <p className="mt-4 text-sm font-semibold text-[#ECD28E] text-center max-w-md px-4 truncate">{caption}</p>
       )}
-    </div>
+    </div>,
+    document.body
   );
 };

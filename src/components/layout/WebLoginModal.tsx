@@ -1,11 +1,27 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useLiffAuth } from '@/contexts/LiffContext';
 import { yftiParticipants, mockHouses } from '@/lib/mockData';
 import { UserProfile } from '@/types';
-import { User, KeyRound, CheckCircle2, AlertCircle, X, Users, Search } from 'lucide-react';
+import { User, KeyRound, CheckCircle2, AlertCircle, X, Users, Search, Sparkles } from 'lucide-react';
 import Image from 'next/image';
+
+const StarDiamond: React.FC<{ className?: string; style?: React.CSSProperties }> = ({
+  className = 'w-3 h-3',
+  style,
+}) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+    style={style}
+    aria-hidden="true"
+  >
+    <path d="M12 0L14.4 9.6L24 12L14.4 14.4L12 24L9.6 14.4L0 12L9.6 9.6Z" />
+  </svg>
+);
 
 interface WebLoginModalProps {
   isOpen: boolean;
@@ -14,12 +30,17 @@ interface WebLoginModalProps {
 
 export const WebLoginModal: React.FC<WebLoginModalProps> = ({ isOpen, onClose }) => {
   const { profile, loginWithCredentials, switchProfile, logout } = useLiffAuth();
+  const [mounted, setMounted] = useState(false);
   const [username, setUsername] = useState('yfti11');
   const [password, setPassword] = useState('yfti@11');
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [showSwitchList, setShowSwitchList] = useState(false);
   const [memberSearch, setMemberSearch] = useState('');
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const filteredMembers = useMemo(() => {
     const q = memberSearch.trim().toLowerCase();
@@ -33,7 +54,7 @@ export const WebLoginModal: React.FC<WebLoginModalProps> = ({ isOpen, onClose })
     );
   }, [memberSearch]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,13 +72,13 @@ export const WebLoginModal: React.FC<WebLoginModalProps> = ({ isOpen, onClose })
     }
   };
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md bg-white rounded-[28px] shadow-[0_24px_60px_rgba(9,13,24,0.28)] overflow-hidden flex flex-col relative"
+        className="w-full max-w-md bg-white rounded-[32px] shadow-[0_24px_60px_rgba(9,13,24,0.32)] overflow-hidden flex flex-col relative"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Obsidian & Satin Gold Header */}
@@ -66,30 +87,50 @@ export const WebLoginModal: React.FC<WebLoginModalProps> = ({ isOpen, onClose })
             src="/images/planets/saturn.webp?v=2"
             alt=""
             aria-hidden="true"
-            className="absolute -left-6 -bottom-6 w-28 h-28 object-contain opacity-[0.16] pointer-events-none select-none"
+            className="absolute -left-6 -bottom-6 w-32 h-32 object-contain opacity-[0.20] pointer-events-none select-none animate-float-gentle"
           />
+
+          {/* Twinkling Star Accents */}
+          <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
+            <StarDiamond className="absolute top-4 left-6 w-3 h-3 text-[#ECD28E] opacity-75 animate-star-twinkle" />
+            <StarDiamond className="absolute bottom-5 right-6 w-2.5 h-2.5 text-[#DFC27D] opacity-65 animate-star-twinkle-delayed" />
+          </div>
+
           <button
             type="button"
             onClick={onClose}
-            className="absolute top-4 right-4 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition"
+            className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-white transition cursor-pointer z-10"
+            aria-label="ปิดหน้าต่าง"
           >
             <X className="w-4 h-4" />
           </button>
-          <div className="relative z-10 w-14 h-14 mx-auto mb-3 bg-white rounded-2xl p-2 shadow-md ring-1 ring-[#DFC27D]/40 flex items-center justify-center">
-            <Image
-              src="/YFTI-11-Logo.jpg"
-              alt="YFTI 11"
-              width={42}
-              height={42}
-              className="object-contain"
-            />
+
+          {/* Logo with Orbit Halo */}
+          <div className="relative w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 rounded-2xl border border-dashed border-[#ECD28E]/40 animate-celestial-orbit pointer-events-none"
+            >
+              <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[#ECD28E] shadow-[0_0_6px_#ECD28E]" />
+            </div>
+            <div className="relative w-14 h-14 bg-white rounded-2xl p-2 shadow-md ring-1 ring-[#DFC27D]/50 flex items-center justify-center">
+              <Image
+                src="/YFTI-11-Logo.jpg"
+                alt="YFTI 11"
+                width={42}
+                height={42}
+                className="object-contain"
+              />
+            </div>
           </div>
-          <h3 className="relative z-10 text-lg tracking-tight text-white">
+
+          <h3 className="relative z-10 text-lg tracking-tight text-white drop-shadow-sm">
             <span className="font-extrabold">YOUNG FTI</span>{' '}
             <span className="font-light text-[#ECD28E]">ELITE 11</span>
           </h3>
-          <p className="relative z-10 text-xs text-[#F5E6BE] font-medium mt-0.5">
-            เข้าสู่ระบบสำหรับสมาชิกและผู้ดูแล
+          <p className="relative z-10 text-xs text-[#F5E6BE] font-medium mt-0.5 flex items-center justify-center gap-1">
+            <Sparkles className="w-3 h-3 text-[#ECD28E]" />
+            <span>เข้าสู่ระบบสำหรับสมาชิกและผู้ดูแล</span>
           </p>
         </div>
 
@@ -264,6 +305,7 @@ export const WebLoginModal: React.FC<WebLoginModalProps> = ({ isOpen, onClose })
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

@@ -426,6 +426,8 @@ export default function ProfilePage() {
           </button>
         </div>
       </InfoCard>
+        </div>
+      </div>
 
       {/* House Members Modal */}
       <HouseMembersModal
@@ -447,8 +449,6 @@ export default function ProfilePage() {
 
       {/* Switch User Modal */}
       <WebLoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
-        </div>
-      </div>
     </div>
   );
 }
