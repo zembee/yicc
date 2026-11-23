@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useLiffAuth } from '@/contexts/LiffContext';
 import { mockEvents, mockHouses } from '@/lib/mockData';
+import { EventItem } from '@/types';
 import { formatMemberCode } from '@/components/profile/profileUtils';
 import { WebLoginModal } from './WebLoginModal';
 
@@ -24,11 +25,15 @@ interface QuickQrHubSheetProps {
 }
 
 export const QuickQrHubSheet: React.FC<QuickQrHubSheetProps> = ({ isOpen, onClose }) => {
-  const { profile } = useLiffAuth();
+  const { profile, refetchProfile } = useLiffAuth();
   const [rendered, setRendered] = useState(isOpen);
   const [visible, setVisible] = useState(false);
   const [qrTimestamp, setQrTimestamp] = useState<number>(() => Date.now());
   const [couponCount, setCouponCount] = useState(0);
+  const [nextEvent, setNextEvent] = useState<EventItem | null>(
+    () => mockEvents.find((e) => e.status === 'UPCOMING') || mockEvents[0] || null
+  );
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [dragOffsetY, setDragOffsetY] = useState(0);
   const touchStartYRef = useRef<number | null>(null);
@@ -57,17 +62,64 @@ export const QuickQrHubSheet: React.FC<QuickQrHubSheetProps> = ({ isOpen, onClos
   useEffect(() => {
     if (!isOpen) return;
 
+    const controller = new AbortController();
     setQrTimestamp(Date.now());
     const intervalId = window.setInterval(() => {
       setQrTimestamp(Date.now());
     }, 30000);
 
+    // Seed coupon count from localStorage immediately, then refetch live data from APIs
+    let localCouponCount = 0;
     try {
       const saved = JSON.parse(localStorage.getItem('yfti_redemptions') || '[]');
       if (Array.isArray(saved)) {
-        setCouponCount(saved.length);
+        localCouponCount = saved.length;
+        setCouponCount(localCouponCount);
       }
     } catch {}
+
+    const syncLiveHubData = async () => {
+      setIsRefreshing(true);
+      try {
+        await Promise.allSettled([
+          refetchProfile(),
+          fetch('/api/privileges/redemptions', {
+            cache: 'no-store',
+            signal: controller.signal,
+          })
+            .then((res) => (res.ok ? res.json() : null))
+            .then((data) => {
+              if (data && Array.isArray(data.redemptions)) {
+                const mine = profile?.id
+                  ? data.redemptions.filter(
+                      (r: { memberId?: string }) =>
+                        !r.memberId || String(r.memberId) === String(profile.id)
+                    )
+                  : data.redemptions;
+                setCouponCount(Math.max(mine.length, localCouponCount));
+              }
+            }),
+          fetch('/api/events', {
+            cache: 'no-store',
+            signal: controller.signal,
+          })
+            .then((res) => (res.ok ? res.json() : null))
+            .then((data) => {
+              if (data && Array.isArray(data.events) && data.events.length > 0) {
+                const upcoming =
+                  data.events.find((e: EventItem) => e.status === 'UPCOMING') || data.events[0];
+                if (upcoming) setNextEvent(upcoming);
+              }
+            }),
+        ]);
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsRefreshing(false);
+        }
+      }
+    };
+
+    syncLiveHubData();
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -75,10 +127,12 @@ export const QuickQrHubSheet: React.FC<QuickQrHubSheetProps> = ({ isOpen, onClos
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
+      controller.abort();
       window.clearInterval(intervalId);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, onClose]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, onClose, profile?.id]);
 
   const normalizedHouseId = (profile?.house_id || profile?.house?.id || '').replace(/-/g, '_');
   const houseName =
@@ -90,11 +144,6 @@ export const QuickQrHubSheet: React.FC<QuickQrHubSheetProps> = ({ isOpen, onClos
   const tier = profile?.tier || (xp >= 2000 ? 'Platinum' : xp >= 1000 ? 'Gold' : 'Silver');
   const memberCode = formatMemberCode(profile?.id);
   const isAdmin = profile?.role === 'SUPER_ADMIN' || profile?.role === 'HOUSE_ADMIN';
-
-  const nextEvent = useMemo(
-    () => mockEvents.find((e) => e.status === 'UPCOMING') || mockEvents[0],
-    []
-  );
 
   const memberQrPayload = useMemo(
     () =>
@@ -202,7 +251,8 @@ export const QuickQrHubSheet: React.FC<QuickQrHubSheetProps> = ({ isOpen, onClos
                       YFTI ELITE 11 • {tier} Tier • {memberCode}
                     </p>
                     <p className="text-[10px] text-slate-400">
-                      Dynamic QR รีเฟรชอัตโนมัติทุก 60 วินาที สำหรับเช็กอินและรับสิทธิ์
+                      Dynamic QR รีเฟรชอัตโนมัติทุก 30 วินาที สำหรับเช็กอินและรับสิทธิ์
+                      {isRefreshing ? ' • กำลังอัปเดตข้อมูล...' : ''}
                     </p>
                   </div>
                 </>
