@@ -11,15 +11,9 @@ import {
   Search, 
   Building2, 
   X, 
-  ChevronLeft,
-  ChevronRight, 
-  ChevronsLeft,
-  ChevronsRight,
   User, 
   QrCode,
   ArrowUpDown,
-  UserPlus,
-  UserCheck,
   Keyboard,
   Camera,
   AlertTriangle,
@@ -27,7 +21,9 @@ import {
   MessageCircle,
   Bookmark,
   BookmarkCheck,
-  SlidersHorizontal
+  SlidersHorizontal,
+  Loader2,
+  ChevronDown
 } from 'lucide-react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
@@ -120,7 +116,7 @@ const COHORT_LIST = [
   { value: 'yfti_1', label: 'YFTI 1' },
 ];
 
-const PAGE_SIZE_OPTIONS = [12, 24, 48, 96];
+const LOAD_MORE_STEP = 12;
 
 const COHORT_COMMITTEE_ROLES: Record<string, { role: string; order: number }> = {
   '3090': { role: 'ประธานรุ่น', order: 1 },
@@ -146,6 +142,7 @@ function DirectoryContent() {
   const [selectedCohort, setSelectedCohort] = useState('ALL');
   const [sortOrder, setSortOrder] = useState<'default' | 'asc' | 'desc'>('default');
   const [followingIds, setFollowingIds] = useState<string[]>([]);
+  const [onlyBookmarked, setOnlyBookmarked] = useState(false);
   const [isScanModalOpen, setIsScanModalOpen] = useState(false);
   const [scanMode, setScanMode] = useState<'camera' | 'manual'>('camera');
   const [scanError, setScanError] = useState<string | null>(null);
@@ -153,17 +150,26 @@ function DirectoryContent() {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
-  // Pagination states
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(24);
+  // Load-more pagination states
+  const [visibleCount, setVisibleCount] = useState(LOAD_MORE_STEP);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const saved = JSON.parse(localStorage.getItem('yfti_following_ids') || '[]');
-        if (Array.isArray(saved)) setFollowingIds(saved);
-      } catch {}
-    }
+    const syncBookmarks = () => {
+      if (typeof window !== 'undefined') {
+        try {
+          const saved = JSON.parse(localStorage.getItem('yfti_following_ids') || '[]');
+          if (Array.isArray(saved)) setFollowingIds(saved);
+        } catch {}
+      }
+    };
+    syncBookmarks();
+    window.addEventListener('storage', syncBookmarks);
+    window.addEventListener('focus', syncBookmarks);
+    return () => {
+      window.removeEventListener('storage', syncBookmarks);
+      window.removeEventListener('focus', syncBookmarks);
+    };
   }, []);
 
   const toggleFollow = (e: React.MouseEvent, pid: string) => {
@@ -284,10 +290,10 @@ function DirectoryContent() {
     };
   }, [isScanModalOpen, scanMode, router]);
 
-  // Reset to page 1 whenever any filter changes
+  // Reset visible list whenever search, filters, sort, or bookmark toggle changes
   useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, selectedHouse, selectedIndustry, selectedCategory, selectedCohort, pageSize]);
+    setVisibleCount(LOAD_MORE_STEP);
+  }, [searchQuery, selectedHouse, selectedIndustry, selectedCategory, selectedCohort, sortOrder, onlyBookmarked]);
 
   const stripHtml = (html?: string) => {
     if (!html) return '';
@@ -358,9 +364,11 @@ function DirectoryContent() {
                (pGenLabel && (pGenLabel.includes(target) || target.includes(pGenLabel)));
       })();
 
-      return matchesSearch && matchesHouse && matchesIndustry && matchesCategory && matchesCohort;
+      const matchesBookmark = !onlyBookmarked || followingIds.includes(String(p.id));
+
+      return matchesSearch && matchesHouse && matchesIndustry && matchesCategory && matchesCohort && matchesBookmark;
     });
-  }, [participants, searchQuery, selectedHouse, selectedIndustry, selectedCategory, selectedCohort]);
+  }, [participants, searchQuery, selectedHouse, selectedIndustry, selectedCategory, selectedCohort, onlyBookmarked, followingIds]);
 
   const sortedParticipants = useMemo(() => {
     if (sortOrder === 'default') return filteredParticipants;
@@ -387,52 +395,28 @@ function DirectoryContent() {
       }));
   }, [participants]);
 
-  // Pagination calculations
+  // Load-more calculations
   const totalItems = sortedParticipants.length;
-  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = Math.min(startIndex + pageSize, totalItems);
+  const visibleParticipants = useMemo(() => {
+    return sortedParticipants.slice(0, visibleCount);
+  }, [sortedParticipants, visibleCount]);
+  const hasMore = visibleCount < totalItems;
 
-  const paginatedParticipants = useMemo(() => {
-    return sortedParticipants.slice(startIndex, endIndex);
-  }, [sortedParticipants, startIndex, endIndex]);
-
-  const goToPage = (page: number) => {
-    const clamped = Math.max(1, Math.min(page, totalPages));
-    setCurrentPage(clamped);
-    const resultsElement = document.getElementById('directory-results');
-    if (resultsElement) {
-      resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+  const handleLoadMore = () => {
+    if (isLoadingMore || !hasMore) return;
+    setIsLoadingMore(true);
+    window.setTimeout(() => {
+      setVisibleCount((prev) => Math.min(prev + LOAD_MORE_STEP, totalItems));
+      setIsLoadingMore(false);
+    }, 180);
   };
-
-  const paginationRange = useMemo(() => {
-    const delta = 2;
-    const range: (number | string)[] = [];
-    const left = Math.max(2, currentPage - delta);
-    const right = Math.min(totalPages - 1, currentPage + delta);
-
-    range.push(1);
-    if (left > 2) {
-      range.push('...');
-    }
-    for (let i = left; i <= right; i++) {
-      range.push(i);
-    }
-    if (right < totalPages - 1) {
-      range.push('...');
-    }
-    if (totalPages > 1) {
-      range.push(totalPages);
-    }
-    return range;
-  }, [currentPage, totalPages]);
 
   const hasActiveFilters =
     selectedHouse !== 'ALL' ||
     selectedIndustry !== 'ALL' ||
     selectedCategory !== 'ALL' ||
     selectedCohort !== 'ALL' ||
+    onlyBookmarked ||
     Boolean(searchQuery);
 
   return (
@@ -452,14 +436,42 @@ function DirectoryContent() {
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
               <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white truncate">
-                ทำเนียบธุรกิจ <span className="font-light text-white/80 text-base sm:text-lg">Directory</span>
+                Y CONNECT
               </h1>
-              <p className="text-[11px] text-slate-300 mt-0.5 tabular-nums">
-                สมาชิกและเครือข่ายธุรกิจทั้งหมด {participants.length.toLocaleString()} ท่าน
+              <p className="text-[11px] text-slate-300 mt-0.5 truncate">
+                รายชื่อเครือข่ายธุรกิจ
               </p>
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => setOnlyBookmarked((prev) => !prev)}
+                aria-pressed={onlyBookmarked}
+                aria-label="ดูเฉพาะรายชื่อที่บันทึกไว้"
+                className={`px-3 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition ${
+                  onlyBookmarked
+                    ? 'bg-[#C59B38] border-[#E5C158] text-white shadow-sm'
+                    : 'bg-white/10 border-white/15 text-slate-200 hover:bg-white/15'
+                }`}
+              >
+                {onlyBookmarked ? (
+                  <BookmarkCheck className="w-3.5 h-3.5 shrink-0" />
+                ) : (
+                  <Bookmark className="w-3.5 h-3.5 shrink-0" />
+                )}
+                <span>ที่บันทึก</span>
+                {followingIds.length > 0 && (
+                  <span
+                    className={`px-1.5 py-0.5 rounded-full text-[10px] tabular-nums leading-none ${
+                      onlyBookmarked ? 'bg-white/25 text-white' : 'bg-white/15 text-[#ECD28E]'
+                    }`}
+                  >
+                    {followingIds.length}
+                  </span>
+                )}
+              </button>
+
               <button
                 type="button"
                 onClick={() => setShowAdvancedFilters((prev) => !prev)}
@@ -704,66 +716,68 @@ function DirectoryContent() {
       )}
 
       {/* 4. Members List Header Row */}
-      <div id="directory-results" className="scroll-mt-6 flex flex-wrap items-center justify-between gap-3 pt-1">
-        <div className="text-sm font-bold text-[#1E2538] tabular-nums">
-          สมาชิกทั้งหมด ({totalItems.toLocaleString()})
+      <div id="directory-results" className="scroll-mt-6 flex items-center justify-between gap-3 pt-1">
+        <div className="text-sm font-bold text-[#1E2538] tabular-nums min-w-0">
+          {onlyBookmarked ? 'รายชื่อที่บันทึกไว้' : 'รายชื่อเครือข่าย'} ({totalItems.toLocaleString()})
           {totalItems > 0 && (
-            <span className="text-xs font-normal text-slate-400 ml-2">
-              แสดง {startIndex + 1} - {endIndex}
+            <span className="text-xs font-normal text-slate-400 ml-1.5">
+              แสดง {visibleParticipants.length.toLocaleString()} จาก {totalItems.toLocaleString()}
             </span>
           )}
         </div>
 
-        <div className="flex items-center gap-2.5 flex-wrap">
-          <button
-            onClick={() =>
-              setSortOrder((prev) =>
-                prev === 'default' ? 'asc' : prev === 'asc' ? 'desc' : 'default'
-              )
-            }
-            className="px-3 py-1.5 rounded-full bg-white border border-slate-200 hover:border-[#C59B38] text-[#B38728] text-xs font-bold flex items-center gap-1.5 transition"
-          >
-            <ArrowUpDown className="w-3.5 h-3.5" />
-            <span>
-              {sortOrder === 'asc'
-                ? 'Sort: ก-ฮ'
-                : sortOrder === 'desc'
-                ? 'Sort: ฮ-ก'
-                : 'Sort: Name'}
-            </span>
-          </button>
-
-          <div className="flex items-center gap-1 bg-white border border-slate-200 p-0.5 rounded-full">
-            {PAGE_SIZE_OPTIONS.map((size) => (
-              <button
-                key={size}
-                onClick={() => setPageSize(size)}
-                className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition tabular-nums ${
-                  pageSize === size
-                    ? 'bg-[#1E2538] text-white'
-                    : 'text-slate-500 hover:text-[#1E2538]'
-                }`}
-              >
-                {size}
-              </button>
-            ))}
-          </div>
-        </div>
+        <button
+          type="button"
+          onClick={() =>
+            setSortOrder((prev) =>
+              prev === 'default' ? 'asc' : prev === 'asc' ? 'desc' : 'default'
+            )
+          }
+          className="px-3 py-1.5 rounded-full bg-white shadow-[0_2px_10px_rgba(13,19,33,0.06)] hover:ring-1 hover:ring-[#C5A059] text-[#9A742B] text-xs font-bold flex items-center gap-1.5 transition shrink-0"
+        >
+          <ArrowUpDown className="w-3.5 h-3.5" />
+          <span>
+            {sortOrder === 'asc'
+              ? 'Sort: ก-ฮ'
+              : sortOrder === 'desc'
+              ? 'Sort: ฮ-ก'
+              : 'Sort: ค่าเริ่มต้น'}
+          </span>
+        </button>
       </div>
 
       {/* 5. Members Grid */}
-      {paginatedParticipants.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-2xl border border-slate-200 p-8 space-y-3">
-          <User className="w-12 h-12 mx-auto text-slate-300" />
-          <h3 className="text-base font-bold text-slate-700">ไม่พบสมาชิกที่ตรงกับเงื่อนไข</h3>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto">
-            ลองปรับเปลี่ยนคำค้นหา หรือเลือกตัวกรองกลุ่มอุตสาหกรรมและดาวใหม่อีกครั้ง
-          </p>
+      {visibleParticipants.length === 0 ? (
+        <div className="text-center py-14 bg-white rounded-[24px] shadow-[0_8px_26px_rgba(13,19,33,0.05)] p-8 space-y-3">
+          {onlyBookmarked ? (
+            <>
+              <Bookmark className="w-11 h-11 mx-auto text-slate-300" />
+              <h3 className="text-base font-bold text-slate-700">ยังไม่มีรายชื่อที่บันทึกไว้</h3>
+              <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                กดปุ่มไอคอน Bookmark บนการ์ดสมาชิกเพื่อบันทึกเครือข่ายธุรกิจที่สนใจไว้ดูภายหลัง
+              </p>
+              <button
+                type="button"
+                onClick={() => setOnlyBookmarked(false)}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#1E2538] text-white text-xs font-bold transition hover:bg-[#2B3550]"
+              >
+                ดูรายชื่อทั้งหมด
+              </button>
+            </>
+          ) : (
+            <>
+              <User className="w-12 h-12 mx-auto text-slate-300" />
+              <h3 className="text-base font-bold text-slate-700">ไม่พบสมาชิกที่ตรงกับเงื่อนไข</h3>
+              <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                ลองปรับเปลี่ยนคำค้นหา หรือเลือกตัวกรองกลุ่มอุตสาหกรรมและดาวใหม่อีกครั้ง
+              </p>
+            </>
+          )}
         </div>
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-            {paginatedParticipants.map((member) => {
+            {visibleParticipants.map((member) => {
               const isFollowed = followingIds.includes(String(member.id));
               const phoneDigits = member.tel_number?.replace(/[^\d+]/g, '');
               const lineHandle = member.line_id?.trim().replace(/^@/, '');
@@ -943,76 +957,37 @@ function DirectoryContent() {
             })}
           </div>
 
-          {/* Pagination Controls Bar */}
-          {totalPages > 1 && (
-            <div className="bg-white rounded-2xl shadow-[0_6px_20px_rgba(13,19,33,0.05)] p-4 flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
-              <div className="text-xs text-slate-500 font-medium tabular-nums">
-                หน้า <strong className="text-[#1E2538] font-bold">{currentPage}</strong> จากทั้งหมด{' '}
-                <strong className="text-[#1E2538] font-bold">{totalPages}</strong> หน้า
-                <span className="text-slate-400 ml-1.5">({totalItems.toLocaleString()} รายการ)</span>
-              </div>
-
-              <div className="flex items-center gap-1 sm:gap-1.5 flex-nowrap justify-center">
-                <button
-                  onClick={() => goToPage(1)}
-                  disabled={currentPage === 1}
-                  title="หน้าแรก"
-                  className="hidden sm:inline-flex items-center justify-center w-9 h-9 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition"
-                >
-                  <ChevronsLeft className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => goToPage(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  title="หน้าก่อนหน้า"
-                  className="inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition shrink-0"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-
-                {paginationRange.map((page, idx) => {
-                  if (page === '...') {
-                    return (
-                      <span key={`ellipsis-${idx}`} className="px-1.5 sm:px-2 py-1 text-xs text-slate-400 font-bold">
-                        ...
-                      </span>
-                    );
-                  }
-                  const pageNum = page as number;
-                  const isActive = pageNum === currentPage;
-                  return (
-                    <button
-                      key={`page-${pageNum}`}
-                      onClick={() => goToPage(pageNum)}
-                      className={`min-w-[32px] h-8 sm:min-w-[36px] sm:h-9 px-2 rounded-xl text-xs font-bold transition tabular-nums shrink-0 ${
-                        isActive
-                          ? 'bg-[#1E2538] text-white shadow-sm'
-                          : 'border border-slate-200 text-slate-700 hover:bg-slate-50'
-                      }`}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                })}
-
-                <button
-                  onClick={() => goToPage(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  title="หน้าถัดไป"
-                  className="inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition shrink-0"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => goToPage(totalPages)}
-                  disabled={currentPage === totalPages}
-                  title="หน้าสุดท้าย"
-                  className="hidden sm:inline-flex items-center justify-center w-9 h-9 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition"
-                >
-                  <ChevronsRight className="w-4 h-4" />
-                </button>
-              </div>
+          {/* Load More Control */}
+          {hasMore ? (
+            <div className="flex flex-col items-center gap-2 pt-3">
+              <button
+                type="button"
+                onClick={handleLoadMore}
+                disabled={isLoadingMore}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#1E2538] hover:bg-[#2B3550] text-white text-xs sm:text-sm font-bold shadow-[0_8px_22px_rgba(13,19,33,0.14)] disabled:opacity-60 disabled:pointer-events-none transition active:scale-[0.98]"
+              >
+                {isLoadingMore ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin text-[#ECD28E]" />
+                    <span>กำลังโหลด...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>โหลดเพิ่มเติม</span>
+                    <ChevronDown className="w-4 h-4 text-[#ECD28E]" />
+                  </>
+                )}
+              </button>
+              <p className="text-[11px] text-slate-400 tabular-nums">
+                เหลืออีก {(totalItems - visibleParticipants.length).toLocaleString()} รายการ
+              </p>
             </div>
+          ) : (
+            totalItems > LOAD_MORE_STEP && (
+              <p className="text-center text-[11px] text-slate-400 pt-2 tabular-nums">
+                แสดงครบทั้งหมด {totalItems.toLocaleString()} รายการแล้ว
+              </p>
+            )
           )}
         </>
       )}

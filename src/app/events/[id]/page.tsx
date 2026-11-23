@@ -5,7 +5,12 @@ import Link from 'next/link';
 import { useParams, notFound } from 'next/navigation';
 import { mockEvents, mockMissions } from '@/lib/mockData';
 import { useLiffAuth } from '@/contexts/LiffContext';
-import { EventItem, Mission, MissionSubmission } from '@/types';
+import { EventItem, Mission, MissionSubmission, CourseSession } from '@/types';
+import {
+  getCourseSummary,
+  readCourseSessionCheckins,
+  writeCourseSessionCheckin,
+} from '@/lib/courseUtils';
 import {
   MissionSubmissionRecord,
   normalizeMissionRecords,
@@ -102,7 +107,13 @@ export default function EventDetailPage() {
 
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const [activeQrSession, setActiveQrSession] = useState<CourseSession | null>(null);
+  const [sessionCheckins, setSessionCheckins] = useState<Record<string, boolean>>({});
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    setSessionCheckins(readCourseSessionCheckins(profile?.id));
+  }, [profile?.id]);
 
   // Mission submission form state
   const [missionRecords, setMissionRecords] = useState<Record<string, MissionSubmissionRecord>>({});
@@ -224,6 +235,25 @@ export default function EventDetailPage() {
 
     closeMissionModal();
     showToast('ส่งหลักฐานภารกิจเรียบร้อยแล้ว รอแอดมินตรวจสอบ');
+  };
+
+  const isCourseWithSessions =
+    event?.event_type === 'course' && Array.isArray(event.sessions) && event.sessions.length > 0;
+
+  const courseSummary =
+    event && isCourseWithSessions
+      ? getCourseSummary(event, sessionCheckins, missionRecords)
+      : null;
+
+  const handleToggleSessionCheckin = (session: CourseSession) => {
+    const nextState = !session.isCheckedIn;
+    const updated = writeCourseSessionCheckin(session.id, nextState, profile?.id);
+    setSessionCheckins(updated);
+    showToast(
+      nextState
+        ? `เช็กชื่อคลาสที่ ${session.session_number} สำเร็จ (+${session.reward_points} Pts)`
+        : `ยกเลิกสถานะเช็กชื่อคลาสที่ ${session.session_number} แล้ว`
+    );
   };
 
   if (!event) {
@@ -464,97 +494,309 @@ export default function EventDetailPage() {
             )}
           </section>
 
-          {/* ================= IN-EVENT MISSIONS (EDITORIAL PRIVATE CLUB LIST — NO NESTED CARDS) ================= */}
-          <section className="space-y-1">
-            {/* Flat #0F1521 Sharp Title Bar (No Gradient, No Glows, No Pill Capsule) */}
-            <div className="bg-[#0F1521] text-white rounded-[4px] px-4 py-3.5 sm:px-5 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3 min-w-0">
-                <Trophy
-                  className="w-4 h-4 text-[#C4A052] shrink-0"
-                  strokeWidth={1.5}
-                />
-                <div className="min-w-0">
-                  <h3 className="text-sm sm:text-[15px] font-semibold text-white tracking-tight truncate">
-                    ภารกิจสะสมแต้มในกิจกรรม
-                  </h3>
-                  <p className="text-[11px] text-slate-400 truncate">
-                    แตะที่รายการเพื่อส่งหลักฐานรับคะแนน
-                  </p>
+          {/* ================= COURSE SCHEDULE & PER-CLASS SESSIONS (OR IN-EVENT MISSIONS) ================= */}
+          {isCourseWithSessions && courseSummary ? (
+            <section className="space-y-4">
+              {/* Course Progress Summary Card */}
+              <div className="bg-white rounded-[22px] p-4 sm:p-5 shadow-[0_8px_26px_rgba(13,19,33,0.05)] space-y-3.5">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#8E7338] block">
+                      COURSE PROGRESS
+                    </span>
+                    <h3 className="text-base sm:text-lg font-extrabold text-[#0F1521]">
+                      สรุปการเรียนและความคืบหน้าหลักสูตร
+                    </h3>
+                  </div>
+                  {event.is_sample_schedule && (
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#F6F4EF] text-[#8E7338] text-[10px] font-bold shrink-0">
+                      ข้อมูลตัวอย่าง
+                    </span>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-xs font-bold">
+                    <span className="text-[#0F1521]">ความคืบหน้าโดยรวม</span>
+                    <span className="text-[#8E7338] tabular-nums">{courseSummary.progressPercent}%</span>
+                  </div>
+                  <div className="h-2 w-full rounded-full bg-[#EFECE4] overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-[#C5A059] to-[#ECD28E] transition-all duration-300"
+                      style={{ width: `${courseSummary.progressPercent}%` }}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 pt-1">
+                  <div className="rounded-xl bg-[#F6F4EF] p-3 text-center">
+                    <p className="text-[10px] text-[#64625A] font-medium">เข้าเรียน</p>
+                    <p className="text-sm sm:text-base font-extrabold text-[#0F1521] tabular-nums mt-0.5">
+                      {courseSummary.attendedSessions}/{courseSummary.totalSessions}
+                    </p>
+                    <p className="text-[10px] text-[#64625A]">คลาส</p>
+                  </div>
+                  <div className="rounded-xl bg-[#F6F4EF] p-3 text-center">
+                    <p className="text-[10px] text-[#64625A] font-medium">ภารกิจ</p>
+                    <p className="text-sm sm:text-base font-extrabold text-[#0F1521] tabular-nums mt-0.5">
+                      {courseSummary.completedMissions}/{courseSummary.totalMissions}
+                    </p>
+                    <p className="text-[10px] text-[#64625A]">รายการ</p>
+                  </div>
+                  <div className="rounded-xl bg-[#F6F4EF] p-3 text-center">
+                    <p className="text-[10px] text-[#64625A] font-medium">คะแนนที่ได้</p>
+                    <p className="text-sm sm:text-base font-extrabold text-[#8E7338] tabular-nums mt-0.5">
+                      +{courseSummary.earnedPoints}
+                    </p>
+                    <p className="text-[10px] text-[#64625A]">Pts</p>
+                  </div>
+                </div>
+
+                {courseSummary.nextSession && (
+                  <div className="rounded-xl bg-[#0F1521] text-white px-3.5 py-2.5 flex items-center justify-between gap-2 text-xs">
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-bold text-[#ECD28E] block">คลาสถัดไป</span>
+                      <p className="font-semibold truncate">{courseSummary.nextSession.title}</p>
+                    </div>
+                    <span className="text-[11px] font-bold text-[#ECD28E] shrink-0 tabular-nums">
+                      {courseSummary.nextSession.date_text}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Per-Class Sessions List */}
+              <div className="space-y-3">
+                <div className="bg-[#0F1521] text-white rounded-[4px] px-4 py-3.5 sm:px-5 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Trophy className="w-4 h-4 text-[#C4A052] shrink-0" strokeWidth={1.5} />
+                    <div className="min-w-0">
+                      <h3 className="text-sm sm:text-[15px] font-semibold text-white tracking-tight truncate">
+                        ตารางเรียนและคลาสแต่ละครั้ง
+                      </h3>
+                      <p className="text-[11px] text-slate-400 truncate">
+                        เช็กชื่อและทำภารกิจแยกตามคลาสเรียน
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#C4A052] tabular-nums shrink-0">
+                    {courseSummary.totalSessions} คลาส
+                  </span>
+                </div>
+
+                <div className="space-y-3">
+                  {courseSummary.sessions.map((session) => (
+                    <div
+                      key={session.id}
+                      className="bg-white rounded-[20px] p-4 sm:p-5 shadow-[0_6px_20px_rgba(13,19,33,0.05)] space-y-3"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                        <div className="space-y-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="px-2.5 py-0.5 rounded-full bg-[#0F1521] text-[#ECD28E] text-[10px] font-bold">
+                              คลาส {session.session_number}
+                            </span>
+                            {session.isCheckedIn ? (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold">
+                                <CheckCircle2 className="w-3 h-3" /> เช็กชื่อแล้ว
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 text-[#9A742B] text-[10px] font-bold">
+                                <Clock className="w-3 h-3" /> รอเช็กชื่อ
+                              </span>
+                            )}
+                            <span className="text-[11px] font-bold text-[#8E7338] tabular-nums">
+                              +{session.reward_points} Pts
+                            </span>
+                          </div>
+                          <h4 className="text-sm sm:text-base font-extrabold text-[#0F1521] leading-snug">
+                            {session.title}
+                          </h4>
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#64625A]">
+                            <span className="inline-flex items-center gap-1">
+                              <Calendar className="w-3.5 h-3.5 text-[#8E7338]" />
+                              {session.date_text} • {session.time_text}
+                            </span>
+                            <span className="inline-flex items-center gap-1">
+                              <MapPin className="w-3.5 h-3.5 text-[#8E7338]" />
+                              {session.location_name}
+                            </span>
+                          </div>
+                          {session.instructor && (
+                            <p className="text-[11px] text-slate-500">
+                              วิทยากร: {session.instructor}
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setActiveQrSession(session);
+                              setIsQrModalOpen(true);
+                            }}
+                            className="px-3 py-2 rounded-xl bg-[#F6F4EF] hover:bg-[#EAE5D9] text-[#0F1521] text-xs font-bold inline-flex items-center gap-1.5 transition"
+                          >
+                            <QrCode className="w-3.5 h-3.5 text-[#8E7338]" />
+                            <span>QR คลาส</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleToggleSessionCheckin(session)}
+                            className={`px-3 py-2 rounded-xl text-xs font-bold inline-flex items-center gap-1.5 transition ${
+                              session.isCheckedIn
+                                ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                                : 'luxury-gold-btn'
+                            }`}
+                          >
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            <span>{session.isCheckedIn ? 'เช็กชื่อแล้ว' : 'เช็กชื่อคลาสนี้'}</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Per-class missions */}
+                      {session.missions && session.missions.length > 0 && (
+                        <div className="pt-2.5 border-t border-black/[0.06] space-y-2">
+                          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#8E7338]">
+                            ภารกิจประจำคลาส {session.session_number}
+                          </p>
+                          {session.missions.map((sm) => {
+                            const rec = missionRecords[sm.id];
+                            const resolvedStatus = rec?.status || sm.status || 'NOT_STARTED';
+                            return (
+                              <button
+                                key={sm.id}
+                                type="button"
+                                onClick={() => openMissionModal(sm)}
+                                className="w-full text-left p-3 rounded-xl bg-[#F6F4EF] hover:bg-[#EFECE4] flex items-center justify-between gap-3 transition group"
+                              >
+                                <div className="min-w-0 space-y-0.5">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <p className="text-xs font-bold text-[#0F1521] group-hover:text-[#8E7338] transition-colors">
+                                      {sm.title}
+                                    </p>
+                                    {resolvedStatus === 'APPROVED' && (
+                                      <span className="text-[10px] font-bold text-emerald-700">
+                                        • สำเร็จแล้ว
+                                      </span>
+                                    )}
+                                    {resolvedStatus === 'PENDING' && (
+                                      <span className="text-[10px] font-bold text-[#9B7B38]">
+                                        • รอตรวจสอบ
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="text-[11px] text-[#64625A] line-clamp-1">
+                                    {sm.description}
+                                  </p>
+                                </div>
+                                <span className="text-xs font-bold text-[#8E7338] tabular-nums shrink-0">
+                                  +{sm.reward_points} PTS
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
-              <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#C4A052] tabular-nums shrink-0">
-                +{event.reward_points + 260} PTS
-              </span>
-            </div>
-
-            {/* Borderless Hairline Editorial List Directly on #F4F1EA */}
-            <div className="divide-y divide-black/[0.07] border-b border-black/[0.07]">
-              {/* 01 Check-in Row */}
-              <div className="py-4 px-1 flex items-start justify-between gap-4">
-                <div className="flex items-start gap-3.5 min-w-0 flex-1">
-                  <span className="text-[11px] font-mono text-[#8E7338] tabular-nums pt-0.5 shrink-0">
-                    01
-                  </span>
-                  <div className="min-w-0 space-y-1">
-                    <p className="text-sm font-semibold text-[#0F1521] leading-snug">
-                      เช็กชื่อเข้าร่วมกิจกรรม
-                    </p>
-                    <p className="text-xs text-[#64625A] leading-relaxed">
-                      สแกน QR บัตรเข้าร่วมกับทีมงานหน้างาน
+            </section>
+          ) : (
+            <section className="space-y-1">
+              {/* Flat #0F1521 Sharp Title Bar (No Gradient, No Glows, No Pill Capsule) */}
+              <div className="bg-[#0F1521] text-white rounded-[4px] px-4 py-3.5 sm:px-5 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <Trophy
+                    className="w-4 h-4 text-[#C4A052] shrink-0"
+                    strokeWidth={1.5}
+                  />
+                  <div className="min-w-0">
+                    <h3 className="text-sm sm:text-[15px] font-semibold text-white tracking-tight truncate">
+                      ภารกิจสะสมแต้มในกิจกรรม
+                    </h3>
+                    <p className="text-[11px] text-slate-400 truncate">
+                      แตะที่รายการเพื่อส่งหลักฐานรับคะแนน
                     </p>
                   </div>
                 </div>
-                <span className="text-xs font-semibold uppercase tracking-[0.08em] text-[#0F1521] tabular-nums pt-0.5 shrink-0">
-                  +{event.reward_points} PTS
+                <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#C4A052] tabular-nums shrink-0">
+                  +{event.reward_points + 260} PTS
                 </span>
               </div>
 
-              {mockMissions.map((m, idx) => {
-                const record = missionRecords[m.id];
-                const resolvedStatus = record?.status || m.status || 'NOT_STARTED';
-                const cleanTitle = m.title.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]|[\u2600-\u27BF]/g, '').trim();
-                const rowNumber = String(idx + 2).padStart(2, '0');
-                return (
-                  <button
-                    key={m.id}
-                    type="button"
-                    onClick={() => openMissionModal(m)}
-                    className="w-full text-left py-4 px-1 hover:bg-black/[0.025] flex items-start justify-between gap-4 transition group cursor-pointer"
-                  >
-                    <div className="flex items-start gap-3.5 min-w-0 flex-1">
-                      <span className="text-[11px] font-mono text-[#8E7338] tabular-nums pt-0.5 shrink-0">
-                        {rowNumber}
-                      </span>
-                      <div className="min-w-0 space-y-1">
-                        <div className="flex items-baseline gap-2.5 flex-wrap">
-                          <p className="text-sm font-semibold text-[#0F1521] group-hover:text-[#8E7338] transition-colors leading-snug">
-                            {cleanTitle}
-                          </p>
-                          {resolvedStatus === 'APPROVED' && (
-                            <span className="text-[11px] font-medium text-[#4A7558] tracking-wide">
-                              • สำเร็จแล้ว
-                            </span>
-                          )}
-                          {resolvedStatus === 'PENDING' && (
-                            <span className="text-[11px] font-medium text-[#9B7B38] tracking-wide">
-                              • รอตรวจสอบ
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-xs text-[#64625A] leading-relaxed">
-                          {m.description}
-                        </p>
-                      </div>
-                    </div>
-
-                    <span className="text-xs font-semibold uppercase tracking-[0.08em] text-[#8E7338] tabular-nums pt-0.5 shrink-0">
-                      +{m.reward_points} PTS
+              {/* Borderless Hairline Editorial List Directly on #F4F1EA */}
+              <div className="divide-y divide-black/[0.07] border-b border-black/[0.07]">
+                {/* 01 Check-in Row */}
+                <div className="py-4 px-1 flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-3.5 min-w-0 flex-1">
+                    <span className="text-[11px] font-mono text-[#8E7338] tabular-nums pt-0.5 shrink-0">
+                      01
                     </span>
-                  </button>
-                );
-              })}
-            </div>
-          </section>
+                    <div className="min-w-0 space-y-1">
+                      <p className="text-sm font-semibold text-[#0F1521] leading-snug">
+                        เช็กชื่อเข้าร่วมกิจกรรม
+                      </p>
+                      <p className="text-xs text-[#64625A] leading-relaxed">
+                        สแกน QR บัตรเข้าร่วมกับทีมงานหน้างาน
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-xs font-semibold uppercase tracking-[0.08em] text-[#0F1521] tabular-nums pt-0.5 shrink-0">
+                    +{event.reward_points} PTS
+                  </span>
+                </div>
+
+                {mockMissions.map((m, idx) => {
+                  const record = missionRecords[m.id];
+                  const resolvedStatus = record?.status || m.status || 'NOT_STARTED';
+                  const cleanTitle = m.title.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]|[\u2600-\u27BF]/g, '').trim();
+                  const rowNumber = String(idx + 2).padStart(2, '0');
+                  return (
+                    <button
+                      key={m.id}
+                      type="button"
+                      onClick={() => openMissionModal(m)}
+                      className="w-full text-left py-4 px-1 hover:bg-black/[0.025] flex items-start justify-between gap-4 transition group cursor-pointer"
+                    >
+                      <div className="flex items-start gap-3.5 min-w-0 flex-1">
+                        <span className="text-[11px] font-mono text-[#8E7338] tabular-nums pt-0.5 shrink-0">
+                          {rowNumber}
+                        </span>
+                        <div className="min-w-0 space-y-1">
+                          <div className="flex items-baseline gap-2.5 flex-wrap">
+                            <p className="text-sm font-semibold text-[#0F1521] group-hover:text-[#8E7338] transition-colors leading-snug">
+                              {cleanTitle}
+                            </p>
+                            {resolvedStatus === 'APPROVED' && (
+                              <span className="text-[11px] font-medium text-[#4A7558] tracking-wide">
+                                • สำเร็จแล้ว
+                              </span>
+                            )}
+                            {resolvedStatus === 'PENDING' && (
+                              <span className="text-[11px] font-medium text-[#9B7B38] tracking-wide">
+                                • รอตรวจสอบ
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-[#64625A] leading-relaxed">
+                            {m.description}
+                          </p>
+                        </div>
+                      </div>
+
+                      <span className="text-xs font-semibold uppercase tracking-[0.08em] text-[#8E7338] tabular-nums pt-0.5 shrink-0">
+                        +{m.reward_points} PTS
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+          )}
 
           {/* Photo Gallery Grid (Only shown after event has started/completed) */}
           {event.status !== 'UPCOMING' && (
@@ -718,7 +960,10 @@ export default function EventDetailPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white border border-slate-200 w-full max-w-sm rounded-2xl p-6 relative shadow-2xl flex flex-col items-center text-center space-y-4">
             <button
-              onClick={() => setIsQrModalOpen(false)}
+              onClick={() => {
+                setIsQrModalOpen(false);
+                setActiveQrSession(null);
+              }}
               className="absolute top-3.5 right-3.5 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 bg-slate-100"
             >
               <X className="w-4 h-4" />
@@ -726,23 +971,32 @@ export default function EventDetailPage() {
 
             <div className="space-y-1 pt-2">
               <span className="px-3 py-1 rounded-full bg-[#FB7170]/10 text-[#FB7170] text-xs font-bold">
-                QR Code เช็คชื่อเข้าร่วมกิจกรรม
+                {activeQrSession
+                  ? `QR เช็กชื่อคลาสที่ ${activeQrSession.session_number}`
+                  : 'QR Code เช็คชื่อเข้าร่วมกิจกรรม'}
               </span>
               <h3 className="text-base font-bold text-[#212542] line-clamp-2 pt-1">
-                {event.title}
+                {activeQrSession ? activeQrSession.title : event.title}
               </h3>
+              {activeQrSession && (
+                <p className="text-[11px] text-slate-500">
+                  {activeQrSession.date_text} • {activeQrSession.time_text}
+                </p>
+              )}
             </div>
 
             <div className="p-4 bg-white border border-slate-100 rounded-2xl shadow-inner flex items-center justify-center">
               <QRCodeSVG
                 value={JSON.stringify({
                   version: 1,
-                  type: 'EVENT_CHECKIN',
+                  type: activeQrSession ? 'COURSE_SESSION_CHECKIN' : 'EVENT_CHECKIN',
                   profileId: profile?.id || '3296',
                   lineUserId: profile?.line_user_id || 'U_SIM_3296',
                   displayName: profile?.display_name || applicantName || 'สมาชิก YFTI 11',
                   eventId: event.id,
                   eventTitle: event.title,
+                  sessionId: activeQrSession?.id,
+                  sessionNumber: activeQrSession?.session_number,
                   ts: Date.now(),
                 })}
                 size={200}
@@ -753,11 +1007,16 @@ export default function EventDetailPage() {
 
             <div className="text-xs text-slate-500 leading-relaxed">
               แสดง QR Code นี้แก่เจ้าหน้าที่หน้างานเพื่อสแกนยืนยันการเข้าร่วมและรับคะแนน{' '}
-              <span className="font-bold text-[#FB7170]">+{event.reward_points} Points</span>
+              <span className="font-bold text-[#FB7170]">
+                +{activeQrSession ? activeQrSession.reward_points : event.reward_points} Points
+              </span>
             </div>
 
             <button
-              onClick={() => setIsQrModalOpen(false)}
+              onClick={() => {
+                setIsQrModalOpen(false);
+                setActiveQrSession(null);
+              }}
               className="w-full py-2.5 rounded-xl bg-[#212542] text-white text-xs font-bold hover:bg-[#2e335b] transition"
             >
               ปิดหน้าต่าง

@@ -7,7 +7,6 @@ import {
   X,
   Ticket,
   CalendarDays,
-  Trophy,
   ChevronRight,
   ShieldCheck,
   LogIn,
@@ -91,11 +90,6 @@ export const QuickQrHubSheet: React.FC<QuickQrHubSheetProps> = ({ isOpen, onClos
   const tier = profile?.tier || (xp >= 2000 ? 'Platinum' : xp >= 1000 ? 'Gold' : 'Silver');
   const memberCode = formatMemberCode(profile?.id);
   const isAdmin = profile?.role === 'SUPER_ADMIN' || profile?.role === 'HOUSE_ADMIN';
-
-  const topHouse = useMemo(
-    () => [...mockHouses].sort((a, b) => b.total_points - a.total_points)[0],
-    []
-  );
 
   const nextEvent = useMemo(
     () => mockEvents.find((e) => e.status === 'UPCOMING') || mockEvents[0],
@@ -267,31 +261,10 @@ export const QuickQrHubSheet: React.FC<QuickQrHubSheetProps> = ({ isOpen, onClos
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-bold text-[#161C2C] group-hover:text-[#9A742B] transition-colors">
-                      กิจกรรมและคอร์สเรียน
+                      คอร์สเรียน และกิจกรรม
                     </p>
                     <p className="text-xs text-slate-500 truncate">
                       {nextEvent ? `${nextEvent.published_date_text || 'เร็วๆ นี้'} • ${nextEvent.title}` : 'ดูกำหนดการทั้งหมด'}
-                    </p>
-                  </div>
-                </div>
-                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#161C2C] shrink-0" />
-              </Link>
-
-              <Link
-                href="/directory"
-                onClick={onClose}
-                className="bg-white rounded-2xl p-3.5 shadow-[0_4px_16px_rgba(13,19,33,0.05)] hover:shadow-[0_8px_22px_rgba(13,19,33,0.09)] flex items-center justify-between gap-3 transition group"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#B18A3B] flex items-center justify-center shrink-0">
-                    <Trophy className="w-5 h-5" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-bold text-[#161C2C] group-hover:text-[#9A742B] transition-colors">
-                      อันดับบ้าน 9 ดวงดาว
-                    </p>
-                    <p className="text-xs text-slate-500 truncate">
-                      อันดับ 1: {topHouse?.name} ({topHouse?.total_points.toLocaleString()} pts)
                     </p>
                   </div>
                 </div>

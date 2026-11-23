@@ -34,6 +34,31 @@ export interface UserProfile {
   tier?: 'Silver' | 'Gold' | 'Platinum';
 }
 
+export interface CourseSessionMission {
+  id: string;
+  title: string;
+  description: string;
+  reward_points: number;
+  reward_xp: number;
+  is_active: boolean;
+  status?: SubmissionStatus | 'NOT_STARTED';
+}
+
+export interface CourseSession {
+  id: string;
+  session_number: number;
+  title: string;
+  date_text: string;
+  time_text: string;
+  start_time: string;
+  end_time: string;
+  location_name: string;
+  instructor?: string;
+  reward_points: number;
+  isCheckedIn?: boolean;
+  missions?: CourseSessionMission[];
+}
+
 export interface EventItem {
   id: string;
   title: string;
@@ -57,6 +82,10 @@ export interface EventItem {
   event_type?: 'general' | 'course';
   fee_member?: number;
   fee_guest?: number;
+  max_seats?: number;
+  registered_count?: number;
+  sessions?: CourseSession[];
+  is_sample_schedule?: boolean;
 }
 
 export interface Mission {

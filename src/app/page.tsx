@@ -17,7 +17,6 @@ import {
   ChevronRight,
   Coins,
   Crown,
-  QrCode,
   Search,
   ShieldCheck,
   Building2,
@@ -28,6 +27,11 @@ import {
   LayoutGrid,
   CalendarDays,
   ArrowRight,
+  Ticket,
+  BookOpen,
+  Users,
+  CheckCircle2,
+  Clock,
 } from 'lucide-react';
 import { WebLoginModal } from '@/components/layout/WebLoginModal';
 import { GlobalSearchModal } from '@/components/layout/GlobalSearchModal';
@@ -36,7 +40,11 @@ import {
   formatMemberCode,
   DEFAULT_AVATAR_DATA_URI,
   handleAvatarError,
+  MissionSubmissionRecord,
+  normalizeMissionRecords,
+  safeReadLocalStorage,
 } from '@/components/profile/profileUtils';
+import { getCourseSummary, readCourseSessionCheckins } from '@/lib/courseUtils';
 
 const INDUSTRY_CIRCLES = [
   { name: 'เทคโนโลยี', query: 'technology', iconSrc: '/images/icons/tech.webp?v=2' },
@@ -67,6 +75,9 @@ export default function HomePage() {
   const [customEvents, setCustomEvents] = useState<EventItem[]>([]);
   const [selectedPrivCategory, setSelectedPrivCategory] = useState<PrivilegeCategory>('All');
   const [directoryQuery, setDirectoryQuery] = useState('');
+  const [sessionCheckins, setSessionCheckins] = useState<Record<string, boolean>>({});
+  const [missionRecords, setMissionRecords] = useState<Record<string, MissionSubmissionRecord>>({});
+  const [registeredEventIds, setRegisteredEventIds] = useState<string[]>([]);
 
   useEffect(() => {
     setMounted(true);
@@ -77,9 +88,28 @@ export default function HomePage() {
 
         const custom = JSON.parse(localStorage.getItem('yfti_custom_events') || '[]');
         if (Array.isArray(custom)) setCustomEvents(custom);
+
+        const regs = JSON.parse(localStorage.getItem('yfti_event_registrations') || '[]');
+        if (Array.isArray(regs)) {
+          setRegisteredEventIds(
+            regs
+              .filter((r: any) => r.status === 'APPROVED' || r.status === 'PENDING')
+              .map((r: any) => String(r.eventId))
+          );
+        }
       } catch {}
     }
   }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    setSessionCheckins(readCourseSessionCheckins(profile?.id));
+    const scopedKey = profile?.id ? `yfti_mission_submissions_${profile.id}` : null;
+    const rawScoped = scopedKey ? safeReadLocalStorage<unknown>(scopedKey, null) : null;
+    const rawLegacy =
+      rawScoped === null ? safeReadLocalStorage<unknown>('yfti_mission_submissions', null) : null;
+    setMissionRecords(normalizeMissionRecords(rawScoped ?? rawLegacy));
+  }, [mounted, profile?.id]);
 
   const unreadCount = useMemo(
     () => mockNotifications.filter((n) => !n.is_read && !readNotificationIds.includes(n.id)).length,
@@ -91,9 +121,29 @@ export default function HomePage() {
     []
   );
 
+  const allEventsCombined = useMemo(() => [...customEvents, ...mockEvents], [customEvents]);
+
+  const myCourses = useMemo(
+    () =>
+      allEventsCombined.filter(
+        (e) =>
+          e.event_type === 'course' &&
+          (e.isRegisteredForEvent || registeredEventIds.includes(String(e.id)))
+      ),
+    [allEventsCombined, registeredEventIds]
+  );
+
   const upcomingEvents = useMemo(
-    () => [...customEvents, ...mockEvents].filter((e) => e.status === 'UPCOMING').slice(0, 4),
-    [customEvents]
+    () =>
+      allEventsCombined
+        .filter((e) => e.status === 'UPCOMING' && e.event_type !== 'course')
+        .slice(0, 4),
+    [allEventsCombined]
+  );
+
+  const openRegistrations = useMemo(
+    () => allEventsCombined.filter((e) => e.status === 'UPCOMING').slice(0, 6),
+    [allEventsCombined]
   );
 
   const filteredPrivileges = useMemo(() => {
@@ -292,16 +342,13 @@ export default function HomePage() {
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            {activeProfile && (
-              <button
-                type="button"
-                onClick={() => setIsCardFlipped((prev) => !prev)}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-bold text-white transition"
-              >
-                <QrCode className="w-3.5 h-3.5 text-[#ECD28E]" />
-                <span>{isCardFlipped ? 'หน้าบัตร' : 'แสดง QR'}</span>
-              </button>
-            )}
+            <Link
+              href="/privileges?tab=history"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-bold text-white transition"
+            >
+              <Ticket className="w-3.5 h-3.5 text-[#ECD28E]" />
+              <span>คูปองของฉัน</span>
+            </Link>
             <Link
               href="/privileges"
               className="inline-flex items-center gap-1 px-3 py-2 rounded-xl luxury-gold-btn text-xs font-bold transition"
@@ -332,14 +379,26 @@ export default function HomePage() {
             >
               <img
                 src="/images/icons/business.webp?v=2"
-                alt="ทำเนียบธุรกิจ"
+                alt="Connect ธุรกิจ"
                 className="w-12 h-12 sm:w-14 sm:h-14 object-contain group-hover:-translate-y-0.5 transition-transform"
               />
-              <span className="text-[11px] sm:text-xs font-bold text-[#161C2C]">ทำเนียบธุรกิจ</span>
+              <span className="text-[11px] sm:text-xs font-bold text-[#161C2C]">Connect ธุรกิจ</span>
             </Link>
 
             <Link
-              href="/events"
+              href="/events?category=course"
+              className="flex flex-col items-center text-center gap-1.5 py-1.5 rounded-xl hover:bg-[#F6F4EF] transition group"
+            >
+              <img
+                src="/images/icons/courses.webp?v=2"
+                alt="คอร์สเรียน"
+                className="w-12 h-12 sm:w-14 sm:h-14 object-contain group-hover:-translate-y-0.5 transition-transform"
+              />
+              <span className="text-[11px] sm:text-xs font-bold text-[#161C2C]">คอร์สเรียน</span>
+            </Link>
+
+            <Link
+              href="/events?category=general"
               className="flex flex-col items-center text-center gap-1.5 py-1.5 rounded-xl hover:bg-[#F6F4EF] transition group"
             >
               <img
@@ -348,18 +407,6 @@ export default function HomePage() {
                 className="w-12 h-12 sm:w-14 sm:h-14 object-contain group-hover:-translate-y-0.5 transition-transform"
               />
               <span className="text-[11px] sm:text-xs font-bold text-[#161C2C]">กิจกรรม</span>
-            </Link>
-
-            <Link
-              href="/privileges?tab=history"
-              className="flex flex-col items-center text-center gap-1.5 py-1.5 rounded-xl hover:bg-[#F6F4EF] transition group"
-            >
-              <img
-                src="/images/icons/points.webp?v=2"
-                alt="คูปองของฉัน"
-                className="w-12 h-12 sm:w-14 sm:h-14 object-contain group-hover:-translate-y-0.5 transition-transform"
-              />
-              <span className="text-[11px] sm:text-xs font-bold text-[#161C2C]">คูปองของฉัน</span>
             </Link>
           </div>
         </div>
@@ -468,58 +515,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ================= 4. CIRCULAR INDUSTRY MEDALLIONS (AIRY BRAND ROW) ================= */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 pt-7 space-y-3.5">
-        <div className="flex items-center justify-between">
-          <h2 className="text-base sm:text-lg font-extrabold text-[#161C2C]">
-            หมวดหมู่ธุรกิจแนะนำ
-          </h2>
-          <Link
-            href="/directory"
-            className="text-xs font-bold text-[#9A742B] hover:text-[#161C2C] inline-flex items-center gap-1 transition"
-          >
-            <span>ทำเนียบทั้งหมด</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-
-        <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar -mr-4 pr-4 sm:mr-0 sm:pr-0">
-          {INDUSTRY_CIRCLES.map((cat) => (
-            <Link
-              key={cat.query}
-              href={`/directory?industry=${encodeURIComponent(cat.query)}`}
-              className="flex flex-col items-center gap-2 shrink-0 w-[68px] group"
-            >
-              <div className="w-14 h-14 rounded-full bg-white shadow-[0_6px_18px_rgba(13,19,33,0.06)] group-hover:-translate-y-0.5 transition flex items-center justify-center p-2.5 overflow-hidden">
-                <img
-                  src={cat.iconSrc}
-                  alt={cat.name}
-                  loading="lazy"
-                  className="w-full h-full object-contain group-hover:scale-105 transition-transform"
-                />
-              </div>
-              <span className="text-[11px] font-semibold text-[#161C2C] text-center leading-tight line-clamp-1">
-                {cat.name}
-              </span>
-            </Link>
-          ))}
-
-          {/* "View All" Circular Medallion */}
-          <Link
-            href="/directory"
-            className="flex flex-col items-center gap-2 shrink-0 w-[68px] group"
-          >
-            <div className="w-14 h-14 rounded-full bg-[#0D1321] border border-[#C5A059]/50 shadow-[0_6px_18px_rgba(13,19,33,0.14)] group-hover:-translate-y-0.5 transition flex items-center justify-center text-[#ECD28E]">
-              <LayoutGrid className="w-5 h-5" />
-            </div>
-            <span className="text-[11px] font-bold text-[#161C2C] text-center leading-tight">
-              ดูทั้งหมด
-            </span>
-          </Link>
-        </div>
-      </section>
-
-      {/* ================= 5. EXCLUSIVE ELITE SPOTLIGHT BANNERS (FULL-BLEED PEEK SLIDER) ================= */}
+      {/* ================= 4. EXCLUSIVE ELITE SPOTLIGHT BANNERS (FULL-BLEED PEEK SLIDER) ================= */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 pt-6 space-y-3">
         <div className="flex items-center justify-between">
           <div>
@@ -579,17 +575,68 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ================= 5. CIRCULAR INDUSTRY MEDALLIONS (AIRY BRAND ROW) ================= */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 pt-7 space-y-3.5">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base sm:text-lg font-extrabold text-[#161C2C]">
+            หมวดหมู่ธุรกิจแนะนำ
+          </h2>
+          <Link
+            href="/directory"
+            className="text-xs font-bold text-[#9A742B] hover:text-[#161C2C] inline-flex items-center gap-1 transition"
+          >
+            <span>ดูทั้งหมด</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar -mr-4 pr-4 sm:mr-0 sm:pr-0">
+          {INDUSTRY_CIRCLES.map((cat) => (
+            <Link
+              key={cat.query}
+              href={`/directory?industry=${encodeURIComponent(cat.query)}`}
+              className="flex flex-col items-center gap-2 shrink-0 w-[68px] group"
+            >
+              <div className="w-14 h-14 rounded-full bg-white shadow-[0_6px_18px_rgba(13,19,33,0.06)] group-hover:-translate-y-0.5 transition flex items-center justify-center p-2.5 overflow-hidden">
+                <img
+                  src={cat.iconSrc}
+                  alt={cat.name}
+                  loading="lazy"
+                  className="w-full h-full object-contain group-hover:scale-105 transition-transform"
+                />
+              </div>
+              <span className="text-[11px] font-semibold text-[#161C2C] text-center leading-tight line-clamp-1">
+                {cat.name}
+              </span>
+            </Link>
+          ))}
+
+          {/* "View All" Circular Medallion */}
+          <Link
+            href="/directory"
+            className="flex flex-col items-center gap-2 shrink-0 w-[68px] group"
+          >
+            <div className="w-14 h-14 rounded-full bg-[#0D1321] border border-[#C5A059]/50 shadow-[0_6px_18px_rgba(13,19,33,0.14)] group-hover:-translate-y-0.5 transition flex items-center justify-center text-[#ECD28E]">
+              <LayoutGrid className="w-5 h-5" />
+            </div>
+            <span className="text-[11px] font-bold text-[#161C2C] text-center leading-tight">
+              ดูทั้งหมด
+            </span>
+          </Link>
+        </div>
+      </section>
+
       {/* ================= 6. FULL-BLEED DARK OBSIDIAN CONTRAST BAND: EXECUTIVE DIRECTORY SHOWCASE ================= */}
       <section className="mt-8 luxury-stage text-white py-7 border-y border-[#C5A059]/25">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 space-y-4">
           <div className="flex items-center justify-between gap-2">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#ECD28E] block">
-                Executive Network
-              </span>
               <h2 className="text-base sm:text-lg font-extrabold text-white">
-                ทำเนียบผู้บริหาร & เครือข่ายธุรกิจ
+                Y CONNECT
               </h2>
+              <p className="text-xs text-slate-300">
+                รายชื่อเครือข่ายธุรกิจ
+              </p>
             </div>
             <Link
               href="/directory"
@@ -656,17 +703,133 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ================= 7. UPCOMING EVENTS POSTER CAROUSEL ================= */}
+      {/* ================= 7A. MY COURSES (คอร์สเรียนของฉัน) ================= */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 pt-7 space-y-3.5">
+        <div className="flex items-center justify-between gap-2">
+          <div>
+            <h2 className="text-base sm:text-lg font-extrabold text-[#161C2C]">
+              คอร์สเรียนของฉัน
+            </h2>
+            <p className="text-xs text-slate-500">ติดตามความคืบหน้า ตารางเรียน และภารกิจประจำคลาส</p>
+          </div>
+          <Link
+            href="/events?category=course"
+            className="text-xs font-bold text-[#9A742B] hover:text-[#161C2C] inline-flex items-center gap-1 shrink-0 transition"
+          >
+            <span>ดูทั้งหมด</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        {myCourses.length > 0 ? (
+          <div className="flex gap-3.5 overflow-x-auto pt-1 pb-4 -mb-2 snap-x no-scrollbar -mr-4 pr-4 sm:mr-0 sm:pr-0">
+            {myCourses.map((course) => {
+              const summary = getCourseSummary(course, sessionCheckins, missionRecords);
+              return (
+                <Link
+                  key={course.id}
+                  href={`/events/${course.id}`}
+                  className="w-[300px] sm:w-[340px] snap-start bg-white rounded-[24px] p-4 sm:p-5 shadow-[0_8px_26px_rgba(13,19,33,0.06)] hover:shadow-[0_12px_30px_rgba(13,19,33,0.10)] transition shrink-0 flex flex-col justify-between gap-3.5 group"
+                >
+                  <div className="space-y-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#0D1321] text-[#ECD28E] text-[10px] font-bold">
+                        <BookOpen className="w-3 h-3" />
+                        คอร์สเรียน
+                      </span>
+                      <span className="text-[11px] font-bold text-[#9A742B] inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                        ดูรายละเอียด <ChevronRight className="w-3.5 h-3.5" />
+                      </span>
+                    </div>
+
+                    <h3 className="text-sm sm:text-base font-extrabold text-[#161C2C] line-clamp-2 leading-snug group-hover:text-[#9A742B] transition-colors">
+                      {course.title}
+                    </h3>
+
+                    {summary.nextSession ? (
+                      <div className="rounded-xl bg-[#F6F4EF] px-3 py-2 space-y-0.5">
+                        <p className="text-[10px] font-bold text-[#9A742B] uppercase tracking-wide">
+                          คลาสถัดไป • คลาสที่ {summary.nextSession.session_number}
+                        </p>
+                        <p className="text-xs font-bold text-[#161C2C] truncate">
+                          {summary.nextSession.title}
+                        </p>
+                        <p className="text-[11px] text-slate-500 truncate">
+                          {summary.nextSession.date_text} • {summary.nextSession.time_text}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="rounded-xl bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700 flex items-center gap-1.5">
+                        <CheckCircle2 className="w-4 h-4 shrink-0" />
+                        <span>เข้าเรียนครบทุกคลาสแล้ว</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-2.5 pt-1 border-t border-slate-100">
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between text-[11px] font-bold">
+                        <span className="text-slate-600">ความคืบหน้าหลักสูตร</span>
+                        <span className="text-[#9A742B] tabular-nums">{summary.progressPercent}%</span>
+                      </div>
+                      <div className="h-1.5 w-full rounded-full bg-[#EFECE4] overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-[#C5A059] to-[#ECD28E]"
+                          style={{ width: `${summary.progressPercent}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-1.5 text-center">
+                      <div className="rounded-xl bg-[#F6F4EF] py-1.5 px-1">
+                        <p className="text-[10px] text-slate-500">เข้าเรียน</p>
+                        <p className="text-xs font-extrabold text-[#161C2C] tabular-nums">
+                          {summary.attendedSessions}/{summary.totalSessions}
+                        </p>
+                      </div>
+                      <div className="rounded-xl bg-[#F6F4EF] py-1.5 px-1">
+                        <p className="text-[10px] text-slate-500">ภารกิจ</p>
+                        <p className="text-xs font-extrabold text-[#161C2C] tabular-nums">
+                          {summary.completedMissions}/{summary.totalMissions}
+                        </p>
+                      </div>
+                      <div className="rounded-xl bg-[#F6F4EF] py-1.5 px-1">
+                        <p className="text-[10px] text-slate-500">คะแนนที่ได้</p>
+                        <p className="text-xs font-extrabold text-[#9A742B] tabular-nums">
+                          +{summary.earnedPoints}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="bg-white rounded-[22px] p-6 text-center shadow-[0_8px_24px_rgba(13,19,33,0.05)] space-y-2">
+            <BookOpen className="w-7 h-7 text-slate-300 mx-auto" />
+            <p className="text-xs font-semibold text-slate-600">ยังไม่มีคอร์สเรียนที่ลงทะเบียน</p>
+            <Link
+              href="/events?category=course"
+              className="inline-flex items-center gap-1 text-xs font-bold text-[#9A742B] hover:underline"
+            >
+              เลือกดูคอร์สเรียนทั้งหมด <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        )}
+      </section>
+
+      {/* ================= 7B. UPCOMING EVENTS (กิจกรรมที่ใกล้มาถึง) ================= */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 pt-7 space-y-3.5">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-base sm:text-lg font-extrabold text-[#161C2C]">
-              กิจกรรม & คอร์สเรียนที่ใกล้มาถึง
+              กิจกรรมที่ใกล้มาถึง
             </h2>
             <p className="text-xs text-slate-500">เข้าร่วมเพื่อสะสมแต้มและเชื่อมต่อเครือข่าย</p>
           </div>
           <Link
-            href="/events"
+            href="/events?category=general"
             className="text-xs font-bold text-[#9A742B] hover:text-[#161C2C] inline-flex items-center gap-1 shrink-0 transition"
           >
             <span>ดูทั้งหมด</span>
@@ -718,24 +881,16 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ================= 8. HOUSE LEADERBOARD (ALL 9 HOUSES — UNIFIED LUXURY OBSIDIAN CARD) ================= */}
+      {/* ================= 8. CONSTELLATION SCORE LEADERBOARD (อันดับคะแนนกลุ่มดาว) ================= */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 pt-7 space-y-3.5">
         <div className="flex items-center justify-between">
           <h2 className="text-base sm:text-lg font-extrabold text-[#161C2C]">
-            อันดับบ้าน 9 ดวงดาว
+            อันดับคะแนนกลุ่มดาว
           </h2>
-          <Link
-            href="/directory"
-            className="text-xs font-bold text-[#9A742B] hover:text-[#161C2C] inline-flex items-center gap-1 transition"
-          >
-            <span>ดูรายชื่อสมาชิก</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
         </div>
 
         <div className="luxury-stage rounded-[26px] p-4 sm:p-6 text-white shadow-[0_14px_34px_rgba(11,16,29,0.16)] space-y-5">
           {(() => {
-            const topScore = Math.max(1, sortedHouses[0]?.total_points ?? 1);
             const podium = [
               { house: sortedHouses[1], rank: 2 },
               { house: sortedHouses[0], rank: 1 },
@@ -796,7 +951,7 @@ export default function HomePage() {
                           </p>
                           {isMyHouse && (
                             <span className="inline-block mt-1.5 px-2 py-0.5 rounded-full bg-[#ECD28E]/18 text-[#ECD28E] text-[9px] font-bold">
-                              บ้านของคุณ
+                              ดาวของคุณ
                             </span>
                           )}
                         </div>
@@ -809,7 +964,6 @@ export default function HomePage() {
                 <div className="pt-2 divide-y divide-white/[0.06]">
                   {remainingHouses.map((house, idx) => {
                     const rank = idx + 4;
-                    const pct = Math.max(18, Math.round((house.total_points / topScore) * 100));
                     const isMyHouse =
                       house.id.toLowerCase() === normalizedHouseId.toLowerCase();
 
@@ -837,25 +991,16 @@ export default function HomePage() {
                             loading="lazy"
                             className="w-9 h-9 object-contain shrink-0"
                           />
-                          <div className="min-w-0 flex-1 space-y-1">
+                          <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-1.5 min-w-0">
                               <span className="text-xs sm:text-sm font-bold text-white truncate">
                                 {house.name}
                               </span>
                               {isMyHouse && (
                                 <span className="px-2 py-0.5 rounded-full bg-[#ECD28E]/20 text-[#ECD28E] text-[9px] font-bold shrink-0">
-                                  บ้านคุณ
+                                  ดาวของคุณ
                                 </span>
                               )}
-                            </div>
-                            <div className="h-1 w-full max-w-[140px] rounded-full bg-white/10 overflow-hidden">
-                              <div
-                                className="h-full rounded-full"
-                                style={{
-                                  width: `${pct}%`,
-                                  backgroundColor: isMyHouse ? '#ECD28E' : 'rgba(255,255,255,0.32)',
-                                }}
-                              />
                             </div>
                           </div>
                         </div>
@@ -872,6 +1017,122 @@ export default function HomePage() {
             );
           })()}
         </div>
+      </section>
+
+      {/* ================= 9. OPEN REGISTRATIONS (คอร์สและกิจกรรมเปิดใหม่) ================= */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 pt-7 space-y-3.5">
+        <div className="flex items-center justify-between gap-2">
+          <div>
+            <h2 className="text-base sm:text-lg font-extrabold text-[#161C2C]">
+              คอร์สและกิจกรรมเปิดใหม่
+            </h2>
+            <p className="text-xs text-slate-500">เปิดรับสมัครสมาชิกเข้าร่วมและสะสมคะแนน</p>
+          </div>
+          <Link
+            href="/events"
+            className="text-xs font-bold text-[#9A742B] hover:text-[#161C2C] inline-flex items-center gap-1 shrink-0 transition"
+          >
+            <span>ดูทั้งหมด</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        {openRegistrations.length > 0 ? (
+          <div className="flex gap-3.5 overflow-x-auto pt-1 pb-5 -mb-3 snap-x no-scrollbar -mr-4 pr-4 sm:mr-0 sm:pr-0">
+            {openRegistrations.map((item) => {
+              const isJoined =
+                Boolean(item.isRegisteredForEvent) || registeredEventIds.includes(String(item.id));
+              const hasSeatInfo = typeof item.max_seats === 'number' && item.max_seats > 0;
+              return (
+                <div
+                  key={`open-${item.id}`}
+                  className="w-[276px] sm:w-[300px] snap-start bg-white rounded-[24px] overflow-hidden shadow-[0_8px_26px_rgba(13,19,33,0.06)] shrink-0 flex flex-col justify-between"
+                >
+                  <Link href={`/events/${item.id}`} className="block relative h-[132px] bg-[#0D1321] overflow-hidden group">
+                    <img
+                      src={
+                        item.image_url ||
+                        'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/event_training.webp'
+                      }
+                      alt={item.title}
+                      loading="lazy"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#090E1A]/85 via-transparent to-[#090E1A]/35" />
+                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2">
+                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/90 text-white text-[10px] font-bold">
+                        เปิดรับสมัคร
+                      </span>
+                      <span className="px-2.5 py-0.5 rounded-full bg-[#0D1321]/85 backdrop-blur-md text-[#ECD28E] text-[10px] font-extrabold tabular-nums">
+                        +{item.reward_points} Pts
+                      </span>
+                    </div>
+                    <span className="absolute bottom-2.5 left-3 px-2 py-0.5 rounded-md bg-white/15 backdrop-blur-md text-white text-[10px] font-bold">
+                      {item.event_type === 'course' ? 'คอร์สเรียน' : 'กิจกรรม'}
+                    </span>
+                  </Link>
+
+                  <div className="p-4 space-y-3 flex-1 flex flex-col justify-between">
+                    <div className="space-y-1.5">
+                      <Link href={`/events/${item.id}`} className="block">
+                        <h3 className="text-sm font-extrabold text-[#161C2C] line-clamp-2 leading-snug hover:text-[#9A742B] transition-colors">
+                          {item.title}
+                        </h3>
+                      </Link>
+                      <p className="text-[11px] text-slate-500 flex items-center gap-1.5 truncate">
+                        <CalendarDays className="w-3.5 h-3.5 text-[#9A742B] shrink-0" />
+                        <span className="truncate">{item.published_date_text || 'เร็วๆ นี้'}</span>
+                      </p>
+                      <p className="text-[11px] text-slate-500 flex items-center gap-1.5 truncate">
+                        <MapPin className="w-3.5 h-3.5 text-[#9A742B] shrink-0" />
+                        <span className="truncate">{item.location_name}</span>
+                      </p>
+                      {hasSeatInfo && (
+                        <p className="text-[11px] font-semibold text-[#161C2C] flex items-center gap-1.5 tabular-nums">
+                          <Users className="w-3.5 h-3.5 text-[#9A742B] shrink-0" />
+                          <span>
+                            ผู้สมัคร {item.registered_count ?? 0}/{item.max_seats} ที่นั่ง
+                          </span>
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                      <Link
+                        href={`/events/${item.id}`}
+                        className="text-xs font-bold text-slate-500 hover:text-[#161C2C] transition"
+                      >
+                        รายละเอียด
+                      </Link>
+                      {isJoined ? (
+                        <Link
+                          href={`/events/${item.id}`}
+                          className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold"
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>สมัครแล้ว</span>
+                        </Link>
+                      ) : (
+                        <Link
+                          href={`/events/${item.id}?register=1`}
+                          className="inline-flex items-center gap-1 px-4 py-1.5 rounded-full luxury-gold-btn text-xs font-bold transition"
+                        >
+                          <span>สมัคร</span>
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="bg-white rounded-[22px] p-6 text-center shadow-[0_8px_24px_rgba(13,19,33,0.05)] text-xs text-slate-500">
+            <Clock className="w-7 h-7 text-slate-300 mx-auto mb-1.5" />
+            ยังไม่มีคอร์สหรือกิจกรรมเปิดรับสมัครในขณะนี้
+          </div>
+        )}
       </section>
 
       <WebLoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />

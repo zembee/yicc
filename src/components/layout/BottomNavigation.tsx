@@ -24,7 +24,7 @@ const LEFT_ITEMS: NavItem[] = [
 ];
 
 const RIGHT_ITEMS: NavItem[] = [
-  { label: 'ทำเนียบ', href: '/directory', icon: Users },
+  { label: 'Connect ธุรกิจ', href: '/directory', icon: Users },
   { label: 'โปรไฟล์', href: '/profile', icon: User },
 ];
 
@@ -118,8 +118,12 @@ export const BottomNavigation: React.FC = () => {
               >
                 <QrCode className="w-6 h-6 stroke-[2.1]" />
               </span>
-              <span className="text-[10px] mt-1 tracking-tight leading-none font-bold text-[#9A742B]">
-                QR บัตร
+              <span
+                className={`text-[10px] mt-1 tracking-tight leading-none font-bold transition-colors ${
+                  isQrSheetOpen ? 'text-[#1E2538]' : 'text-[#9A742B]'
+                }`}
+              >
+                QR และคูปอง
               </span>
             </button>
           </div>

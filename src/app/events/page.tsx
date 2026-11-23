@@ -13,8 +13,8 @@ type EventFilter = 'ALL' | 'GENERAL' | 'COURSE' | 'COMPLETED';
 
 const FILTER_TABS: { key: EventFilter; label: string }[] = [
   { key: 'ALL', label: 'ทั้งหมด' },
-  { key: 'GENERAL', label: 'กิจกรรมทั่วไป' },
   { key: 'COURSE', label: 'คอร์สเรียน' },
+  { key: 'GENERAL', label: 'กิจกรรม' },
   { key: 'COMPLETED', label: 'เช็กชื่อ / สำเร็จ' },
 ];
 
@@ -64,7 +64,7 @@ function EventsContent() {
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0">
               <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white truncate">
-                กิจกรรม <span className="font-light text-white/80 text-base sm:text-lg">&amp; คอร์สเรียน</span>
+                คอร์สเรียน <span className="font-light text-white/80 text-base sm:text-lg">และกิจกรรม</span>
               </h1>
               <p className="text-[11px] text-slate-300 mt-0.5 truncate">
                 หลักสูตรและกิจกรรมเครือข่าย Young FTI ELITE 11

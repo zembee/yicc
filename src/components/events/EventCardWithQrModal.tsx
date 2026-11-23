@@ -20,6 +20,12 @@ import { format, formatISO } from 'date-fns';
 import { th } from 'date-fns/locale';
 import { useLiffAuth } from '@/contexts/LiffContext';
 import { EventItem } from '@/types';
+import { getCourseSummary, readCourseSessionCheckins } from '@/lib/courseUtils';
+import {
+  MissionSubmissionRecord,
+  normalizeMissionRecords,
+  safeReadLocalStorage,
+} from '@/components/profile/profileUtils';
 
 interface Props {
   event: EventItem;
@@ -39,6 +45,23 @@ export const EventCardWithQrModal: React.FC<Props> = ({ event }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [countdown, setCountdown] = useState(30);
   const [timestampToken, setTimestampToken] = useState<number>(Date.now());
+  const [sessionCheckins, setSessionCheckins] = useState<Record<string, boolean>>({});
+  const [missionRecords, setMissionRecords] = useState<Record<string, MissionSubmissionRecord>>({});
+
+  useEffect(() => {
+    if (event.event_type !== 'course' || !event.sessions?.length) return;
+    setSessionCheckins(readCourseSessionCheckins(profile?.id));
+    const scopedKey = profile?.id ? `yfti_mission_submissions_${profile.id}` : null;
+    const rawScoped = scopedKey ? safeReadLocalStorage<unknown>(scopedKey, null) : null;
+    const rawLegacy =
+      rawScoped === null ? safeReadLocalStorage<unknown>('yfti_mission_submissions', null) : null;
+    setMissionRecords(normalizeMissionRecords(rawScoped ?? rawLegacy));
+  }, [event.event_type, event.sessions?.length, profile?.id]);
+
+  const courseSummary = useMemo(() => {
+    if (event.event_type !== 'course' || !event.sessions?.length) return null;
+    return getCourseSummary(event, sessionCheckins, missionRecords);
+  }, [event, sessionCheckins, missionRecords]);
 
   useEffect(() => {
     if (event.isRegisteredForEvent) {
@@ -198,6 +221,30 @@ export const EventCardWithQrModal: React.FC<Props> = ({ event }) => {
             <div className="flex items-center gap-1.5 text-xs text-slate-300">
               <MapPin className="w-3.5 h-3.5 text-[#ECD28E]/80 shrink-0" />
               <span className="truncate">{event.location_name}</span>
+            </div>
+          )}
+
+          {courseSummary && (
+            <div className="mt-2 p-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/12 space-y-1.5">
+              <div className="flex items-center justify-between text-[10px] font-bold">
+                <span className="text-[#ECD28E]">
+                  ความคืบหน้า {courseSummary.progressPercent}%
+                </span>
+                <span className="text-slate-200 tabular-nums">
+                  เข้าเรียน {courseSummary.attendedSessions}/{courseSummary.totalSessions} • ภารกิจ {courseSummary.completedMissions}/{courseSummary.totalMissions}
+                </span>
+              </div>
+              <div className="h-1.5 w-full rounded-full bg-white/15 overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-[#C5A059] to-[#ECD28E]"
+                  style={{ width: `${courseSummary.progressPercent}%` }}
+                />
+              </div>
+              {courseSummary.nextSession && (
+                <p className="text-[10px] text-slate-200 truncate">
+                  คลาสถัดไป: {courseSummary.nextSession.date_text} • {courseSummary.nextSession.title}
+                </p>
+              )}
             </div>
           )}
         </Link>
