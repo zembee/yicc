@@ -3,25 +3,324 @@
     "id": "e-up-1",
     "slug": "ai-industrial-transformation-course",
     "title": "คอร์สเรียน: AI & Automation for Modern Industry",
-    "description": "เจาะลึกการนำ AI และระบบอัตโนมัติมาประยุกต์ใช้จริงในโรงงานและธุรกิจอุตสาหกรรมยุคใหม่ พร้อม Workshop ลงมือปฏิบัติจริง",
+    "description": "หลักสูตรเข้มข้นสำหรับผู้บริหารรุ่นใหม่ในการวางกลยุทธ์ด้าน AI และ Smart Factory เพื่อลดต้นทุนและเพิ่มขีดความสามารถในการแข่งขันระดับสากล",
     "location_name": "สภาอุตสาหกรรมแห่งประเทศไทย (FTI Tower) ห้อง 801",
     "google_maps_url": "https://maps.app.goo.gl/fti-tower",
-    "start_time": "2026-12-05T09:00:00.000Z",
-    "end_time": "2026-12-05T16:30:00.000Z",
+    "start_time": "2026-12-05T09:00:00+07:00",
+    "end_time": "2026-12-19T16:30:00+07:00",
     "reward_points": 120,
     "reward_xp": 300,
     "is_mandatory": true,
     "status": "UPCOMING",
     "event_type": "course",
-    "fee_member": 1500,
-    "fee_guest": 2500,
+    "fee_member": 8900,
+    "fee_guest": 11900,
+    "max_seats": 60,
+    "registered_count": 46,
     "image_url": "https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/event_training.webp",
     "author_name": "YFTI Academy",
     "published_date_text": "5 ธันวาคม 2026",
+    "schedule_summary_text": "ทุกวันเสาร์ 5 – 19 ธ.ค. 2026",
+    "duration_summary_text": "09:00 – 16:30 น. · 3 ครั้ง (18 ชม.)",
+    "certificate_requirement_text": "เข้าเรียนอย่างน้อย 80% (ครบ 3 ครั้ง)",
     "content_paragraphs": [
       "หลักสูตรเข้มข้นสำหรับผู้บริหารรุ่นใหม่ในการวางกลยุทธ์ด้าน AI และ Smart Factory เพื่อลดต้นทุนและเพิ่มขีดความสามารถในการแข่งขันระดับสากล"
     ],
-    "isRegisteredForEvent": true
+    "isRegisteredForEvent": true,
+    "sessions": [
+      {
+        "id": "e-up-1-s1",
+        "session_number": 1,
+        "title": "Module 1: AI Strategy for Industrial Leaders",
+        "date_text": "5 ธ.ค. 2026",
+        "time_text": "09:00 – 12:00 น.",
+        "start_time": "2026-12-05T09:00:00+07:00",
+        "end_time": "2026-12-05T12:00:00+07:00",
+        "location_name": "FTI Tower ห้อง 801",
+        "instructor": "ดร.ปิยวัฒน์ วงศ์สุวรรณ",
+        "reward_points": 40,
+        "checkin_window_text": "08:30 – 09:30 น.",
+        "mission_deadline_text": "ส่งได้ถึง 5 ธ.ค. 23:59 น.",
+        "isCheckedIn": true,
+        "agenda": [
+          {
+            "time": "08:30",
+            "title": "ลงทะเบียนและเช็กชื่อเข้าคลาส"
+          },
+          {
+            "time": "09:00",
+            "title": "AI Landscape & Industrial Use Cases"
+          },
+          {
+            "time": "10:30",
+            "title": "Workshop: ประเมินความพร้อมองค์กรด้าน AI"
+          },
+          {
+            "time": "11:45",
+            "title": "สรุปแนวทางและมอบหมายภารกิจ"
+          }
+        ],
+        "missions": [
+          {
+            "id": "e-up-1-s1-m1",
+            "title": "สรุป Use Case AI สำหรับโรงงานของคุณ",
+            "description": "ถ่ายภาพเวิร์กชอปหรือสรุปแนวคิด AI ที่จะนำไปปรับใช้ในธุรกิจ 1 หน้า",
+            "reward_points": 30,
+            "reward_xp": 60,
+            "is_active": true,
+            "status": "APPROVED"
+          }
+        ]
+      },
+      {
+        "id": "e-up-1-s2",
+        "session_number": 2,
+        "title": "Module 2: Smart Factory & Automation Workshop",
+        "date_text": "12 ธ.ค. 2026",
+        "time_text": "09:00 – 16:30 น.",
+        "start_time": "2026-12-12T09:00:00+07:00",
+        "end_time": "2026-12-12T16:30:00+07:00",
+        "location_name": "FTI Tower ห้อง 801",
+        "instructor": "คุณธนกฤต อัครเดชา",
+        "reward_points": 40,
+        "checkin_window_text": "08:30 – 10:00 น.",
+        "mission_deadline_text": "ส่งได้ถึง 12 ธ.ค. 23:59 น.",
+        "isCheckedIn": false,
+        "agenda": [
+          {
+            "time": "09:00",
+            "title": "ลงทะเบียนและเช็กชื่อเข้าคลาส"
+          },
+          {
+            "time": "09:30",
+            "title": "Smart Factory Overview & Case Study"
+          },
+          {
+            "time": "13:00",
+            "title": "Workshop: ออกแบบ Workflow อัตโนมัติ"
+          },
+          {
+            "time": "16:00",
+            "title": "นำเสนอผลงานกลุ่มและสรุปคลาส"
+          }
+        ],
+        "missions": [
+          {
+            "id": "e-up-1-s2-m1",
+            "title": "ภารกิจออกแบบ Workflow อัตโนมัติประจำคลาส",
+            "description": "ส่งภาพผัง Workflow ที่ออกแบบร่วมกับกลุ่มในคลาสเรียน",
+            "reward_points": 40,
+            "reward_xp": 80,
+            "is_active": true,
+            "status": "NOT_STARTED"
+          }
+        ]
+      },
+      {
+        "id": "e-up-1-s3",
+        "session_number": 3,
+        "title": "Module 3: Capstone Pitching & Executive Demo",
+        "date_text": "19 ธ.ค. 2026",
+        "time_text": "13:00 – 16:30 น.",
+        "start_time": "2026-12-19T13:00:00+07:00",
+        "end_time": "2026-12-19T16:30:00+07:00",
+        "location_name": "FTI Tower ห้องประชุมใหญ่",
+        "instructor": "คณะกรรมการ YFTI Academy",
+        "reward_points": 40,
+        "checkin_window_text": "12:30 – 13:30 น.",
+        "mission_deadline_text": "ส่งได้ถึง 19 ธ.ค. 23:59 น.",
+        "isCheckedIn": false,
+        "agenda": [
+          {
+            "time": "13:00",
+            "title": "ลงทะเบียนและเช็กชื่อเข้าคลาส"
+          },
+          {
+            "time": "13:30",
+            "title": "ซ้อมนำเสนอแผนงาน AI Transformation"
+          },
+          {
+            "time": "14:30",
+            "title": "Capstone Pitching & Executive Feedback"
+          },
+          {
+            "time": "16:00",
+            "title": "สรุปหลักสูตรและมอบประกาศนียบัตร"
+          }
+        ],
+        "missions": [
+          {
+            "id": "e-up-1-s3-m1",
+            "title": "ภารกิจนำเสนอแผน AI Roadmap",
+            "description": "ส่งภาพขณะนำเสนอโปรเจกต์จบหลักสูตรหน้าชั้นเรียน",
+            "reward_points": 50,
+            "reward_xp": 100,
+            "is_active": true,
+            "status": "NOT_STARTED"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "e-up-esg",
+    "slug": "esg-sustainability-strategy-for-industry",
+    "title": "ESG & Sustainability Strategy for Industry",
+    "description": "หลักสูตรเชิงปฏิบัติสำหรับเจ้าของธุรกิจและผู้บริหารรุ่นใหม่ ที่ต้องการวางกลยุทธ์ ESG ให้ธุรกิจอุตสาหกรรมพร้อมรับเกณฑ์ใหม่ของคู่ค้าและตลาดส่งออก จบคอร์สพร้อมแผน ESG ของธุรกิจตัวเอง",
+    "location_name": "สภาอุตสาหกรรมแห่งประเทศไทย (FTI Tower)",
+    "google_maps_url": "https://maps.app.goo.gl/fti-tower",
+    "start_time": "2027-01-15T09:00:00+07:00",
+    "end_time": "2027-02-19T16:00:00+07:00",
+    "reward_points": 200,
+    "reward_xp": 400,
+    "is_mandatory": false,
+    "status": "UPCOMING",
+    "event_type": "course",
+    "fee_member": 12900,
+    "fee_guest": 15900,
+    "max_seats": 30,
+    "registered_count": 18,
+    "image_url": "https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/hero_leaders.webp",
+    "author_name": "YFTI Academy",
+    "published_date_text": "เริ่ม ศ. 15 ม.ค. 2027",
+    "registration_deadline_text": "ปิดรับสมัคร ศ. 8 ม.ค. 2027 หรือจนกว่าที่นั่งจะเต็ม",
+    "schedule_summary_text": "ทุกวันศุกร์ 15 ม.ค. – 19 ก.พ. 2027",
+    "duration_summary_text": "09:00 – 16:00 น. · 6 ครั้ง (36 ชม.)",
+    "certificate_requirement_text": "เข้าเรียนอย่างน้อย 5 จาก 6 ครั้ง",
+    "learning_outcomes": [
+      "เข้าใจกรอบ ESG และมาตรฐานที่ลูกค้าต่างประเทศเริ่มบังคับใช้",
+      "คำนวณ Carbon Footprint ขององค์กรและเตรียมรับ CBAM",
+      "วางแผนลดต้นทุนพลังงานและของเสียในโรงงาน",
+      "จัดทำแผน ESG ของธุรกิจตัวเองพร้อมนำเสนอ"
+    ],
+    "interest_topics": [
+      "Carbon Footprint",
+      "CBAM / การส่งออก",
+      "Green Factory",
+      "Supply Chain",
+      "Green Finance"
+    ],
+    "speakers": [
+      {
+        "name": "ดร. พิมพ์ชนก วงศ์ไพศาล",
+        "role": "ผู้เชี่ยวชาญด้าน Carbon Accounting",
+        "sessions_label": "ครั้งที่ 1–2"
+      },
+      {
+        "name": "คุณเจษฎา อรุณเลิศ",
+        "role": "ผู้อำนวยการฝ่ายความยั่งยืน กลุ่มอุตสาหกรรมพลาสติก",
+        "sessions_label": "ครั้งที่ 3–6"
+      }
+    ],
+    "faqs": [
+      {
+        "question": "ถ้าเข้าเรียนไม่ครบทุกครั้งทำอย่างไร",
+        "answer": "ผู้เรียนสามารถดาวน์โหลดเอกสารประกอบการเรียนได้ครบทุกครั้ง และยังมีสิทธิ์รับใบประกาศนียบัตรเมื่อเข้าเรียนอย่างน้อย 5 จาก 6 ครั้ง (≥ 80%)"
+      },
+      {
+        "question": "ขอใบกำกับภาษีในนามบริษัทได้ไหม",
+        "answer": "สามารถออกใบเสร็จรับเงินและใบกำกับภาษีเต็มรูปแบบในนามนิติบุคคลหรือบุคคลธรรมดาได้ โดยระบุข้อมูลในขั้นตอนสมัครเรียน"
+      },
+      {
+        "question": "ยกเลิกหรือโอนสิทธิ์ให้ผู้อื่นได้หรือไม่",
+        "answer": "สามารถแจ้งโอนสิทธิ์ให้ผู้บริหารในองค์กรเดียวกันหรือสมาชิก YFTI ท่านอื่นได้ล่วงหน้าอย่างน้อย 5 วันทำการก่อนเริ่มคลาสแรก"
+      }
+    ],
+    "content_paragraphs": [
+      "หลักสูตรเชิงปฏิบัติสำหรับเจ้าของธุรกิจและผู้บริหารรุ่นใหม่ ที่ต้องการวางกลยุทธ์ ESG ให้ธุรกิจอุตสาหกรรมพร้อมรับเกณฑ์ใหม่ของคู่ค้าและตลาดส่งออก จบคอร์สพร้อมแผน ESG ของธุรกิจตัวเอง"
+    ],
+    "isRegisteredForEvent": false,
+    "sessions": [
+      {
+        "id": "e-up-esg-s1",
+        "session_number": 1,
+        "title": "ESG 101: ทำไมอุตสาหกรรมต้องเปลี่ยน",
+        "date_text": "ศ. 15 ม.ค. 2027",
+        "time_text": "09:00 – 16:00 น.",
+        "start_time": "2027-01-15T09:00:00+07:00",
+        "end_time": "2027-01-15T16:00:00+07:00",
+        "location_name": "FTI Tower ห้อง 801",
+        "instructor": "ดร. พิมพ์ชนก วงศ์ไพศาล",
+        "reward_points": 30,
+        "isCheckedIn": false,
+        "missions": [
+          {
+            "id": "e-up-esg-s1-m1",
+            "title": "ประเมินความเสี่ยง ESG เบื้องต้นของบริษัท",
+            "description": "ส่งแบบประเมิน ESG Readiness ของธุรกิจคุณ",
+            "reward_points": 20,
+            "reward_xp": 50,
+            "is_active": true,
+            "status": "NOT_STARTED"
+          }
+        ]
+      },
+      {
+        "id": "e-up-esg-s2",
+        "session_number": 2,
+        "title": "Carbon Footprint & CBAM สำหรับผู้ส่งออก",
+        "date_text": "ศ. 22 ม.ค. 2027",
+        "time_text": "09:00 – 16:00 น.",
+        "start_time": "2027-01-22T09:00:00+07:00",
+        "end_time": "2027-01-22T16:00:00+07:00",
+        "location_name": "FTI Tower ห้อง 801",
+        "instructor": "ดร. พิมพ์ชนก วงศ์ไพศาล",
+        "reward_points": 30,
+        "isCheckedIn": false
+      },
+      {
+        "id": "e-up-esg-s3",
+        "session_number": 3,
+        "title": "Green Factory: พลังงานและการจัดการของเสีย",
+        "date_text": "ศ. 29 ม.ค. 2027",
+        "time_text": "09:00 – 16:00 น.",
+        "start_time": "2027-01-29T09:00:00+07:00",
+        "end_time": "2027-01-29T16:00:00+07:00",
+        "location_name": "FTI Tower ห้อง 801",
+        "instructor": "คุณเจษฎา อรุณเลิศ",
+        "reward_points": 30,
+        "isCheckedIn": false
+      },
+      {
+        "id": "e-up-esg-s4",
+        "session_number": 4,
+        "title": "Sustainable Supply Chain",
+        "date_text": "ศ. 5 ก.พ. 2027",
+        "time_text": "09:00 – 16:00 น.",
+        "start_time": "2027-02-05T09:00:00+07:00",
+        "end_time": "2027-02-05T16:00:00+07:00",
+        "location_name": "FTI Tower ห้อง 801",
+        "instructor": "คุณเจษฎา อรุณเลิศ",
+        "reward_points": 30,
+        "isCheckedIn": false
+      },
+      {
+        "id": "e-up-esg-s5",
+        "session_number": 5,
+        "title": "Sustainability Reporting & Green Finance",
+        "date_text": "ศ. 12 ก.พ. 2027",
+        "time_text": "09:00 – 16:00 น.",
+        "start_time": "2027-02-12T09:00:00+07:00",
+        "end_time": "2027-02-12T16:00:00+07:00",
+        "location_name": "FTI Tower ห้อง 801",
+        "instructor": "คุณเจษฎา อรุณเลิศ",
+        "reward_points": 40,
+        "isCheckedIn": false
+      },
+      {
+        "id": "e-up-esg-s6",
+        "session_number": 6,
+        "title": "Pitch Day: นำเสนอแผน ESG ของธุรกิจ",
+        "date_text": "ศ. 19 ก.พ. 2027",
+        "time_text": "09:00 – 16:00 น.",
+        "start_time": "2027-02-19T09:00:00+07:00",
+        "end_time": "2027-02-19T16:00:00+07:00",
+        "location_name": "FTI Tower ห้องประชุมใหญ่",
+        "instructor": "คุณเจษฎา อรุณเลิศ",
+        "reward_points": 40,
+        "isCheckedIn": false
+      }
+    ]
   },
   {
     "id": "e-up-2",
@@ -30,20 +329,99 @@
     "description": "กลยุทธ์การบริหารจัดการซัพพลายเชนระดับโลกและการปรับตัวสู่ธุรกิจคาร์บอนต่ำสำหรับผู้ประกอบการอุตสาหกรรม",
     "location_name": "โรงแรมสยาม เคมปินสกี้ กรุงเทพฯ",
     "google_maps_url": "https://maps.app.goo.gl/siam-kempinski",
-    "start_time": "2026-12-12T09:00:00.000Z",
-    "end_time": "2026-12-12T17:00:00.000Z",
+    "start_time": "2026-12-12T09:00:00+07:00",
+    "end_time": "2026-12-18T17:00:00+07:00",
     "reward_points": 120,
     "reward_xp": 280,
     "is_mandatory": false,
     "status": "UPCOMING",
     "event_type": "course",
-    "fee_member": 1900,
-    "fee_guest": 3200,
-    "image_url": "https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/hero_leaders.webp",
+    "fee_member": 9900,
+    "fee_guest": 12900,
+    "max_seats": 50,
+    "registered_count": 34,
+    "image_url": "https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/DSC00451-scaled.webp",
     "author_name": "YFTI Academy",
     "published_date_text": "12 ธันวาคม 2026",
+    "registration_deadline_text": "ปิดรับสมัคร ศ. 5 ธ.ค. 2026 หรือจนกว่าที่นั่งจะเต็ม",
+    "schedule_summary_text": "12 และ 18 ธ.ค. 2026",
+    "duration_summary_text": "09:00 – 17:00 น. · 2 ครั้ง (12 ชม.)",
+    "certificate_requirement_text": "เข้าเรียนครบทั้ง 2 ครั้ง",
+    "learning_outcomes": [
+      "บริหารความเสี่ยงซัพพลายเชนข้ามประเทศในยุคภูมิรัฐศาสตร์ผันผวน",
+      "เชื่อมต่อพันธมิตรโลจิสติกส์และผู้ผลิตในเครือข่าย ส.อ.ท.",
+      "วางโครงสร้างการจัดซื้อสีเขียว (Green Procurement)"
+    ],
+    "interest_topics": [
+      "Global Sourcing",
+      "Logistics Cost",
+      "Green Supply Chain",
+      "Risk Management"
+    ],
+    "speakers": [
+      {
+        "name": "รศ.ดร.สมชาย วัฒนากูล",
+        "role": "ที่ปรึกษาด้าน Global Supply Chain Strategy",
+        "sessions_label": "ครั้งที่ 1"
+      },
+      {
+        "name": "คุณณัฐวุฒิ เจริญสุข",
+        "role": "ผู้บริหารด้านความยั่งยืนและโลจิสติกส์สากล",
+        "sessions_label": "ครั้งที่ 2"
+      }
+    ],
     "content_paragraphs": [
-      "เรียนรู้แนวทาง ESG ที่เป็นมาตรฐานสากลจากผู้เชี่ยวชาญ พร้อมกรณีศึกษาจริงจากบริษัทในเครือสภาอุตสาหกรรมฯ"
+      "เรียนรู้แนวทางบริหารซัพพลายเชนและ ESG ที่เป็นมาตรฐานสากลจากผู้เชี่ยวชาญ พร้อมกรณีศึกษาจริงจากบริษัทในเครือสภาอุตสาหกรรมฯ"
+    ],
+    "sessions": [
+      {
+        "id": "e-up-2-s1",
+        "session_number": 1,
+        "title": "Module 1: Global Supply Chain Resilience",
+        "date_text": "12 ธ.ค. 2026",
+        "time_text": "09:00 – 12:00 น.",
+        "start_time": "2026-12-12T09:00:00+07:00",
+        "end_time": "2026-12-12T12:00:00+07:00",
+        "location_name": "โรงแรมสยาม เคมปินสกี้ กรุงเทพฯ",
+        "instructor": "รศ.ดร.สมชาย วัฒนากูล",
+        "reward_points": 60,
+        "isCheckedIn": false,
+        "missions": [
+          {
+            "id": "e-up-2-s1-m1",
+            "title": "วิเคราะห์ Supply Chain Risk ขององค์กร",
+            "description": "ถ่ายภาพ Canvas การวิเคราะห์ความเสี่ยงซัพพลายเชน",
+            "reward_points": 40,
+            "reward_xp": 80,
+            "is_active": true,
+            "status": "NOT_STARTED"
+          }
+        ]
+      },
+      {
+        "id": "e-up-2-s2",
+        "session_number": 2,
+        "title": "Module 2: Net Zero & ESG Reporting",
+        "date_text": "18 ธ.ค. 2026",
+        "time_text": "13:00 – 17:00 น.",
+        "start_time": "2026-12-18T13:00:00+07:00",
+        "end_time": "2026-12-18T17:00:00+07:00",
+        "location_name": "โรงแรมสยาม เคมปินสกี้ กรุงเทพฯ",
+        "instructor": "คุณณัฐวุฒิ เจริญสุข",
+        "reward_points": 60,
+        "isCheckedIn": false,
+        "missions": [
+          {
+            "id": "e-up-2-s2-m1",
+            "title": "แผนลด Carbon Footprint ประจำคลาส",
+            "description": "อัปโหลดภาพเป้าหมาย ESG ระยะ 1 ปีของบริษัท",
+            "reward_points": 40,
+            "reward_xp": 80,
+            "is_active": true,
+            "status": "NOT_STARTED"
+          }
+        ]
+      }
     ]
   },
   {
@@ -62,6 +440,8 @@
     "event_type": "general",
     "fee_member": 1200,
     "fee_guest": 2200,
+    "max_seats": 120,
+    "registered_count": 94,
     "image_url": "https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/home/Young-FTI-11-979-scaled-e1779826560403-1536x863.webp",
     "author_name": "YFTI Committee",
     "published_date_text": "19 ธันวาคม 2026",

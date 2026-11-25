@@ -44,6 +44,23 @@ export interface CourseSessionMission {
   status?: SubmissionStatus | 'NOT_STARTED';
 }
 
+export interface CourseAgendaItem {
+  time: string;
+  title: string;
+}
+
+export interface CourseSpeaker {
+  name: string;
+  role: string;
+  sessions_label?: string;
+  image_url?: string;
+}
+
+export interface CourseFaqItem {
+  question: string;
+  answer: string;
+}
+
 export interface CourseSession {
   id: string;
   session_number: number;
@@ -56,6 +73,9 @@ export interface CourseSession {
   instructor?: string;
   reward_points: number;
   isCheckedIn?: boolean;
+  checkin_window_text?: string;
+  mission_deadline_text?: string;
+  agenda?: CourseAgendaItem[];
   missions?: CourseSessionMission[];
 }
 
@@ -86,6 +106,16 @@ export interface EventItem {
   registered_count?: number;
   sessions?: CourseSession[];
   is_sample_schedule?: boolean;
+  schedule_summary_text?: string;
+  duration_summary_text?: string;
+  certificate_requirement_text?: string;
+  registration_deadline_text?: string;
+  learning_outcomes?: string[];
+  interest_topics?: string[];
+  speakers?: CourseSpeaker[];
+  faqs?: CourseFaqItem[];
+  contact_phone?: string;
+  contact_line?: string;
 }
 
 export interface Mission {

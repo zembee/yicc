@@ -24,7 +24,7 @@ const LEFT_ITEMS: NavItem[] = [
 ];
 
 const RIGHT_ITEMS: NavItem[] = [
-  { label: 'Connect ธุรกิจ', href: '/directory', icon: Users },
+  { label: 'เครือข่ายธุรกิจ', href: '/directory', icon: Users },
   { label: 'โปรไฟล์', href: '/profile', icon: User },
 ];
 

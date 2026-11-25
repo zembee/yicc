@@ -197,13 +197,26 @@ function DirectoryContent() {
 
   useEffect(() => {
     const indParam = searchParams?.get('industry');
+    const catParam = searchParams?.get('category');
     const qParam = searchParams?.get('q') || searchParams?.get('search');
-    if (indParam) {
+    if (catParam) {
+      const matchedCat = BUSINESS_CATEGORIES.find(
+        (bc) => bc.value === catParam || bc.label.includes(catParam)
+      );
+      if (matchedCat) {
+        setSelectedCategory(matchedCat.value);
+        setSelectedIndustry('ALL');
+        setSearchQuery('');
+      } else {
+        setSearchQuery(catParam);
+      }
+    } else if (indParam) {
       const matched = INDUSTRY_GROUPS.find(
         (ig) => ig.value === indParam || ig.label.includes(indParam)
       );
       if (matched) {
         setSelectedIndustry(matched.value);
+        setSelectedCategory('ALL');
         setSearchQuery('');
       } else {
         setSearchQuery(indParam);
@@ -352,6 +365,14 @@ function DirectoryContent() {
         const target = selectedCategory.toLowerCase().replace(/[\s\-_]/g, '');
         const pCat = (p.business_categories || '').toLowerCase().replace(/[\s\-_]/g, '');
         const pCatLabel = (p.business_categories_label || '').toLowerCase().replace(/[\s\-_]/g, '');
+        if (selectedCategory === 'medicine') {
+          return (
+            pCat.includes('medicine') ||
+            pCat.includes('medical') ||
+            pCatLabel.includes('แพทย์') ||
+            pCatLabel.includes('ยา')
+          );
+        }
         return (pCat && (pCat.includes(target) || target.includes(pCat))) ||
                (pCatLabel && (pCatLabel.includes(target) || target.includes(pCatLabel)));
       })();
@@ -628,8 +649,8 @@ function DirectoryContent() {
             </div>
           )}
 
-      {/* 3. Committee Section (กรรมการ) */}
-      {committeeMembers.length > 0 && (
+      {/* 3. Committee Section (กรรมการ — แสดงเฉพาะตอนเลือก "ทั้งหมด" เท่านั้น) */}
+      {!hasActiveFilters && committeeMembers.length > 0 && (
         <section className="space-y-3">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2.5">

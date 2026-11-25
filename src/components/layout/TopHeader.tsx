@@ -27,8 +27,8 @@ export const TopHeader: React.FC = () => {
   const navLinks = [
     { label: 'หน้าแรก', href: '/' },
     { label: 'สิทธิพิเศษ', href: '/privileges' },
-    { label: 'ทำเนียบธุรกิจ', href: '/directory' },
-    { label: 'กิจกรรม', href: '/events' },
+    { label: 'เครือข่ายธุรกิจ', href: '/directory' },
+    { label: 'คอร์สเรียนและกิจกรรม', href: '/events' },
     { label: 'โปรไฟล์', href: '/profile' },
   ];
 

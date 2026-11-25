@@ -224,7 +224,7 @@ export const EventCardWithQrModal: React.FC<Props> = ({ event }) => {
             </div>
           )}
 
-          {courseSummary && (
+          {courseSummary && isRegistered && (
             <div className="mt-2 p-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/12 space-y-1.5">
               <div className="flex items-center justify-between text-[10px] font-bold">
                 <span className="text-[#ECD28E]">
@@ -247,28 +247,53 @@ export const EventCardWithQrModal: React.FC<Props> = ({ event }) => {
               )}
             </div>
           )}
+
+          {event.event_type === 'course' && !isRegistered && event.status === 'UPCOMING' && (
+            <div className="mt-2 p-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/12 flex items-center justify-between gap-2 text-[11px]">
+              <span className="font-bold text-white tabular-nums">
+                {event.fee_member ? `฿${event.fee_member.toLocaleString()}` : 'เรียนฟรี'}
+                <span className="text-[10px] font-normal text-slate-300 ml-1">
+                  · {event.sessions?.length || 1} ครั้ง
+                </span>
+              </span>
+              {typeof event.max_seats === 'number' && (
+                <span className="text-[10px] font-bold text-[#ECD28E] tabular-nums">
+                  เหลือ {Math.max(0, event.max_seats - (event.registered_count ?? 0))}/{event.max_seats} ที่นั่ง
+                </span>
+              )}
+            </div>
+          )}
         </Link>
 
         {/* Action Buttons Row */}
         <div className="flex items-center gap-2 pt-2.5 border-t border-white/12">
-          <a
-            href={googleCalendarUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-white/12 hover:bg-white/20 backdrop-blur-sm text-xs font-bold text-white whitespace-nowrap transition"
-          >
-            <ExternalLink className="w-3.5 h-3.5 text-[#ECD28E]" />
-            <span>ลงปฏิทิน</span>
-          </a>
+          {event.event_type === 'course' && !isRegistered && event.status === 'UPCOMING' ? (
+            <Link
+              href={`/events/${event.id}`}
+              className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-white/12 hover:bg-white/20 backdrop-blur-sm text-xs font-bold text-white whitespace-nowrap transition"
+            >
+              <span>ดูหลักสูตร</span>
+            </Link>
+          ) : (
+            <a
+              href={googleCalendarUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-white/12 hover:bg-white/20 backdrop-blur-sm text-xs font-bold text-white whitespace-nowrap transition"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-[#ECD28E]" />
+              <span>ลงปฏิทิน</span>
+            </a>
+          )}
 
           {/* Not Registered -> Navigate to registration & slip upload form */}
           {!event.isCheckedIn && event.status === 'UPCOMING' && (regStatus === 'NONE' || regStatus === 'REJECTED') && (
             <Link
               href={`/events/${event.id}?register=1`}
-              className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl luxury-gold-btn text-xs font-bold whitespace-nowrap transition"
+              className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl luxury-gold-btn !text-[#12192B] text-xs font-extrabold whitespace-nowrap transition"
             >
               <UserCheck className="w-3.5 h-3.5" />
-              <span>สมัครเข้าร่วม</span>
+              <span>{event.event_type === 'course' ? 'สมัครเรียน' : 'สมัครเข้าร่วม'}</span>
             </Link>
           )}
 
