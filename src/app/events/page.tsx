@@ -268,11 +268,20 @@ function EventsContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allEvents, registeredEventIds, q]);
 
-  // 4. Featured / All Activities (กิจกรรมที่น่าสนใจ)
+  // 4. Featured / All Activities (กิจกรรมอื่นๆ ที่น่าสนใจ)
   const featuredActivities = useMemo(() => {
-    return allEvents.filter((ev) => ev.event_type !== 'course' && matchesQuery(ev));
+    const list = allEvents.filter((ev) => ev.event_type !== 'course' && matchesQuery(ev));
+    return [...list].sort((a, b) => {
+      if (a.status === 'UPCOMING' && b.status !== 'UPCOMING') return -1;
+      if (a.status !== 'UPCOMING' && b.status === 'UPCOMING') return 1;
+      const aUnreg = !a.isRegisteredForEvent && !registeredEventIds.includes(String(a.id));
+      const bUnreg = !b.isRegisteredForEvent && !registeredEventIds.includes(String(b.id));
+      if (aUnreg && !bUnreg) return -1;
+      if (!aUnreg && bUnreg) return 1;
+      return 0;
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allEvents, q]);
+  }, [allEvents, registeredEventIds, q]);
 
   // Aggregate Header Stats
   const stats = useMemo(() => {
@@ -758,12 +767,12 @@ function EventsContent() {
           </section>
         )}
 
-        {/* SECTION 4: กิจกรรมที่น่าสนใจ */}
+        {/* SECTION 4: กิจกรรมอื่นๆ ที่น่าสนใจ */}
         {featuredActivities.length > 0 && (
           <section className="space-y-3">
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-base sm:text-lg font-extrabold text-[#161C2C]">
-                กิจกรรมที่น่าสนใจ
+                กิจกรรมอื่นๆ ที่น่าสนใจ
               </h2>
               {featuredActivities.length > 3 && (
                 <button
@@ -777,47 +786,61 @@ function EventsContent() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
-              {visibleActivities.map((ev) => (
-                <Link
-                  key={ev.id}
-                  href={`/events/${ev.id}`}
-                  className="relative h-[214px] sm:h-[232px] rounded-[24px] overflow-hidden bg-[#1A243B] shadow-[0_8px_24px_rgba(13,19,33,0.12)] hover:shadow-[0_14px_32px_rgba(13,19,33,0.18)] hover:-translate-y-0.5 transition-all duration-300 block group"
-                >
-                  {ev.image_url && (
-                    <img
-                      src={ev.image_url}
-                      alt={ev.title}
-                      loading="lazy"
-                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              {visibleActivities.map((ev) => {
+                const isRegistered =
+                  Boolean(ev.isRegisteredForEvent) ||
+                  Boolean(ev.isCheckedIn) ||
+                  registeredEventIds.includes(String(ev.id));
+
+                return (
+                  <Link
+                    key={ev.id}
+                    href={`/events/${ev.id}`}
+                    className="relative h-[214px] sm:h-[232px] rounded-[24px] overflow-hidden bg-[#1A243B] shadow-[0_8px_24px_rgba(13,19,33,0.12)] hover:shadow-[0_14px_32px_rgba(13,19,33,0.18)] hover:-translate-y-0.5 transition-all duration-300 block group"
+                  >
+                    {ev.image_url && (
+                      <img
+                        src={ev.image_url}
+                        alt={ev.title}
+                        loading="lazy"
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    )}
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        background:
+                          'linear-gradient(180deg, rgba(11,16,29,0.28) 0%, rgba(11,16,29,0.35) 42%, rgba(9,14,26,0.95) 100%)',
+                      }}
                     />
-                  )}
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background:
-                        'linear-gradient(180deg, rgba(11,16,29,0.28) 0%, rgba(11,16,29,0.35) 42%, rgba(9,14,26,0.95) 100%)',
-                    }}
-                  />
 
-                  <div className="relative z-10 h-full p-4 sm:p-5 flex flex-col justify-between text-white">
-                    <div>
-                      <span className="px-3 py-1 rounded-full bg-[#0D1321]/80 backdrop-blur-md text-white text-[10px] font-bold">
-                        {ev.is_mandatory ? 'วิชาบังคับ' : 'กิจกรรมทั่วไป'}
-                      </span>
-                    </div>
+                    <div className="relative z-10 h-full p-4 sm:p-5 flex flex-col justify-between text-white">
+                      <div>
+                        <span className="px-3 py-1 rounded-full bg-[#0D1321]/80 backdrop-blur-md text-white text-[10px] font-bold">
+                          {ev.is_mandatory ? 'วิชาบังคับ' : 'กิจกรรมทั่วไป'}
+                        </span>
+                      </div>
 
-                    <div className="space-y-1">
-                      <p className="text-xs font-extrabold text-[#ECD28E] tabular-nums">
-                        {ev.published_date_text || '2026'} · +{ev.reward_points} Pts
-                      </p>
-                      <h3 className="text-base sm:text-lg font-extrabold text-white leading-snug line-clamp-2 group-hover:text-[#ECD28E] transition-colors">
-                        {ev.title}
-                      </h3>
-                      <p className="text-xs text-slate-300 truncate">{ev.location_name}</p>
+                      <div className="space-y-1.5">
+                        <p className="text-xs font-extrabold text-[#ECD28E] tabular-nums">
+                          {ev.published_date_text || '2026'} · +{ev.reward_points} Pts
+                        </p>
+                        <h3 className="text-base sm:text-lg font-extrabold text-white leading-snug line-clamp-2 group-hover:text-[#ECD28E] transition-colors">
+                          {ev.title}
+                        </h3>
+                        <div className="flex items-center justify-between gap-2 pt-0.5">
+                          <p className="text-xs text-slate-300 truncate min-w-0">
+                            {ev.location_name}
+                          </p>
+                          <span className="px-3.5 py-1.5 rounded-xl luxury-gold-btn !text-[#12192B] text-xs font-extrabold shrink-0 shadow-sm transition group-hover:brightness-105">
+                            {ev.status === 'UPCOMING' && !isRegistered ? 'สมัครเลย' : 'ดูข้อมูล'}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           </section>
         )}

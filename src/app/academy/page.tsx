@@ -461,7 +461,7 @@ export default function AcademyPage() {
           <div>
             <h2 className="text-xl font-extrabold text-[#1E2538] flex items-center gap-2">
               <Trophy className="w-5 h-5 text-amber-500" />
-              <span>House Leaderboard (9 ดวงดาว)</span>
+              <span>อันดับคะแนนกลุ่มดาว (9 ดวงดาว)</span>
             </h2>
             <p className="text-xs text-slate-500">ตารางคะแนนรวมและอันดับการร่วมกิจกรรมประจำรุ่น YFTI 11</p>
           </div>
@@ -491,7 +491,7 @@ export default function AcademyPage() {
                 </span>
                 <div>
                   <p className="font-bold text-xs sm:text-sm text-[#1E2538]">{house.name}</p>
-                  <p className="text-[10px] text-slate-400">House Group</p>
+                  <p className="text-[10px] text-slate-400">กลุ่มดาว</p>
                 </div>
               </div>
               <span className="font-mono font-black text-xs sm:text-sm text-[#1E2538]">

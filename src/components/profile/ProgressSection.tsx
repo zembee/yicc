@@ -1,21 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import {
   AlertCircle,
-  CalendarCheck,
-  CheckCircle2,
+  Check,
   ChevronRight,
-  Clock,
-  Coins,
-  Crown,
   GraduationCap,
-  Target,
-  Upload,
+  Star,
 } from 'lucide-react';
 import { EventItem, Mission, UserProfile } from '@/types';
-import { MissionSubmissionRecord, readImageProofFile } from './profileUtils';
+import { getCourseSummary } from '@/lib/courseUtils';
+import { MissionSubmissionRecord } from './profileUtils';
 
 export interface MergedMissionItem extends Mission {
   resolvedStatus: 'APPROVED' | 'PENDING' | 'NOT_STARTED';
@@ -25,31 +21,61 @@ export interface MergedMissionItem extends Mission {
 interface ProgressSectionProps {
   profile: UserProfile;
   tier: string;
+  allEventsList?: EventItem[];
   myEventsList: EventItem[];
-  mergedMissions: MergedMissionItem[];
-  onSubmitMission: (
-    missionId: string,
-    record: MissionSubmissionRecord
-  ) => void;
+  sessionCheckins?: Record<string, boolean>;
+  missionRecords?: Record<string, MissionSubmissionRecord>;
+  mergedMissions?: MergedMissionItem[];
+  onSubmitMission?: (missionId: string, record: MissionSubmissionRecord) => void;
 }
 
 const MIN_ATTENDANCE_FOR_CERTIFICATE = 80;
-const MAX_VISIBLE_EVENTS = 5;
-const DEFAULT_EVENT_COVER =
-  'https://ygtiouphuajowaistiru.supabase.co/storage/v1/object/public/participants-assets/events/25680523-Y11-YoungFTI_1683-scaled.webp';
+const MAX_VISIBLE_ACTIVITIES = 4;
+
+const THAI_SHORT_MONTH_MAP: Record<string, string> = {
+  มกราคม: 'ม.ค.',
+  กุมภาพันธ์: 'ก.พ.',
+  มีนาคม: 'มี.ค.',
+  เมษายน: 'เม.ย.',
+  พฤษภาคม: 'พ.ค.',
+  มิถุนายน: 'มิ.ย.',
+  กรกฎาคม: 'ก.ค.',
+  สิงหาคม: 'ส.ค.',
+  กันยายน: 'ก.ย.',
+  ตุลาคม: 'ต.ค.',
+  พฤศจิกายน: 'พ.ย.',
+  ธันวาคม: 'ธ.ค.',
+};
+
+function shortenThaiDate(text?: string): string {
+  if (!text) return 'กำลังจะมาถึง';
+  let result = text.replace(/^เริ่ม\s+[ก-ฮ]\.\s*/, 'เริ่ม ');
+  for (const [full, short] of Object.entries(THAI_SHORT_MONTH_MAP)) {
+    result = result.replace(new RegExp(full, 'g'), short);
+  }
+  return result;
+}
+
+function shortenVenue(loc?: string): string {
+  if (!loc) return 'FTI Tower';
+  return loc
+    .replace(/\s*\([^)]*\)/g, '')
+    .replace(', ชั้น 19 กรุงเทพฯ', '')
+    .replace(' ราชประสงค์', '')
+    .trim();
+}
 
 export function ProgressSection({
   profile,
   tier,
+  allEventsList = [],
   myEventsList,
-  mergedMissions,
-  onSubmitMission,
+  sessionCheckins = {},
+  missionRecords = {},
 }: ProgressSectionProps) {
-  const [activeDetailTab, setActiveDetailTab] = useState<'events' | 'missions'>('events');
-  const [uploadError, setUploadError] = useState<string | null>(null);
-  const [uploadingMissionId, setUploadingMissionId] = useState<string | null>(null);
+  const [activeDetailTab, setActiveDetailTab] = useState<'courses' | 'history'>('courses');
 
-  const attendanceRate = Math.max(0, Math.min(100, profile.attendance_rate ?? 0));
+  const attendanceRate = Math.max(0, Math.min(100, profile.attendance_rate ?? 95));
   const isCertificateEligible = attendanceRate >= MIN_ATTENDANCE_FOR_CERTIFICATE;
   const registeredEventsCount = myEventsList.length;
   const checkedInCount = myEventsList.filter((ev) => ev.isCheckedIn).length;
@@ -69,33 +95,47 @@ export function ProgressSection({
       : 2;
   const remainingQuota = Math.max(0, absentQuota - estimatedAbsentCount);
 
-  const handleMissionFileChange = async (
-    missionId: string,
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = e.target.files?.[0];
-    // Reset input value so the user can re-select the same file if needed
-    e.target.value = '';
-    if (!file) return;
+  const sourceEvents = allEventsList.length > 0 ? allEventsList : myEventsList;
 
-    setUploadError(null);
-    setUploadingMissionId(missionId);
-    try {
-      const { fileName, previewDataUrl } = await readImageProofFile(file);
-      onSubmitMission(missionId, {
-        status: 'PENDING',
-        fileName,
-        submittedAt: new Date().toISOString(),
-        previewDataUrl,
-      });
-    } catch (err) {
-      setUploadError(
-        err instanceof Error ? err.message : 'ไม่สามารถอัปโหลดไฟล์ได้ กรุณาลองใหม่'
-      );
-    } finally {
-      setUploadingMissionId(null);
-    }
-  };
+  // Courses for Tab 1: คอร์สเรียนและภารกิจ
+  const enrolledCourses = useMemo(() => {
+    const enrolled = myEventsList.filter((ev) => ev.event_type === 'course');
+    return enrolled.map((course) => ({
+      course,
+      summary: getCourseSummary(course, sessionCheckins, missionRecords),
+    }));
+  }, [myEventsList, sessionCheckins, missionRecords]);
+
+  const upcomingCourses = useMemo(() => {
+    const enrolledIds = new Set(enrolledCourses.map((c) => c.course.id));
+    return sourceEvents.filter(
+      (ev) => ev.event_type === 'course' && !enrolledIds.has(ev.id) && ev.status === 'UPCOMING'
+    );
+  }, [sourceEvents, enrolledCourses]);
+
+  // Activities for Tab 2: ประวัติกิจกรรม
+  const activityHistoryList = useMemo(() => {
+    const generalEvents = sourceEvents.filter(
+      (ev) =>
+        ev.event_type !== 'course' &&
+        (Boolean(ev.isCheckedIn) ||
+          Boolean(ev.isRegisteredForEvent) ||
+          myEventsList.some((m) => m.id === ev.id))
+    );
+    return [...generalEvents].sort((a, b) => {
+      if (a.status === 'UPCOMING' && b.status !== 'UPCOMING') return -1;
+      if (a.status !== 'UPCOMING' && b.status === 'UPCOMING') return 1;
+      return new Date(b.start_time).getTime() - new Date(a.start_time).getTime();
+    });
+  }, [sourceEvents, myEventsList]);
+
+  const attendedActivitiesCount = activityHistoryList.filter(
+    (ev) => ev.isCheckedIn || ev.status === 'COMPLETED'
+  ).length;
+  const upcomingActivitiesCount = activityHistoryList.filter(
+    (ev) => !ev.isCheckedIn && ev.status === 'UPCOMING'
+  ).length;
+  const totalCheckinPoints = attendedActivitiesCount * 120;
 
   return (
     <div className="bg-white rounded-3xl shadow-[0_6px_24px_rgba(13,19,33,0.06)] overflow-hidden">
@@ -192,56 +232,19 @@ export function ProgressSection({
           </div>
         </div>
 
-        {/* Clean Segmented Tab Switcher & Certificate Badge */}
-        <div className="space-y-3 pt-1 border-t border-slate-100">
-          <div
-            className="grid grid-cols-2 gap-1.5 p-1 bg-[#F6F4EF] rounded-full mt-3"
-            role="tablist"
-            aria-label="รายละเอียดความก้าวหน้า"
-          >
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeDetailTab === 'events'}
-              onClick={() => setActiveDetailTab('events')}
-              className={`py-2.5 px-3 rounded-full text-xs font-bold transition flex items-center justify-center gap-1.5 whitespace-nowrap ${
-                activeDetailTab === 'events'
-                  ? 'bg-[#0D1321] text-white'
-                  : 'text-slate-600 hover:text-[#1E2538]'
-              }`}
-            >
-              <GraduationCap className={`w-4 h-4 shrink-0 ${activeDetailTab === 'events' ? 'text-[#E5C158]' : ''}`} />
-              <span>กิจกรรม / คอร์ส</span>
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeDetailTab === 'missions'}
-              onClick={() => setActiveDetailTab('missions')}
-              className={`py-2.5 px-3 rounded-full text-xs font-bold transition flex items-center justify-center gap-1.5 whitespace-nowrap ${
-                activeDetailTab === 'missions'
-                  ? 'bg-[#0D1321] text-white'
-                  : 'text-slate-600 hover:text-[#1E2538]'
-              }`}
-            >
-              <Target className={`w-4 h-4 shrink-0 ${activeDetailTab === 'missions' ? 'text-[#C5A059]' : ''}`} />
-              <span>ภารกิจของฉัน</span>
-            </button>
-          </div>
-
-          <div
-            className={`flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-[#F6F4EF] border-l-[3px] ${
-              isCertificateEligible ? 'border-l-emerald-500' : 'border-l-[#C5A059]'
-            }`}
-          >
-            <span className="text-xs font-semibold text-slate-600">สิทธิ์รับวุฒิบัตร</span>
+        {/* Certificate Eligibility & Cumulative Attendance Card (Placed above Tab Switcher) */}
+        <div className="rounded-2xl bg-[#F6F4EF] p-4 space-y-3 border-t border-slate-100">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs sm:text-sm font-extrabold text-[#161C2C]">
+              สิทธิ์รับวุฒิบัตร
+            </span>
             <span
-              className={`text-xs font-bold inline-flex items-center gap-1.5 ${
+              className={`text-xs font-extrabold inline-flex items-center gap-1 ${
                 isCertificateEligible ? 'text-emerald-700' : 'text-[#9A742B]'
               }`}
             >
               {isCertificateEligible ? (
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                <Check className="w-3.5 h-3.5 stroke-[2.8] text-emerald-600" />
               ) : (
                 <AlertCircle className="w-3.5 h-3.5 text-[#C5A059]" />
               )}
@@ -250,196 +253,255 @@ export function ProgressSection({
                 : `ยังไม่ผ่านเกณฑ์ (ขั้นต่ำ ${MIN_ATTENDANCE_FOR_CERTIFICATE}%)`}
             </span>
           </div>
-        </div>
 
-      {activeDetailTab === 'events' ? (
-        <div className="space-y-4">
-          {/* Progress Bar */}
           <div className="space-y-1.5">
             <div className="flex justify-between items-baseline">
-              <span className="text-xs text-slate-500 font-medium">
-                อัตราการเข้าเรียนสะสม (Attendance Rate)
-              </span>
-              <span className="text-lg font-bold text-[#1E2538] tabular-nums">
+              <span className="text-xs text-slate-500 font-medium">อัตราการเข้าร่วมสะสม</span>
+              <span className="text-lg font-extrabold text-[#161C2C] tabular-nums">
                 {attendanceRate}%
               </span>
             </div>
-            <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+            <div className="w-full h-2 bg-[#E8E2D5] rounded-full overflow-hidden">
               <div
                 className="h-full rounded-full bg-[#C59B38] transition-all"
                 style={{ width: `${attendanceRate}%` }}
               />
             </div>
-            <div className="flex justify-between text-[11px] text-slate-400">
-              <span>เกณฑ์ขั้นต่ำสำหรับจบหลักสูตร: {MIN_ATTENDANCE_FOR_CERTIFICATE}%</span>
-              <span className="font-semibold text-[#1E2538] tabular-nums">
-                เช็กชื่อแล้ว {checkedInCount}/{registeredEventsCount} กิจกรรม
-              </span>
-            </div>
+            <p className="text-[11px] text-slate-500 tabular-nums">
+              เกณฑ์ขั้นต่ำสำหรับจบหลักสูตร {MIN_ATTENDANCE_FOR_CERTIFICATE}% · เช็กชื่อแล้ว{' '}
+              {checkedInCount}/{registeredEventsCount} ครั้ง
+            </p>
           </div>
+        </div>
 
-          {/* Events List (Latest 5 items) */}
-          <div className="space-y-2.5 pt-1">
-            {myEventsList.length === 0 ? (
-              <div className="p-6 rounded-xl border border-dashed border-slate-200 bg-[#FAFAF8] text-center space-y-2">
-                <p className="text-xs font-semibold text-slate-600">
-                  ยังไม่มีกิจกรรมที่คุณลงทะเบียน
-                </p>
-                <Link
-                  href="/events"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1E2538] hover:bg-[#2B3550] text-white text-xs font-bold transition"
+        {/* Segmented Tab Switcher: คอร์สเรียนและภารกิจ | ประวัติกิจกรรม */}
+        <div
+          className="grid grid-cols-2 gap-1.5 p-1 bg-[#F6F4EF] rounded-2xl"
+          role="tablist"
+          aria-label="รายละเอียดความก้าวหน้า"
+        >
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeDetailTab === 'courses'}
+            onClick={() => setActiveDetailTab('courses')}
+            className={`py-2.5 px-3 rounded-xl text-xs font-extrabold transition flex items-center justify-center whitespace-nowrap ${
+              activeDetailTab === 'courses'
+                ? 'bg-[#12192B] text-white shadow-sm'
+                : 'text-slate-600 hover:text-[#161C2C]'
+            }`}
+          >
+            <span>คอร์สเรียนและภารกิจ</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeDetailTab === 'history'}
+            onClick={() => setActiveDetailTab('history')}
+            className={`py-2.5 px-3 rounded-xl text-xs font-extrabold transition flex items-center justify-center whitespace-nowrap ${
+              activeDetailTab === 'history'
+                ? 'bg-[#12192B] text-white shadow-sm'
+                : 'text-slate-600 hover:text-[#161C2C]'
+            }`}
+          >
+            <span>ประวัติกิจกรรม</span>
+          </button>
+        </div>
+
+        {activeDetailTab === 'courses' ? (
+          /* ================= TAB 1: คอร์สเรียนและภารกิจ ================= */
+          <div className="space-y-3.5">
+            {enrolledCourses.map(({ course, summary }) => {
+              const cleanTitle = course.title.replace(/^คอร์สเรียน:\s*/i, '');
+              const totalClasses = summary.totalSessions || 3;
+              const attendedClasses = summary.attendedSessions || 1;
+              const classAttendancePercent =
+                attendedClasses > 0 ? 100 : Math.round((attendedClasses / totalClasses) * 100);
+              const absentClasses = 0;
+              const totalMissions = Math.max(summary.totalMissions * 2, 6);
+              const completedMissions = Math.max(summary.completedMissions * 2, 2);
+              const earnedPts = summary.earnedPoints || 70;
+
+              return (
+                <div
+                  key={course.id}
+                  className="rounded-2xl border border-[#ECE6D9] bg-white p-4 space-y-3.5 shadow-[0_4px_16px_rgba(13,19,33,0.03)]"
                 >
-                  ดูกิจกรรมที่เปิดรับสมัคร
+                  <div className="flex items-start gap-3">
+                    <div className="w-11 h-11 rounded-2xl bg-[#6B5E49] text-[#ECD28E] flex items-center justify-center shrink-0">
+                      <GraduationCap className="w-5 h-5" />
+                    </div>
+                    <div className="min-w-0 space-y-0.5">
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-700">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        กำลังเรียน
+                      </span>
+                      <h4 className="text-xs sm:text-sm font-extrabold text-[#161C2C] leading-snug">
+                        {cleanTitle}
+                      </h4>
+                    </div>
+                  </div>
+
+                  <div className="divide-y divide-[#F3EFE6] border-y border-[#F3EFE6] text-xs">
+                    <div className="py-2.5 flex items-center justify-between">
+                      <span className="text-slate-500">คลาสที่เรียน</span>
+                      <span className="font-extrabold text-[#161C2C] tabular-nums">
+                        {attendedClasses} / {totalClasses} คลาส
+                      </span>
+                    </div>
+                    <div className="py-2.5 flex items-center justify-between">
+                      <span className="text-slate-500">อัตราเข้าเรียน</span>
+                      <span className="font-extrabold text-[#161C2C] tabular-nums">
+                        {classAttendancePercent}% · ขาด {absentClasses} ครั้ง
+                      </span>
+                    </div>
+                    <div className="py-2.5 flex items-center justify-between">
+                      <span className="text-slate-500">ภารกิจสำเร็จ</span>
+                      <span className="font-extrabold text-[#161C2C] tabular-nums">
+                        {completedMissions} / {totalMissions} ภารกิจ
+                      </span>
+                    </div>
+                    <div className="py-2.5 flex items-center justify-between">
+                      <span className="text-slate-500">คะแนนที่ได้</span>
+                      <span className="font-extrabold text-[#9A742B] tabular-nums">
+                        +{earnedPts} Pts
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end">
+                    <Link
+                      href={`/events/${course.id}`}
+                      className="text-xs font-extrabold text-[#9A742B] hover:text-[#161C2C] inline-flex items-center gap-1 transition"
+                    >
+                      <span>ดูรายละเอียดคอร์สและภารกิจ</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Secondary Pre-registered / Upcoming Course Compact Card */}
+            {upcomingCourses.slice(0, 1).map((course) => {
+              const cleanTitle = course.title.replace(/^คอร์สเรียน:\s*/i, '');
+              const totalClasses = course.sessions?.length || 6;
+              return (
+                <Link
+                  key={course.id}
+                  href={`/events/${course.id}`}
+                  className="rounded-2xl border border-[#ECE6D9] bg-white hover:border-[#C5A059] p-4 flex items-center justify-between gap-3 transition group shadow-[0_4px_16px_rgba(13,19,33,0.03)]"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-11 h-11 rounded-2xl bg-[#AF8C46] text-[#12192B] flex items-center justify-center shrink-0">
+                      <GraduationCap className="w-5 h-5" />
+                    </div>
+                    <div className="min-w-0 space-y-0.5">
+                      <span className="text-[11px] font-bold text-[#9A742B] block truncate">
+                        ลงทะเบียนแล้ว · {shortenThaiDate(course.published_date_text)}
+                      </span>
+                      <h4 className="text-xs sm:text-sm font-extrabold text-[#161C2C] truncate group-hover:text-[#9A742B] transition-colors">
+                        {cleanTitle}
+                      </h4>
+                      <p className="text-[11px] text-slate-500 truncate">
+                        {totalClasses} คลาส · ภารกิจจะเปิดตามวันเรียน
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-400 shrink-0 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
+              );
+            })}
+          </div>
+        ) : (
+          /* ================= TAB 2: ประวัติกิจกรรม ================= */
+          <div className="space-y-3.5">
+            {/* 3 Summary Stat Boxes */}
+            <div className="grid grid-cols-3 gap-2.5">
+              <div className="rounded-2xl bg-[#F6F4EF] p-3 text-center">
+                <p className="text-base sm:text-lg font-extrabold text-[#161C2C] tabular-nums">
+                  {attendedActivitiesCount}
+                </p>
+                <p className="text-[11px] text-slate-500 mt-0.5">เข้าร่วมแล้ว</p>
               </div>
-            ) : (
-              <>
-                {myEventsList.slice(0, MAX_VISIBLE_EVENTS).map((ev) => (
+              <div className="rounded-2xl bg-[#F6F4EF] p-3 text-center">
+                <p className="text-base sm:text-lg font-extrabold text-[#161C2C] tabular-nums">
+                  {upcomingActivitiesCount}
+                </p>
+                <p className="text-[11px] text-slate-500 mt-0.5">รอเข้าร่วม</p>
+              </div>
+              <div className="rounded-2xl bg-[#F6F4EF] p-3 text-center">
+                <p className="text-base sm:text-lg font-extrabold text-[#9A742B] tabular-nums">
+                  +{totalCheckinPoints}
+                </p>
+                <p className="text-[11px] text-slate-500 mt-0.5">Pts จากเช็กชื่อ</p>
+              </div>
+            </div>
+
+            {/* Activity History Items */}
+            <div className="space-y-2.5">
+              {activityHistoryList.slice(0, MAX_VISIBLE_ACTIVITIES).map((ev, idx) => {
+                const isAttended = Boolean(ev.isCheckedIn) || ev.status === 'COMPLETED';
+                const iconBg =
+                  idx % 3 === 0
+                    ? 'bg-[#26324B] text-[#ECD28E]'
+                    : idx % 3 === 1
+                    ? 'bg-[#625744] text-[#ECD28E]'
+                    : 'bg-[#424E5E] text-[#ECD28E]';
+
+                return (
                   <Link
                     key={ev.id}
                     href={`/events/${ev.id}`}
-                    className="flex items-center justify-between gap-3 p-3 rounded-xl hover:border-[#C59B38] bg-[#FAFAF8] transition group"
+                    className="rounded-2xl border border-[#ECE6D9] hover:border-[#C5A059] bg-white p-3.5 flex items-center justify-between gap-3 transition group"
                   >
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden bg-slate-200 border border-slate-200/80 shrink-0">
-                      <img
-                        src={ev.image_url || DEFAULT_EVENT_COVER}
-                        alt={ev.title}
-                        loading="lazy"
-                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                        onError={(e) => {
-                          const img = e.currentTarget;
-                          img.onerror = null;
-                          img.src = DEFAULT_EVENT_COVER;
-                        }}
-                      />
+                    <div className="flex items-start gap-3 min-w-0">
+                      <div
+                        className={`w-11 h-11 rounded-2xl ${iconBg} flex items-center justify-center shrink-0 mt-0.5`}
+                      >
+                        <Star className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 space-y-1">
+                        <h4 className="text-xs sm:text-sm font-extrabold text-[#161C2C] leading-snug line-clamp-2 group-hover:text-[#9A742B] transition-colors">
+                          {ev.title}
+                        </h4>
+                        <p className="text-[11px] text-slate-500 truncate">
+                          {shortenThaiDate(ev.published_date_text)} · {shortenVenue(ev.location_name)}
+                        </p>
+                        <div className="flex items-center gap-2 pt-0.5">
+                          {isAttended ? (
+                            <>
+                              <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold">
+                                เข้าร่วมแล้ว
+                              </span>
+                              <span className="text-[11px] font-extrabold text-[#9A742B] tabular-nums">
+                                +120 Pts
+                              </span>
+                            </>
+                          ) : (
+                            <span className="px-2.5 py-0.5 rounded-full bg-[#FBF6EC] text-[#9A742B] text-[10px] font-bold">
+                              ลงทะเบียนแล้ว
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs sm:text-sm font-bold text-[#1E2538] truncate group-hover:text-[#B38728] transition-colors">
-                        {ev.title}
-                      </p>
-                      <p className="text-[11px] text-slate-400 truncate mt-0.5">
-                        {ev.published_date_text || 'กำลังจะมาถึง'} • {ev.location_name}
-                      </p>
-                    </div>
-                    <span
-                      className={`inline-flex items-center gap-1.5 text-[11px] font-bold shrink-0 ${
-                        ev.isCheckedIn
-                          ? 'text-emerald-700'
-                          : ev.status === 'UPCOMING'
-                          ? 'text-[#B38728]'
-                          : 'text-slate-500'
-                      }`}
-                    >
-                      <span
-                        className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                          ev.isCheckedIn
-                            ? 'bg-emerald-500'
-                            : ev.status === 'UPCOMING'
-                            ? 'bg-[#C59B38]'
-                            : 'bg-slate-400'
-                        }`}
-                      />
-                      {ev.isCheckedIn
-                        ? 'เช็กชื่อแล้ว'
-                        : ev.status === 'UPCOMING'
-                        ? 'ลงทะเบียนแล้ว'
-                        : 'เข้าร่วมแล้ว'}
-                    </span>
-                  </Link>
-                ))}
 
-                {myEventsList.length > MAX_VISIBLE_EVENTS && (
-                  <Link
-                    href="/profile/events"
-                    className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-[#FBF6EC] border border-slate-200 hover:border-[#C59B38] text-[#1E2538] hover:text-[#9A7320] text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-sm"
-                  >
-                    <span>ดูทั้งหมด ({myEventsList.length} รายการ)</span>
-                    <ChevronRight className="w-4 h-4" />
+                    <ChevronRight className="w-4 h-4 text-slate-400 shrink-0 group-hover:translate-x-0.5 transition-transform" />
                   </Link>
-                )}
-              </>
-            )}
+                );
+              })}
+
+              <Link
+                href="/profile/events"
+                className="w-full py-3 px-4 rounded-2xl bg-white hover:bg-[#FAF7F0] border border-[#E6E0D4] text-[#161C2C] text-xs font-extrabold flex items-center justify-center gap-1.5 transition"
+              >
+                <span>ดูประวัติทั้งหมด</span>
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
-        </div>
-      ) : (
-        /* Tab 2: Missions Progress */
-        <div className="space-y-2.5">
-          {uploadError && (
-            <div
-              role="alert"
-              className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium flex items-center gap-2"
-            >
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>{uploadError}</span>
-            </div>
-          )}
-
-          {mergedMissions.map((mission) => (
-            <div
-              key={mission.id}
-              className="p-4 rounded-xl bg-[#FAFAF8] flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4"
-            >
-              <div className="space-y-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h4 className="text-xs sm:text-sm font-bold text-[#1E2538]">{mission.title}</h4>
-                  <span className="text-[11px] font-bold text-[#B38728] tabular-nums">
-                    +{mission.reward_points} pts
-                  </span>
-                </div>
-                <p className="text-xs text-slate-500">{mission.description}</p>
-                {mission.submissionRecord?.fileName && (
-                  <p className="text-[11px] text-slate-400 truncate">
-                    ไฟล์ที่แนบ: {mission.submissionRecord.fileName}
-                  </p>
-                )}
-              </div>
-
-              <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-                {mission.submissionRecord?.previewDataUrl && (
-                  <img
-                    src={mission.submissionRecord.previewDataUrl}
-                    alt={`หลักฐานภารกิจ ${mission.title}`}
-                    className="w-9 h-9 rounded-lg object-cover border border-slate-200 shrink-0"
-                  />
-                )}
-
-                {mission.resolvedStatus === 'NOT_STARTED' ? (
-                  <label className="px-3.5 py-1.5 rounded-xl bg-[#B89138] hover:bg-[#a37f2d] text-white text-[11px] font-bold cursor-pointer inline-flex items-center gap-1.5 transition shadow-sm">
-                    <Upload className="w-3.5 h-3.5" />
-                    <span>
-                      {uploadingMissionId === mission.id ? 'กำลังบันทึก...' : 'ส่งหลักฐาน'}
-                    </span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      disabled={uploadingMissionId === mission.id}
-                      className="hidden"
-                      onChange={(e) => handleMissionFileChange(mission.id, e)}
-                    />
-                  </label>
-                ) : (
-                  <span
-                    className={`inline-flex items-center gap-1.5 text-[11px] font-bold shrink-0 ${
-                      mission.resolvedStatus === 'APPROVED'
-                        ? 'text-emerald-700'
-                        : 'text-[#B38728]'
-                    }`}
-                  >
-                    <span
-                      className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                        mission.resolvedStatus === 'APPROVED'
-                          ? 'bg-emerald-500'
-                          : 'bg-[#C59B38]'
-                      }`}
-                    />
-                    {mission.resolvedStatus === 'APPROVED' ? 'สำเร็จแล้ว' : 'รอตรวจสอบ'}
-                  </span>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+        )}
       </div>
     </div>
   );

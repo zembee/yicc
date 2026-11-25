@@ -61,6 +61,37 @@ export interface CourseFaqItem {
   answer: string;
 }
 
+export interface EventAgendaItem {
+  time: string;
+  title: string;
+  reward_points?: number;
+}
+
+export interface EventStatBox {
+  value: string;
+  label: string;
+}
+
+export interface EventRegistrationFieldConfig {
+  id: string;
+  label: string;
+  type: 'text' | 'select' | 'radio' | 'number' | 'textarea';
+  required?: boolean;
+  placeholder?: string;
+  options?: string[];
+  enabled?: boolean;
+}
+
+export interface EventRegistrationConfig {
+  enableDietary?: boolean;
+  dietaryOptions?: string[];
+  enableAllergyNote?: boolean;
+  enableGuests?: boolean;
+  maxGuests?: number;
+  guestFee?: number;
+  customFields?: EventRegistrationFieldConfig[];
+}
+
 export interface CourseSession {
   id: string;
   session_number: number;
@@ -116,6 +147,17 @@ export interface EventItem {
   faqs?: CourseFaqItem[];
   contact_phone?: string;
   contact_line?: string;
+  dress_code?: string;
+  event_category_badge?: string;
+  poster_eyebrow?: string;
+  poster_title?: string;
+  poster_date_badge?: string;
+  organizer_label?: string;
+  event_stats?: EventStatBox[];
+  event_agenda?: EventAgendaItem[];
+  attendee_count?: number;
+  house_attendee_count?: number;
+  registration_config?: EventRegistrationConfig;
 }
 
 export interface Mission {

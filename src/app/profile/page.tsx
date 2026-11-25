@@ -11,7 +11,9 @@ import {
   Phone,
   RefreshCw,
   Share2,
+  Trophy,
   Users,
+  X,
 } from 'lucide-react';
 import { useLiffAuth } from '@/contexts/LiffContext';
 import { mockHouses, mockEvents, mockMissions, yftiParticipants } from '@/lib/mockData';
@@ -25,6 +27,7 @@ import {
   MergedMissionItem,
   ProgressSection,
 } from '@/components/profile/ProgressSection';
+import { readCourseSessionCheckins } from '@/lib/courseUtils';
 import {
   DEFAULT_AVATAR_DATA_URI,
   MissionSubmissionRecord,
@@ -48,10 +51,12 @@ export default function ProfilePage() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isPhotoOpen, setIsPhotoOpen] = useState(false);
   const [isHouseModalOpen, setIsHouseModalOpen] = useState(false);
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
   const [followingIds, setFollowingIds] = useState<string[] | null>(null);
   const [customEvents, setCustomEvents] = useState<EventItem[]>([]);
   const [registeredEventIds, setRegisteredEventIds] = useState<string[]>([]);
+  const [sessionCheckins, setSessionCheckins] = useState<Record<string, boolean>>({});
   const [missionRecords, setMissionRecords] = useState<Record<string, MissionSubmissionRecord>>({});
   const copyTimeoutRef = useRef<number | null>(null);
 
@@ -102,6 +107,8 @@ export default function ProfilePage() {
       })
       .map((r) => String(r.eventId));
     setRegisteredEventIds(ids);
+
+    setSessionCheckins(readCourseSessionCheckins(profileId));
 
     const scopedMissionKey = profileId ? `yfti_mission_submissions_${profileId}` : null;
     const rawScopedMissions = scopedMissionKey
@@ -341,7 +348,7 @@ export default function ProfilePage() {
             </InfoGrid>
           </InfoCard>
 
-      {/* ================= 4. SEPARATE HOUSE CARD (SPLIT-TONE EXECUTIVE PASS) ================= */}
+      {/* ================= 4. SEPARATE CONSTELLATION CARD (กลุ่มดาวของฉัน) ================= */}
       <div className="bg-white rounded-3xl shadow-[0_6px_24px_rgba(13,19,33,0.06)] overflow-hidden">
         <div className="relative luxury-stage text-white p-5 sm:p-6 flex items-center justify-between gap-4 overflow-hidden">
           <div className="relative z-10 flex items-center gap-4 min-w-0">
@@ -351,42 +358,61 @@ export default function ProfilePage() {
               className="w-14 h-14 object-contain shrink-0 drop-shadow-[0_6px_14px_rgba(0,0,0,0.4)]"
             />
             <div className="min-w-0 space-y-0.5">
-              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-300 block">
-                My House
+              <span className="text-xs font-semibold text-slate-300 block">
+                กลุ่มดาวของฉัน
               </span>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="text-lg sm:text-xl font-extrabold text-white">{houseName}</h3>
-                {houseRank !== null && (
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#C59B38]/25 border border-[#E5C158]/50 text-[#E5C158] tabular-nums">
-                    Rank #{houseRank}
-                  </span>
-                )}
-              </div>
+              <h3 className="text-lg sm:text-xl font-extrabold text-white truncate">{houseName}</h3>
               <p className="text-xs text-slate-300 tabular-nums">
-                {houseMembers.length} สมาชิก •{' '}
+                {houseMembers.length} สมาชิก ·{' '}
                 <strong className="text-[#E5C158]">{housePoints.toLocaleString()}</strong> คะแนน
               </p>
             </div>
           </div>
+
+          {houseRank !== null && (
+            <button
+              type="button"
+              onClick={() => setIsLeaderboardOpen(true)}
+              className="relative z-10 shrink-0 px-3 py-2 rounded-2xl bg-white/[0.06] hover:bg-white/[0.12] border border-[#E5C158]/40 flex flex-col items-center justify-center min-w-[60px] transition"
+            >
+              <Trophy className="w-3.5 h-3.5 text-[#E5C158] mb-0.5" />
+              <span className="text-sm font-extrabold text-[#E5C158] tabular-nums leading-none">
+                #{houseRank}
+              </span>
+              <span className="text-[9px] text-slate-300 mt-1">ดูอันดับ</span>
+            </button>
+          )}
         </div>
 
-        <div className="p-4 sm:p-5 bg-white">
+        <div className="p-4 sm:p-5 bg-white grid grid-cols-2 gap-2.5">
           <button
             type="button"
             onClick={() => setIsHouseModalOpen(true)}
-            className="w-full py-2.5 rounded-full luxury-gold-btn text-xs font-bold transition flex items-center justify-center gap-2"
+            className="py-2.5 px-3 rounded-2xl luxury-gold-btn !text-[#12192B] text-xs font-extrabold transition flex items-center justify-center gap-1.5"
           >
-            <Users className="w-4 h-4" />
-            <span>ดูสมาชิกในบ้าน</span>
+            <Users className="w-4 h-4 shrink-0" />
+            <span>ดูสมาชิกในกลุ่ม</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsLeaderboardOpen(true)}
+            className="py-2.5 px-3 rounded-2xl bg-white hover:bg-[#FAF7F0] border border-[#E6E0D4] text-[#161C2C] text-xs font-extrabold transition flex items-center justify-center gap-1.5"
+          >
+            <Trophy className="w-4 h-4 text-[#9A742B] shrink-0" />
+            <span>อันดับทุกกลุ่มดาว</span>
           </button>
         </div>
       </div>
 
-      {/* ================= 5. SUMMARY & SPLIT ATTENDANCE / MISSIONS ================= */}
+      {/* ================= 5. SUMMARY & COURSES/MISSIONS + ACTIVITY HISTORY ================= */}
       <ProgressSection
         profile={profile}
         tier={tier}
+        allEventsList={allEventsList}
         myEventsList={myEventsList}
+        sessionCheckins={sessionCheckins}
+        missionRecords={missionRecords}
         mergedMissions={mergedMissions}
         onSubmitMission={handleSubmitMission}
       />
@@ -438,6 +464,78 @@ export default function ProfilePage() {
         housePoints={housePoints}
         houseMembers={houseMembers}
       />
+
+      {/* Constellation Leaderboard Modal */}
+      {isLeaderboardOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="อันดับทุกกลุ่มดาว"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#080C18]/75 backdrop-blur-sm p-0 sm:p-4 animate-in fade-in duration-200"
+          onClick={() => setIsLeaderboardOpen(false)}
+        >
+          <div
+            className="w-full max-w-md luxury-stage text-white rounded-t-[28px] sm:rounded-[28px] border border-[#C5A059]/30 p-5 pb-[max(1.5rem,calc(env(safe-area-inset-bottom,0px)+1rem))] sm:p-6 max-h-[88vh] overflow-y-auto space-y-4 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Crown className="w-4 h-4 text-[#ECD28E]" />
+                <h3 className="text-base font-extrabold text-white">อันดับคะแนนกลุ่มดาว</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsLeaderboardOpen(false)}
+                aria-label="ปิดหน้าต่าง"
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="divide-y divide-white/10">
+              {sortedHouses.map((h, idx) => {
+                const rank = idx + 1;
+                const isMine = h.id.toLowerCase() === (currentHouse?.id || '').toLowerCase();
+                return (
+                  <div
+                    key={h.id}
+                    className={`py-2.5 px-3 rounded-xl flex items-center justify-between gap-3 transition ${
+                      isMine ? 'bg-[#C5A059]/18' : 'hover:bg-white/[0.06]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span
+                        className={`w-5 text-xs font-extrabold tabular-nums text-center ${
+                          rank <= 3 ? 'text-[#ECD28E]' : 'text-slate-400'
+                        }`}
+                      >
+                        #{rank}
+                      </span>
+                      <img
+                        src={`/images/planets/${h.id}.webp?v=2`}
+                        alt={h.name}
+                        className="w-8 h-8 object-contain shrink-0"
+                      />
+                      <span className="text-xs sm:text-sm font-bold text-white truncate">
+                        {h.name}
+                      </span>
+                      {isMine && (
+                        <span className="px-2 py-0.5 rounded-full bg-[#ECD28E]/20 text-[#ECD28E] text-[9px] font-bold">
+                          ดาวของคุณ
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-xs sm:text-sm font-extrabold text-[#ECD28E] tabular-nums shrink-0">
+                      {h.total_points.toLocaleString()} Pts
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       <PhotoLightbox
         isOpen={isPhotoOpen}

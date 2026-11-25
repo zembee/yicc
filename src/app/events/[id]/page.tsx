@@ -28,6 +28,8 @@ import {
 import { CourseSalesView } from '@/components/events/CourseSalesView';
 import { CourseRegistrationView } from '@/components/events/CourseRegistrationView';
 import { CourseSessionSheet } from '@/components/events/CourseSessionSheet';
+import { EventRegistrationView } from '@/components/events/EventRegistrationView';
+import { GeneralEventDetailView } from '@/components/events/GeneralEventDetailView';
 import {
   Calendar,
   MapPin,
@@ -64,6 +66,9 @@ export default function EventDetailPage() {
   const [registrationStatus, setRegistrationStatus] = useState<
     'NONE' | 'PENDING' | 'APPROVED' | 'REJECTED'
   >('NONE');
+  const [registrationRecord, setRegistrationRecord] = useState<Record<string, unknown> | null>(
+    null
+  );
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isCourseRegisterPageOpen, setIsCourseRegisterPageOpen] = useState(false);
   const [previewTodayMode, setPreviewTodayMode] = useState(false);
@@ -103,11 +108,6 @@ export default function EventDetailPage() {
       paramsQuery.get('preview') === 'today' || paramsQuery.get('today') === '1';
     setPreviewTodayMode(isPreviewToday);
 
-    if (event.isRegisteredForEvent) {
-      setRegistrationStatus('APPROVED');
-      return;
-    }
-
     try {
       const regs = JSON.parse(localStorage.getItem('yfti_event_registrations') || '[]');
       const found = Array.isArray(regs)
@@ -115,12 +115,18 @@ export default function EventDetailPage() {
         : null;
       if (found) {
         setRegistrationStatus(found.status);
+        setRegistrationRecord(found);
         if (found.status === 'REJECTED' && autoOpenRegister && event.status === 'UPCOMING') {
           setIsCourseRegisterPageOpen(true);
         }
         return;
       }
     } catch {}
+
+    if (event.isRegisteredForEvent) {
+      setRegistrationStatus('APPROVED');
+      return;
+    }
 
     setRegistrationStatus('NONE');
     if (autoOpenRegister && event.status === 'UPCOMING') {
@@ -302,7 +308,7 @@ export default function EventDetailPage() {
     registrationStatus === 'APPROVED' ||
     event.status !== 'UPCOMING';
 
-  // ================= VIEW B: DEDICATED 4-STEP REGISTRATION FORM (COURSES & EVENTS) =================
+  // ================= VIEW B: DEDICATED REGISTRATION FORM (COURSES & EVENTS) =================
   if (isCourseRegisterPageOpen) {
     return (
       <>
@@ -312,22 +318,165 @@ export default function EventDetailPage() {
             <span>{toastMessage}</span>
           </div>
         )}
-        <CourseRegistrationView
-          course={event}
-          profile={profile}
-          onBack={() => setIsCourseRegisterPageOpen(false)}
-          onSubmitSuccess={(status, msg) => {
-            setRegistrationStatus(status);
-            setIsCourseRegisterPageOpen(false);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            showToast(msg);
-          }}
-        />
+        {isCourse ? (
+          <CourseRegistrationView
+            course={event}
+            profile={profile}
+            onBack={() => setIsCourseRegisterPageOpen(false)}
+            onSubmitSuccess={(status, msg) => {
+              setRegistrationStatus(status);
+              setIsCourseRegisterPageOpen(false);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              showToast(msg);
+            }}
+          />
+        ) : (
+          <EventRegistrationView
+            event={event}
+            profile={profile}
+            initialValues={
+              registrationRecord
+                ? {
+                    guestNames: Array.isArray(registrationRecord.guestNames)
+                      ? (registrationRecord.guestNames as string[])
+                      : undefined,
+                    dietaryType:
+                      typeof registrationRecord.dietaryType === 'string'
+                        ? registrationRecord.dietaryType
+                        : undefined,
+                    allergyNote:
+                      typeof registrationRecord.allergyNote === 'string'
+                        ? registrationRecord.allergyNote
+                        : undefined,
+                    customFields:
+                      registrationRecord.customFields &&
+                      typeof registrationRecord.customFields === 'object'
+                        ? (registrationRecord.customFields as Record<string, string>)
+                        : undefined,
+                  }
+                : undefined
+            }
+            onBack={() => setIsCourseRegisterPageOpen(false)}
+            onSubmitSuccess={(status, msg, regRec) => {
+              setRegistrationStatus(status);
+              setRegistrationRecord(regRec);
+              setIsCourseRegisterPageOpen(false);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              showToast(msg);
+            }}
+          />
+        )}
       </>
     );
   }
 
-  // ================= VIEW A: SALES / OVERVIEW PAGE (UN-REGISTERED COURSE OR EVENT) =================
+  // ================= VIEW A2: UPCOMING GENERAL EVENT DETAIL (UNREGISTERED & REGISTERED) =================
+  if (!isCourse && event.status === 'UPCOMING') {
+    const evDateMeta = getSessionDateMeta(
+      {
+        id: event.id,
+        session_number: 1,
+        title: event.title,
+        date_text: event.published_date_text || '',
+        time_text: '',
+        start_time: event.start_time,
+        end_time: event.end_time,
+        location_name: event.location_name,
+        reward_points: event.reward_points,
+      },
+      previewTodayMode ? event.id : null
+    );
+    const isRegisteredGeneral =
+      Boolean(event.isRegisteredForEvent) ||
+      Boolean(event.isCheckedIn) ||
+      registrationStatus === 'APPROVED' ||
+      registrationStatus === 'PENDING';
+    const isUnlockedToday =
+      previewTodayMode || Boolean(event.isCheckedIn) || !evDateMeta.isFuture;
+
+    return (
+      <>
+        {toastMessage && (
+          <div className="fixed top-5 right-5 z-50 bg-[#0D1321] text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-lg flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-[#ECD28E]" />
+            <span>{toastMessage}</span>
+          </div>
+        )}
+        <GeneralEventDetailView
+          event={event}
+          profile={profile}
+          isRegistered={isRegisteredGeneral}
+          isEventTodayOrUnlocked={isUnlockedToday}
+          daysUntilEvent={evDateMeta.daysUntil || 23}
+          registrationRecord={registrationRecord}
+          onStartRegister={() => {
+            setIsCourseRegisterPageOpen(true);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onOpenQr={() => setIsQrModalOpen(true)}
+          onTogglePreviewToday={() => setPreviewTodayMode((prev) => !prev)}
+          onShare={handleShare}
+        />
+
+        {isQrModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className="bg-white w-full max-w-sm rounded-3xl p-6 relative shadow-2xl flex flex-col items-center text-center space-y-4">
+              <button
+                onClick={() => setIsQrModalOpen(false)}
+                className="absolute top-3.5 right-3.5 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 bg-slate-100"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              <div className="space-y-1 pt-2">
+                <span className="px-3 py-1 rounded-full bg-[#F6EFE0] text-[#8E6F30] text-xs font-extrabold">
+                  QR Code เช็กชื่อเข้าร่วมกิจกรรม
+                </span>
+                <h3 className="text-base font-extrabold text-[#161C2C] line-clamp-2 pt-1">
+                  {event.title}
+                </h3>
+              </div>
+
+              <div className="p-4 bg-white border border-[#E6E0D4] rounded-2xl shadow-sm flex items-center justify-center">
+                <QRCodeSVG
+                  value={JSON.stringify({
+                    version: 1,
+                    type: 'EVENT_CHECKIN',
+                    profileId: profile?.id || '3296',
+                    lineUserId: profile?.line_user_id || 'U_SIM_3296',
+                    displayName: profile?.display_name || applicantName || 'สมาชิก YFTI 11',
+                    eventId: event.id,
+                    eventTitle: event.title,
+                    ts: Date.now(),
+                  })}
+                  size={196}
+                  level="H"
+                  fgColor="#12192B"
+                  includeMargin
+                />
+              </div>
+
+              <div className="text-xs text-slate-500 leading-relaxed">
+                แสดง QR Code นี้แก่ทีมงานหน้างานเพื่อสแกนยืนยันการเข้าร่วมและรับคะแนน{' '}
+                <span className="font-extrabold text-[#8E6F30]">
+                  +{Math.round(event.reward_points * 0.6) || 120} Points
+                </span>
+              </div>
+
+              <button
+                onClick={() => setIsQrModalOpen(false)}
+                className="w-full py-2.5 rounded-xl bg-[#12192B] text-white text-xs font-bold hover:bg-[#1B2540] transition"
+              >
+                ปิดหน้าต่าง
+              </button>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // ================= VIEW A: SALES / OVERVIEW PAGE (UN-REGISTERED COURSE) =================
   if (!isEnrolledOrActive) {
     return (
       <>

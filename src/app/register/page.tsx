@@ -743,7 +743,7 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-xs font-bold text-slate-700">ดวงดาวประจำตัว (House)</label>
+                  <label className="block text-xs font-bold text-slate-700">กลุ่มดาวประจำตัว</label>
                   <select
                     value={selectedHouseId}
                     onChange={(e) => setSelectedHouseId(e.target.value)}

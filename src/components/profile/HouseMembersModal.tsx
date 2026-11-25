@@ -64,14 +64,14 @@ export function HouseMembersModal({
                 {houseName}
               </h3>
               <p className="text-xs text-slate-300 tabular-nums">
-                {houseMembers.length} สมาชิกในบ้าน
-                {houseRank !== null ? ` • Rank #${houseRank}` : ''}
+                {houseMembers.length} สมาชิกในกลุ่มดาว
+                {houseRank !== null ? ` • อันดับ #${houseRank}` : ''}
               </p>
             </div>
             <button
               type="button"
               onClick={onClose}
-              aria-label="ปิดหน้าต่างสมาชิกในบ้าน"
+              aria-label="ปิดหน้าต่างสมาชิกในกลุ่มดาว"
               className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-slate-200 transition"
             >
               <X className="w-5 h-5" />
@@ -79,7 +79,7 @@ export function HouseMembersModal({
           </div>
 
           <div className="p-3 rounded-xl bg-white/10 border border-white/15 flex items-center justify-between text-xs">
-            <span className="text-slate-300">คะแนนรวมบ้าน</span>
+            <span className="text-slate-300">คะแนนรวมกลุ่มดาว</span>
             <span className="font-bold text-[#E5C158] tabular-nums">
               {housePoints.toLocaleString()} คะแนน
             </span>
@@ -89,7 +89,7 @@ export function HouseMembersModal({
         <div className="overflow-y-auto p-4 space-y-2.5">
           {houseMembers.length === 0 ? (
             <p className="text-center text-xs text-slate-500 py-8">
-              ยังไม่มีรายชื่อสมาชิกในบ้านนี้
+              ยังไม่มีรายชื่อสมาชิกในกลุ่มดาวนี้
             </p>
           ) : (
             houseMembers.map((m) => (

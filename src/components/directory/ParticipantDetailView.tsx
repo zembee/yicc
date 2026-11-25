@@ -297,7 +297,7 @@ export const ParticipantDetailView: React.FC<ParticipantDetailViewProps> = ({ id
                 '-'
               )}
             </InfoRow>
-            <InfoRow label="ดาวประจำบ้าน">{participant.star_group_label || participant.star_group || '-'}</InfoRow>
+            <InfoRow label="กลุ่มดาว">{participant.star_group_label || participant.star_group || '-'}</InfoRow>
           </InfoGrid>
         </InfoCard>
 

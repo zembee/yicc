@@ -48,6 +48,8 @@ export async function POST(req: NextRequest) {
       event_type: body.event_type || 'course',
       fee_member: body.fee_member !== undefined ? Number(body.fee_member) : 1500,
       fee_guest: body.fee_guest !== undefined ? Number(body.fee_guest) : 2500,
+      dress_code: body.dress_code,
+      registration_config: body.registration_config,
     };
 
     const next = [newEvent, ...events];

@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { EventItem, EventStatus } from '@/types';
+import { EventItem, EventRegistrationFieldConfig, EventStatus } from '@/types';
 import {
   Calendar,
   Plus,
@@ -12,6 +12,7 @@ import {
   X,
   MapPin,
   RefreshCw,
+  SlidersHorizontal,
 } from 'lucide-react';
 
 const EMPTY_FORM = {
@@ -22,10 +23,17 @@ const EMPTY_FORM = {
   date: '2026-12-25',
   location_name: 'สภาอุตสาหกรรมแห่งประเทศไทย (FTI)',
   fee_member: '1500',
-  fee_guest: '2500',
+  fee_guest: '2000',
   reward_points: '50',
   reward_xp: '100',
+  dress_code: 'Black Tie · โทนดำ–ทอง',
   description: '',
+  enableDietary: true,
+  dietaryOptionsText: 'ทั่วไป, มังสวิรัติ, ฮาลาล, เจ',
+  enableAllergyNote: true,
+  enableGuests: true,
+  maxGuests: '2',
+  customFields: [] as EventRegistrationFieldConfig[],
 };
 
 export const EventManager: React.FC<{ onCountChange?: (count: number) => void }> = ({
@@ -64,6 +72,7 @@ export const EventManager: React.FC<{ onCountChange?: (count: number) => void }>
 
   const openEdit = (item: EventItem) => {
     const datePart = item.start_time ? item.start_time.slice(0, 10) : '2026-12-25';
+    const cfg = item.registration_config || {};
     setForm({
       id: item.id,
       title: item.title,
@@ -75,7 +84,17 @@ export const EventManager: React.FC<{ onCountChange?: (count: number) => void }>
       fee_guest: String(item.fee_guest ?? 0),
       reward_points: String(item.reward_points ?? 50),
       reward_xp: String(item.reward_xp ?? 100),
+      dress_code: item.dress_code || 'Black Tie · โทนดำ–ทอง',
       description: item.description || '',
+      enableDietary: cfg.enableDietary !== false,
+      dietaryOptionsText:
+        cfg.dietaryOptions && cfg.dietaryOptions.length > 0
+          ? cfg.dietaryOptions.join(', ')
+          : 'ทั่วไป, มังสวิรัติ, ฮาลาล, เจ',
+      enableAllergyNote: cfg.enableAllergyNote !== false,
+      enableGuests: cfg.enableGuests !== false,
+      maxGuests: String(cfg.maxGuests ?? 2),
+      customFields: Array.isArray(cfg.customFields) ? cfg.customFields : [],
     });
     setIsModalOpen(true);
   };
@@ -88,7 +107,12 @@ export const EventManager: React.FC<{ onCountChange?: (count: number) => void }>
       const startIso = new Date(`${form.date}T09:00:00+07:00`).toISOString();
       const endIso = new Date(`${form.date}T17:00:00+07:00`).toISOString();
 
-      const payload = {
+      const dietaryOptions = form.dietaryOptionsText
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+      const payload: Partial<EventItem> = {
         id: form.id || undefined,
         title: form.title.trim(),
         event_type: form.event_type,
@@ -100,7 +124,17 @@ export const EventManager: React.FC<{ onCountChange?: (count: number) => void }>
         fee_guest: Number(form.fee_guest) || 0,
         reward_points: Number(form.reward_points) || 50,
         reward_xp: Number(form.reward_xp) || 100,
+        dress_code: form.dress_code.trim() || undefined,
         description: form.description.trim(),
+        registration_config: {
+          enableDietary: form.enableDietary,
+          dietaryOptions: dietaryOptions.length > 0 ? dietaryOptions : ['ทั่วไป', 'มังสวิรัติ', 'ฮาลาล', 'เจ'],
+          enableAllergyNote: form.enableAllergyNote,
+          enableGuests: form.enableGuests,
+          maxGuests: Math.max(0, Number(form.maxGuests) || 2),
+          guestFee: Number(form.fee_guest) || 0,
+          customFields: form.customFields.filter((f) => f.label.trim()),
+        },
       };
 
       const res = await fetch('/api/events', {
@@ -110,10 +144,24 @@ export const EventManager: React.FC<{ onCountChange?: (count: number) => void }>
       });
 
       if (res.ok) {
-        const data = (await res.json()) as { events?: EventItem[] };
+        const data = (await res.json()) as { events?: EventItem[]; event?: EventItem };
         if (Array.isArray(data.events)) {
           setEvents(data.events);
           onCountChange?.(data.events.length);
+          if (typeof window !== 'undefined' && data.event) {
+            try {
+              const localCustom: EventItem[] = JSON.parse(
+                localStorage.getItem('yfti_custom_events') || '[]'
+              );
+              const filtered = Array.isArray(localCustom)
+                ? localCustom.filter((ev) => ev.id !== data.event!.id)
+                : [];
+              localStorage.setItem(
+                'yfti_custom_events',
+                JSON.stringify([data.event, ...filtered])
+              );
+            } catch {}
+          }
         }
         setIsModalOpen(false);
       }
@@ -371,6 +419,168 @@ export const EventManager: React.FC<{ onCountChange?: (count: number) => void }>
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl border border-slate-200"
                 />
+              </div>
+
+              {/* Admin-Configurable Registration Form Fields */}
+              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 font-extrabold text-[#1E2538]">
+                    <SlidersHorizontal className="w-3.5 h-3.5 text-[#B38728]" />
+                    <span>ตั้งค่าฟิลด์ฟอร์มสมัครกิจกรรม (Admin Custom Fields)</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setForm((prev) => ({
+                        ...prev,
+                        customFields: [
+                          ...prev.customFields,
+                          {
+                            id: `cf-${Date.now()}`,
+                            label: '',
+                            type: 'text',
+                            required: false,
+                            placeholder: '',
+                            options: [],
+                            enabled: true,
+                          },
+                        ],
+                      }))
+                    }
+                    className="px-2.5 py-1 rounded-lg bg-[#1E2538] text-white text-[11px] font-bold inline-flex items-center gap-1"
+                  >
+                    <Plus className="w-3 h-3 text-[#E5C158]" />
+                    เพิ่มฟิลด์ใหม่
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <label className="flex items-center gap-2 p-2 rounded-xl bg-white border border-slate-200 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.enableDietary}
+                      onChange={(e) => setForm({ ...form, enableDietary: e.target.checked })}
+                    />
+                    <span className="font-semibold text-slate-700">เลือกประเภทอาหาร</span>
+                  </label>
+                  <label className="flex items-center gap-2 p-2 rounded-xl bg-white border border-slate-200 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.enableAllergyNote}
+                      onChange={(e) => setForm({ ...form, enableAllergyNote: e.target.checked })}
+                    />
+                    <span className="font-semibold text-slate-700">ระบุอาหารที่แพ้</span>
+                  </label>
+                  <label className="flex items-center gap-2 p-2 rounded-xl bg-white border border-slate-200 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.enableGuests}
+                      onChange={(e) => setForm({ ...form, enableGuests: e.target.checked })}
+                    />
+                    <span className="font-semibold text-slate-700">อนุญาตผู้ติดตาม</span>
+                  </label>
+                </div>
+
+                {form.enableDietary && (
+                  <div>
+                    <label className="font-bold text-slate-600 block mb-1">
+                      ตัวเลือกประเภทอาหาร (คั่นด้วยเครื่องหมายจุลภาค ,)
+                    </label>
+                    <input
+                      type="text"
+                      value={form.dietaryOptionsText}
+                      onChange={(e) => setForm({ ...form, dietaryOptionsText: e.target.value })}
+                      className="w-full px-3 py-1.5 rounded-xl bg-white border border-slate-200"
+                    />
+                  </div>
+                )}
+
+                {form.customFields.length > 0 && (
+                  <div className="space-y-2 pt-1">
+                    <p className="text-[11px] font-bold text-slate-500">ฟิลด์เพิ่มเติมที่กำหนดเอง:</p>
+                    {form.customFields.map((cf, idx) => (
+                      <div
+                        key={cf.id}
+                        className="p-2.5 rounded-xl bg-white border border-slate-200 space-y-2"
+                      >
+                        <div className="grid grid-cols-12 gap-2 items-center">
+                          <input
+                            type="text"
+                            placeholder="ชื่อฟิลด์ (เช่น ไซส์เสื้อ, ทะเบียนรถ)"
+                            value={cf.label}
+                            onChange={(e) => {
+                              const next = [...form.customFields];
+                              next[idx] = { ...cf, label: e.target.value };
+                              setForm({ ...form, customFields: next });
+                            }}
+                            className="col-span-6 px-2.5 py-1.5 rounded-lg border border-slate-200"
+                          />
+                          <select
+                            value={cf.type}
+                            onChange={(e) => {
+                              const next = [...form.customFields];
+                              next[idx] = {
+                                ...cf,
+                                type: e.target.value as EventRegistrationFieldConfig['type'],
+                              };
+                              setForm({ ...form, customFields: next });
+                            }}
+                            className="col-span-3 px-2 py-1.5 rounded-lg border border-slate-200"
+                          >
+                            <option value="text">ข้อความ</option>
+                            <option value="radio">ปุ่มตัวเลือก</option>
+                            <option value="select">Dropdown</option>
+                            <option value="number">ตัวเลข</option>
+                            <option value="textarea">หลายบรรทัด</option>
+                          </select>
+                          <label className="col-span-2 flex items-center gap-1 text-[11px] font-semibold text-slate-600 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={Boolean(cf.required)}
+                              onChange={(e) => {
+                                const next = [...form.customFields];
+                                next[idx] = { ...cf, required: e.target.checked };
+                                setForm({ ...form, customFields: next });
+                              }}
+                            />
+                            <span>จำเป็น</span>
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setForm({
+                                ...form,
+                                customFields: form.customFields.filter((_, i) => i !== idx),
+                              })
+                            }
+                            className="col-span-1 p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 flex items-center justify-center"
+                            title="ลบฟิลด์"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+
+                        {(cf.type === 'radio' || cf.type === 'select') && (
+                          <input
+                            type="text"
+                            placeholder="ตัวเลือก คั่นด้วยจุลภาค เช่น S, M, L, XL"
+                            value={(cf.options || []).join(', ')}
+                            onChange={(e) => {
+                              const opts = e.target.value
+                                .split(',')
+                                .map((s) => s.trim())
+                                .filter(Boolean);
+                              const next = [...form.customFields];
+                              next[idx] = { ...cf, options: opts };
+                              setForm({ ...form, customFields: next });
+                            }}
+                            className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 text-[11px]"
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <button
