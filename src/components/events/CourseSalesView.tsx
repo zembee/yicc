@@ -64,11 +64,12 @@ export const CourseSalesView: React.FC<CourseSalesViewProps> = ({
 }) => {
   const [openFaqIdx, setOpenFaqIdx] = useState<number | null>(null);
 
+  const isCourse = course.event_type === 'course';
   const sessions = course.sessions || [];
   const totalSessions = sessions.length || 1;
-  const memberFee = course.fee_member ?? 12900;
+  const memberFee = course.fee_member ?? (isCourse ? 12900 : 1200);
   const guestFee = course.fee_guest ?? Math.round(memberFee * 1.25);
-  const hasDiscount = guestFee > memberFee;
+  const hasDiscount = guestFee > memberFee && memberFee > 0;
 
   const maxSeats = course.max_seats ?? 30;
   const registeredCount = course.registered_count ?? 18;
@@ -109,6 +110,7 @@ export const CourseSalesView: React.FC<CourseSalesViewProps> = ({
   const shortLocation = course.location_name.includes('FTI Tower')
     ? 'FTI Tower'
     : course.location_name;
+  const ctaText = isCourse ? 'สมัครเรียน' : 'ลงทะเบียนเข้าร่วม';
 
   return (
     <div className="w-full bg-[#F6F4EF] text-[#161C2C] pb-24">
@@ -128,17 +130,17 @@ export const CourseSalesView: React.FC<CourseSalesViewProps> = ({
           {/* Top Navigation Bar */}
           <div className="flex items-center justify-between gap-2">
             <Link
-              href="/events?category=course"
+              href={isCourse ? '/events?category=course' : '/events'}
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/12 text-xs font-bold text-white backdrop-blur-sm transition"
             >
               <ChevronLeft className="w-4 h-4 text-[#ECD28E]" />
-              <span>คอร์สเรียน</span>
+              <span>{isCourse ? 'คอร์สเรียน' : 'กิจกรรม'}</span>
             </Link>
 
             <button
               type="button"
               onClick={onShare}
-              aria-label="แชร์คอร์สเรียน"
+              aria-label="แชร์"
               className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/15 border border-white/12 flex items-center justify-center text-white backdrop-blur-sm transition"
             >
               <Share2 className="w-4 h-4 text-[#ECD28E]" />
@@ -156,7 +158,7 @@ export const CourseSalesView: React.FC<CourseSalesViewProps> = ({
             </div>
 
             <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-slate-300/90 pt-1">
-              YFTI ACADEMY · {startYear}
+              {isCourse ? `YFTI ACADEMY · ${startYear}` : `YFTI ELITE 11 · ${startYear}`}
             </p>
 
             <p className="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight max-w-sm bg-gradient-to-b from-[#F5E6BE] via-[#DFC27D] to-[#B89040] bg-clip-text text-transparent">
@@ -171,7 +173,7 @@ export const CourseSalesView: React.FC<CourseSalesViewProps> = ({
                 เปิดรับสมัคร
               </span>
               <span className="px-2.5 py-0.5 rounded-full bg-white/[0.06] border border-[#C5A059]/40 text-[#ECD28E] text-[10px] font-bold">
-                คอร์สเรียน · {totalSessions} ครั้ง
+                {isCourse ? `คอร์สเรียน · ${totalSessions} ครั้ง` : 'กิจกรรมเครือข่าย'}
               </span>
               <span className="px-2.5 py-0.5 rounded-full luxury-gold-btn !text-[#12192B] text-[10px] font-extrabold tabular-nums">
                 +{displayPoints} Pts
@@ -233,7 +235,7 @@ export const CourseSalesView: React.FC<CourseSalesViewProps> = ({
               onClick={onStartRegister}
               className="w-full py-3.5 px-5 rounded-2xl bg-[#12192B] hover:bg-[#1B2540] text-white text-sm font-bold flex items-center justify-center gap-2 transition active:scale-[0.99] shadow-sm"
             >
-              <span>{registrationStatus === 'REJECTED' ? 'ส่งใบสมัครใหม่' : 'สมัครเรียน'}</span>
+              <span>{registrationStatus === 'REJECTED' ? 'ส่งใบสมัครใหม่' : ctaText}</span>
               <ArrowRight className="w-4 h-4 text-[#ECD28E]" />
             </button>
           )}
@@ -246,9 +248,9 @@ export const CourseSalesView: React.FC<CourseSalesViewProps> = ({
               <Calendar className="w-4 h-4" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] text-slate-400">ตารางเรียน</p>
+              <p className="text-[11px] text-slate-400">{isCourse ? 'ตารางเรียน' : 'วันจัดกิจกรรม'}</p>
               <p className="text-xs sm:text-sm font-extrabold text-[#161C2C] mt-0.5">
-                {course.schedule_summary_text || course.published_date_text || 'ตามตารางหลักสูตร'}
+                {course.schedule_summary_text || course.published_date_text || 'ตามกำหนดการ'}
               </p>
             </div>
           </div>
@@ -258,10 +260,10 @@ export const CourseSalesView: React.FC<CourseSalesViewProps> = ({
               <Clock className="w-4 h-4" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] text-slate-400">เวลาเรียน</p>
+              <p className="text-[11px] text-slate-400">{isCourse ? 'เวลาเรียน' : 'เวลา'}</p>
               <p className="text-xs sm:text-sm font-extrabold text-[#161C2C] mt-0.5">
                 {course.duration_summary_text ||
-                  `${sessions[0]?.time_text || '09:00 – 16:00 น.'} · ${totalSessions} ครั้ง`}
+                  `${sessions[0]?.time_text || '09:00 – 16:00 น.'}${isCourse ? ` · ${totalSessions} ครั้ง` : ''}`}
               </p>
             </div>
           </div>
@@ -295,10 +297,14 @@ export const CourseSalesView: React.FC<CourseSalesViewProps> = ({
               <Award className="w-4 h-4" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] text-slate-400">เงื่อนไขรับประกาศนียบัตร</p>
+              <p className="text-[11px] text-slate-400">
+                {isCourse ? 'เงื่อนไขรับประกาศนียบัตร' : 'สิทธิ์คะแนนสะสม'}
+              </p>
               <p className="text-xs sm:text-sm font-extrabold text-[#161C2C] mt-0.5">
                 {course.certificate_requirement_text ||
-                  `เข้าเรียนอย่างน้อย ${Math.ceil(totalSessions * 0.8)} จาก ${totalSessions} ครั้ง`}
+                  (isCourse
+                    ? `เข้าเรียนอย่างน้อย ${Math.ceil(totalSessions * 0.8)} จาก ${totalSessions} ครั้ง`
+                    : `รับ +${displayPoints} Points และ +${course.reward_xp} XP เมื่อสแกนเช็กอินหน้างาน`)}
               </p>
             </div>
           </div>
@@ -310,7 +316,9 @@ export const CourseSalesView: React.FC<CourseSalesViewProps> = ({
             <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9A742B] block">
               ABOUT
             </span>
-            <h2 className="text-lg sm:text-xl font-extrabold text-[#161C2C]">เกี่ยวกับคอร์สนี้</h2>
+            <h2 className="text-lg sm:text-xl font-extrabold text-[#161C2C]">
+              {isCourse ? 'เกี่ยวกับคอร์สนี้' : 'เกี่ยวกับกิจกรรมนี้'}
+            </h2>
           </div>
 
           <p className="text-xs sm:text-sm text-[#394154] leading-relaxed">
@@ -318,7 +326,9 @@ export const CourseSalesView: React.FC<CourseSalesViewProps> = ({
           </p>
 
           <div className="bg-white rounded-[22px] p-4 sm:p-5 shadow-[0_8px_26px_rgba(13,19,33,0.05)] space-y-3">
-            <h3 className="text-xs sm:text-sm font-extrabold text-[#161C2C]">สิ่งที่คุณจะได้เรียนรู้</h3>
+            <h3 className="text-xs sm:text-sm font-extrabold text-[#161C2C]">
+              {isCourse ? 'สิ่งที่คุณจะได้เรียนรู้' : 'ไฮไลต์กิจกรรม'}
+            </h3>
             <ul className="space-y-2.5">
               {outcomes.map((item, idx) => (
                 <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-[#394154]">
@@ -539,10 +549,10 @@ export const CourseSalesView: React.FC<CourseSalesViewProps> = ({
         <div className="max-w-3xl mx-auto flex items-center justify-between gap-3">
           <div>
             <p className="text-[10px] font-medium text-slate-500">
-              ราคาสมาชิก · {totalSessions} ครั้ง
+              {isCourse ? `ราคาสมาชิก · ${totalSessions} ครั้ง` : 'ราคาสมาชิก YFTI'}
             </p>
             <p className="text-base sm:text-lg font-extrabold text-[#161C2C] tabular-nums leading-tight">
-              {memberFee > 0 ? `฿${memberFee.toLocaleString()}` : 'เรียนฟรี'}
+              {memberFee > 0 ? `฿${memberFee.toLocaleString()}` : 'เข้าร่วมฟรี'}
             </p>
           </div>
 
@@ -556,7 +566,7 @@ export const CourseSalesView: React.FC<CourseSalesViewProps> = ({
               onClick={onStartRegister}
               className="px-6 py-2.5 rounded-xl luxury-gold-btn !text-[#12192B] text-xs sm:text-sm font-extrabold transition active:scale-95"
             >
-              สมัครเรียน
+              {ctaText}
             </button>
           )}
         </div>

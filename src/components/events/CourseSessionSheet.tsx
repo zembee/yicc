@@ -311,7 +311,7 @@ export const CourseSessionSheet: React.FC<CourseSessionSheetProps> = ({
         </div>
 
         {/* Sticky Sheet Footer */}
-        <div className="bg-white border-t border-[#E6E0D4] px-4 sm:px-5 py-3 pb-safe flex items-center gap-2.5 shrink-0">
+        <div className="bg-white border-t border-[#E6E0D4] px-4 sm:px-5 pt-3.5 pb-[max(1.5rem,calc(env(safe-area-inset-bottom,0px)+1rem))] sm:py-4 flex items-center gap-2.5 shrink-0">
           <a
             href={sessionCalendarUrl}
             target="_blank"

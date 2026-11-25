@@ -116,11 +116,7 @@ export default function EventDetailPage() {
       if (found) {
         setRegistrationStatus(found.status);
         if (found.status === 'REJECTED' && autoOpenRegister && event.status === 'UPCOMING') {
-          if (event.event_type === 'course') {
-            setIsCourseRegisterPageOpen(true);
-          } else {
-            setIsRegisterModalOpen(true);
-          }
+          setIsCourseRegisterPageOpen(true);
         }
         return;
       }
@@ -128,11 +124,7 @@ export default function EventDetailPage() {
 
     setRegistrationStatus('NONE');
     if (autoOpenRegister && event.status === 'UPCOMING') {
-      if (event.event_type === 'course') {
-        setIsCourseRegisterPageOpen(true);
-      } else {
-        setIsRegisterModalOpen(true);
-      }
+      setIsCourseRegisterPageOpen(true);
     }
   }, [event]);
 
@@ -304,14 +296,14 @@ export default function EventDetailPage() {
   };
 
   const isCourse = event.event_type === 'course';
-  const isEnrolledInCourse =
+  const isEnrolledOrActive =
     Boolean(event.isRegisteredForEvent) ||
     Boolean(event.isCheckedIn) ||
     registrationStatus === 'APPROVED' ||
     event.status !== 'UPCOMING';
 
-  // ================= VIEW B: DEDICATED 4-STEP COURSE REGISTRATION FORM =================
-  if (isCourse && isCourseRegisterPageOpen) {
+  // ================= VIEW B: DEDICATED 4-STEP REGISTRATION FORM (COURSES & EVENTS) =================
+  if (isCourseRegisterPageOpen) {
     return (
       <>
         {toastMessage && (
@@ -335,8 +327,8 @@ export default function EventDetailPage() {
     );
   }
 
-  // ================= VIEW A: COURSE SALES PAGE (UN-ENROLLED COURSE) =================
-  if (isCourse && !isEnrolledInCourse) {
+  // ================= VIEW A: SALES / OVERVIEW PAGE (UN-REGISTERED COURSE OR EVENT) =================
+  if (!isEnrolledOrActive) {
     return (
       <>
         {toastMessage && (
@@ -425,7 +417,7 @@ export default function EventDetailPage() {
               className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-200 hover:text-white transition bg-white/10 hover:bg-white/15 px-3.5 py-1.5 rounded-full backdrop-blur-sm"
             >
               <ArrowLeft className="w-3.5 h-3.5 text-[#ECD28E]" />
-              <span>{isCourse ? 'กลับหน้าคอร์สเรียน' : 'กลับหน้ารวมกิจกรรม'}</span>
+              <span>{isCourse ? 'กลับหน้าคอร์สเรียน' : 'กลับหน้ากิจกรรม'}</span>
             </Link>
             <button
               onClick={handleShare}
@@ -447,9 +439,13 @@ export default function EventDetailPage() {
                   {isCourse ? 'คอร์สเรียน' : 'กิจกรรมทั่วไป'}
                 </span>
               )}
-              {event.isCheckedIn && (
+              {event.isCheckedIn ? (
                 <span className="px-3 py-0.5 rounded-full bg-emerald-500/90 text-white text-[11px] font-bold flex items-center gap-1">
                   <CheckCircle2 className="w-3 h-3" /> เข้าร่วมแล้ว
+                </span>
+              ) : (
+                <span className="px-3 py-0.5 rounded-full bg-[#C5A059]/20 border border-[#C5A059]/40 text-[#ECD28E] text-[11px] font-bold">
+                  ลงทะเบียนแล้ว
                 </span>
               )}
             </div>
@@ -459,30 +455,11 @@ export default function EventDetailPage() {
             </h1>
           </div>
 
-          {/* Meta Info Bar */}
-          {isCourse ? (
-            event.location_name && (
-              <div className="flex items-center gap-1.5 text-xs text-slate-300 pt-0.5">
-                <MapPin className="w-3.5 h-3.5 text-[#ECD28E] shrink-0" />
-                <span className="truncate">{event.location_name}</span>
-              </div>
-            )
-          ) : (
-            <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-xs text-slate-300 pt-2 border-t border-white/10">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-3.5 h-3.5 text-[#ECD28E]" />
-                <span>เผยแพร่ {event.published_date_text || '24 พฤษภาคม 2025'}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <User className="w-3.5 h-3.5 text-[#ECD28E]" />
-                <span>ผู้เขียน {event.author_name || 'admin'}</span>
-              </div>
-              {event.location_name && (
-                <div className="flex items-center gap-2 truncate max-w-md">
-                  <MapPin className="w-3.5 h-3.5 text-[#ECD28E] shrink-0" />
-                  <span className="truncate">{event.location_name}</span>
-                </div>
-              )}
+          {/* Clean Location Line (Consistent Across Courses & Activities) */}
+          {event.location_name && (
+            <div className="flex items-center gap-1.5 text-xs text-slate-300 pt-0.5">
+              <MapPin className="w-3.5 h-3.5 text-[#ECD28E] shrink-0" />
+              <span className="truncate">{event.location_name}</span>
             </div>
           )}
         </div>
@@ -670,64 +647,210 @@ export default function EventDetailPage() {
               </div>
             </section>
           ) : !isCourseWithSessions ? (
-            /* General Event Activity Pass Bar */
-            <div className="pb-6 border-b border-black/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="space-y-1 text-left">
-                <div className="text-[10px] font-medium text-[#8E7338] uppercase tracking-[0.26em]">
-                  ACTIVITY PASS
-                </div>
-                <div className="text-base sm:text-lg font-bold text-[#0F1521] tracking-tight">
-                  {event.isCheckedIn
-                    ? 'คุณเช็กชื่อเข้าร่วมกิจกรรมนี้แล้ว'
-                    : 'เข้าร่วมกิจกรรมและสะสมคะแนน'}
-                </div>
-                <p className="text-xs text-[#64625A]">
-                  บันทึกลงปฏิทินส่วนตัว หรือเปิด QR Code สำหรับเช็กชื่อหน้างาน
-                </p>
-              </div>
+            /* ================= REGISTERED GENERAL EVENT CHECK-IN & IN-EVENT MISSIONS CARD ================= */
+            (() => {
+              const evMeta = getSessionDateMeta(
+                {
+                  id: event.id,
+                  session_number: 1,
+                  title: event.title,
+                  date_text: event.published_date_text || '',
+                  time_text: '',
+                  start_time: event.start_time,
+                  end_time: event.end_time,
+                  location_name: event.location_name,
+                  reward_points: event.reward_points,
+                },
+                previewTodayMode ? event.id : null
+              );
+              const isEventUnlocked =
+                Boolean(event.isCheckedIn) || event.status !== 'UPCOMING' || !evMeta.isFuture;
+              const startD = new Date(event.start_time);
+              const endD = new Date(event.end_time);
+              const timeStr =
+                !Number.isNaN(startD.getTime()) && !Number.isNaN(endD.getTime())
+                  ? `${String(startD.getHours()).padStart(2, '0')}:${String(
+                      startD.getMinutes()
+                    ).padStart(2, '0')} – ${String(endD.getHours()).padStart(2, '0')}:${String(
+                      endD.getMinutes()
+                    ).padStart(2, '0')} น.`
+                  : '18:00 – 22:00 น.';
 
-              <div className="flex items-center gap-2.5 w-full sm:w-auto">
-                <a
-                  href={googleCalendarUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-white border border-[#E6E0D4] hover:border-[#C5A059] text-[#0F1521] text-xs font-bold whitespace-nowrap transition"
-                >
-                  <Calendar className="w-3.5 h-3.5 text-[#8E7338] shrink-0" />
-                  <span>เพิ่มลงปฏิทิน</span>
-                </a>
+              return (
+                <section className="space-y-2.5">
+                  <div>
+                    <h2 className="text-lg sm:text-xl font-extrabold text-[#161C2C]">
+                      {event.status !== 'UPCOMING'
+                        ? 'บัตรเข้าร่วมและภารกิจกิจกรรม'
+                        : evMeta.isToday
+                        ? 'กิจกรรมวันนี้'
+                        : 'กิจกรรมที่กำลังมาถึง'}
+                    </h2>
+                    <p className="text-xs text-slate-500">
+                      เปิด QR Code เพื่อเช็กชื่อหน้างาน และทำภารกิจในกิจกรรมเพื่อสะสมคะแนน
+                    </p>
+                  </div>
 
-                {event.status === 'UPCOMING' &&
-                  (registrationStatus === 'NONE' || registrationStatus === 'REJECTED') && (
-                    <button
-                      onClick={() => setIsRegisterModalOpen(true)}
-                      className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#0F1521] hover:bg-[#1A2438] text-[#ECD28E] text-xs font-bold whitespace-nowrap transition"
-                    >
-                      <Ticket className="w-3.5 h-3.5 shrink-0" />
-                      <span>
-                        {registrationStatus === 'REJECTED' ? 'ส่งสลิปใหม่' : 'สมัครเข้าร่วม'}
-                      </span>
-                    </button>
-                  )}
+                  <div className="bg-white rounded-[22px] p-4 sm:p-5 border border-[#E8DFC8] shadow-[0_8px_26px_rgba(13,19,33,0.05)] space-y-3.5">
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="px-2.5 py-0.5 rounded-full bg-[#12192B] text-[#ECD28E] text-[10px] font-bold">
+                          กิจกรรม
+                        </span>
+                        {event.isCheckedIn ? (
+                          <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold inline-flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3" /> เช็กชื่อแล้ว
+                          </span>
+                        ) : evMeta.isToday ? (
+                          <span className="px-2.5 py-0.5 rounded-full bg-[#DF4747] text-white text-[10px] font-bold inline-flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                            วันนี้
+                          </span>
+                        ) : event.status === 'UPCOMING' ? (
+                          <span className="px-2.5 py-0.5 rounded-full bg-[#F6EFE0] text-[#8E6F30] text-[10px] font-bold">
+                            {evMeta.countdownLabel}
+                          </span>
+                        ) : null}
 
-                {event.status === 'UPCOMING' && registrationStatus === 'PENDING' && (
-                  <span className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#FBF6EC] border border-[#E5D3A7] text-[#8E7338] text-xs font-bold whitespace-nowrap">
-                    <Hourglass className="w-3.5 h-3.5 shrink-0" />
-                    <span>รออนุมัติสลิป</span>
-                  </span>
-                )}
+                        {!event.isCheckedIn && event.status === 'UPCOMING' && (
+                          <span className="px-2.5 py-0.5 rounded-full bg-[#FBF7EE] border border-[#E8DFC8] text-[#8E6F30] text-[10px] font-bold inline-flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            รอเช็กชื่อ
+                          </span>
+                        )}
+                      </div>
 
-                {(event.status !== 'UPCOMING' || registrationStatus === 'APPROVED') && (
-                  <button
-                    onClick={() => setIsQrModalOpen(true)}
-                    className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#0F1521] hover:bg-[#1A2438] text-white text-xs font-bold whitespace-nowrap transition"
-                  >
-                    <QrCode className="w-3.5 h-3.5 text-[#ECD28E] shrink-0" />
-                    <span>{event.isCheckedIn ? 'ดู QR Code' : 'เปิด QR เข้าร่วม'}</span>
-                  </button>
-                )}
-              </div>
-            </div>
+                      <a
+                        href={googleCalendarUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3 py-1 rounded-xl bg-[#FAF8F3] hover:bg-[#EFECE4] border border-[#E6E0D4] text-[11px] font-extrabold text-[#161C2C] inline-flex items-center gap-1.5 transition"
+                      >
+                        <Calendar className="w-3.5 h-3.5 text-[#9A742B]" />
+                        <span>ลงปฏิทิน</span>
+                      </a>
+                    </div>
+
+                    <div className="space-y-1 text-xs text-[#4A5060]">
+                      <p className="flex items-center gap-2">
+                        <Calendar className="w-3.5 h-3.5 text-[#9A742B] shrink-0" />
+                        <span>
+                          {event.published_date_text || evMeta.fullDateThai} · {timeStr}
+                        </span>
+                      </p>
+                      <p className="flex items-center gap-2">
+                        <MapPin className="w-3.5 h-3.5 text-[#9A742B] shrink-0" />
+                        <span>{event.location_name}</span>
+                      </p>
+                      {event.author_name && (
+                        <p className="flex items-center gap-2">
+                          <User className="w-3.5 h-3.5 text-[#9A742B] shrink-0" />
+                          <span>ผู้จัดงาน: {event.author_name}</span>
+                        </p>
+                      )}
+                    </div>
+
+                    {isEventUnlocked ? (
+                      <button
+                        type="button"
+                        onClick={() => setIsQrModalOpen(true)}
+                        className="w-full py-3 px-4 rounded-xl bg-[#12192B] hover:bg-[#1B2540] text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition shadow-sm"
+                      >
+                        <QrCode className="w-4 h-4 text-[#ECD28E]" />
+                        <span>{event.isCheckedIn ? 'ดู QR บัตรเข้าร่วม' : 'เปิด QR เช็กชื่อ'}</span>
+                      </button>
+                    ) : (
+                      <div className="w-full py-3 px-4 rounded-xl bg-[#F3EFE6] border border-dashed border-[#CFC6B4] text-xs font-semibold text-[#545047] flex items-center justify-center gap-2">
+                        <Lock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span>
+                          เปิด QR เช็กชื่อได้ในอีก{' '}
+                          <strong className="font-extrabold text-[#8E6F30]">
+                            {evMeta.daysUntil} วัน
+                          </strong>
+                        </span>
+                      </div>
+                    )}
+
+                    {/* In-Event Missions Inside Luxury Card */}
+                    <div className="pt-3 border-t border-dashed border-[#E6E0D4] space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <p className="text-[11px] font-bold text-[#8E6F30]">ภารกิจสะสมแต้มในกิจกรรม</p>
+                        <span className="text-[11px] font-bold text-[#8E6F30] tabular-nums">
+                          +{mockMissions.reduce((acc, m) => acc + m.reward_points, 0)} PTS
+                        </span>
+                      </div>
+
+                      {mockMissions.map((m) => {
+                        const record = missionRecords[m.id];
+                        const resolvedStatus = record?.status || m.status || 'NOT_STARTED';
+                        const cleanTitle = m.title
+                          .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]|[\u2600-\u27BF]/g, '')
+                          .trim();
+
+                        return (
+                          <div
+                            key={m.id}
+                            className="rounded-2xl bg-[#F6F4EF] p-3.5 space-y-2.5"
+                          >
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="space-y-0.5 min-w-0">
+                                <p className="text-xs sm:text-sm font-extrabold text-[#161C2C] leading-snug">
+                                  {cleanTitle}
+                                </p>
+                                <p className="text-xs text-slate-500 leading-relaxed">
+                                  {m.description}
+                                </p>
+                              </div>
+                              <span className="text-xs font-extrabold text-[#8E6F30] tabular-nums shrink-0">
+                                +{m.reward_points} PTS
+                              </span>
+                            </div>
+
+                            <div className="pt-2 border-t border-[#E8E2D5] flex items-center justify-between gap-2">
+                              <span className="text-[11px] text-slate-500 flex items-center gap-1">
+                                <Clock className="w-3.5 h-3.5 text-[#9A742B] shrink-0" />
+                                <span>
+                                  {isEventUnlocked
+                                    ? 'ส่งหลักฐานภาพถ่ายเพื่อรับคะแนน'
+                                    : `เปิดให้ทำในวันกิจกรรม ${event.published_date_text || ''}`}
+                                </span>
+                              </span>
+
+                              {resolvedStatus === 'APPROVED' ? (
+                                <span className="px-3 py-1 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-bold inline-flex items-center gap-1">
+                                  <CheckCircle2 className="w-3.5 h-3.5" /> สำเร็จแล้ว
+                                </span>
+                              ) : resolvedStatus === 'PENDING' ? (
+                                <button
+                                  type="button"
+                                  onClick={() => openMissionModal(m)}
+                                  className="px-3 py-1 rounded-xl bg-[#FBF6EC] border border-[#E5D3A7] text-[#8E6F30] text-xs font-bold"
+                                >
+                                  รอตรวจสอบ
+                                </button>
+                              ) : isEventUnlocked ? (
+                                <button
+                                  type="button"
+                                  onClick={() => openMissionModal(m)}
+                                  className="px-3.5 py-1.5 rounded-xl bg-[#12192B] hover:bg-[#1B2540] text-white text-xs font-bold inline-flex items-center gap-1 transition"
+                                >
+                                  <span>ทำภารกิจ</span>
+                                  <ArrowRight className="w-3.5 h-3.5 text-[#ECD28E]" />
+                                </button>
+                              ) : (
+                                <span className="px-3 py-1 rounded-xl bg-[#EBE6DA] border border-[#D8D1C2] text-slate-500 text-xs font-semibold inline-flex items-center gap-1">
+                                  <Lock className="w-3 h-3" /> ยังไม่เปิด
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </section>
+              );
+            })()
           ) : null}
 
           {/* ================= EVENT / COURSE OVERVIEW ================= */}
@@ -981,92 +1104,6 @@ export default function EventDetailPage() {
                     );
                   })}
                 </div>
-              </div>
-            </section>
-          ) : !isCourseWithSessions ? (
-            /* General Event Missions List */
-            <section className="space-y-1">
-              <div className="bg-[#0F1521] text-white rounded-2xl px-4 py-3.5 sm:px-5 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  <Trophy className="w-4 h-4 text-[#C4A052] shrink-0" />
-                  <div className="min-w-0">
-                    <h3 className="text-sm sm:text-[15px] font-semibold text-white tracking-tight truncate">
-                      ภารกิจสะสมแต้มในกิจกรรม
-                    </h3>
-                    <p className="text-[11px] text-slate-400 truncate">
-                      แตะที่รายการเพื่อส่งหลักฐานรับคะแนน
-                    </p>
-                  </div>
-                </div>
-                <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#C4A052] tabular-nums shrink-0">
-                  +{event.reward_points + 260} PTS
-                </span>
-              </div>
-
-              <div className="divide-y divide-black/[0.07] border-b border-black/[0.07]">
-                <div className="py-4 px-1 flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-3.5 min-w-0 flex-1">
-                    <span className="text-[11px] font-mono text-[#8E7338] tabular-nums pt-0.5 shrink-0">
-                      01
-                    </span>
-                    <div className="min-w-0 space-y-1">
-                      <p className="text-sm font-semibold text-[#0F1521] leading-snug">
-                        เช็กชื่อเข้าร่วมกิจกรรม
-                      </p>
-                      <p className="text-xs text-[#64625A] leading-relaxed">
-                        สแกน QR บัตรเข้าร่วมกับทีมงานหน้างาน
-                      </p>
-                    </div>
-                  </div>
-                  <span className="text-xs font-semibold uppercase tracking-[0.08em] text-[#0F1521] tabular-nums pt-0.5 shrink-0">
-                    +{event.reward_points} PTS
-                  </span>
-                </div>
-
-                {mockMissions.map((m, idx) => {
-                  const record = missionRecords[m.id];
-                  const resolvedStatus = record?.status || m.status || 'NOT_STARTED';
-                  const cleanTitle = m.title
-                    .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]|[\u2600-\u27BF]/g, '')
-                    .trim();
-                  const rowNumber = String(idx + 2).padStart(2, '0');
-                  return (
-                    <button
-                      key={m.id}
-                      type="button"
-                      onClick={() => openMissionModal(m)}
-                      className="w-full text-left py-4 px-1 hover:bg-black/[0.025] flex items-start justify-between gap-4 transition group cursor-pointer"
-                    >
-                      <div className="flex items-start gap-3.5 min-w-0 flex-1">
-                        <span className="text-[11px] font-mono text-[#8E7338] tabular-nums pt-0.5 shrink-0">
-                          {rowNumber}
-                        </span>
-                        <div className="min-w-0 space-y-1">
-                          <div className="flex items-baseline gap-2.5 flex-wrap">
-                            <p className="text-sm font-semibold text-[#0F1521] group-hover:text-[#8E7338] transition-colors leading-snug">
-                              {cleanTitle}
-                            </p>
-                            {resolvedStatus === 'APPROVED' && (
-                              <span className="text-[11px] font-medium text-[#4A7558] tracking-wide">
-                                • สำเร็จแล้ว
-                              </span>
-                            )}
-                            {resolvedStatus === 'PENDING' && (
-                              <span className="text-[11px] font-medium text-[#9B7B38] tracking-wide">
-                                • รอตรวจสอบ
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-xs text-[#64625A] leading-relaxed">{m.description}</p>
-                        </div>
-                      </div>
-
-                      <span className="text-xs font-semibold uppercase tracking-[0.08em] text-[#8E7338] tabular-nums pt-0.5 shrink-0">
-                        +{m.reward_points} PTS
-                      </span>
-                    </button>
-                  );
-                })}
               </div>
             </section>
           ) : null}

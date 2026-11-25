@@ -103,7 +103,9 @@ export const CourseRegistrationView: React.FC<CourseRegistrationViewProps> = ({
     );
   }, [profile, matchedParticipant, resolvedHouseName]);
 
-  const memberFee = course.fee_member ?? 12900;
+  const isCourse = course.event_type === 'course';
+  const actionLabel = isCourse ? 'สมัครเรียน' : 'ลงทะเบียนกิจกรรม';
+  const memberFee = course.fee_member ?? (isCourse ? 12900 : 1200);
   const guestFee = course.fee_guest ?? Math.round(memberFee * 1.25);
   const memberDiscount = Math.max(0, guestFee - memberFee);
   const totalSessions = course.sessions?.length || 1;
@@ -206,7 +208,7 @@ export const CourseRegistrationView: React.FC<CourseRegistrationViewProps> = ({
             >
               <ChevronLeft className="w-4 h-4 text-[#ECD28E]" />
             </button>
-            <h1 className="text-base sm:text-lg font-extrabold text-white">สมัครเรียน</h1>
+            <h1 className="text-base sm:text-lg font-extrabold text-white">{actionLabel}</h1>
           </div>
 
           {/* Course Summary Mini Card */}
@@ -223,7 +225,8 @@ export const CourseRegistrationView: React.FC<CourseRegistrationViewProps> = ({
                 {cleanDisplayTitle}
               </p>
               <p className="text-[11px] text-slate-300 truncate mt-0.5">
-                {totalSessions} ครั้ง · {course.published_date_text || 'เร็วๆ นี้'} · {shortLocation}
+                {isCourse ? `${totalSessions} ครั้ง · ` : ''}
+                {course.published_date_text || 'เร็วๆ นี้'} · {shortLocation}
               </p>
             </div>
           </div>
@@ -685,7 +688,7 @@ export const CourseRegistrationView: React.FC<CourseRegistrationViewProps> = ({
         </div>
 
         {/* ================= STICKY BOTTOM SUBMIT BAR ================= */}
-        <div className="fixed inset-x-0 bottom-0 z-50 bg-white/95 backdrop-blur-md border-t border-[#E6E0D4] px-4 py-3 pb-safe shadow-[0_-8px_24px_rgba(11,16,29,0.10)]">
+        <div className="fixed inset-x-0 bottom-0 z-50 bg-white/95 backdrop-blur-md border-t border-[#E6E0D4] px-4 pt-3 pb-[max(1.5rem,calc(env(safe-area-inset-bottom,0px)+1rem))] sm:py-3.5 shadow-[0_-8px_24px_rgba(11,16,29,0.10)]">
           <div className="max-w-2xl mx-auto flex items-center justify-between gap-3">
             <div>
               <p className="text-[10px] font-medium text-slate-500">ยอดชำระ</p>
@@ -698,7 +701,7 @@ export const CourseRegistrationView: React.FC<CourseRegistrationViewProps> = ({
               type="submit"
               className="px-6 py-3 rounded-2xl bg-[#12192B] hover:bg-[#1B2540] text-white text-xs sm:text-sm font-bold inline-flex items-center gap-2 transition active:scale-95 shadow-sm"
             >
-              <span>สมัครเรียน</span>
+              <span>{actionLabel}</span>
               <ArrowRight className="w-4 h-4 text-[#ECD28E]" />
             </button>
           </div>

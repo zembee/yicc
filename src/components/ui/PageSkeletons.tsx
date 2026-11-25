@@ -257,53 +257,37 @@ export const PrivilegesPageSkeleton: React.FC = () => (
  */
 export const EventsPageSkeleton: React.FC = () => (
   <div className="w-full bg-[#F6F4EF] pb-4 fade-in-soft">
-    <section className="sticky top-0 md:top-24 z-30 luxury-stage text-white pt-4 pb-5 px-4 sm:px-6 rounded-b-[28px] shadow-[0_14px_34px_rgba(9,13,24,0.28)] overflow-hidden">
-      <div className="relative z-10 max-w-5xl mx-auto space-y-3.5">
+    <section className="relative overflow-hidden luxury-stage text-white pt-4 pb-5 px-4 sm:px-6 rounded-b-[28px] shadow-[0_14px_34px_rgba(9,13,24,0.28)]">
+      <div className="relative z-10 max-w-4xl mx-auto space-y-3.5">
         <div className="flex items-center justify-between gap-2">
-          <div className="space-y-1.5">
-            <div className="h-6 w-48 rounded-lg skeleton-shimmer-dark" />
-            <div className="h-3 w-52 max-w-full rounded-md skeleton-shimmer-dark" />
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="h-9 w-24 rounded-xl skeleton-shimmer-dark" />
-            <div className="h-9 w-24 rounded-xl skeleton-shimmer-dark" />
-          </div>
+          <div className="h-6 w-48 rounded-lg skeleton-shimmer-dark" />
+          <div className="h-8 w-28 rounded-xl skeleton-shimmer-dark" />
         </div>
 
-        {/* Search Input */}
-        <div className="h-11 w-full rounded-2xl skeleton-shimmer-dark" />
-
-        {/* Filter Pills */}
-        <div className="flex items-center gap-2 overflow-hidden pt-0.5">
-          {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="h-8 w-24 shrink-0 rounded-full skeleton-shimmer-dark" />
-          ))}
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-3.5">
+          <div className="h-[104px] rounded-[20px] skeleton-shimmer-dark" />
+          <div className="h-[104px] rounded-[20px] skeleton-shimmer-dark" />
         </div>
+
+        <div className="h-[62px] rounded-[20px] skeleton-shimmer-dark" />
       </div>
     </section>
 
-    <div className="relative z-10 pt-5 pb-4 px-4 sm:px-6">
-      <div className="max-w-5xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-          {[0, 1, 2, 3, 4, 5].map((i) => (
-            <div
-              key={i}
-              className="h-[340px] sm:h-[360px] rounded-[24px] p-5 flex flex-col justify-between bg-[#0D1321] shadow-[0_14px_34px_rgba(9,13,24,0.16)]"
-            >
-              <div className="flex items-center justify-between">
-                <div className="h-6 w-28 rounded-full skeleton-shimmer-dark" />
-                <div className="h-6 w-20 rounded-full skeleton-shimmer-dark" />
-              </div>
-              <div className="space-y-2.5">
-                <div className="h-3 w-32 rounded skeleton-shimmer-dark" />
-                <div className="h-5 w-4/5 rounded-md skeleton-shimmer-dark" />
-                <div className="h-3.5 w-3/5 rounded-md skeleton-shimmer-dark" />
-                <div className="grid grid-cols-2 gap-2 pt-2">
-                  <div className="h-9 rounded-full skeleton-shimmer-dark" />
-                  <div className="h-9 rounded-full skeleton-shimmer-dark" />
-                </div>
-              </div>
-            </div>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-4 space-y-6">
+      <div className="h-11 w-full rounded-2xl skeleton-shimmer" />
+
+      <div className="space-y-3">
+        <div className="h-5 w-40 rounded-md skeleton-shimmer" />
+        {[0, 1].map((i) => (
+          <div key={i} className="h-[96px] w-full rounded-[22px] skeleton-shimmer" />
+        ))}
+      </div>
+
+      <div className="space-y-3">
+        <div className="h-5 w-36 rounded-md skeleton-shimmer" />
+        <div className="flex gap-3.5 overflow-hidden">
+          {[0, 1].map((i) => (
+            <div key={i} className="w-[262px] h-[276px] shrink-0 rounded-[22px] skeleton-shimmer" />
           ))}
         </div>
       </div>
