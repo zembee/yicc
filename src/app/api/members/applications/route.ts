@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { UserProfile } from '@/types';
 import { linkRichMenuToUser, unlinkRichMenuFromUser } from '@/lib/lineRichMenu';
-import { readJsonStore, writeJsonStore } from '@/lib/serverJsonStore';
+import { readCloudJsonStore, writeCloudJsonStore } from '@/lib/serverJsonStore';
+
+export const dynamic = 'force-dynamic';
 
 export interface StoredMemberApplication extends UserProfile {
   created_at?: string;
@@ -43,7 +45,7 @@ function normalizeRowToApplication(row: any): StoredMemberApplication {
 export async function GET(req: NextRequest) {
   try {
     const lineUserId = req.nextUrl.searchParams.get('lineUserId')?.trim();
-    const localApps = readJsonStore<StoredMemberApplication[]>(STORE_FILE, []);
+    const localApps = await readCloudJsonStore<StoredMemberApplication[]>(STORE_FILE, []);
     const mergedMap = new Map<string, StoredMemberApplication>();
 
     localApps.forEach((a) => {
@@ -107,7 +109,7 @@ export async function POST(req: NextRequest) {
     }
 
     const now = new Date().toISOString();
-    const applications = readJsonStore<StoredMemberApplication[]>(STORE_FILE, []);
+    const applications = await readCloudJsonStore<StoredMemberApplication[]>(STORE_FILE, []);
     const existingIndex = applications.findIndex((a) => a.line_user_id === body.line_user_id);
 
     if (existingIndex >= 0) {
@@ -130,7 +132,7 @@ export async function POST(req: NextRequest) {
     } else {
       applications.unshift(record);
     }
-    writeJsonStore(STORE_FILE, applications);
+    await writeCloudJsonStore(STORE_FILE, applications);
 
     // Sync to Supabase if reachable (handle user_role enum without PENDING & UUID house_id)
     let supabaseSaved = false;
@@ -194,7 +196,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     const now = new Date().toISOString();
-    const applications = readJsonStore<StoredMemberApplication[]>(STORE_FILE, []);
+    const applications = await readCloudJsonStore<StoredMemberApplication[]>(STORE_FILE, []);
     const idx = applications.findIndex((a) => a.line_user_id === lineUserId);
 
     const current = idx >= 0 ? applications[idx] : ({ line_user_id: lineUserId, display_name: lineUserId } as StoredMemberApplication);
@@ -212,7 +214,7 @@ export async function PATCH(req: NextRequest) {
     } else {
       applications.unshift(updated);
     }
-    writeJsonStore(STORE_FILE, applications);
+    await writeCloudJsonStore(STORE_FILE, applications);
 
     // Update Supabase if reachable
     const sb = getSupabaseServerClient();

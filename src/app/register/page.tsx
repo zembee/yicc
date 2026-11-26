@@ -308,27 +308,7 @@ export default function RegisterPage() {
         attendance_rate: 0,
       };
 
-      // Save application to Supabase
-      try {
-        await supabase.from('profiles').insert({
-          line_user_id: pendingProfile.line_user_id,
-          display_name: pendingProfile.display_name,
-          picture_url: pendingProfile.picture_url,
-          phone_number: pendingProfile.phone_number,
-          email: pendingProfile.email,
-          company_name: pendingProfile.company_name,
-          position: pendingProfile.position,
-          industry: pendingProfile.industry,
-          house_id: pendingProfile.house_id,
-          cohort_batch: 'YFTI 11',
-          role: 'PENDING',
-          updated_at: new Date().toISOString()
-        });
-      } catch (dbErr) {
-        console.warn('Supabase DB notice:', dbErr);
-      }
-
-      // Save application to server API so Admin on any device sees it immediately
+      // Save application to server API (persists to both Cloud JSON Store & Supabase with proper PENDING markers)
       try {
         await fetch('/api/members/applications', {
           method: 'POST',

@@ -64,12 +64,16 @@ export default function AdminPage() {
       } catch {}
     }
 
-    fetch('/api/members/applications')
+    fetch('/api/members/applications', { cache: 'no-store' })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data && Array.isArray(data.applications)) {
           const count = data.applications.filter(
-            (a: any) => a.role === 'PENDING' && a.approval_status !== 'REJECTED'
+            (a: any) =>
+              (a.role === 'PENDING' ||
+                a.approval_status === 'PENDING' ||
+                (typeof a.cohort_batch === 'string' && a.cohort_batch.includes('PENDING'))) &&
+              a.approval_status !== 'REJECTED'
           ).length;
           setPendingMembersCount(count);
         }

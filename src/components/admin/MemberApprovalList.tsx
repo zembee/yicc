@@ -35,7 +35,7 @@ export const MemberApprovalList: React.FC = () => {
 
       // 1. Load from server API (shared across all browsers/devices)
       try {
-        const res = await fetch('/api/members/applications');
+        const res = await fetch('/api/members/applications', { cache: 'no-store' });
         if (res.ok) {
           const json = (await res.json()) as {
             applications?: MemberApplication[];
@@ -80,17 +80,25 @@ export const MemberApprovalList: React.FC = () => {
         if (!error && Array.isArray(data)) {
           data.forEach((row) => {
             const existing = mergedMap.get(row.line_user_id);
+            const isPendingBatch =
+              typeof row.cohort_batch === 'string' && row.cohort_batch.includes('PENDING');
+            const isRejectedBatch =
+              typeof row.cohort_batch === 'string' && row.cohort_batch.includes('REJECTED');
+            const isRowPending = row.role === 'PENDING' || isPendingBatch;
+
             const app: MemberApplication = {
               ...(existing || {}),
               ...(row as UserProfile),
-              approval_status:
-                row.role === 'PENDING'
-                  ? 'PENDING'
-                  : existing?.approval_status === 'REJECTED'
-                  ? 'REJECTED'
-                  : 'APPROVED',
+              role: isRowPending ? 'PENDING' : (row.role as UserProfile['role']),
+              approval_status: isRejectedBatch
+                ? 'REJECTED'
+                : isRowPending
+                ? 'PENDING'
+                : existing?.approval_status === 'REJECTED'
+                ? 'REJECTED'
+                : 'APPROVED',
             };
-            if (row.role === 'PENDING' || existing) {
+            if (isRowPending || isRejectedBatch || existing) {
               mergedMap.set(row.line_user_id, app);
             }
           });
@@ -166,7 +174,8 @@ export const MemberApprovalList: React.FC = () => {
         await supabase
           .from('profiles')
           .update({
-            role: nextRole,
+            role: 'MEMBER',
+            cohort_batch: decision === 'APPROVED' ? 'YFTI 11' : 'YFTI 11 (REJECTED)',
             points_balance: updates.points_balance,
             xp_balance: updates.xp_balance,
             updated_at: new Date().toISOString(),
