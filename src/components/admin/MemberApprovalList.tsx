@@ -78,7 +78,9 @@ export const MemberApprovalList: React.FC = () => {
           .limit(50);
 
         if (!error && Array.isArray(data)) {
-          data.forEach((row) => {
+          data
+            .filter((row) => row?.line_user_id !== 'U_TEST_DEBUG_999')
+            .forEach((row) => {
             const existing = mergedMap.get(row.line_user_id);
             const isPendingBatch =
               typeof row.cohort_batch === 'string' && row.cohort_batch.includes('PENDING');

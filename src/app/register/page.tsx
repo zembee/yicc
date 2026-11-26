@@ -81,6 +81,8 @@ export default function RegisterPage() {
   const [houses, setHouses] = useState<House[]>(mockHouses);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isCheckingStatus, setIsCheckingStatus] = useState(false);
+  const [statusFeedback, setStatusFeedback] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Load houses
@@ -817,14 +819,30 @@ export default function RegisterPage() {
                 </div>
               </div>
 
+              {statusFeedback && (
+                <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold">
+                  {statusFeedback}
+                </div>
+              )}
+
               <div className="pt-2 flex flex-col sm:flex-row gap-2.5">
                 <button
                   type="button"
-                  onClick={() => refetchProfile()}
-                  className="flex-1 py-3 px-4 rounded-xl bg-[#1E2538] hover:bg-[#151A28] text-white text-xs font-bold transition flex items-center justify-center gap-1.5"
+                  disabled={isCheckingStatus}
+                  onClick={async () => {
+                    setIsCheckingStatus(true);
+                    setStatusFeedback(null);
+                    try {
+                      await refetchProfile();
+                      setStatusFeedback('ซิงก์ข้อมูลล่าสุดแล้ว · อยู่ระหว่างรอแอดมินอนุมัติ');
+                    } finally {
+                      setIsCheckingStatus(false);
+                    }
+                  }}
+                  className="flex-1 py-3 px-4 rounded-xl bg-[#1E2538] hover:bg-[#151A28] disabled:opacity-60 text-white text-xs font-bold transition flex items-center justify-center gap-1.5"
                 >
-                  <RefreshCw className="w-3.5 h-3.5" />
-                  ตรวจสอบสถานะอีกครั้ง
+                  <RefreshCw className={`w-3.5 h-3.5 ${isCheckingStatus ? 'animate-spin' : ''}`} />
+                  <span>{isCheckingStatus ? 'กำลังตรวจสอบ...' : 'ตรวจสอบสถานะอีกครั้ง'}</span>
                 </button>
                 <a
                   href="https://line.me/R/ti/p/@yfti11"
@@ -835,10 +853,10 @@ export default function RegisterPage() {
                   <span>ติดต่อเจ้าหน้าที่ผ่าน LINE</span>
                 </a>
               </div>
-              <div className="flex items-center justify-between pt-1">
+              <div className="flex items-center justify-between pt-2 border-t border-slate-100">
                 <Link
                   href="/"
-                  className="text-[11px] font-bold text-slate-500 hover:text-[#1E2538] transition"
+                  className="text-xs font-bold text-slate-500 hover:text-[#1E2538] transition"
                 >
                   กลับหน้าหลัก
                 </Link>
@@ -846,11 +864,13 @@ export default function RegisterPage() {
                   type="button"
                   onClick={() => {
                     logout();
+                    setStatusFeedback(null);
+                    setErrorMsg(null);
                     setStep('PHONE_LOOKUP');
                   }}
-                  className="text-[11px] font-bold text-slate-400 hover:text-slate-600 transition"
+                  className="px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-xs font-bold text-rose-600 transition"
                 >
-                  ออกจากระบบ / เปลี่ยนบัญชี
+                  รีเซ็ต / กรอกข้อมูลสมัครใหม่
                 </button>
               </div>
             </div>

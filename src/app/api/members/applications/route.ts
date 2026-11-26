@@ -69,18 +69,20 @@ export async function GET(req: NextRequest) {
         if (!error) {
           supabaseReachable = true;
           const rows = lineUserId ? (data ? [data] : []) : Array.isArray(data) ? data : [];
-          rows.forEach((row: any) => {
-            const app = normalizeRowToApplication(row);
-            if (
-              lineUserId ||
-              app.role === 'PENDING' ||
-              app.approval_status === 'PENDING' ||
-              app.approval_status === 'REJECTED' ||
-              mergedMap.has(app.line_user_id)
-            ) {
-              mergedMap.set(app.line_user_id, app);
-            }
-          });
+          rows
+            .filter((row: any) => row?.line_user_id !== 'U_TEST_DEBUG_999')
+            .forEach((row: any) => {
+              const app = normalizeRowToApplication(row);
+              if (
+                lineUserId ||
+                app.role === 'PENDING' ||
+                app.approval_status === 'PENDING' ||
+                app.approval_status === 'REJECTED' ||
+                mergedMap.has(app.line_user_id)
+              ) {
+                mergedMap.set(app.line_user_id, app);
+              }
+            });
         }
       } catch {
         supabaseReachable = false;

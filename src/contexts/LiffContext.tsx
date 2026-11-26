@@ -239,6 +239,17 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
             if (isApproved) {
               syncLineRichMenu(lProfile.userId, 'link');
+            } else if (finalProfile.role === 'PENDING' || finalProfile.approval_status === 'PENDING') {
+              const serverApp = await syncApplicationFromServer(finalProfile.line_user_id, finalProfile);
+              if (!cancelled && serverApp && (serverApp.role !== finalProfile.role || serverApp.approval_status !== finalProfile.approval_status)) {
+                setProfile(serverApp);
+                if (typeof window !== 'undefined') {
+                  localStorage.setItem('yfti_auth_session', JSON.stringify(serverApp));
+                }
+                if (serverApp.role !== 'PENDING' && serverApp.approval_status !== 'PENDING' && serverApp.approval_status !== 'REJECTED') {
+                  syncLineRichMenu(serverApp.line_user_id, 'link');
+                }
+              }
             }
           } else {
             // Otherwise check if this LINE user already exists in Supabase
@@ -325,10 +336,23 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const activeLineUserId = profile?.line_user_id || lineProfile?.userId;
     syncLineRichMenu(activeLineUserId, 'unlink');
     setProfile(null);
-    setLineProfile(null);
     setIsRegistered(false);
     if (typeof window !== 'undefined') {
       localStorage.removeItem('yfti_auth_session');
+      if (activeLineUserId) {
+        try {
+          const raw = localStorage.getItem('yfti_member_applications');
+          if (raw) {
+            const list = JSON.parse(raw) as UserProfile[];
+            if (Array.isArray(list)) {
+              localStorage.setItem(
+                'yfti_member_applications',
+                JSON.stringify(list.filter((item) => item.line_user_id !== activeLineUserId))
+              );
+            }
+          }
+        } catch {}
+      }
     }
   };
 
@@ -352,6 +376,14 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (serverApp) {
         switchProfile(serverApp);
         return;
+      }
+      // If local profile is PENDING and server had nothing, re-fetch after POST so it's confirmed
+      if (profile && (profile.role === 'PENDING' || profile.approval_status === 'PENDING')) {
+        const resynced = await syncApplicationFromServer(targetLineUserId);
+        if (resynced) {
+          switchProfile(resynced);
+          return;
+        }
       }
     }
     if (profile) {
