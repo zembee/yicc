@@ -363,6 +363,37 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Apply role assigned by Super Admin (server role store) to the active session
+  const activeProfileId = profile?.id;
+  const activeLineUserId = profile?.line_user_id;
+  const activeRole = profile?.role;
+  useEffect(() => {
+    if (!activeProfileId && !activeLineUserId) return;
+    if (activeRole === 'PENDING') return;
+    let cancelled = false;
+    const params = new URLSearchParams();
+    if (activeProfileId) params.set('memberId', String(activeProfileId));
+    if (activeLineUserId) params.set('lineUserId', activeLineUserId);
+    fetch(`/api/members/roles?${params.toString()}`, { cache: 'no-store' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { role?: UserProfile['role'] | null } | null) => {
+        const assigned = data?.role;
+        if (cancelled || !assigned || assigned === activeRole) return;
+        setProfile((prev) => {
+          if (!prev) return prev;
+          const updated = { ...prev, role: assigned };
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('yfti_auth_session', JSON.stringify(updated));
+          }
+          return updated;
+        });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [activeProfileId, activeLineUserId, activeRole]);
+
   const updateRole = (newRole: UserProfile['role']) => {
     if (profile) {
       const updated = { ...profile, role: newRole };

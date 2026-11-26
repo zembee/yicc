@@ -3,6 +3,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { UserProfile } from '@/types';
 import { supabase } from '@/lib/supabase';
+import { mockDirectory } from '@/lib/mockData';
+import { useLiffAuth } from '@/contexts/LiffContext';
 import {
   UserCheck,
   CheckCircle2,
@@ -14,9 +16,40 @@ import {
   Briefcase,
   Clock,
   Trash2,
+  Search,
+  ShieldCheck,
 } from 'lucide-react';
 
-type FilterMode = 'PENDING' | 'APPROVED' | 'ALL';
+type FilterMode = 'PENDING' | 'APPROVED' | 'ADMINS' | 'ALL';
+type AssignableRole = 'MEMBER' | 'HOUSE_ADMIN' | 'SUPER_ADMIN';
+
+interface MemberRoleRecord {
+  member_id?: string;
+  line_user_id?: string;
+  role: AssignableRole;
+}
+
+const BUILTIN_SUPER_ADMIN_IDS = ['3296'];
+
+const ROLE_LABELS: Record<AssignableRole, string> = {
+  MEMBER: 'สมาชิก',
+  HOUSE_ADMIN: 'House Admin',
+  SUPER_ADMIN: 'Super Admin',
+};
+
+const ROLE_BADGE_CLASS: Record<AssignableRole, string> = {
+  MEMBER: 'bg-slate-100 text-slate-600 border-slate-200',
+  HOUSE_ADMIN: 'bg-sky-50 text-sky-700 border-sky-200',
+  SUPER_ADMIN: 'bg-[#FBF6EC] text-[#8A6516] border-[#EFE2C2]',
+};
+
+function findRoleRecord(records: MemberRoleRecord[], app: { id?: string; line_user_id?: string }) {
+  return records.find(
+    (r) =>
+      (app.id && r.member_id && String(r.member_id) === String(app.id)) ||
+      (app.line_user_id && r.line_user_id && r.line_user_id === app.line_user_id)
+  );
+}
 
 interface MemberApplication extends UserProfile {
   created_at?: string;
@@ -29,6 +62,10 @@ export const MemberApprovalList: React.FC = () => {
   const [isClearingPending, setIsClearingPending] = useState(false);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [supabaseReachable, setSupabaseReachable] = useState<boolean | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [roleError, setRoleError] = useState<string | null>(null);
+  const { profile } = useLiffAuth();
+  const isSuperAdmin = profile?.role === 'SUPER_ADMIN';
 
   const loadApplications = useCallback(async () => {
     setIsLoading(true);
@@ -77,7 +114,7 @@ export const MemberApprovalList: React.FC = () => {
           .from('profiles')
           .select('*')
           .order('updated_at', { ascending: false })
-          .limit(50);
+          .limit(500);
 
         if (!error && Array.isArray(data)) {
           data
@@ -102,14 +139,47 @@ export const MemberApprovalList: React.FC = () => {
                 ? 'REJECTED'
                 : 'APPROVED',
             };
-            if (isRowPending || isRejectedBatch || existing) {
+            if (row.line_user_id) {
               mergedMap.set(row.line_user_id, app);
             }
           });
         }
       } catch {}
 
-      setApplications(Array.from(mergedMap.values()));
+      // 4. Include YFTI 11 directory members (122 ท่าน) as approved members
+      const knownIds = new Set(
+        Array.from(mergedMap.values())
+          .map((a) => (a.id ? String(a.id) : ''))
+          .filter(Boolean)
+      );
+      mockDirectory.forEach((member) => {
+        if (mergedMap.has(member.line_user_id) || knownIds.has(String(member.id))) return;
+        mergedMap.set(member.line_user_id, {
+          ...member,
+          // Directory default: everyone is a member unless a Super Admin assigns a role
+          role: BUILTIN_SUPER_ADMIN_IDS.includes(String(member.id)) ? 'SUPER_ADMIN' : 'MEMBER',
+          approval_status: 'APPROVED',
+        });
+      });
+
+      // 5. Apply roles assigned by Super Admin
+      let roleRecords: MemberRoleRecord[] = [];
+      try {
+        const res = await fetch('/api/members/roles', { cache: 'no-store' });
+        if (res.ok) {
+          const json = (await res.json()) as { roles?: MemberRoleRecord[] };
+          if (Array.isArray(json.roles)) roleRecords = json.roles;
+        }
+      } catch {}
+
+      const merged = Array.from(mergedMap.values()).map((app) => {
+        if (app.role === 'PENDING' || app.approval_status === 'REJECTED') return app;
+        if (BUILTIN_SUPER_ADMIN_IDS.includes(String(app.id))) return { ...app, role: 'SUPER_ADMIN' as const };
+        const record = findRoleRecord(roleRecords, app);
+        return record ? { ...app, role: record.role } : app;
+      });
+
+      setApplications(merged);
     } finally {
       setIsLoading(false);
     }
@@ -210,6 +280,52 @@ export const MemberApprovalList: React.FC = () => {
     }
   };
 
+  const handleRoleChange = async (app: MemberApplication, nextRole: AssignableRole) => {
+    if (!isSuperAdmin || app.role === nextRole) return;
+    if (
+      typeof window !== 'undefined' &&
+      !window.confirm(`ต้องการเปลี่ยนสิทธิ์ของ "${app.display_name}" เป็น ${ROLE_LABELS[nextRole]} หรือไม่?`)
+    ) {
+      return;
+    }
+
+    setRoleError(null);
+    setProcessingId(app.line_user_id);
+    try {
+      const res = await fetch('/api/members/roles', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          memberId: app.id,
+          // Only send real (non-placeholder) LINE ids so Supabase sync targets the right row
+          lineUserId: app.line_user_id?.startsWith('U_YFTI_') ? undefined : app.line_user_id,
+          displayName: app.display_name,
+          role: nextRole,
+          actor: {
+            memberId: profile?.id,
+            lineUserId: profile?.line_user_id,
+            role: profile?.role,
+            displayName: profile?.display_name,
+          },
+        }),
+      });
+      if (!res.ok) {
+        const json = (await res.json().catch(() => null)) as { error?: string } | null;
+        setRoleError(json?.error || 'เปลี่ยนสิทธิ์ไม่สำเร็จ');
+        return;
+      }
+      setApplications((prev) =>
+        prev.map((item) =>
+          item.line_user_id === app.line_user_id ? { ...item, role: nextRole } : item
+        )
+      );
+    } catch {
+      setRoleError('เปลี่ยนสิทธิ์ไม่สำเร็จ');
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
   const handleClearAllPending = async () => {
     if (
       typeof window !== 'undefined' &&
@@ -249,7 +365,27 @@ export const MemberApprovalList: React.FC = () => {
     (a) => a.role === 'PENDING' && a.approval_status !== 'REJECTED'
   ).length;
 
+  const approvedCount = applications.filter(
+    (a) => a.role !== 'PENDING' && a.approval_status !== 'REJECTED'
+  ).length;
+
+  const adminCount = applications.filter(
+    (a) => (a.role === 'SUPER_ADMIN' || a.role === 'HOUSE_ADMIN') && a.approval_status !== 'REJECTED'
+  ).length;
+
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+
   const filteredApps = applications.filter((a) => {
+    if (normalizedQuery) {
+      const haystack = [a.display_name, a.company_name, a.phone_number, a.email, a.position]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      if (!haystack.includes(normalizedQuery)) return false;
+    }
+    if (filter === 'ADMINS') {
+      return (a.role === 'SUPER_ADMIN' || a.role === 'HOUSE_ADMIN') && a.approval_status !== 'REJECTED';
+    }
     if (filter === 'PENDING') {
       return a.role === 'PENDING' && a.approval_status !== 'REJECTED';
     }
@@ -294,12 +430,13 @@ export const MemberApprovalList: React.FC = () => {
 
       {/* Filter Tabs */}
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex gap-1.5">
+        <div className="flex flex-wrap gap-1.5">
           {(
             [
               { key: 'PENDING', label: `รออนุมัติ (${pendingCount})` },
-              { key: 'APPROVED', label: 'อนุมัติแล้ว' },
-              { key: 'ALL', label: 'ทั้งหมด' },
+              { key: 'APPROVED', label: `อนุมัติแล้ว (${approvedCount})` },
+              { key: 'ADMINS', label: `แอดมิน (${adminCount})` },
+              { key: 'ALL', label: `ทั้งหมด (${applications.length})` },
             ] as { key: FilterMode; label: string }[]
           ).map((tab) => (
             <button
@@ -322,6 +459,23 @@ export const MemberApprovalList: React.FC = () => {
           </span>
         )}
       </div>
+
+      <div className="relative">
+        <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+        <input
+          type="search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="ค้นหาชื่อ บริษัท เบอร์โทร หรืออีเมล"
+          className="w-full pl-8 pr-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-xs text-[#1E2538] placeholder:text-slate-400 focus:outline-none focus:border-[#C59B38] focus:bg-white"
+        />
+      </div>
+
+      {roleError && (
+        <div className="text-[11px] font-bold px-3 py-2 rounded-lg bg-rose-50 text-rose-700 border border-rose-200">
+          {roleError}
+        </div>
+      )}
 
       {filteredApps.length === 0 ? (
         <div className="text-center py-6 text-xs text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
@@ -411,14 +565,36 @@ export const MemberApprovalList: React.FC = () => {
                       ปฏิเสธ
                     </button>
                   </div>
-                ) : (
+                ) : isRejected ? (
                   <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
                     <Clock className="w-3 h-3" />
-                    <span>
-                      {isRejected
-                        ? 'ปฏิเสธคำขอแล้ว'
-                        : 'อนุมัติและปลดล็อกสิทธิ์สมาชิกแล้ว'}
+                    <span>ปฏิเสธคำขอแล้ว</span>
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span
+                      className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                        ROLE_BADGE_CLASS[(app.role as AssignableRole) in ROLE_LABELS ? (app.role as AssignableRole) : 'MEMBER']
+                      }`}
+                    >
+                      <ShieldCheck className="w-3 h-3" />
+                      {ROLE_LABELS[(app.role as AssignableRole) in ROLE_LABELS ? (app.role as AssignableRole) : 'MEMBER']}
                     </span>
+                    {isSuperAdmin && (
+                      <label className="flex items-center gap-1.5 text-[11px] text-slate-500">
+                        <span>แต่งตั้งสิทธิ์</span>
+                        <select
+                          value={(app.role as AssignableRole) in ROLE_LABELS ? app.role : 'MEMBER'}
+                          disabled={isBusy || BUILTIN_SUPER_ADMIN_IDS.includes(String(app.id))}
+                          onChange={(e) => handleRoleChange(app, e.target.value as AssignableRole)}
+                          className="px-2 py-1 rounded-lg border border-slate-200 bg-white text-[11px] font-bold text-[#1E2538] disabled:opacity-60 focus:outline-none focus:border-[#C59B38]"
+                        >
+                          <option value="MEMBER">สมาชิก</option>
+                          <option value="HOUSE_ADMIN">House Admin</option>
+                          <option value="SUPER_ADMIN">Super Admin</option>
+                        </select>
+                      </label>
+                    )}
                   </div>
                 )}
               </div>
