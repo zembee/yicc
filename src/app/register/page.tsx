@@ -219,7 +219,7 @@ export default function RegisterPage() {
         cohort_batch: 'YFTI 11',
         house_id: targetHouse.id,
         house: targetHouse,
-        role: 'MEMBER',
+        role: String(matchedParticipant.id) === '3296' ? 'SUPER_ADMIN' : 'MEMBER',
         approval_status: 'APPROVED',
         points_balance: 100, // Linked bonus
         xp_balance: 300,      // Linked bonus
@@ -239,7 +239,7 @@ export default function RegisterPage() {
           industry: linkedProfile.industry,
           house_id: linkedProfile.house_id,
           cohort_batch: 'YFTI 11',
-          role: 'MEMBER',
+          role: linkedProfile.role,
           points_balance: linkedProfile.points_balance,
           xp_balance: linkedProfile.xp_balance,
           attendance_rate: linkedProfile.attendance_rate,

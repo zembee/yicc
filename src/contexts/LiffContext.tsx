@@ -158,7 +158,11 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
           try {
             const parsed = JSON.parse(saved) as UserProfile;
             if (parsed && parsed.display_name) {
-              const synced = syncProfileFromLocalApplications(parsed);
+              const normalizedParsed: UserProfile =
+                String(parsed.id) === '3296' && parsed.role !== 'SUPER_ADMIN'
+                  ? { ...parsed, role: 'SUPER_ADMIN' }
+                  : parsed;
+              const synced = syncProfileFromLocalApplications(normalizedParsed);
               savedProfile = synced;
               if (synced !== parsed) {
                 localStorage.setItem('yfti_auth_session', JSON.stringify(synced));
@@ -279,7 +283,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ...mockCurrentUser,
         line_user_id: lineProfile?.userId || mockCurrentUser.line_user_id,
         display_name: trimmedUser === 'YFTI Admin' ? 'YFTI Admin' : 'พงศ์พิชาญ ธนสิริพูนสิน (Golf)',
-        role: trimmedUser === 'YFTI Admin' ? 'SUPER_ADMIN' : 'MEMBER',
+        role: 'SUPER_ADMIN',
       };
       setProfile(authUser);
       setIsRegistered(true);

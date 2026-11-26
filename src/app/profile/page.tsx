@@ -46,7 +46,7 @@ const isArrayOfObjects = (v: unknown): v is Record<string, unknown>[] =>
   Array.isArray(v);
 
 export default function ProfilePage() {
-  const { profile, updateRole, logout } = useLiffAuth();
+  const { profile, logout } = useLiffAuth();
   const [mounted, setMounted] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isPhotoOpen, setIsPhotoOpen] = useState(false);
@@ -417,41 +417,17 @@ export default function ProfilePage() {
         onSubmitMission={handleSubmitMission}
       />
 
-      {/* ================= 6. ACCOUNT / ROLE ================= */}
-      <InfoCard eyebrow="Account" title="สิทธิ์การเข้าถึงระบบ">
-        <p className="text-xs text-slate-500 pt-1 pb-3 border-b border-[#F1ECE2]">
-          สลับบทบาทเพื่อทดสอบการใช้งานในมุมมองสมาชิกและผู้ดูแลระบบ
-        </p>
-        <div className="flex flex-wrap items-center gap-2 py-4">
-          {(['MEMBER', 'HOUSE_ADMIN', 'SUPER_ADMIN'] as const).map((roleOption) => (
-            <button
-              key={roleOption}
-              type="button"
-              onClick={() => updateRole(roleOption)}
-              className={`py-2 px-4 rounded-full text-xs font-bold transition ${
-                profile.role === roleOption
-                  ? 'bg-[#0D1321] text-[#ECD28E]'
-                  : 'bg-[#F6F4EF] text-slate-600 hover:bg-[#EAE5DA]'
-              }`}
-            >
-              {roleOption === 'SUPER_ADMIN'
-                ? 'Super Admin'
-                : roleOption === 'HOUSE_ADMIN'
-                ? 'House Admin'
-                : 'Member'}
-            </button>
-          ))}
-
-          <button
-            type="button"
-            onClick={logout}
-            className="py-2 px-4 rounded-full text-xs font-bold text-rose-600 hover:bg-rose-50 transition flex items-center gap-1.5 ml-auto"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>ออกจากระบบ</span>
-          </button>
-        </div>
-      </InfoCard>
+      {/* ================= 6. LOGOUT BUTTON ================= */}
+      <div className="pt-1">
+        <button
+          type="button"
+          onClick={logout}
+          className="w-full py-3.5 px-5 rounded-2xl bg-white hover:bg-rose-50 text-rose-600 text-xs font-extrabold shadow-[0_6px_22px_rgba(13,19,33,0.05)] transition flex items-center justify-center gap-2"
+        >
+          <LogOut className="w-4 h-4" />
+          <span>ออกจากระบบ</span>
+        </button>
+      </div>
         </div>
       </div>
 
