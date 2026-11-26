@@ -35,7 +35,7 @@ export const Footer: React.FC = () => {
             {/* Compact Contact Buttons (Phone, Email, LINE) */}
             <div className="flex items-center gap-2">
               <a
-                href="tel:0987654321"
+                href="tel:0000000000"
                 aria-label="โทรศัพท์ติดต่อสำนักงาน"
                 className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full bg-[#F6F4EF] hover:bg-[#0D1321] hover:text-white text-xs font-bold text-[#161C2C] transition"
               >
