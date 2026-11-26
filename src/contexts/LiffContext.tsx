@@ -479,7 +479,17 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loginWithLine = () => {
     if (liffObject) {
-      liffObject.login();
+      // Already authenticated with LINE (e.g. inside the LINE app after resetting the app session):
+      // calling liff.login() again leads to a 400 from access.line.me, so go straight to registration.
+      if (liffObject.isLoggedIn()) {
+        if (typeof window !== 'undefined') window.location.href = '/register';
+        return;
+      }
+      // Return to the registration page after LINE login; the URL must sit under the LIFF Endpoint URL.
+      liffObject.login({
+        redirectUri:
+          typeof window !== 'undefined' ? `${window.location.origin}/register` : undefined,
+      });
     } else {
       alert('LINE LIFF เชื่อมต่ออัตโนมัติเมื่อเปิดผ่านแอปพลิเคชัน LINE');
     }
