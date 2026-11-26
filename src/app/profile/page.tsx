@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import {
   Briefcase,
+  Camera,
   Coins,
   CreditCard,
   Crown,
@@ -23,6 +24,7 @@ import { PhotoLightbox } from '@/components/ui/PhotoLightbox';
 import { InfoCard, InfoGrid, InfoRow } from '@/components/ui/InfoCard';
 import { ProfilePageSkeleton } from '@/components/ui/PageSkeletons';
 import { HouseMembersModal } from '@/components/profile/HouseMembersModal';
+import { EditProfilePhotoModal } from '@/components/profile/EditProfilePhotoModal';
 import {
   MergedMissionItem,
   ProgressSection,
@@ -46,10 +48,11 @@ const isArrayOfObjects = (v: unknown): v is Record<string, unknown>[] =>
   Array.isArray(v);
 
 export default function ProfilePage() {
-  const { profile, logout } = useLiffAuth();
+  const { profile, lineProfile, updateProfilePicture, logout } = useLiffAuth();
   const [mounted, setMounted] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isPhotoOpen, setIsPhotoOpen] = useState(false);
+  const [isEditPhotoOpen, setIsEditPhotoOpen] = useState(false);
   const [isHouseModalOpen, setIsHouseModalOpen] = useState(false);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
@@ -257,16 +260,19 @@ export default function ProfilePage() {
             <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
               <button
                 type="button"
-                onClick={() => setIsPhotoOpen(true)}
-                aria-label="ดูรูปเต็มจอ"
-                className="shrink-0 rounded-full cursor-zoom-in"
+                onClick={() => setIsEditPhotoOpen(true)}
+                aria-label="แก้ไขรูปโปรไฟล์"
+                className="relative group shrink-0 rounded-full cursor-pointer"
               >
                 <img
                   src={profile.picture_url || DEFAULT_AVATAR_DATA_URI}
                   alt={profile.display_name}
                   onError={handleAvatarError}
-                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover object-top ring-2 ring-[#ECD28E]/50 hover:ring-[#ECD28E] bg-[#0D1321] shadow-lg transition"
+                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover object-top ring-2 ring-[#ECD28E]/50 group-hover:ring-[#ECD28E] bg-[#0D1321] shadow-lg transition"
                 />
+                <span className="absolute -bottom-0.5 -right-0.5 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#ECD28E] text-[#12192B] flex items-center justify-center shadow-md ring-2 ring-[#0B111E] group-hover:scale-105 transition">
+                  <Camera className="w-3.5 h-3.5" />
+                </span>
               </button>
               <div className="min-w-0 space-y-1">
                 <div className="flex items-center gap-2 flex-wrap">
@@ -512,6 +518,18 @@ export default function ProfilePage() {
           </div>
         </div>
       )}
+
+      <EditProfilePhotoModal
+        isOpen={isEditPhotoOpen}
+        onClose={() => setIsEditPhotoOpen(false)}
+        currentSrc={profile.picture_url || DEFAULT_AVATAR_DATA_URI}
+        displayName={profile.display_name}
+        memberId={profile.id}
+        lineUserId={profile.line_user_id}
+        linePictureUrl={lineProfile?.pictureUrl}
+        onSaved={(newUrl) => updateProfilePicture(newUrl)}
+        onViewFullScreen={() => setIsPhotoOpen(true)}
+      />
 
       <PhotoLightbox
         isOpen={isPhotoOpen}

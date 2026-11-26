@@ -1,0 +1,30 @@
+[
+  {
+    "id": "pending_1795675829444",
+    "line_user_id": "U71529d729e9364b26049af07efd17a82",
+    "display_name": "pond (Pond)",
+    "picture_url": "https://api.dicebear.com/7.x/avataaars/svg?seed=pond",
+    "phone_number": "0960263336",
+    "email": "p.zembee@gmail.com",
+    "company_name": "Pan",
+    "position": "Dev",
+    "industry": "สินค้าอุตสาหกรรม",
+    "cohort_batch": "YFTI 11",
+    "house_id": "fbcb44bb-abc5-471b-9874-573a0e948162",
+    "house": {
+      "id": "fbcb44bb-abc5-471b-9874-573a0e948162",
+      "name": "Earth",
+      "color_hex": "#10B981",
+      "total_points": 1180,
+      "created_at": "2026-08-26T11:03:19.468402+00:00",
+      "updated_at": "2026-08-26T11:03:19.468402+00:00"
+    },
+    "role": "PENDING",
+    "approval_status": "PENDING",
+    "points_balance": 0,
+    "xp_balance": 0,
+    "attendance_rate": 0,
+    "created_at": "2026-11-26T06:55:04.447Z",
+    "updated_at": "2026-11-26T06:55:04.447Z"
+  }
+]

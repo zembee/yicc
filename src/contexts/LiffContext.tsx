@@ -17,6 +17,7 @@ interface LiffContextType {
   isMockMode: boolean;
   refetchProfile: () => Promise<void>;
   updateRole: (newRole: UserProfile['role']) => void;
+  updateProfilePicture: (pictureUrl: string) => void;
   loginWithLine: () => void;
   loginWithCredentials: (user: string, pass: string) => boolean;
   switchProfile: (user: UserProfile) => void;
@@ -34,6 +35,7 @@ const LiffContext = createContext<LiffContextType>({
   isMockMode: true,
   refetchProfile: async () => {},
   updateRole: () => {},
+  updateProfilePicture: () => {},
   loginWithLine: () => {},
   loginWithCredentials: () => false,
   switchProfile: () => {},
@@ -404,6 +406,53 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const updateProfilePicture = useCallback((pictureUrl: string) => {
+    setProfile((prev) => {
+      if (!prev) return prev;
+      const updated = { ...prev, picture_url: pictureUrl };
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('yfti_auth_session', JSON.stringify(updated));
+        try {
+          const raw = localStorage.getItem('yfti_member_applications');
+          if (raw) {
+            const list = JSON.parse(raw) as UserProfile[];
+            if (Array.isArray(list)) {
+              const next = list.map((item) =>
+                (prev.line_user_id && item.line_user_id === prev.line_user_id) ||
+                (prev.id && item.id === prev.id)
+                  ? { ...item, picture_url: pictureUrl }
+                  : item
+              );
+              localStorage.setItem('yfti_member_applications', JSON.stringify(next));
+            }
+          }
+        } catch {}
+      }
+      return updated;
+    });
+  }, []);
+
+  // Sync custom avatar saved in cloud store for the active session
+  const activePictureUrl = profile?.picture_url;
+  useEffect(() => {
+    if (!activeProfileId && !activeLineUserId) return;
+    let cancelled = false;
+    const params = new URLSearchParams();
+    if (activeProfileId) params.set('memberId', String(activeProfileId));
+    if (activeLineUserId) params.set('lineUserId', activeLineUserId);
+    fetch(`/api/members/avatar?${params.toString()}`, { cache: 'no-store' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { pictureUrl?: string | null } | null) => {
+        const savedUrl = data?.pictureUrl;
+        if (cancelled || !savedUrl || savedUrl === activePictureUrl) return;
+        updateProfilePicture(savedUrl);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [activeProfileId, activeLineUserId, activePictureUrl, updateProfilePicture]);
+
   const logout = () => {
     const activeLineUserId = profile?.line_user_id || lineProfile?.userId;
     syncLineRichMenu(activeLineUserId, 'unlink');
@@ -479,6 +528,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isMockMode,
         refetchProfile,
         updateRole,
+        updateProfilePicture,
         loginWithLine,
         loginWithCredentials,
         switchProfile,
