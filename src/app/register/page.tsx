@@ -312,14 +312,25 @@ export default function RegisterPage() {
       };
 
       // Save application to server API (persists to both Cloud JSON Store & Supabase with proper PENDING markers)
+      // If the server did not save it, admins will never see it, so stop and tell the user.
+      let saved = false;
       try {
-        await fetch('/api/members/applications', {
+        const res = await fetch('/api/members/applications', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(pendingProfile),
         });
+        saved = res.ok;
+        if (!res.ok) {
+          const json = (await res.json().catch(() => null)) as { error?: string } | null;
+          console.warn('Member application API error:', res.status, json?.error);
+        }
       } catch (apiErr) {
         console.warn('Member application API notice:', apiErr);
+      }
+      if (!saved) {
+        setErrorMsg('ส่งข้อมูลสมัครสมาชิกไม่สำเร็จ กรุณาลองใหม่อีกครั้ง');
+        return;
       }
 
       // Save application to localStorage for offline/demo Admin approval queue

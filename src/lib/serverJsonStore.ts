@@ -2,7 +2,21 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import path from 'path';
 import { createClient } from '@supabase/supabase-js';
 
+const IS_READONLY_FS = Boolean(
+  process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NETLIFY
+);
+
+function bundledStorePath(filename: string): string {
+  return path.join(process.cwd(), '.data', filename);
+}
+
+function tmpStorePath(filename: string): string {
+  return path.join('/tmp', `yfti-${filename}`);
+}
+
 export function getStorePath(filename: string): string {
+  // Serverless deployments have a read-only project directory; only /tmp is writable.
+  if (IS_READONLY_FS) return tmpStorePath(filename);
   const localDir = path.join(process.cwd(), '.data');
   try {
     if (!existsSync(localDir)) {
@@ -10,24 +24,34 @@ export function getStorePath(filename: string): string {
     }
     return path.join(localDir, filename);
   } catch {
-    return path.join('/tmp', `yfti-${filename}`);
+    return tmpStorePath(filename);
   }
 }
 
 export function readJsonStore<T>(filename: string, fallback: T): T {
-  const filePath = getStorePath(filename);
-  if (!existsSync(filePath)) return fallback;
-  try {
-    const raw = readFileSync(filePath, 'utf8');
-    return JSON.parse(raw) as T;
-  } catch {
-    return fallback;
+  // Writable cache first, then the seed file bundled with the deployment.
+  const candidates = Array.from(new Set([getStorePath(filename), bundledStorePath(filename)]));
+  for (const filePath of candidates) {
+    if (!existsSync(filePath)) continue;
+    try {
+      return JSON.parse(readFileSync(filePath, 'utf8')) as T;
+    } catch {}
   }
+  return fallback;
 }
 
+// Local cache write. Never throws: a failed cache write must not break the request.
 export function writeJsonStore<T>(filename: string, data: T): void {
-  const filePath = getStorePath(filename);
-  writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+  const body = JSON.stringify(data, null, 2);
+  try {
+    writeFileSync(getStorePath(filename), body, 'utf8');
+  } catch {
+    try {
+      writeFileSync(tmpStorePath(filename), body, 'utf8');
+    } catch (err) {
+      console.warn(`writeJsonStore(${filename}) local write failed:`, err);
+    }
+  }
 }
 
 function getSupabaseStorageClient() {
