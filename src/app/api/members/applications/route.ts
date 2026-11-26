@@ -12,8 +12,13 @@ export interface StoredMemberApplication extends UserProfile {
 }
 
 const STORE_FILE = 'member-applications.json';
+const META_FILE = 'member-applications-meta.json';
 const REAL_LINE_USER_ID_RE = /^U[0-9a-f]{32}$/i;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+interface ApplicationsMeta {
+  pendingClearedAt?: string;
+}
 
 function getSupabaseServerClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -45,7 +50,10 @@ function normalizeRowToApplication(row: any): StoredMemberApplication {
 export async function GET(req: NextRequest) {
   try {
     const lineUserId = req.nextUrl.searchParams.get('lineUserId')?.trim();
-    const localApps = await readCloudJsonStore<StoredMemberApplication[]>(STORE_FILE, []);
+    const [localApps, meta] = await Promise.all([
+      readCloudJsonStore<StoredMemberApplication[]>(STORE_FILE, []),
+      readCloudJsonStore<ApplicationsMeta>(META_FILE, {}),
+    ]);
     const mergedMap = new Map<string, StoredMemberApplication>();
 
     localApps.forEach((a) => {
@@ -93,10 +101,18 @@ export async function GET(req: NextRequest) {
 
     if (lineUserId) {
       const match = applications.find((a) => a.line_user_id === lineUserId) || null;
-      return NextResponse.json({ application: match, supabaseReachable });
+      return NextResponse.json({
+        application: match,
+        pendingClearedAt: meta.pendingClearedAt || null,
+        supabaseReachable,
+      });
     }
 
-    return NextResponse.json({ applications, supabaseReachable });
+    return NextResponse.json({
+      applications,
+      pendingClearedAt: meta.pendingClearedAt || null,
+      supabaseReachable,
+    });
   } catch (error) {
     console.error('GET /api/members/applications error:', error);
     return NextResponse.json({ applications: [], supabaseReachable: false }, { status: 500 });
@@ -255,6 +271,46 @@ export async function PATCH(req: NextRequest) {
     console.error('PATCH /api/members/applications error:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to update application' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE() {
+  try {
+    const now = new Date().toISOString();
+    const applications = await readCloudJsonStore<StoredMemberApplication[]>(STORE_FILE, []);
+    const remaining = applications.filter((a) => {
+      const isPending =
+        a.role === 'PENDING' ||
+        a.approval_status === 'PENDING' ||
+        (typeof a.cohort_batch === 'string' && a.cohort_batch.includes('PENDING'));
+      return !isPending;
+    });
+
+    await Promise.all([
+      writeCloudJsonStore(STORE_FILE, remaining),
+      writeCloudJsonStore<ApplicationsMeta>(META_FILE, { pendingClearedAt: now }),
+    ]);
+
+    const sb = getSupabaseServerClient();
+    if (sb) {
+      try {
+        await sb.from('profiles').delete().ilike('cohort_batch', '%PENDING%');
+        await sb.from('profiles').delete().eq('role', 'PENDING');
+      } catch {}
+    }
+
+    return NextResponse.json({
+      ok: true,
+      clearedAt: now,
+      removedCount: applications.length - remaining.length,
+      applications: remaining,
+    });
+  } catch (error) {
+    console.error('DELETE /api/members/applications error:', error);
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Failed to clear pending applications' },
       { status: 500 }
     );
   }

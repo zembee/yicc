@@ -121,14 +121,55 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
     []
   );
 
+  const clearLocalPendingSession = useCallback((lineUserId?: string) => {
+    setProfile(null);
+    setIsRegistered(false);
+    if (typeof window === 'undefined') return;
+    localStorage.removeItem('yfti_auth_session');
+    if (lineUserId) {
+      try {
+        const raw = localStorage.getItem('yfti_member_applications');
+        if (raw) {
+          const list = JSON.parse(raw) as UserProfile[];
+          if (Array.isArray(list)) {
+            localStorage.setItem(
+              'yfti_member_applications',
+              JSON.stringify(list.filter((item) => item.line_user_id !== lineUserId))
+            );
+          }
+        }
+      } catch {}
+    }
+  }, []);
+
   const syncApplicationFromServer = useCallback(
     async (lineUserId: string, fallbackPending?: UserProfile): Promise<UserProfile | null> => {
       try {
-        const res = await fetch(`/api/members/applications?lineUserId=${encodeURIComponent(lineUserId)}`);
+        const res = await fetch(
+          `/api/members/applications?lineUserId=${encodeURIComponent(lineUserId)}`,
+          { cache: 'no-store' }
+        );
         if (res.ok) {
-          const data = (await res.json()) as { application?: UserProfile | null };
+          const data = (await res.json()) as {
+            application?: UserProfile | null;
+            pendingClearedAt?: string | null;
+          };
           if (data.application) {
             return data.application;
+          }
+          // If admin cleared all pending applications after this local pending session was created, reset it
+          if (
+            data.pendingClearedAt &&
+            fallbackPending &&
+            (fallbackPending.role === 'PENDING' || fallbackPending.approval_status === 'PENDING')
+          ) {
+            const clearedMs = new Date(data.pendingClearedAt).getTime();
+            const createdRaw = (fallbackPending as UserProfile & { created_at?: string }).created_at;
+            const createdMs = createdRaw ? new Date(createdRaw).getTime() : 0;
+            if (!Number.isNaN(clearedMs) && (createdMs === 0 || createdMs <= clearedMs)) {
+              clearLocalPendingSession(lineUserId);
+              return null;
+            }
           }
         }
         // If user already had a local PENDING session before the API existed, push it to the server
@@ -142,7 +183,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } catch {}
       return null;
     },
-    []
+    [clearLocalPendingSession]
   );
 
   // Restore saved session and initialize LINE LIFF

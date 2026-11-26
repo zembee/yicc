@@ -290,7 +290,7 @@ export default function RegisterPage() {
       const linePicture = lineProfile?.pictureUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(fullName.trim())}`;
       const selectedHouse = houses.find((h) => h.id === selectedHouseId) || mockHouses[0];
 
-      const pendingProfile: UserProfile = {
+      const pendingProfile: UserProfile & { created_at?: string } = {
         id: `pending_${Date.now()}`,
         line_user_id: lineUserId,
         display_name: fullName.trim() + (nickname ? ` (${nickname.trim()})` : ''),
@@ -308,6 +308,7 @@ export default function RegisterPage() {
         points_balance: 0,
         xp_balance: 0,
         attendance_rate: 0,
+        created_at: new Date().toISOString(),
       };
 
       // Save application to server API (persists to both Cloud JSON Store & Supabase with proper PENDING markers)

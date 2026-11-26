@@ -13,6 +13,7 @@ import {
   Mail,
   Briefcase,
   Clock,
+  Trash2,
 } from 'lucide-react';
 
 type FilterMode = 'PENDING' | 'APPROVED' | 'ALL';
@@ -25,6 +26,7 @@ export const MemberApprovalList: React.FC = () => {
   const [applications, setApplications] = useState<MemberApplication[]>([]);
   const [filter, setFilter] = useState<FilterMode>('PENDING');
   const [isLoading, setIsLoading] = useState(false);
+  const [isClearingPending, setIsClearingPending] = useState(false);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [supabaseReachable, setSupabaseReachable] = useState<boolean | null>(null);
 
@@ -208,6 +210,41 @@ export const MemberApprovalList: React.FC = () => {
     }
   };
 
+  const handleClearAllPending = async () => {
+    if (
+      typeof window !== 'undefined' &&
+      !window.confirm(
+        'ต้องการล้างรายการที่รออนุมัติ (Pending) ทั้งหมดและรีเซ็ตให้ผู้ที่ค้างหน้า Pending สมัครเข้ามาใหม่หรือไม่?'
+      )
+    ) {
+      return;
+    }
+
+    setIsClearingPending(true);
+    try {
+      await fetch('/api/members/applications', { method: 'DELETE' });
+
+      if (typeof window !== 'undefined') {
+        try {
+          const raw = localStorage.getItem('yfti_member_applications');
+          const list = raw ? (JSON.parse(raw) as MemberApplication[]) : [];
+          if (Array.isArray(list)) {
+            const nonPending = list.filter(
+              (item) => item.role !== 'PENDING' && item.approval_status !== 'PENDING'
+            );
+            localStorage.setItem('yfti_member_applications', JSON.stringify(nonPending));
+          }
+        } catch {}
+      }
+
+      setApplications((prev) =>
+        prev.filter((a) => !(a.role === 'PENDING' && a.approval_status !== 'REJECTED'))
+      );
+    } finally {
+      setIsClearingPending(false);
+    }
+  };
+
   const pendingCount = applications.filter(
     (a) => a.role === 'PENDING' && a.approval_status !== 'REJECTED'
   ).length;
@@ -233,6 +270,16 @@ export const MemberApprovalList: React.FC = () => {
           <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
             รออนุมัติ {pendingCount} คน
           </span>
+          <button
+            type="button"
+            onClick={handleClearAllPending}
+            disabled={isClearingPending}
+            className="px-2.5 py-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 disabled:opacity-60 text-rose-700 text-[11px] font-bold inline-flex items-center gap-1 transition"
+            title="ล้างรายการรออนุมัติทั้งหมดและรีเซ็ตผู้ที่ค้าง Pending"
+          >
+            <Trash2 className="w-3 h-3" />
+            <span>{isClearingPending ? 'กำลังล้าง...' : 'ล้าง Pending ทั้งหมด'}</span>
+          </button>
           <button
             type="button"
             onClick={loadApplications}
